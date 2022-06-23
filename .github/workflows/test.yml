@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  pull_request:
+
+jobs:
+  install_dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: v1-contract/node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: 14.x
+
+      - name: Install dependencies
+        working-directory: ./v1-contract
+        run: yarn install --frozen-lockfile
+
+  test:
+    needs: install_dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Load node_modules
+        uses: actions/cache@v1
+        with:
+          path: v1-contract/node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Compile contracts
+        working-directory: ./v1-contract
+        run: npx hardhat compile
+      
+      - name: Run Contract tests
+        working-directory: ./v1-contract
+        run: npx hardhat test
