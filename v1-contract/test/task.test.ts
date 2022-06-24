@@ -30,7 +30,7 @@ describe("Task contract", function () {
   it("Should add task", async function () {
     const { contractInstance } = await getContractInstances();
     const [, , , , addr5] = await ethers.getSigners();
-    await contractInstance.submitTask(
+    await contractInstance.createTask(
       "update ethers version",
       "update ethers version to v2",
       addr5.address,
@@ -45,7 +45,7 @@ describe("Task contract", function () {
   it("Should assign task", async function () {
     const { contractInstance } = await getContractInstances();
     const [, , , , addr5, addr6] = await ethers.getSigners();
-    await contractInstance.submitTask(
+    await contractInstance.createTask(
       "update ethers version",
       "update ethers version to v2",
       addr5.address,
@@ -64,7 +64,7 @@ describe("Task contract", function () {
   it("Should fail to assign task due to low reputation", async function () {
     const { contractInstance } = await getContractInstances();
     const [, , , , addr5, addr6] = await ethers.getSigners();
-    await contractInstance.submitTask(
+    await contractInstance.createTask(
       "update ethers version",
       "update ethers version to v2",
       addr5.address,
@@ -78,7 +78,7 @@ describe("Task contract", function () {
   it("Should get reputation token and assign task", async function () {
     const { contractInstance, tokenContract } = await getContractInstances();
     const [, , , , addr5, addr6, addr7] = await ethers.getSigners();
-    await contractInstance.submitTask(
+    await contractInstance.createTask(
       "update ethers version",
       "update ethers version to v2",
       addr5.address,
@@ -94,5 +94,80 @@ describe("Task contract", function () {
     expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
       "ASSIGNED"
     );
+  });
+
+  it("Should let assignee submit task", async function () {
+    const { contractInstance } = await getContractInstances();
+    const [, , , , addr5, addr6] = await ethers.getSigners();
+    await contractInstance.createTask(
+      "update ethers version",
+      "update ethers version to v2",
+      addr5.address,
+      0
+    );
+    contractInstance.connect(addr6).assignSelf(0);
+    contractInstance.connect(addr6).submitTask(0);
+  });
+
+  it("Should let owner confirm task", async function () {
+    const { contractInstance } = await getContractInstances();
+    const [, addr1, , , addr5, addr6] = await ethers.getSigners();
+    await contractInstance.createTask(
+      "update ethers version",
+      "update ethers version to v2",
+      addr5.address,
+      0
+    );
+    contractInstance.connect(addr6).assignSelf(0);
+    contractInstance.connect(addr6).submitTask(0);
+    contractInstance.connect(addr1).confirmTask(0);
+  });
+
+  it("Should fail to confirm unsubmitted task", async function () {
+    const { contractInstance } = await getContractInstances();
+    const [, addr1, , , addr5, addr6] = await ethers.getSigners();
+    await contractInstance.createTask(
+      "update ethers version",
+      "update ethers version to v2",
+      addr5.address,
+      0
+    );
+    contractInstance.connect(addr6).assignSelf(0);
+    await expect(
+      contractInstance.connect(addr1).confirmTask(0)
+    ).to.be.revertedWith("Task is not submitted");
+  });
+
+  it("Should let owner close task", async function () {
+    const { contractInstance } = await getContractInstances();
+    const [, addr2, addr3, addr4, addr5, addr6] = await ethers.getSigners();
+    await contractInstance.createTask(
+      "update ethers version",
+      "update ethers version to v2",
+      addr5.address,
+      0
+    );
+    contractInstance.connect(addr6).assignSelf(0);
+    contractInstance.connect(addr6).submitTask(0);
+    contractInstance.connect(addr2).confirmTask(0);
+    contractInstance.connect(addr3).confirmTask(0);
+    contractInstance.connect(addr4).closeTask(0);
+  });
+
+  it("Should fail to close unconfirmed task", async function () {
+    const { contractInstance } = await getContractInstances();
+    const [, addr2, , addr4, addr5, addr6] = await ethers.getSigners();
+    await contractInstance.createTask(
+      "update ethers version",
+      "update ethers version to v2",
+      addr5.address,
+      0
+    );
+    contractInstance.connect(addr6).assignSelf(0);
+    contractInstance.connect(addr6).submitTask(0);
+    contractInstance.connect(addr2).confirmTask(0);
+    await expect(
+      contractInstance.connect(addr4).closeTask(0)
+    ).to.be.revertedWith("Insufficient confirmations");
   });
 });
