@@ -11,8 +11,9 @@ contract TaskContract {
 
   event Confirmation(address indexed sender, uint256 indexed taskId);
   event Revocation(address indexed sender, uint256 indexed taskId);
+  event Creation(uint indexed taskId);
   event Submission(uint indexed taskId);
-  event Execution(uint indexed taskId);
+  event Closed(uint indexed taskId);
   event ExecutionFailure(uint indexed taskId);
   event Deposit(address indexed sender, uint value);
   event OwnerAddition(address indexed owner);
@@ -37,7 +38,7 @@ contract TaskContract {
     uint256 complexityScore;
   }
 
-  enum TaskStatus { OPEN, ASSIGNED, CLOSED }
+  enum TaskStatus { OPEN, ASSIGNED, SUBMITTED, CLOSED }
 
   modifier onlyWallet() {
     require(msg.sender == address(this), "Permission denied");
@@ -69,7 +70,7 @@ contract TaskContract {
     _;
   }
 
-  modifier notExecuted(uint256 taskId) {
+  modifier notClosed(uint256 taskId) {
     require(tasks[taskId].status != TaskStatus.CLOSED, "Task is not executed");
     _;
   }
@@ -185,7 +186,7 @@ contract TaskContract {
    * @param complexityScore Task title.
    * @return taskId task ID.
    */
-  function submitTask(
+  function createTask(
     string memory title,
     string memory description,
     address taskTypeAddress,
@@ -204,9 +205,9 @@ contract TaskContract {
     taskExists(taskId)
     notConfirmed(taskId, msg.sender)
   {
+    require(tasks[taskId].status == TaskStatus.SUBMITTED, "Task is not submitted");
     confirmations[taskId][msg.sender] = true;
     emit Confirmation(msg.sender, taskId);
-    executeTask(taskId);
   }
 
   /**
@@ -217,7 +218,7 @@ contract TaskContract {
     public
     ownerExists(msg.sender)
     confirmed(taskId, msg.sender)
-    notExecuted(taskId)
+    notClosed(taskId)
   {
     confirmations[taskId][msg.sender] = false;
     emit Revocation(msg.sender, taskId);
@@ -227,20 +228,19 @@ contract TaskContract {
    * @dev Allows anyone to execute a confirmed task.
    * @param taskId Task ID.
    */
-  function executeTask(uint256 taskId)
+  function closeTask(uint256 taskId)
     public
     ownerExists(msg.sender)
-    notExecuted(taskId)
+    notClosed(taskId)
   {
-    if (isConfirmed(taskId)) {
-      Task memory task = tasks[taskId];
-      sbtToken.reward(task.assigneeAddress, task.complexityScore);
-      task.status = TaskStatus.CLOSED;
-      if (tasks[taskId].status == TaskStatus.CLOSED)
-        emit Execution(taskId);
-      else {
-        emit ExecutionFailure(taskId);
-      }
+    require(isConfirmed(taskId), "Insufficient confirmations");
+    Task memory task = tasks[taskId];
+    sbtToken.reward(task.assigneeAddress, task.complexityScore);
+    task.status = TaskStatus.CLOSED;
+    if (tasks[taskId].status == TaskStatus.CLOSED)
+      emit Closed(taskId);
+    else {
+      emit ExecutionFailure(taskId);
     }
   }
 
@@ -265,6 +265,13 @@ contract TaskContract {
    */
   function getTask(uint256 taskId) public taskExists(taskId) view returns (Task memory) {
     return tasks[taskId];
+  }
+
+  function submitTask(uint256 taskId) public taskExists(taskId) {
+    Task storage task  = tasks[taskId];
+    require(task.assigneeAddress == msg.sender, "Task is not yours");
+    task.status = TaskStatus.SUBMITTED;
+    emit Submission(taskId);
   }
 
   /*
@@ -297,7 +304,7 @@ contract TaskContract {
     });
     taskCount += 1;
     _taskExists[taskId] = true;
-    emit Submission(taskId);
+    emit Creation(taskId);
   }
 
   /**
@@ -309,6 +316,7 @@ contract TaskContract {
     TaskStatus status = tasks[taskId].status;
     if (status == TaskStatus.OPEN) return "OPEN";
     if (status == TaskStatus.ASSIGNED) return "ASSIGNED";
+    if (status == TaskStatus.SUBMITTED) return "SUBMITTED";
     if (status == TaskStatus.CLOSED) return "CLOSED";
     return "";
   }
