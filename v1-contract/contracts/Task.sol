@@ -1,31 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ReputationToken.sol";
+import "./abstract/ReputationToken.sol";
+import "./abstract/Organization.sol";
 import "hardhat/console.sol";
 
 contract TaskContract {
     
   uint256 public constant MAX_OWNER_COUNT = 50;
   SBTToken private sbtToken;
+  Organization private organization;
 
   event Confirmation(address indexed sender, uint256 indexed taskId);
   event Revocation(address indexed sender, uint256 indexed taskId);
   event Creation(uint indexed taskId);
+  event Assignment(address indexed sender, uint indexed taskId);
   event Submission(uint indexed taskId);
   event Closed(uint indexed taskId);
-  event ExecutionFailure(uint indexed taskId);
-  event Deposit(address indexed sender, uint value);
-  event OwnerAddition(address indexed owner);
-  event OwnerRemoval(address indexed owner);
-  event RequirementChange(uint required);
 
   mapping(uint256 => Task) public tasks;
   mapping(uint256 => bool) public _taskExists;
   mapping(uint256 => mapping(address => bool)) public confirmations;
-  mapping(address => bool) public isOwner;
-  address[] public owners;
-  uint256 public required;
   uint256 public taskCount;
 
   struct Task {
@@ -40,18 +35,8 @@ contract TaskContract {
 
   enum TaskStatus { OPEN, ASSIGNED, SUBMITTED, CLOSED }
 
-  modifier onlyWallet() {
-    require(msg.sender == address(this), "Permission denied");
-    _;
-  }
-
-  modifier ownerDoesNotExist(address owner) {
-    require(!isOwner[owner], "Owner already exists");
-    _;
-  }
-
-  modifier ownerExists(address owner) {
-    require(isOwner[owner], "Owner does not exist");
+  modifier onlyReviewer() {
+    require(organization.isReviewerAddress(msg.sender), "Permission denied");
     _;
   }
 
@@ -60,13 +45,13 @@ contract TaskContract {
     _;
   }
 
-  modifier confirmed(uint256 taskId, address owner) {
-    require(confirmations[taskId][owner], "Task has not been confirmed");
+  modifier confirmed(uint256 taskId) {
+    require(confirmations[taskId][msg.sender], "Task has not been confirmed");
     _;
   }
 
-  modifier notConfirmed(uint256 taskId, address owner) {
-    require(!confirmations[taskId][owner], "Task is already confirmed");
+  modifier notConfirmed(uint256 taskId) {
+    require(!confirmations[taskId][msg.sender], "Task is already confirmed");
     _;
   }
 
@@ -80,106 +65,18 @@ contract TaskContract {
     _;
   }
 
-  modifier validRequirement(uint256 ownerCount, uint256 _required) {
-    require(
-      ownerCount < MAX_OWNER_COUNT &&
-      _required < ownerCount &&
-      _required != 0 &&
-      ownerCount != 0,
-      "Invalid requirements"
-    );
-    _;
-  }
-
-  /** 
-   * @dev param _owners List of initial owners.
-   * @param _required Number of required confirmations.
-   * @param _owners constructor sets initial owners and required number of confirmations.
+  /**
+   * @dev constructor sets reputation token address and organization contract address.
    * @param tokenAddress Reputation token address.
+   * @param organizationAddress Reputation token address.
    */
-  constructor(address[] memory _owners, uint256 _required, address tokenAddress) {
-    for (uint256 i = 0; i < _owners.length; i++) {
-      require(!isOwner[_owners[i]] || _owners[i] != address(0), "Invalid address provided");
-      isOwner[_owners[i]] = true;
-    }
-    owners = _owners;
-    required = _required;
+  constructor(address tokenAddress, address organizationAddress) {
     sbtToken = SBTToken(tokenAddress);
-  }
-
-
-  /*
-   * Public functions
-   */
-
-  /** 
-   * @dev Allows to add a new owner. Task has to be sent by wallet.
-   * @param owner Address of new owner.
-   */
-  function addOwner(address owner)
-    public
-    onlyWallet
-    ownerDoesNotExist(owner)
-    notNull(owner)
-    validRequirement(owners.length + 1, required)
-  {
-    isOwner[owner] = true;
-    owners.push(owner);
-    emit OwnerAddition(owner);
+    organization = Organization(organizationAddress);
   }
 
   /** 
-   * @dev Allows to remove an owner. Task has to be sent by wallet.
-   * @param owner Address of owner.
-   */
-  function removeOwner(address owner) public onlyWallet ownerExists(owner) {
-    isOwner[owner] = false;
-    for (uint256 i = 0; i < owners.length - 1; i++)
-      if (owners[i] == owner) {
-        owners[i] = owners[owners.length - 1];
-        break;
-      }
-    if (required > owners.length) changeRequirement(owners.length);
-    emit OwnerRemoval(owner);
-  }
-
-  /** 
-   * @dev Allows to replace an owner with a new owner. Task has to be sent by wallet.
-   * @param owner Address of owner to be replaced.
-   * @param newOwner Address of new owner.
-   */
-  function replaceOwner(address owner, address newOwner)
-    public
-    onlyWallet
-    ownerExists(owner)
-    ownerDoesNotExist(newOwner)
-  {
-    for (uint256 i = 0; i < owners.length; i++)
-      if (owners[i] == owner) {
-        owners[i] = newOwner;
-        break;
-      }
-    isOwner[owner] = false;
-    isOwner[newOwner] = true;
-    emit OwnerRemoval(owner);
-    emit OwnerAddition(newOwner);
-  }
-
-  /** 
-   * @dev Allows to change the number of required confirmations. Task has to be sent by wallet.
-   * @param _required Number of required confirmations.
-   */
-  function changeRequirement(uint256 _required)
-    public
-    onlyWallet
-    validRequirement(owners.length, _required)
-  {
-    required = _required;
-    emit RequirementChange(_required);
-  }
-
-  /** 
-   * @dev Allows an owner to submit and confirm a task.
+   * @dev Allows a reviewer to create a task.
    * @param title Task title.
    * @param description Task title.
    * @param taskTypeAddress Task title.
@@ -191,19 +88,19 @@ contract TaskContract {
     string memory description,
     address taskTypeAddress,
     uint256 complexityScore
-  ) public returns (uint256 taskId) {
+  ) public onlyReviewer returns (uint256 taskId) {
     taskId = addTask(title, description, taskTypeAddress, complexityScore);
   }
 
   /** 
-   * @dev Allows an owner to confirm a task.
+   * @dev Allows a reviewer to confirm a task.
    * @param taskId Task ID.
    */
   function confirmTask(uint256 taskId)
     public
-    ownerExists(msg.sender)
+    onlyReviewer
     taskExists(taskId)
-    notConfirmed(taskId, msg.sender)
+    notConfirmed(taskId)
   {
     require(tasks[taskId].status == TaskStatus.SUBMITTED, "Task is not submitted");
     confirmations[taskId][msg.sender] = true;
@@ -211,13 +108,13 @@ contract TaskContract {
   }
 
   /**
-   * @dev Allows an owner to revoke a confirmation for a task.
+   * @dev Allows a reviewer to revoke a confirmation for a task.
    * @param taskId Task ID.
    */
   function revokeConfirmation(uint256 taskId)
     public
-    ownerExists(msg.sender)
-    confirmed(taskId, msg.sender)
+    onlyReviewer
+    confirmed(taskId)
     notClosed(taskId)
   {
     confirmations[taskId][msg.sender] = false;
@@ -225,23 +122,19 @@ contract TaskContract {
   }
 
   /**
-   * @dev Allows anyone to execute a confirmed task.
+   * @dev Allows a reviewer to close a confirmed task.
    * @param taskId Task ID.
    */
   function closeTask(uint256 taskId)
     public
-    ownerExists(msg.sender)
+    onlyReviewer
     notClosed(taskId)
   {
     require(isConfirmed(taskId), "Insufficient confirmations");
     Task memory task = tasks[taskId];
-    sbtToken.reward(task.assigneeAddress, task.complexityScore);
+    organization.reward(task.assigneeAddress, task.complexityScore);
     task.status = TaskStatus.CLOSED;
-    if (tasks[taskId].status == TaskStatus.CLOSED)
-      emit Closed(taskId);
-    else {
-      emit ExecutionFailure(taskId);
-    }
+    emit Closed(taskId);
   }
 
   /**
@@ -252,14 +145,16 @@ contract TaskContract {
   function isConfirmed(uint256 taskId) public view returns (bool confirmationStatus) {
     uint256 count = 0;
     confirmationStatus = false;
-    for (uint256 i = 0; i < owners.length; i++) {
-      if (confirmations[taskId][owners[i]]) count += 1;
-      if (count == required) confirmationStatus = true;
+    address[] memory reviewers = organization.getReviewers();
+    uint256 requiredReviews = organization.requiredReviews();
+    for (uint256 i = 0; i < reviewers.length; i++) {
+      if (confirmations[taskId][reviewers[i]]) count += 1;
+      if (count == requiredReviews) confirmationStatus = true;
     }
   }
 
   /**
-   * @dev Returns task.
+   * @dev Allows to retrieve a task.
    * @param taskId Task ID.
    * @return task.
    */
@@ -267,6 +162,10 @@ contract TaskContract {
     return tasks[taskId];
   }
 
+  /**
+   * @dev Allows assignee to submit task for review.
+   * @param taskId Task ID.
+   */
   function submitTask(uint256 taskId) public taskExists(taskId) {
     Task storage task  = tasks[taskId];
     require(task.assigneeAddress == msg.sender, "Task is not yours");
@@ -291,7 +190,7 @@ contract TaskContract {
     string memory description,
     address taskTypeAddress,
     uint256 complexityScore
-  ) internal notNull(taskTypeAddress) ownerExists(msg.sender) returns (uint256 taskId) {
+  ) internal notNull(taskTypeAddress) onlyReviewer returns (uint256 taskId) {
     taskId = taskCount;
     tasks[taskId] = Task({
       id: taskId,
@@ -332,8 +231,9 @@ contract TaskContract {
    */
   function getConfirmationCount(uint256 taskId) public view returns (uint256 count)
   {
-    for (uint256 i = 0; i < owners.length; i++)
-      if (confirmations[taskId][owners[i]]) count += 1;
+    address[] memory reviewers = organization.getReviewers();
+    for (uint256 i = 0; i < reviewers.length; i++)
+      if (confirmations[taskId][reviewers[i]]) count += 1;
   }
 
   /**
@@ -352,39 +252,49 @@ contract TaskContract {
   }
 
   /**
-   * @dev Assign task to sender.
+   * @dev Allows assignees assign task to themselves.
    * @param taskId Task ID.
    * @return status Task updated status.
    */
   function assignSelf(uint256 taskId) public returns (string memory status) {
     Task storage task = tasks[taskId];
     require(sbtToken.balanceOf(msg.sender) >= task.complexityScore, "Not enough reputation tokens");
+    sbtToken.stake(msg.sender);
     task.assigneeAddress = msg.sender;
     task.status = TaskStatus.ASSIGNED;
     status = getState(taskId);
+    emit Assignment(msg.sender, taskId);
   }
 
   /**
-   * @dev Returns list of owners.
-   * @return List of owner addresses.
+   * @dev Allows a reviewer to assign task to an assignee.
+   * @param taskId Task ID.
+   * @return status Task updated status.
    */
-  function getOwners() public view returns (address[] memory) {
-    return owners;
+  function assignOthers(address assignee, uint256 taskId) public onlyReviewer returns (string memory status) {
+    Task storage task = tasks[taskId];
+    require(sbtToken.balanceOf(assignee) >= task.complexityScore, "Not enough reputation tokens");
+    sbtToken.stake(assignee);
+    task.assigneeAddress = assignee;
+    task.status = TaskStatus.ASSIGNED;
+    status = getState(taskId);
+    emit Assignment(msg.sender, taskId);
   }
 
   /**
-   * @dev Returns array with owner addresses, which confirmed task.
+   * @dev Returns array with reviewer addresses, which confirmed task.
    * @param taskId Task ID.
    * @return _confirmations array of owner addresses.
    */
   function getConfirmations(uint256 taskId) public view returns (address[] memory _confirmations)
   {
-    address[] memory confirmationsTemp = new address[](owners.length);
+    address[] memory reviewers = organization.getReviewers();
+    address[] memory confirmationsTemp = new address[](reviewers.length);
     uint256 count = 0;
     uint256 i;
-    for (i = 0; i < owners.length; i++)
-      if (confirmations[taskId][owners[i]]) {
-        confirmationsTemp[count] = owners[i];
+    for (i = 0; i < reviewers.length; i++)
+      if (confirmations[taskId][reviewers[i]]) {
+        confirmationsTemp[count] = reviewers[i];
         count += 1;
       }
     _confirmations = new address[](count);
@@ -395,23 +305,29 @@ contract TaskContract {
    * @dev Returns list of task IDs in defined range.
    * @param from Index start position of task array.
    * @param to Index end position of task array.
-   * @param pending Include pending tasks.
-   * @param executed Include executed tasks.
+   * @param open Include open tasks.
+   * @param assigned Include assigned tasks.
+   * @param submitted Include submitted tasks.
+   * @param closed Include closed tasks.
    * @return _taskIds array of task IDs.
    */
   function getTaskIds(
     uint256 from,
     uint256 to,
-    bool pending,
-    bool executed
+    bool open,
+    bool assigned,
+    bool submitted,
+    bool closed
   ) public view returns (uint256[] memory _taskIds) {
     uint256[] memory taskIdsTemp = new uint256[](taskCount);
     uint256 count = 0;
     uint256 i;
     for (i = 0; i < taskCount; i++)
       if (
-        (pending && tasks[i].status != TaskStatus.CLOSED) ||
-        (executed && tasks[i].status == TaskStatus.CLOSED)
+        (open && tasks[i].status == TaskStatus.OPEN) ||
+        (assigned && tasks[i].status == TaskStatus.ASSIGNED) ||
+        (submitted && tasks[i].status == TaskStatus.SUBMITTED) ||
+        (closed && tasks[i].status == TaskStatus.CLOSED)
       ) {
         taskIdsTemp[count] = i;
         count += 1;
@@ -422,18 +338,23 @@ contract TaskContract {
   }
 
   /**
-   * @dev Returns list of task IDs in defined range.
+   * @dev Returns list of task IDs in defined range assigned to an address.
    * @param from Index start position of task array.
    * @param to Index end position of task array.
-   * @param pending Include pending tasks.
-   * @param executed Include executed tasks.
+   * @param open Include open tasks.
+   * @param assigned Include assigned tasks.
+   * @param submitted Include submitted tasks.
+   * @param closed Include closed tasks.
+   * @param assignee Assignee address.
    * @return _taskIds array of task IDs.
    */
   function getTaskIdsByAssignee(
     uint256 from,
     uint256 to,
-    bool pending,
-    bool executed,
+    bool open,
+    bool assigned,
+    bool submitted,
+    bool closed,
     address assignee
   ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
     uint256[] memory taskIdsTemp = new uint256[](taskCount);
@@ -442,8 +363,10 @@ contract TaskContract {
     for (i = 0; i < taskCount; i++)
       if (
         (tasks[i].assigneeAddress == assignee) &&
-        ((pending && tasks[i].status != TaskStatus.CLOSED) ||
-        (executed && tasks[i].status == TaskStatus.CLOSED))
+        (open && tasks[i].status == TaskStatus.OPEN) ||
+        (assigned && tasks[i].status == TaskStatus.ASSIGNED) ||
+        (submitted && tasks[i].status == TaskStatus.SUBMITTED) ||
+        (closed && tasks[i].status == TaskStatus.CLOSED)
       ) {
         taskIdsTemp[count] = i;
         count += 1;
