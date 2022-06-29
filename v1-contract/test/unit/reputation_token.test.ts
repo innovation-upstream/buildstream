@@ -2,21 +2,15 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 const getContractInstance = async () => {
-  const [owner, addr1] = await ethers.getSigners();
-  const org = await ethers.getContractFactory("Org");
-  const orgContract = await org.deploy([owner.address, addr1.address], 1, {
-    gasLimit: 3e7,
-  });
-  await orgContract.deployed();
-
-  const reputationToken = await ethers.getContractFactory("XPToken");
-  const contractInstance = await reputationToken.deploy(orgContract.address);
+  const [, addr1] = await ethers.getSigners();
+  const reputationToken = await ethers.getContractFactory("SBTToken");
+  const contractInstance = await reputationToken.deploy(addr1.address);
   await contractInstance.deployed();
 
-  return { contractInstance, orgContract };
+  return { contractInstance };
 };
 
-describe("Reputation token contract", function () {
+describe("Unit test: Reputation token contract", function () {
   it("Should fail reward because it's not tokenContract account", async function () {
     const { contractInstance } = await getContractInstance();
     const [, addr2] = await ethers.getSigners();
@@ -25,7 +19,7 @@ describe("Reputation token contract", function () {
     );
   });
 
-  it("Should update tokenContractAddress and reward", async function () {
+  it("Should update organization contract address and reward", async function () {
     const { contractInstance } = await getContractInstance();
     const [, addr1, addr2] = await ethers.getSigners();
     await contractInstance.updateOrganizationContractAddress(addr1.address);
