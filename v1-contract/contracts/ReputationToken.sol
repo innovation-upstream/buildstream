@@ -4,14 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "hardhat/console.sol";
 
-abstract contract SBTToken is ERC20 {
+contract SBTToken is ERC20 {
   address private owner;
   address private organizationContractAddress;
   address private taskContractAddress;
   uint256 public constant MAX_TOKEN_REWARD = 5;
   mapping(address => bool) public locked;
-
-  function getTitle() virtual public pure returns (string memory name);
 
   modifier onlyOwner() {
     require(msg.sender == owner, "Permission denied");
@@ -37,7 +35,7 @@ abstract contract SBTToken is ERC20 {
    * @dev constructor sets organization contract address.
    * @param _organizationContractAddress Organization contract address.
    */
-  constructor(address _organizationContractAddress) {
+  constructor(address _organizationContractAddress) ERC20("SBTToken", "SBT") {
     owner = msg.sender;
     organizationContractAddress = _organizationContractAddress;
   }

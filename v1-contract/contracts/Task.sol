@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./abstract/ReputationToken.sol";
-import "./abstract/Organization.sol";
+import "./ReputationToken.sol";
+import "./Organization.sol";
 import "hardhat/console.sol";
 
 contract TaskContract {
     
-  uint256 public constant MAX_OWNER_COUNT = 50;
   SBTToken private sbtToken;
   Organization private organization;
 
@@ -18,25 +17,35 @@ contract TaskContract {
   event Submission(uint indexed taskId);
   event Closed(uint indexed taskId);
 
-  mapping(uint256 => Task) public tasks;
+  mapping(uint256 => mapping(uint256 => Task)) public tasks;
   mapping(uint256 => bool) public _taskExists;
   mapping(uint256 => mapping(address => bool)) public confirmations;
   uint256 public taskCount;
+  mapping(uint256 => uint256) public orgTaskCount;
+  mapping(uint256 => uint256[]) public orgTaskIds;
+  mapping(uint256 => uint256) public taskOrg;
+  mapping(uint256 => mapping(address => uint256)) public orgAssignees;
 
   struct Task {
     uint256 id;
+    uint256 orgId;
     string title;
     string description;
     address assigneeAddress;
-    address taskTypeAddress;
+    string taskType;
     TaskStatus status;
     uint256 complexityScore;
   }
 
   enum TaskStatus { OPEN, ASSIGNED, SUBMITTED, CLOSED }
 
-  modifier onlyReviewer() {
-    require(organization.isReviewerAddress(msg.sender), "Permission denied");
+  modifier onlyReviewer(uint256 _orgId) {
+    require(organization.isReviewerAddress(_orgId, msg.sender), "Permission denied");
+    _;
+  }
+
+  modifier orgExists(uint256 orgId) {
+    require(organization.doesOrgExists(orgId), "Org does not exist");
     _;
   }
 
@@ -56,7 +65,8 @@ contract TaskContract {
   }
 
   modifier notClosed(uint256 taskId) {
-    require(tasks[taskId].status != TaskStatus.CLOSED, "Task is not executed");
+    uint256 orgId = taskOrg[taskId];
+    require(tasks[orgId][taskId].status != TaskStatus.CLOSED, "Task is not executed");
     _;
   }
 
@@ -77,19 +87,21 @@ contract TaskContract {
 
   /** 
    * @dev Allows a reviewer to create a task.
+   * @param orgId Id of organization.
    * @param title Task title.
    * @param description Task title.
-   * @param taskTypeAddress Task title.
+   * @param taskType Task title.
    * @param complexityScore Task title.
    * @return taskId task ID.
    */
   function createTask(
+    uint256 orgId,
     string memory title,
     string memory description,
-    address taskTypeAddress,
+    string memory taskType,
     uint256 complexityScore
-  ) public onlyReviewer returns (uint256 taskId) {
-    taskId = addTask(title, description, taskTypeAddress, complexityScore);
+  ) public orgExists(orgId) onlyReviewer(orgId) returns (uint256 taskId) {
+    taskId = addTask(orgId, title, description, taskType, complexityScore);
   }
 
   /** 
@@ -98,11 +110,12 @@ contract TaskContract {
    */
   function confirmTask(uint256 taskId)
     public
-    onlyReviewer
     taskExists(taskId)
+    onlyReviewer(taskOrg[taskId])
     notConfirmed(taskId)
   {
-    require(tasks[taskId].status == TaskStatus.SUBMITTED, "Task is not submitted");
+    uint256 orgId = taskOrg[taskId];
+    require(tasks[orgId][taskId].status == TaskStatus.SUBMITTED, "Task is not submitted");
     confirmations[taskId][msg.sender] = true;
     emit Confirmation(msg.sender, taskId);
   }
@@ -113,7 +126,8 @@ contract TaskContract {
    */
   function revokeConfirmation(uint256 taskId)
     public
-    onlyReviewer
+    taskExists(taskId)
+    onlyReviewer(taskOrg[taskId])
     confirmed(taskId)
     notClosed(taskId)
   {
@@ -127,11 +141,13 @@ contract TaskContract {
    */
   function closeTask(uint256 taskId)
     public
-    onlyReviewer
+    taskExists(taskId)
+    onlyReviewer(taskOrg[taskId])
     notClosed(taskId)
   {
     require(isConfirmed(taskId), "Insufficient confirmations");
-    Task memory task = tasks[taskId];
+    uint256 orgId = taskOrg[taskId];
+    Task memory task = tasks[orgId][taskId];
     organization.reward(task.assigneeAddress, task.complexityScore);
     task.status = TaskStatus.CLOSED;
     emit Closed(taskId);
@@ -145,8 +161,9 @@ contract TaskContract {
   function isConfirmed(uint256 taskId) public view returns (bool confirmationStatus) {
     uint256 count = 0;
     confirmationStatus = false;
-    address[] memory reviewers = organization.getReviewers();
-    uint256 requiredReviews = organization.requiredReviews();
+    uint256 orgId = taskOrg[taskId];
+    address[] memory reviewers = organization.getReviewers(orgId);
+    uint256 requiredReviews = organization.getRequiredReviewsCount(orgId);
     for (uint256 i = 0; i < reviewers.length; i++) {
       if (confirmations[taskId][reviewers[i]]) count += 1;
       if (count == requiredReviews) confirmationStatus = true;
@@ -159,7 +176,8 @@ contract TaskContract {
    * @return task.
    */
   function getTask(uint256 taskId) public taskExists(taskId) view returns (Task memory) {
-    return tasks[taskId];
+    uint256 orgId = taskOrg[taskId];
+    return tasks[orgId][taskId];
   }
 
   /**
@@ -167,7 +185,8 @@ contract TaskContract {
    * @param taskId Task ID.
    */
   function submitTask(uint256 taskId) public taskExists(taskId) {
-    Task storage task  = tasks[taskId];
+    uint256 orgId = taskOrg[taskId];
+    Task storage task  = tasks[orgId][taskId];
     require(task.assigneeAddress == msg.sender, "Task is not yours");
     task.status = TaskStatus.SUBMITTED;
     emit Submission(taskId);
@@ -179,30 +198,36 @@ contract TaskContract {
 
   /**
    * @dev Adds a new task to the task mapping, if task does not exist yet.
+   * @param orgId Id of organization.
    * @param title Task title.
    * @param description Task title.
-   * @param taskTypeAddress Task title.
+   * @param taskType Task title.
    * @param complexityScore Task title.
    * @return taskId task ID.
    */
   function addTask(
+    uint256 orgId,
     string memory title,
     string memory description,
-    address taskTypeAddress,
+    string memory taskType,
     uint256 complexityScore
-  ) internal notNull(taskTypeAddress) onlyReviewer returns (uint256 taskId) {
+  ) internal onlyReviewer(orgId) returns (uint256 taskId) {
     taskId = taskCount;
-    tasks[taskId] = Task({
+    tasks[orgId][taskId] = Task({
       id: taskId,
+      orgId: orgId,
       title: title,
       description: description,
-      taskTypeAddress: taskTypeAddress,
+      taskType: taskType,
       complexityScore: complexityScore,
       assigneeAddress: address(0),
       status: TaskStatus.OPEN
     });
     taskCount += 1;
+    orgTaskCount[orgId] += 1;
+    orgTaskIds[orgId].push(taskId);
     _taskExists[taskId] = true;
+    taskOrg[taskId] = orgId;
     emit Creation(taskId);
   }
 
@@ -212,17 +237,14 @@ contract TaskContract {
    * @return state of a task.
    */
   function getState(uint256 taskId) public view taskExists(taskId) returns (string memory) {
-    TaskStatus status = tasks[taskId].status;
+    uint256 orgId = taskOrg[taskId];
+    TaskStatus status = tasks[orgId][taskId].status;
     if (status == TaskStatus.OPEN) return "OPEN";
     if (status == TaskStatus.ASSIGNED) return "ASSIGNED";
     if (status == TaskStatus.SUBMITTED) return "SUBMITTED";
     if (status == TaskStatus.CLOSED) return "CLOSED";
     return "";
   }
-
-  /*
-    * Web3 call functions
-  */
 
   /**
    * @dev Returns number of confirmations of a task.
@@ -231,24 +253,28 @@ contract TaskContract {
    */
   function getConfirmationCount(uint256 taskId) public view returns (uint256 count)
   {
-    address[] memory reviewers = organization.getReviewers();
+    uint256 orgId = taskOrg[taskId];
+    address[] memory reviewers = organization.getReviewers(orgId);
     for (uint256 i = 0; i < reviewers.length; i++)
       if (confirmations[taskId][reviewers[i]]) count += 1;
   }
 
   /**
    * @dev Returns total number of tasks after filers are applied.
+   * @param orgId Id of organization.
    * @param pending Include pending tasks.
    * @param executed Include executed tasks.
    * @return count Total number of tasks after filters are applied.
    */
-  function getTaskCount(bool pending, bool executed) public view returns (uint256 count)
+  function getTaskCount(uint256 orgId, bool pending, bool executed) public view returns (uint256 count)
   {
-    for (uint256 i = 0; i < taskCount; i++)
+    for (uint256 i = 0; i < orgTaskCount[orgId]; i++) {
+      uint256 taskId = orgTaskIds[orgId][i];
       if (
-        (pending && tasks[i].status != TaskStatus.CLOSED) ||
-        (executed && tasks[i].status == TaskStatus.CLOSED)
+        (pending && tasks[orgId][taskId].status != TaskStatus.CLOSED) ||
+        (executed && tasks[orgId][taskId].status == TaskStatus.CLOSED)
       ) count += 1;
+    }
   }
 
   /**
@@ -257,12 +283,15 @@ contract TaskContract {
    * @return status Task updated status.
    */
   function assignSelf(uint256 taskId) public returns (string memory status) {
-    Task storage task = tasks[taskId];
+    uint256 orgId = taskOrg[taskId];
+    Task memory task = tasks[orgId][taskId];
     require(sbtToken.balanceOf(msg.sender) >= task.complexityScore, "Not enough reputation tokens");
     sbtToken.stake(msg.sender);
     task.assigneeAddress = msg.sender;
     task.status = TaskStatus.ASSIGNED;
+    tasks[orgId][taskId] = task;
     status = getState(taskId);
+    orgAssignees[task.orgId][msg.sender] += 1;
     emit Assignment(msg.sender, taskId);
   }
 
@@ -271,13 +300,21 @@ contract TaskContract {
    * @param taskId Task ID.
    * @return status Task updated status.
    */
-  function assignOthers(address assignee, uint256 taskId) public onlyReviewer returns (string memory status) {
-    Task storage task = tasks[taskId];
+  function assignOthers(address assignee, uint256 taskId)
+    public
+    taskExists(taskId)
+    onlyReviewer(taskOrg[taskId])
+    returns (string memory status)
+  {
+    uint256 orgId = taskOrg[taskId];
+    Task memory task = tasks[orgId][taskId];
     require(sbtToken.balanceOf(assignee) >= task.complexityScore, "Not enough reputation tokens");
     sbtToken.stake(assignee);
     task.assigneeAddress = assignee;
     task.status = TaskStatus.ASSIGNED;
+    tasks[orgId][taskId] = task;
     status = getState(taskId);
+    orgAssignees[task.orgId][assignee] += 1;
     emit Assignment(msg.sender, taskId);
   }
 
@@ -288,7 +325,8 @@ contract TaskContract {
    */
   function getConfirmations(uint256 taskId) public view returns (address[] memory _confirmations)
   {
-    address[] memory reviewers = organization.getReviewers();
+    uint256 orgId = taskOrg[taskId];
+    address[] memory reviewers = organization.getReviewers(orgId);
     address[] memory confirmationsTemp = new address[](reviewers.length);
     uint256 count = 0;
     uint256 i;
@@ -303,6 +341,7 @@ contract TaskContract {
 
   /**
    * @dev Returns list of task IDs in defined range.
+   * @param orgId Id of organization.
    * @param from Index start position of task array.
    * @param to Index end position of task array.
    * @param open Include open tasks.
@@ -312,6 +351,7 @@ contract TaskContract {
    * @return _taskIds array of task IDs.
    */
   function getTaskIds(
+    uint256 orgId,
     uint256 from,
     uint256 to,
     bool open,
@@ -319,60 +359,67 @@ contract TaskContract {
     bool submitted,
     bool closed
   ) public view returns (uint256[] memory _taskIds) {
-    uint256[] memory taskIdsTemp = new uint256[](taskCount);
+    uint256 orgTaskTotal = orgTaskCount[orgId];
+    uint256[] memory taskIdsTemp = new uint256[](orgTaskTotal);
     uint256 count = 0;
     uint256 i;
-    for (i = 0; i < taskCount; i++)
+    for (i = 0; i < orgTaskTotal; i++) {
+      uint256 taskId = orgTaskIds[orgId][i];
+      Task memory task = tasks[orgId][taskId];
       if (
-        (open && tasks[i].status == TaskStatus.OPEN) ||
-        (assigned && tasks[i].status == TaskStatus.ASSIGNED) ||
-        (submitted && tasks[i].status == TaskStatus.SUBMITTED) ||
-        (closed && tasks[i].status == TaskStatus.CLOSED)
+        (open && task.status == TaskStatus.OPEN) ||
+        (assigned && task.status == TaskStatus.ASSIGNED) ||
+        (submitted && task.status == TaskStatus.SUBMITTED) ||
+        (closed && task.status == TaskStatus.CLOSED)
       ) {
-        taskIdsTemp[count] = i;
+        taskIdsTemp[count] = task.id;
         count += 1;
       }
+    }
     _taskIds = new uint256[](to - from);
     for (i = from; i < to; i++)
-        _taskIds[i - from] = taskIdsTemp[i];
+      _taskIds[i - from] = taskIdsTemp[i];
   }
 
   /**
    * @dev Returns list of task IDs in defined range assigned to an address.
+   * @param orgId Id of organization.
    * @param from Index start position of task array.
    * @param to Index end position of task array.
-   * @param open Include open tasks.
    * @param assigned Include assigned tasks.
    * @param submitted Include submitted tasks.
    * @param closed Include closed tasks.
    * @param assignee Assignee address.
    * @return _taskIds array of task IDs.
    */
-  function getTaskIdsByAssignee(
-    uint256 from,
-    uint256 to,
-    bool open,
-    bool assigned,
-    bool submitted,
-    bool closed,
-    address assignee
-  ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
-    uint256[] memory taskIdsTemp = new uint256[](taskCount);
-    uint256 count = 0;
-    uint256 i;
-    for (i = 0; i < taskCount; i++)
-      if (
-        (tasks[i].assigneeAddress == assignee) &&
-        (open && tasks[i].status == TaskStatus.OPEN) ||
-        (assigned && tasks[i].status == TaskStatus.ASSIGNED) ||
-        (submitted && tasks[i].status == TaskStatus.SUBMITTED) ||
-        (closed && tasks[i].status == TaskStatus.CLOSED)
-      ) {
-        taskIdsTemp[count] = i;
-        count += 1;
-      }
-    _taskIds = new uint256[](to - from);
-    for (i = from; i < to; i++)
-      _taskIds[i - from] = taskIdsTemp[i];
-  }
+  // function getTaskIdsByAssignee(
+  //   uint256 orgId,
+  //   uint256 from,
+  //   uint256 to,
+  //   bool assigned,
+  //   bool submitted,
+  //   bool closed,
+  //   address assignee
+  // ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
+  //   uint256 assignedCount = orgAssignees[orgId][msg.sender];
+  //   uint256[] memory taskIdsTemp = new uint256[](assignedCount);
+  //   uint256 count = 0;
+  //   uint256 i;
+  //   for (i = 0; i < orgTaskCount[orgId]; i++) {
+  //     uint256 taskId = orgTaskIds[orgId][i];
+  //     Task memory task = tasks[orgId][taskId];
+  //     if (
+  //       (task.assigneeAddress == assignee) &&
+  //       (assigned && task.status == TaskStatus.ASSIGNED) ||
+  //       (submitted && task.status == TaskStatus.SUBMITTED) ||
+  //       (closed && task.status == TaskStatus.CLOSED)
+  //     ) {
+  //       taskIdsTemp[count] = task.id;
+  //       count += 1;
+  //     }
+  //   }
+  //   _taskIds = new uint256[](to - from);
+  //   for (i = from; i < to; i++)
+  //     _taskIds[i - from] = taskIdsTemp[i];
+  // }
 }
