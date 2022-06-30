@@ -37,7 +37,8 @@ describe("Unit test: Task contract", function () {
   });
 
   it("Should add task", async function () {
-    const { contractInstance, orgContract } = await getContractInstances();
+    const { contractInstance, orgContract, tokenContract } =
+      await getContractInstances();
 
     const creationEvent = new Promise<any>((resolve, reject) => {
       contractInstance.on("Creation", (taskId, event) => {
@@ -55,11 +56,12 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isReviewerAddress.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
 
@@ -81,11 +83,12 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     const taskId = (await contractInstance.getTask(0)).id;
@@ -107,18 +110,19 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);
@@ -136,11 +140,12 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(0);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       4
     );
     await expect(
@@ -157,11 +162,12 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);
@@ -177,11 +183,12 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);
@@ -198,11 +205,12 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.isReviewerAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);
@@ -218,16 +226,17 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isReviewerAddress.returns(true);
-    await orgContract.mock.reward.returns(true);
     await orgContract.mock.getReviewers.returns([addr2.address, addr3.address]);
     await orgContract.mock.getRequiredReviewsCount.returns(2);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
+    await tokenContract.mock.reward.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);
@@ -244,16 +253,17 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isReviewerAddress.returns(true);
-    await orgContract.mock.reward.returns(true);
     await orgContract.mock.getReviewers.returns([addr2.address, addr3.address]);
     await orgContract.mock.getRequiredReviewsCount.returns(2);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
+    await tokenContract.mock.reward.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      "golang",
+      0,
       1
     );
     await contractInstance.connect(addr1).assignSelf(0);

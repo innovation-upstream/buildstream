@@ -32,7 +32,7 @@ contract TaskContract {
     string title;
     string description;
     address assigneeAddress;
-    string taskType;
+    uint256 taskType;
     TaskStatus status;
     uint256 complexityScore;
   }
@@ -46,6 +46,11 @@ contract TaskContract {
 
   modifier orgExists(uint256 orgId) {
     require(organization.doesOrgExists(orgId), "Org does not exist");
+    _;
+  }
+
+  modifier tokenExists(uint256 tokenId) {
+    require(sbtToken.doesTokenExist(tokenId), "Token does not exist");
     _;
   }
 
@@ -98,9 +103,9 @@ contract TaskContract {
     uint256 orgId,
     string memory title,
     string memory description,
-    string memory taskType,
+    uint256 taskType,
     uint256 complexityScore
-  ) public orgExists(orgId) onlyReviewer(orgId) returns (uint256 taskId) {
+  ) public orgExists(orgId) onlyReviewer(orgId) tokenExists(taskType) returns (uint256 taskId) {
     taskId = addTask(orgId, title, description, taskType, complexityScore);
   }
 
@@ -142,13 +147,12 @@ contract TaskContract {
   function closeTask(uint256 taskId)
     public
     taskExists(taskId)
-    onlyReviewer(taskOrg[taskId])
     notClosed(taskId)
   {
     require(isConfirmed(taskId), "Insufficient confirmations");
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    organization.reward(task.assigneeAddress, task.complexityScore);
+    sbtToken.reward(task.assigneeAddress, task.taskType, task.complexityScore);
     task.status = TaskStatus.CLOSED;
     emit Closed(taskId);
   }
@@ -209,7 +213,7 @@ contract TaskContract {
     uint256 orgId,
     string memory title,
     string memory description,
-    string memory taskType,
+    uint256 taskType,
     uint256 complexityScore
   ) internal onlyReviewer(orgId) returns (uint256 taskId) {
     taskId = taskCount;
@@ -285,7 +289,7 @@ contract TaskContract {
   function assignSelf(uint256 taskId) public returns (string memory status) {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    require(sbtToken.balanceOf(msg.sender) >= task.complexityScore, "Not enough reputation tokens");
+    require(sbtToken.balanceOf(msg.sender, task.taskType) >= task.complexityScore, "Not enough reputation tokens");
     sbtToken.stake(msg.sender);
     task.assigneeAddress = msg.sender;
     task.status = TaskStatus.ASSIGNED;
@@ -308,7 +312,7 @@ contract TaskContract {
   {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    require(sbtToken.balanceOf(assignee) >= task.complexityScore, "Not enough reputation tokens");
+    require(sbtToken.balanceOf(assignee, task.taskType) >= task.complexityScore, "Not enough reputation tokens");
     sbtToken.stake(assignee);
     task.assigneeAddress = assignee;
     task.status = TaskStatus.ASSIGNED;

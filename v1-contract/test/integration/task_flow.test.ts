@@ -9,7 +9,7 @@ const getContractInstances = async () => {
   await orgContract.deployed();
 
   const reputationToken = await ethers.getContractFactory("SBTToken");
-  const tokenContract = await reputationToken.deploy(orgContract.address);
+  const tokenContract = await reputationToken.deploy();
   await tokenContract.deployed();
 
   const task = await ethers.getContractFactory("TaskContract");
@@ -22,8 +22,6 @@ const getContractInstances = async () => {
   );
   await taskContract.deployed();
   await tokenContract.updateTaskContractAddress(taskContract.address);
-  await orgContract.updateTaskContractAddress(taskContract.address);
-  await orgContract.updateReputationContract(tokenContract.address);
 
   return { tokenContract, taskContract, orgContract };
 };
@@ -33,6 +31,9 @@ describe("Integration test: Task flow", function () {
     const [, reviewer1, reviewer2, assignee] = await ethers.getSigners();
     const { orgContract, taskContract, tokenContract } =
       await getContractInstances();
+
+    // Create new token
+    await tokenContract.creatNewToken(0);
 
     // Create organization
     const orgCreationEvent = new Promise<any>((resolve, reject) => {
@@ -78,7 +79,7 @@ describe("Integration test: Task flow", function () {
         orgId,
         "update ethers version",
         "update ethers version to v2",
-        "golang",
+        0,
         0
       );
 
@@ -96,10 +97,10 @@ describe("Integration test: Task flow", function () {
     await taskContract.connect(reviewer1).confirmTask(taskId);
     await taskContract.connect(reviewer2).confirmTask(taskId);
 
-    // Reviewers can close task
-    await taskContract.connect(reviewer2).closeTask(taskId);
+    // Anyone can close task
+    await taskContract.connect(assignee).closeTask(taskId);
 
     // Assignee should receive reward
-    expect(await tokenContract.balanceOf(assignee.address)).to.be.equal(1);
+    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(1);
   });
 });
