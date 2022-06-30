@@ -7,15 +7,12 @@ import "./Task.sol";
 
 contract Organization {
   address private owner;
-  SBTToken private sbtToken;
-  TaskContract private taskContract;
 
   event Creation(uint indexed taskId);
   event ReviewerAddition(uint256 _orgId, address indexed _reviewer);
   event ReviewerRemoval(uint256 _orgId, address indexed _reviewer);
   event RequirementChange(uint256 _orgId, uint required);
 
-  address private taskContractAddress;
   mapping(uint256 => mapping(address => bool)) public isReviewer;
   mapping(uint256 => Org) public orgs;
   mapping(uint256 => bool) public _orgExists;
@@ -43,11 +40,6 @@ contract Organization {
 
   modifier onlyReviewer(uint256 _orgId) {
     require(isReviewer[_orgId][msg.sender], "Permission denied");
-    _;
-  }
-
-  modifier onlyTaskContract() {
-    require(msg.sender == taskContractAddress, "Permission denied");
     _;
   }
 
@@ -259,25 +251,6 @@ contract Organization {
     emit RequirementChange(_orgId, _requiredReviews);
   }
 
-  /** 
-   * @dev Allows to change task contract address.
-   * @param _taskContractAddress new task contract address.
-   */
-  function updateTaskContractAddress(address _taskContractAddress) public onlyOwner returns (bool) {
-    taskContractAddress = _taskContractAddress;
-    taskContract = TaskContract(_taskContractAddress);
-    return true;
-  }
-
-  /** 
-   * @dev Allows to change reputation token contract address.
-   * @param _reputationContractAddress new reputation token contract address.
-   */
-  function updateReputationContract(address _reputationContractAddress) public onlyOwner returns (bool) {
-    sbtToken = SBTToken(_reputationContractAddress);
-    return true;
-  }
-
   /**
    * @dev Returns list of reviewers.
    * @param _orgId Id of organization.
@@ -306,18 +279,5 @@ contract Organization {
    */
   function isReviewerAddress(uint256 _orgId, address _address) public orgExists(_orgId) view returns (bool) {
     return isReviewer[_orgId][_address];
-  }
-
-  /** 
-   * @dev Allows to reward a user with tokens.
-   * @param to Assignee address.
-   * @param value Token reward value.
-   */
-  function reward(address to, uint256 value) public onlyTaskContract returns (bool) {
-    uint256 _value = value;
-    if (sbtToken.balanceOf(to) == 0)
-      _value = 1;
-    sbtToken.reward(to, _value);
-    return true;
   }
 }
