@@ -1,0 +1,432 @@
+{
+  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "abi": [
+    {
+      "type": "constructor",
+      "payable": false,
+      "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Creation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "RequirementChange",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "required",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ReviewerAddition",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_reviewer",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ReviewerRemoval",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_reviewer",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "_orgExists",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "addReviewer",
+      "constant": false,
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_reviewer"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "changeRequirement",
+      "constant": false,
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "uint256",
+          "name": "_requiredReviews"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "createOrg",
+      "constant": false,
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "string",
+          "name": "name"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "address[]",
+          "name": "reviewers"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredReviews"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "doesOrgExists",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getOrgCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getOrgIds",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "from"
+        },
+        {
+          "type": "uint256",
+          "name": "to"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256[]",
+          "name": "_orgIds"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getOrganization",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "name": "org",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "adminAddress"
+            },
+            {
+              "type": "address[]",
+              "name": "reviewers"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredReviews"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getRequiredReviewsCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getReviewers",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isReviewer",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isReviewerAddress",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orgCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orgs",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "id"
+        },
+        {
+          "type": "string",
+          "name": "name"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "address",
+          "name": "adminAddress"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredReviews"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "removeReviewer",
+      "constant": false,
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_reviewer"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "replaceReviewer",
+      "constant": false,
+      "payable": false,
+      "gas": 29000000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_reviewer"
+        },
+        {
+          "type": "address",
+          "name": "newReviewer"
+        }
+      ],
+      "outputs": []
+    }
+  ]
+}
