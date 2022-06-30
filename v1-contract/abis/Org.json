@@ -1,5 +1,5 @@
 {
-  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "address": "0x86A9b990d58BDA1e3274ca91A8d13BB9F05919b1",
   "abi": [
     {
       "type": "constructor",
@@ -75,7 +75,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -92,7 +92,7 @@
       "name": "addReviewer",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -110,7 +110,7 @@
       "name": "changeRequirement",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -128,7 +128,7 @@
       "name": "createOrg",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "string",
@@ -160,7 +160,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -179,7 +179,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [],
       "outputs": [
         {
@@ -193,7 +193,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -217,7 +217,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -263,7 +263,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -282,7 +282,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -301,7 +301,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -322,7 +322,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -345,7 +345,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [],
       "outputs": [
         {
@@ -359,7 +359,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -393,7 +393,7 @@
       "name": "removeReviewer",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -411,7 +411,7 @@
       "name": "replaceReviewer",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",

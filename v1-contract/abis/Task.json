@@ -1,5 +1,5 @@
 {
-  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "address": "0xc4ce30E5a048eC5250CA33CA5e02013bDfC87eF2",
   "abi": [
     {
       "type": "constructor",
@@ -108,7 +108,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -125,7 +125,7 @@
       "name": "assignOthers",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "address",
@@ -148,7 +148,7 @@
       "name": "assignSelf",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -167,7 +167,7 @@
       "name": "closeTask",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -181,7 +181,7 @@
       "name": "confirmTask",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -196,7 +196,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -216,7 +216,7 @@
       "name": "createTask",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -252,7 +252,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -272,7 +272,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -292,7 +292,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -311,7 +311,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -364,7 +364,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -392,7 +392,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -436,7 +436,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -456,7 +456,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -477,7 +477,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -495,7 +495,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -515,7 +515,7 @@
       "name": "revokeConfirmation",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -529,7 +529,7 @@
       "name": "submitTask",
       "constant": false,
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256",
@@ -544,7 +544,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [],
       "outputs": [
         {
@@ -558,7 +558,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
@@ -576,7 +576,7 @@
       "constant": true,
       "stateMutability": "view",
       "payable": false,
-      "gas": 29000000,
+      "gas": 1100000,
       "inputs": [
         {
           "type": "uint256"
