@@ -80,25 +80,21 @@ contract TaskContract {
     _;
   }
 
-  /**
-   * @dev constructor sets reputation token address and organization contract address.
-   * @param tokenAddress Reputation token address.
-   * @param organizationAddress Reputation token address.
-   */
+  /// @dev constructor sets reputation token address and organization contract address.
+  /// @param tokenAddress Reputation token address.
+  /// @param organizationAddress Reputation token address.
   constructor(address tokenAddress, address organizationAddress) {
     sbtToken = SBTToken(tokenAddress);
     organization = Organization(organizationAddress);
   }
-
-  /** 
-   * @dev Allows a reviewer to create a task.
-   * @param orgId Id of organization.
-   * @param title Task title.
-   * @param description Task title.
-   * @param taskType Task title.
-   * @param complexityScore Task title.
-   * @return taskId task ID.
-   */
+ 
+  /// @dev Allows a reviewer to create a task.
+  /// @param orgId Id of organization.
+  /// @param title Task title.
+  /// @param description Task description.
+  /// @param taskType Token id.
+  /// @param complexityScore Task complexity score.
+  /// @return taskId task ID.
   function createTask(
     uint256 orgId,
     string memory title,
@@ -108,11 +104,9 @@ contract TaskContract {
   ) public orgExists(orgId) onlyReviewer(orgId) tokenExists(taskType) returns (uint256 taskId) {
     taskId = addTask(orgId, title, description, taskType, complexityScore);
   }
-
-  /** 
-   * @dev Allows a reviewer to confirm a task.
-   * @param taskId Task ID.
-   */
+ 
+  /// @dev Allows a reviewer to confirm a task.
+  /// @param taskId Task ID.
   function confirmTask(uint256 taskId)
     public
     taskExists(taskId)
@@ -125,10 +119,8 @@ contract TaskContract {
     emit Confirmation(msg.sender, taskId);
   }
 
-  /**
-   * @dev Allows a reviewer to revoke a confirmation for a task.
-   * @param taskId Task ID.
-   */
+  /// @dev Allows a reviewer to revoke a confirmation for a task.
+  /// @param taskId Task ID.
   function revokeConfirmation(uint256 taskId)
     public
     taskExists(taskId)
@@ -140,10 +132,8 @@ contract TaskContract {
     emit Revocation(msg.sender, taskId);
   }
 
-  /**
-   * @dev Allows a reviewer to close a confirmed task.
-   * @param taskId Task ID.
-   */
+  /// @dev Allows a reviewer to close a confirmed task.
+  /// @param taskId Task ID.
   function closeTask(uint256 taskId)
     public
     taskExists(taskId)
@@ -157,11 +147,9 @@ contract TaskContract {
     emit Closed(taskId);
   }
 
-  /**
-   * @dev Returns the confirmation status of a task.
-   * @param taskId Task ID.
-   * @return confirmationStatus Confirmation status.
-   */
+  /// @dev Returns the confirmation status of a task.
+  /// @param taskId Task ID.
+  /// @return confirmationStatus Confirmation status.
   function isConfirmed(uint256 taskId) public view returns (bool confirmationStatus) {
     uint256 count = 0;
     confirmationStatus = false;
@@ -174,20 +162,16 @@ contract TaskContract {
     }
   }
 
-  /**
-   * @dev Allows to retrieve a task.
-   * @param taskId Task ID.
-   * @return task.
-   */
+  /// @dev Allows to retrieve a task.
+  /// @param taskId Task ID.
+  /// @return task.
   function getTask(uint256 taskId) public taskExists(taskId) view returns (Task memory) {
     uint256 orgId = taskOrg[taskId];
     return tasks[orgId][taskId];
   }
 
-  /**
-   * @dev Allows assignee to submit task for review.
-   * @param taskId Task ID.
-   */
+  /// @dev Allows assignee to submit task for review.
+  /// @param taskId Task ID.
   function submitTask(uint256 taskId) public taskExists(taskId) {
     uint256 orgId = taskOrg[taskId];
     Task storage task  = tasks[orgId][taskId];
@@ -196,19 +180,13 @@ contract TaskContract {
     emit Submission(taskId);
   }
 
-  /*
-   * Internal functions
-   */
-
-  /**
-   * @dev Adds a new task to the task mapping, if task does not exist yet.
-   * @param orgId Id of organization.
-   * @param title Task title.
-   * @param description Task title.
-   * @param taskType Task title.
-   * @param complexityScore Task title.
-   * @return taskId task ID.
-   */
+  /// @dev Adds a new task to the task mapping, if task does not exist yet.
+  /// @param orgId Id of organization.
+  /// @param title Task title.
+  /// @param description Task description.
+  /// @param taskType Token id.
+  /// @param complexityScore Task complexity score.
+  /// @return taskId task ID.
   function addTask(
     uint256 orgId,
     string memory title,
@@ -235,11 +213,9 @@ contract TaskContract {
     emit Creation(taskId);
   }
 
-  /**
-   * @dev Returns status of a task.
-   * @param taskId TaskStatus enum.
-   * @return state of a task.
-   */
+  /// @dev Returns status of a task.
+  /// @param taskId TaskStatus enum.
+  /// @return state of a task.
   function getState(uint256 taskId) public view taskExists(taskId) returns (string memory) {
     uint256 orgId = taskOrg[taskId];
     TaskStatus status = tasks[orgId][taskId].status;
@@ -250,11 +226,9 @@ contract TaskContract {
     return "";
   }
 
-  /**
-   * @dev Returns number of confirmations of a task.
-   * @param taskId Task ID.
-   * @return count Number of confirmations.
-   */
+  /// @dev Returns number of confirmations of a task.
+  /// @param taskId Task ID.
+  /// @return count Number of confirmations.
   function getConfirmationCount(uint256 taskId) public view returns (uint256 count)
   {
     uint256 orgId = taskOrg[taskId];
@@ -263,13 +237,11 @@ contract TaskContract {
       if (confirmations[taskId][reviewers[i]]) count += 1;
   }
 
-  /**
-   * @dev Returns total number of tasks after filers are applied.
-   * @param orgId Id of organization.
-   * @param pending Include pending tasks.
-   * @param executed Include executed tasks.
-   * @return count Total number of tasks after filters are applied.
-   */
+  /// @dev Returns total number of tasks after filers are applied.
+  /// @param orgId Id of organization.
+  /// @param pending Include pending tasks.
+  /// @param executed Include executed tasks.
+  /// @return count Total number of tasks after filters are applied.
   function getTaskCount(uint256 orgId, bool pending, bool executed) public view returns (uint256 count)
   {
     for (uint256 i = 0; i < orgTaskCount[orgId]; i++) {
@@ -281,11 +253,9 @@ contract TaskContract {
     }
   }
 
-  /**
-   * @dev Allows assignees assign task to themselves.
-   * @param taskId Task ID.
-   * @return status Task updated status.
-   */
+  /// @dev Allows assignees assign task to themselves.
+  /// @param taskId Task ID.
+  /// @return status Task updated status.
   function assignSelf(uint256 taskId) public returns (string memory status) {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
@@ -299,11 +269,9 @@ contract TaskContract {
     emit Assignment(msg.sender, taskId);
   }
 
-  /**
-   * @dev Allows a reviewer to assign task to an assignee.
-   * @param taskId Task ID.
-   * @return status Task updated status.
-   */
+  /// @dev Allows a reviewer to assign task to an assignee.
+  /// @param taskId Task ID.
+  /// @return status Task updated status.
   function assignOthers(address assignee, uint256 taskId)
     public
     taskExists(taskId)
@@ -322,11 +290,9 @@ contract TaskContract {
     emit Assignment(msg.sender, taskId);
   }
 
-  /**
-   * @dev Returns array with reviewer addresses, which confirmed task.
-   * @param taskId Task ID.
-   * @return _confirmations array of owner addresses.
-   */
+  /// @dev Returns array with reviewer addresses, which confirmed task.
+  /// @param taskId Task ID.
+  /// @return _confirmations array of owner addresses.
   function getConfirmations(uint256 taskId) public view returns (address[] memory _confirmations)
   {
     uint256 orgId = taskOrg[taskId];
@@ -343,17 +309,15 @@ contract TaskContract {
     for (i = 0; i < count; i++) _confirmations[i] = confirmationsTemp[i];
   }
 
-  /**
-   * @dev Returns list of task IDs in defined range.
-   * @param orgId Id of organization.
-   * @param from Index start position of task array.
-   * @param to Index end position of task array.
-   * @param open Include open tasks.
-   * @param assigned Include assigned tasks.
-   * @param submitted Include submitted tasks.
-   * @param closed Include closed tasks.
-   * @return _taskIds array of task IDs.
-   */
+  /// @dev Returns list of task IDs in defined range.
+  /// @param orgId Id of organization.
+  /// @param from Index start position of task array.
+  /// @param to Index end position of task array.
+  /// @param open Include open tasks.
+  /// @param assigned Include assigned tasks.
+  /// @param submitted Include submitted tasks.
+  /// @param closed Include closed tasks.
+  /// @return _taskIds array of task IDs.
   function getTaskIds(
     uint256 orgId,
     uint256 from,
@@ -385,45 +349,45 @@ contract TaskContract {
       _taskIds[i - from] = taskIdsTemp[i];
   }
 
-  /**
-   * @dev Returns list of task IDs in defined range assigned to an address.
-   * @param orgId Id of organization.
-   * @param from Index start position of task array.
-   * @param to Index end position of task array.
-   * @param assigned Include assigned tasks.
-   * @param submitted Include submitted tasks.
-   * @param closed Include closed tasks.
-   * @param assignee Assignee address.
-   * @return _taskIds array of task IDs.
-   */
-  // function getTaskIdsByAssignee(
-  //   uint256 orgId,
-  //   uint256 from,
-  //   uint256 to,
-  //   bool assigned,
-  //   bool submitted,
-  //   bool closed,
-  //   address assignee
-  // ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
-  //   uint256 assignedCount = orgAssignees[orgId][msg.sender];
-  //   uint256[] memory taskIdsTemp = new uint256[](assignedCount);
-  //   uint256 count = 0;
-  //   uint256 i;
-  //   for (i = 0; i < orgTaskCount[orgId]; i++) {
-  //     uint256 taskId = orgTaskIds[orgId][i];
-  //     Task memory task = tasks[orgId][taskId];
-  //     if (
-  //       (task.assigneeAddress == assignee) &&
-  //       (assigned && task.status == TaskStatus.ASSIGNED) ||
-  //       (submitted && task.status == TaskStatus.SUBMITTED) ||
-  //       (closed && task.status == TaskStatus.CLOSED)
-  //     ) {
-  //       taskIdsTemp[count] = task.id;
-  //       count += 1;
-  //     }
-  //   }
-  //   _taskIds = new uint256[](to - from);
-  //   for (i = from; i < to; i++)
-  //     _taskIds[i - from] = taskIdsTemp[i];
-  // }
+  /// @dev Returns list of task IDs in defined range assigned to an address.
+  /// @param orgId Id of organization.
+  /// @param from Index start position of task array.
+  /// @param to Index end position of task array.
+  /// @param assigned Include assigned tasks.
+  /// @param submitted Include submitted tasks.
+  /// @param closed Include closed tasks.
+  /// @param assignee Assignee address.
+  /// @return _taskIds array of task IDs.
+  /*
+  function getTaskIdsByAssignee(
+    uint256 orgId,
+    uint256 from,
+    uint256 to,
+    bool assigned,
+    bool submitted,
+    bool closed,
+    address assignee
+  ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
+    uint256 assignedCount = orgAssignees[orgId][msg.sender];
+    uint256[] memory taskIdsTemp = new uint256[](assignedCount);
+    uint256 count = 0;
+    uint256 i;
+    for (i = 0; i < orgTaskCount[orgId]; i++) {
+      uint256 taskId = orgTaskIds[orgId][i];
+      Task memory task = tasks[orgId][taskId];
+      if (
+        (task.assigneeAddress == assignee) &&
+        (assigned && task.status == TaskStatus.ASSIGNED) ||
+        (submitted && task.status == TaskStatus.SUBMITTED) ||
+        (closed && task.status == TaskStatus.CLOSED)
+      ) {
+        taskIdsTemp[count] = task.id;
+        count += 1;
+      }
+    }
+    _taskIds = new uint256[](to - from);
+    for (i = from; i < to; i++)
+      _taskIds[i - from] = taskIdsTemp[i];
+  }
+  */
 }
