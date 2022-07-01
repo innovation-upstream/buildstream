@@ -75,7 +75,7 @@ contract Organization {
     }
     uint256 count = org.reviewers.length + reviewerCount;
     require(
-      _requiredReviews < count &&
+      _requiredReviews <= count &&
       _requiredReviews != 0 &&
       count != 0,
       "Invalid requirements"
@@ -83,21 +83,17 @@ contract Organization {
     _;
   }
 
-  /**
-   * @dev constructor.
-   */
+  /// @dev constructor.
   constructor() {
     owner = msg.sender;
   }
 
-  /** 
-   * @dev Allows to add a new organization.
-   * @param name Organization name.
-   * @param description Organization description.
-   * @param reviewers List of reviewers.
-   * @param requiredReviews Required reviews count.
-   * @return orgId organizaion ID.
-   */
+  /// @dev Allows to add a new organization.
+  /// @param name Organization name.
+  /// @param description Organization description.
+  /// @param reviewers List of reviewers.
+  /// @param requiredReviews Required reviews count.
+  /// @return orgId organizaion ID.
   function createOrg(
     string memory name,
     string memory description,
@@ -122,28 +118,22 @@ contract Organization {
     emit Creation(orgId);
   }
 
-  /** 
-   * @dev Get organization.
-   * @param _orgId Id of organization.
-   */
+  /// @dev Get organization.
+  /// @param _orgId Id of organization.
   function getOrganization(uint256 _orgId) public view orgExists(_orgId) returns (Org memory org) {
     return orgs[_orgId];
   }
 
-  /**
-   * @dev Returns org count.
-   * @return Organization count.
-   */
+  /// @dev Returns org count.
+  /// @return Organization count.
   function getOrgCount() public view returns (uint256) {
     return orgCount;
   }
 
-  /**
-   * @dev Returns list of organization IDs in defined range.
-   * @param from Index start position of task array.
-   * @param to Index end position of task array.
-   * @return _orgIds array of organization IDs.
-   */
+  /// @dev Returns list of organization IDs in defined range.
+  /// @param from Index start position of task array.
+  /// @param to Index end position of task array.
+  /// @return _orgIds array of organization IDs.
   function getOrgIds(uint256 from, uint256 to) public view returns (uint256[] memory _orgIds) {
     uint256[] memory orgIdsTemp = new uint256[](orgCount);
     uint256 count = 0;
@@ -157,19 +147,15 @@ contract Organization {
       _orgIds[i - from] = orgIdsTemp[i];
   }
 
-  /** 
-   * @dev Check if an organization exists.
-   * @param _orgId Id of organization.
-   */
+  /// @dev Check if an organization exists.
+  /// @param _orgId Id of organization.
   function doesOrgExists(uint256 _orgId) public view returns (bool) {
     return _orgExists[_orgId];
   }
 
-  /** 
-   * @dev Allows to add a new reviewer.
-   * @param _orgId Id of organization.
-   * @param _reviewer Address of new reviewer.
-   */
+  /// @dev Allows to add a new reviewer.
+  /// @param _orgId Id of organization.
+  /// @param _reviewer Address of new reviewer.
   function addReviewer(uint256 _orgId, address _reviewer)
     public
     orgExists(_orgId)
@@ -184,11 +170,9 @@ contract Organization {
     emit ReviewerAddition(_orgId, _reviewer);
   }
 
-  /** 
-   * @dev Allows to remove an reviewer.
-   * @param _orgId Id of organization.
-   * @param _reviewer Address of reviewer.
-   */
+  /// @dev Allows to remove an reviewer.
+  /// @param _orgId Id of organization.
+  /// @param _reviewer Address of reviewer.
   function removeReviewer(uint256 _orgId, address _reviewer)
     public
     orgExists(_orgId)
@@ -208,12 +192,10 @@ contract Organization {
     emit ReviewerRemoval(_orgId, _reviewer);
   }
 
-  /** 
-   * @dev Allows to replace an reviewer with a new reviewer.
-   * @param _orgId Id of organization.
-   * @param _reviewer Address of reviewer to be replaced.
-   * @param newReviewer Address of new reviewer.
-   */
+  /// @dev Allows to replace an reviewer with a new reviewer.
+  /// @param _orgId Id of organization.
+  /// @param _reviewer Address of reviewer to be replaced.
+  /// @param newReviewer Address of new reviewer.
   function replaceReviewer(uint256 _orgId, address _reviewer, address newReviewer)
     public
     orgExists(_orgId)
@@ -235,11 +217,9 @@ contract Organization {
     emit ReviewerAddition(_orgId, newReviewer);
   }
 
-  /** 
-   * @dev Allows to change the number of required confirmations.
-   * @param _orgId Id of organization.
-   * @param _requiredReviews Number of required confirmations.
-   */
+  /// @dev Allows to change the number of required confirmations.
+  /// @param _orgId Id of organization.
+  /// @param _requiredReviews Number of required confirmations.
   function changeRequirement(uint256 _orgId, uint256 _requiredReviews)
     public
     onlyAdmin(_orgId)
@@ -251,32 +231,28 @@ contract Organization {
     emit RequirementChange(_orgId, _requiredReviews);
   }
 
-  /**
-   * @dev Returns list of reviewers.
-   * @param _orgId Id of organization.
-   * @return List of reviewer addresses.
-   */
+  
+  /// @dev Returns list of reviewers.
+  /// @param _orgId Id of organization.
+  /// @return List of reviewer addresses.
   function getReviewers(uint256 _orgId) public view orgExists(_orgId) returns (address[] memory) {
     Org memory org = orgs[_orgId];
     return org.reviewers;
   }
 
-  /**
-   * @dev Returns required reviews count.
-   * @param _orgId Id of organization.
-   * @return Required reviews.
-   */
+  /// @dev Returns required reviews count.
+  /// @param _orgId Id of organization.
+  /// @return Required reviews.
   function getRequiredReviewsCount(uint256 _orgId) public view orgExists(_orgId) returns (uint256) {
     Org memory org = orgs[_orgId];
     return org.requiredReviews;
   }
 
-  /**
-   * @dev Returns if is reviewer.
-   * @param _orgId Id of organization.
-   * @param _address Address of reviewer.
-   * @return if is reviewer address.
-   */
+  
+  /// @dev Returns if is reviewer.
+  /// @param _orgId Id of organization.
+  /// @param _address Address of reviewer.
+  /// @return if is reviewer address.
   function isReviewerAddress(uint256 _orgId, address _address) public orgExists(_orgId) view returns (bool) {
     return isReviewer[_orgId][_address];
   }

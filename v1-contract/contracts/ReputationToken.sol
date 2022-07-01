@@ -40,43 +40,34 @@ contract SBTToken is ERC1155 {
     _;
   }
 
-  /**
-   * @dev constructor.
-   */
+  
+  /// @dev constructor.
   constructor() ERC1155("https://buildstream-schema.vercel.app/tokens/{id}.json") {
     owner = msg.sender;
   }
 
-  /** 
-   * @dev Allows owner to create a new token.
-   * @param tokenId new tokenId.
-   */
+  /// @dev Allows owner to create a new token.
+  /// @param tokenId new tokenId.
   function creatNewToken(uint256 tokenId) public onlyOwner tokenDoesNotExist(tokenId) {
     _mint(msg.sender, tokenId, 0, "");
     tokenTypeCount += 1;
   }
 
-   /** 
-   * @dev Check if a token exists.
-   * @param tokenId Id of token.
-   */
+  /// @dev Check if a token exists.
+  /// @param tokenId Id of token.
   function doesTokenExist(uint256 tokenId) public view returns (bool) {
     return tokenTypeCount > tokenId;
   }
 
-  /** 
-   * @dev Allows to change task contract address.
-   * @param _taskContractAddress new task contract address.
-   */
+  /// @dev Allows to change task contract address.
+  /// @param _taskContractAddress new task contract address.
   function updateTaskContractAddress(address _taskContractAddress) public onlyOwner {
     taskContractAddress = _taskContractAddress;
   }
 
-  /** 
-   * @dev Allows organization to reward a user with tokens.
-   * @param to Assignee address.
-   * @param value Token reward value.
-   */
+  /// @dev Allows organization to reward a user with tokens.
+  /// @param to Assignee address.
+  /// @param value Token reward value.
   function reward(address to, uint256 tokenId, uint256 value) public onlyTaskContract tokenExists(tokenId) returns (bool) {
     require(MAX_TOKEN_REWARD >= value, "Maximum tokens allowed exceeded");
     uint256 amount = value;
@@ -87,33 +78,25 @@ contract SBTToken is ERC1155 {
     return true;
   }
 
-  /** 
-   Disable transfers
-   */
+  /// @dev Disable transfers
   function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) public pure override {
     require(false, "Feature is disabled");
   }
 
-  /** 
-   Disable batch transfers
-   */
+  /// @dev Disable batch transfers
   function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public pure override {
     require(false, "Feature is disabled");
   }
 
-  /** 
-   * @dev Allows to lock an assignee tokens.
-   * @param _address Assignee address.
-   */
+  /// @dev Allows to lock an assignee tokens.
+  /// @param _address Assignee address.
   function stake(address _address) public onlyTaskContract notLocked(_address) returns (bool) {
     locked[_address] = true;
     return true;
   }
 
-  /** 
-   * @dev Allows to unlock an assignee tokens.
-   * @param _address Assignee address.
-   */
+  /// @dev Allows to unlock an assignee tokens.
+  /// @param _address Assignee address.
   function unStake(address _address) public onlyTaskContract returns (bool) {
     locked[_address] = false;
     return true;
