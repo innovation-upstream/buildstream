@@ -11,9 +11,16 @@ import "hardhat/console.sol";
 contract SBTToken is ERC1155 {
   address private owner;
   address private taskContractAddress;
+
+  uint256 public constant BASIC = 0;
+  uint256 public constant BEGINNER = 1;
+  uint256 public constant INTERMEDIATE = 2;
+  uint256 public constant ADVANCED = 3;
+  uint256 public constant COMPLEX = 4;
+
   uint256 public constant MAX_TOKEN_REWARD = 5;
   mapping(address => bool) public locked;
-  uint256 public tokenTypeCount = 0;
+  uint256 public tokenTypeCount = 5;
 
   modifier onlyOwner() {
     require(msg.sender == owner, "Permission denied");
@@ -46,13 +53,6 @@ contract SBTToken is ERC1155 {
     owner = msg.sender;
   }
 
-  /// @dev Allows owner to create a new token.
-  /// @param tokenId new tokenId.
-  function creatNewToken(uint256 tokenId) public onlyOwner tokenDoesNotExist(tokenId) {
-    _mint(msg.sender, tokenId, 0, "");
-    tokenTypeCount += 1;
-  }
-
   /// @dev Check if a token exists.
   /// @param tokenId Id of token.
   function doesTokenExist(uint256 tokenId) public view returns (bool) {
@@ -67,13 +67,9 @@ contract SBTToken is ERC1155 {
 
   /// @dev Allows organization to reward a user with tokens.
   /// @param to Assignee address.
-  /// @param value Token reward value.
-  function reward(address to, uint256 tokenId, uint256 value) public onlyTaskContract tokenExists(tokenId) returns (bool) {
-    require(MAX_TOKEN_REWARD >= value, "Maximum tokens allowed exceeded");
-    uint256 amount = value;
-    if (balanceOf(to, tokenId) == 0)
-      amount = 1;
-    _mint(to, tokenId, amount, "");
+  /// @param tokenId Reward tokenId.
+  function reward(address to, uint256 tokenId) public onlyTaskContract tokenExists(tokenId) returns (bool) {
+    _mint(to, tokenId, 1, "");
     unStake(to);
     return true;
   }
@@ -100,5 +96,10 @@ contract SBTToken is ERC1155 {
   function unStake(address _address) public onlyTaskContract returns (bool) {
     locked[_address] = false;
     return true;
+  }
+
+  /// @dev Get token type count.
+  function getTokenTypeCount() public view returns (uint256) {
+    return tokenTypeCount;
   }
 }

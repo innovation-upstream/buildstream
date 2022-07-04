@@ -28,12 +28,9 @@ const getContractInstances = async () => {
 
 describe("Integration test: Task flow", function () {
   it("Should successfully complete the task flow", async function () {
-    const [, reviewer1, reviewer2, assignee] = await ethers.getSigners();
+    const [, approver1, approver2, assignee] = await ethers.getSigners();
     const { orgContract, taskContract, tokenContract } =
       await getContractInstances();
-
-    // Create new token
-    await tokenContract.creatNewToken(0);
 
     // Create organization
     const orgCreationEvent = new Promise<any>((resolve, reject) => {
@@ -52,8 +49,8 @@ describe("Integration test: Task flow", function () {
     await orgContract.createOrg(
       "Buildstream",
       "Decentralized task managers",
-      [reviewer1.address, reviewer2.address],
-      2
+      [],
+      [approver1.address, approver2.address]
     );
 
     const orgEvent = await orgCreationEvent;
@@ -74,18 +71,23 @@ describe("Integration test: Task flow", function () {
     });
 
     await taskContract
-      .connect(reviewer1)
+      .connect(approver1)
       .createTask(
         orgId,
         "update ethers version",
         "update ethers version to v2",
+        ["golang"],
         0,
-        0
+        0,
+        2
       );
 
     const taskEvent = await taskCreationEvent;
 
     const taskId = taskEvent.taskId.toNumber();
+
+    // Open task
+    await taskContract.connect(approver1).openTask(taskId);
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId);
@@ -94,11 +96,8 @@ describe("Integration test: Task flow", function () {
     await taskContract.connect(assignee).submitTask(taskId);
 
     // Reviewers can confirm task
-    await taskContract.connect(reviewer1).confirmTask(taskId);
-    await taskContract.connect(reviewer2).confirmTask(taskId);
-
-    // Anyone can close task
-    await taskContract.connect(assignee).closeTask(taskId);
+    await taskContract.connect(approver1).approveTask(taskId);
+    await taskContract.connect(approver2).approveTask(taskId);
 
     // Assignee should receive reward
     expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(1);

@@ -19,7 +19,7 @@ describe("Unit test: Org contract", function () {
 
   it("Should create org", async function () {
     const { contractInstance } = await getContractInstances();
-    const [, reviewer1, reviewer2] = await ethers.getSigners();
+    const [, approver1, approver2] = await ethers.getSigners();
 
     const creationEvent = new Promise<any>((resolve, reject) => {
       contractInstance.on("Creation", (orgId, event) => {
@@ -38,8 +38,8 @@ describe("Unit test: Org contract", function () {
     await contractInstance.createOrg(
       "Buildstream",
       "Decentralized task management",
-      [reviewer1.address, reviewer2.address],
-      1
+      [],
+      [approver1.address, approver2.address]
     );
 
     const event = await creationEvent;
