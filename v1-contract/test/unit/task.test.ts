@@ -2,6 +2,14 @@ import { expect } from "chai";
 import { waffle, ethers } from "hardhat";
 const { deployMockContract, provider } = waffle;
 
+const TaskStatus = {
+  PROPOSED: 0,
+  OPEN: 1,
+  ASSIGNED: 2,
+  SUBMITTED: 3,
+  CLOSED: 4,
+};
+
 const getContractInstances = async () => {
   const [deployerOfContract] = provider.getWallets();
 
@@ -55,12 +63,14 @@ describe("Unit test: Task contract", function () {
     });
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
@@ -80,7 +90,7 @@ describe("Unit test: Task contract", function () {
     const [, addr1] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -88,16 +98,22 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
     const taskId = (await contractInstance.getTask(0)).id;
     expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
-      "OPEN"
+      TaskStatus.PROPOSED
+    );
+    await contractInstance.openTask(taskId.toNumber());
+    expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
+      TaskStatus.OPEN
     );
     await contractInstance.connect(addr1).assignSelf(0);
     expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
-      "ASSIGNED"
+      TaskStatus.ASSIGNED
     );
   });
 
@@ -107,7 +123,7 @@ describe("Unit test: Task contract", function () {
     const [, addr1] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -115,6 +131,8 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
@@ -122,13 +140,17 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
+    await contractInstance.openTask(0);
+    await contractInstance.openTask(1);
     await contractInstance.connect(addr1).assignSelf(0);
     await tokenContract.mock.stake.revertsWithReason("Tokens are locked");
     await expect(
-      contractInstance.connect(addr1).assignSelf(0)
+      contractInstance.connect(addr1).assignSelf(1)
     ).to.be.revertedWith("Tokens are locked");
   });
 
@@ -138,19 +160,58 @@ describe("Unit test: Task contract", function () {
     const [, addr1] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(0);
+    await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
-      0,
-      4
+      ["golang"],
+      4,
+      1,
+      1
     );
+    await contractInstance.openTask(0);
     await expect(
       contractInstance.connect(addr1).assignSelf(0)
     ).to.be.revertedWith("Not enough reputation tokens");
+  });
+
+  it("Should unassign task", async function () {
+    const { contractInstance, orgContract, tokenContract } =
+      await getContractInstances();
+    const [, addr1] = await ethers.getSigners();
+
+    await orgContract.mock.doesOrgExists.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
+    await tokenContract.mock.balanceOf.returns(1);
+    await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.unStake.returns(true);
+    await tokenContract.mock.doesTokenExist.returns(true);
+    await contractInstance.createTask(
+      0,
+      "update ethers version",
+      "update ethers version to v2",
+      ["golang"],
+      1,
+      0,
+      1
+    );
+    const taskId = (await contractInstance.getTask(0)).id;
+    expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
+      TaskStatus.PROPOSED
+    );
+    await contractInstance.openTask(taskId.toNumber());
+    expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
+      TaskStatus.OPEN
+    );
+    await contractInstance.connect(addr1).assignSelf(0);
+    await contractInstance.connect(addr1).unassignSelf(0);
+    expect(await contractInstance.getState(taskId.toNumber())).to.be.equal(
+      TaskStatus.OPEN
+    );
   });
 
   it("Should let assignee submit task", async function () {
@@ -159,7 +220,7 @@ describe("Unit test: Task contract", function () {
     const [, addr1] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -167,33 +228,41 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
+    await contractInstance.openTask(0);
     await contractInstance.connect(addr1).assignSelf(0);
     await contractInstance.connect(addr1).submitTask(0);
   });
 
-  it("Should let reviewer confirm task", async function () {
+  it("Should let approver confirm task", async function () {
     const { contractInstance, orgContract, tokenContract } =
       await getContractInstances();
     const [, addr1, addr2] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getApprovers.returns([addr2.address]);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
+    await tokenContract.mock.reward.returns(true);
     await contractInstance.createTask(
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
+    await contractInstance.openTask(0);
     await contractInstance.connect(addr1).assignSelf(0);
     await contractInstance.connect(addr1).submitTask(0);
-    await contractInstance.connect(addr2).confirmTask(0);
+    await contractInstance.connect(addr2).approveTask(0);
   });
 
   it("Should fail to confirm unsubmitted task", async function () {
@@ -202,7 +271,7 @@ describe("Unit test: Task contract", function () {
     const [, addr1, addr2] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
+    await orgContract.mock.isApproverAddress.returns(true);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -210,24 +279,26 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
       1
     );
+    await contractInstance.openTask(0);
     await contractInstance.connect(addr1).assignSelf(0);
     await expect(
-      contractInstance.connect(addr2).confirmTask(0)
+      contractInstance.connect(addr2).approveTask(0)
     ).to.be.revertedWith("Task is not submitted");
   });
 
-  it("Should let reviewer close task", async function () {
+  it("Should let approver close task", async function () {
     const { contractInstance, orgContract, tokenContract } =
       await getContractInstances();
     const [, addr1, addr2, addr3] = await ethers.getSigners();
 
     await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
-    await orgContract.mock.getReviewers.returns([addr2.address, addr3.address]);
-    await orgContract.mock.getRequiredReviewsCount.returns(2);
+    await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getApprovers.returns([addr2.address, addr3.address]);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -236,41 +307,19 @@ describe("Unit test: Task contract", function () {
       0,
       "update ethers version",
       "update ethers version to v2",
+      ["golang"],
+      1,
       0,
-      1
+      2
     );
+    await contractInstance.openTask(0);
     await contractInstance.connect(addr1).assignSelf(0);
     await contractInstance.connect(addr1).submitTask(0);
-    await contractInstance.connect(addr2).confirmTask(0);
-    await contractInstance.connect(addr3).confirmTask(0);
-    await contractInstance.connect(addr3).closeTask(0);
-  });
-
-  it("Should fail to close unconfirmed task", async function () {
-    const { contractInstance, orgContract, tokenContract } =
-      await getContractInstances();
-    const [, addr1, addr2, addr3] = await ethers.getSigners();
-
-    await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isReviewerAddress.returns(true);
-    await orgContract.mock.getReviewers.returns([addr2.address, addr3.address]);
-    await orgContract.mock.getRequiredReviewsCount.returns(2);
-    await tokenContract.mock.balanceOf.returns(1);
-    await tokenContract.mock.stake.returns(true);
-    await tokenContract.mock.doesTokenExist.returns(true);
-    await tokenContract.mock.reward.returns(true);
-    await contractInstance.createTask(
-      0,
-      "update ethers version",
-      "update ethers version to v2",
-      0,
-      1
+    await contractInstance.connect(addr2).approveTask(0);
+    expect(await contractInstance.getState(0)).to.be.equal(
+      TaskStatus.SUBMITTED
     );
-    await contractInstance.connect(addr1).assignSelf(0);
-    await contractInstance.connect(addr1).submitTask(0);
-    await contractInstance.connect(addr2).confirmTask(0);
-    await expect(
-      contractInstance.connect(addr3).closeTask(0)
-    ).to.be.revertedWith("Insufficient confirmations");
+    await contractInstance.connect(addr3).approveTask(0);
+    expect(await contractInstance.getState(0)).to.be.equal(TaskStatus.CLOSED);
   });
 });

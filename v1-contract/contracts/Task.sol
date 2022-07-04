@@ -14,12 +14,13 @@ contract TaskContract {
   event Revocation(address indexed sender, uint256 indexed taskId);
   event Creation(uint indexed taskId);
   event Assignment(address indexed sender, uint indexed taskId);
+  event Unassignment(address indexed sender, uint indexed taskId);
   event Submission(uint indexed taskId);
   event Closed(uint indexed taskId);
 
   mapping(uint256 => mapping(uint256 => Task)) public tasks;
   mapping(uint256 => bool) public _taskExists;
-  mapping(uint256 => mapping(address => bool)) public confirmations;
+  mapping(uint256 => mapping(address => bool)) public approvals;
   uint256 public taskCount;
   mapping(uint256 => uint256) public orgTaskCount;
   mapping(uint256 => uint256[]) public orgTaskIds;
@@ -32,15 +33,22 @@ contract TaskContract {
     string title;
     string description;
     address assigneeAddress;
-    uint256 taskType;
+    string[] taskTags;
     TaskStatus status;
     uint256 complexityScore;
+    uint256 reputationLevel;
+    uint256 requiredApprovals;
   }
 
-  enum TaskStatus { OPEN, ASSIGNED, SUBMITTED, CLOSED }
+  enum TaskStatus { PROPOSED, OPEN, ASSIGNED, SUBMITTED, CLOSED }
 
   modifier onlyReviewer(uint256 _orgId) {
     require(organization.isReviewerAddress(_orgId, msg.sender), "Permission denied");
+    _;
+  }
+
+  modifier onlyApprover(uint256 _orgId) {
+    require(organization.isApproverAddress(_orgId, msg.sender), "Permission denied");
     _;
   }
 
@@ -59,13 +67,13 @@ contract TaskContract {
     _;
   }
 
-  modifier confirmed(uint256 taskId) {
-    require(confirmations[taskId][msg.sender], "Task has not been confirmed");
+  modifier approved(uint256 taskId) {
+    require(approvals[taskId][msg.sender], "Task has not been approved");
     _;
   }
 
-  modifier notConfirmed(uint256 taskId) {
-    require(!confirmations[taskId][msg.sender], "Task is already confirmed");
+  modifier notApproved(uint256 taskId) {
+    require(!approvals[taskId][msg.sender], "Task is already approved");
     _;
   }
 
@@ -88,77 +96,106 @@ contract TaskContract {
     organization = Organization(organizationAddress);
   }
  
-  /// @dev Allows a reviewer to create a task.
+  /// @dev Allows a user to create a task.
   /// @param orgId Id of organization.
   /// @param title Task title.
   /// @param description Task description.
-  /// @param taskType Token id.
+  /// @param taskTags Token id.
   /// @param complexityScore Task complexity score.
+  /// @param reputationLevel Number of tokens.
+  /// @param requiredApprovals Number of approvers required.
   /// @return taskId task ID.
   function createTask(
     uint256 orgId,
     string memory title,
     string memory description,
-    uint256 taskType,
-    uint256 complexityScore
-  ) public orgExists(orgId) onlyReviewer(orgId) tokenExists(taskType) returns (uint256 taskId) {
-    taskId = addTask(orgId, title, description, taskType, complexityScore);
+    string[] memory taskTags,
+    uint256 complexityScore,
+    uint256 reputationLevel,
+    uint256 requiredApprovals
+  ) public orgExists(orgId) tokenExists(complexityScore) returns (uint256 taskId) {
+    taskId = taskCount;
+    tasks[orgId][taskId] = Task({
+      id: taskId,
+      orgId: orgId,
+      title: title,
+      description: description,
+      taskTags: taskTags,
+      complexityScore: complexityScore,
+      reputationLevel: reputationLevel,
+      requiredApprovals: requiredApprovals,
+      assigneeAddress: address(0),
+      status: TaskStatus.PROPOSED
+    });
+    taskCount += 1;
+    orgTaskCount[orgId] += 1;
+    orgTaskIds[orgId].push(taskId);
+    _taskExists[taskId] = true;
+    taskOrg[taskId] = orgId;
+    emit Creation(taskId);
+  }
+
+  /// @dev Allows an approver to move a task to open.
+  /// @param taskId Task ID.
+  function openTask(
+    uint256 taskId
+  ) public taskExists(taskId) onlyApprover(taskOrg[taskId]) {
+    uint256 orgId = taskOrg[taskId];
+    require(tasks[orgId][taskId].status == TaskStatus.PROPOSED, "Task has already been opened");
+    tasks[orgId][taskId].status = TaskStatus.OPEN;
   }
  
-  /// @dev Allows a reviewer to confirm a task.
+  /// @dev Allows a approver to approve a task.
   /// @param taskId Task ID.
-  function confirmTask(uint256 taskId)
+  function approveTask(uint256 taskId)
     public
     taskExists(taskId)
-    onlyReviewer(taskOrg[taskId])
-    notConfirmed(taskId)
+    onlyApprover(taskOrg[taskId])
+    notApproved(taskId)
   {
     uint256 orgId = taskOrg[taskId];
     require(tasks[orgId][taskId].status == TaskStatus.SUBMITTED, "Task is not submitted");
-    confirmations[taskId][msg.sender] = true;
+    approvals[taskId][msg.sender] = true;
     emit Confirmation(msg.sender, taskId);
+    if (isApproved(taskId))
+      closeTask(taskId);
   }
 
-  /// @dev Allows a reviewer to revoke a confirmation for a task.
+  /// @dev Allows a approver to revoke approval for a task.
   /// @param taskId Task ID.
-  function revokeConfirmation(uint256 taskId)
+  function revokeApproval(uint256 taskId)
     public
     taskExists(taskId)
-    onlyReviewer(taskOrg[taskId])
-    confirmed(taskId)
+    onlyApprover(taskOrg[taskId])
+    approved(taskId)
     notClosed(taskId)
   {
-    confirmations[taskId][msg.sender] = false;
+    approvals[taskId][msg.sender] = false;
     emit Revocation(msg.sender, taskId);
   }
 
-  /// @dev Allows a reviewer to close a confirmed task.
+  /// @dev Allows closing an approved task.
   /// @param taskId Task ID.
-  function closeTask(uint256 taskId)
-    public
-    taskExists(taskId)
-    notClosed(taskId)
-  {
-    require(isConfirmed(taskId), "Insufficient confirmations");
+  function closeTask(uint256 taskId) internal {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    sbtToken.reward(task.assigneeAddress, task.taskType, task.complexityScore);
-    task.status = TaskStatus.CLOSED;
+    sbtToken.reward(task.assigneeAddress, task.complexityScore);
+    tasks[orgId][taskId].status = TaskStatus.CLOSED;
     emit Closed(taskId);
   }
 
-  /// @dev Returns the confirmation status of a task.
+  /// @dev Returns the approval status of a task.
   /// @param taskId Task ID.
-  /// @return confirmationStatus Confirmation status.
-  function isConfirmed(uint256 taskId) public view returns (bool confirmationStatus) {
+  /// @return approvalStatus Approval status.
+  function isApproved(uint256 taskId) public view returns (bool approvalStatus) {
     uint256 count = 0;
-    confirmationStatus = false;
+    approvalStatus = false;
     uint256 orgId = taskOrg[taskId];
-    address[] memory reviewers = organization.getReviewers(orgId);
-    uint256 requiredReviews = organization.getRequiredReviewsCount(orgId);
-    for (uint256 i = 0; i < reviewers.length; i++) {
-      if (confirmations[taskId][reviewers[i]]) count += 1;
-      if (count == requiredReviews) confirmationStatus = true;
+    Task memory task = tasks[orgId][taskId];
+    address[] memory approvers = organization.getApprovers(orgId);
+    for (uint256 i = 0; i < approvers.length; i++) {
+      if (approvals[taskId][approvers[i]]) count += 1;
+      if (count == task.requiredApprovals) approvalStatus = true;
     }
   }
 
@@ -170,7 +207,7 @@ contract TaskContract {
     return tasks[orgId][taskId];
   }
 
-  /// @dev Allows assignee to submit task for review.
+  /// @dev Allows assignee to submit task for approval.
   /// @param taskId Task ID.
   function submitTask(uint256 taskId) public taskExists(taskId) {
     uint256 orgId = taskOrg[taskId];
@@ -180,61 +217,23 @@ contract TaskContract {
     emit Submission(taskId);
   }
 
-  /// @dev Adds a new task to the task mapping, if task does not exist yet.
-  /// @param orgId Id of organization.
-  /// @param title Task title.
-  /// @param description Task description.
-  /// @param taskType Token id.
-  /// @param complexityScore Task complexity score.
-  /// @return taskId task ID.
-  function addTask(
-    uint256 orgId,
-    string memory title,
-    string memory description,
-    uint256 taskType,
-    uint256 complexityScore
-  ) internal onlyReviewer(orgId) returns (uint256 taskId) {
-    taskId = taskCount;
-    tasks[orgId][taskId] = Task({
-      id: taskId,
-      orgId: orgId,
-      title: title,
-      description: description,
-      taskType: taskType,
-      complexityScore: complexityScore,
-      assigneeAddress: address(0),
-      status: TaskStatus.OPEN
-    });
-    taskCount += 1;
-    orgTaskCount[orgId] += 1;
-    orgTaskIds[orgId].push(taskId);
-    _taskExists[taskId] = true;
-    taskOrg[taskId] = orgId;
-    emit Creation(taskId);
-  }
-
   /// @dev Returns status of a task.
   /// @param taskId TaskStatus enum.
-  /// @return state of a task.
-  function getState(uint256 taskId) public view taskExists(taskId) returns (string memory) {
+  /// @return status State of a task.
+  function getState(uint256 taskId) public view taskExists(taskId) returns (TaskStatus status) {
     uint256 orgId = taskOrg[taskId];
-    TaskStatus status = tasks[orgId][taskId].status;
-    if (status == TaskStatus.OPEN) return "OPEN";
-    if (status == TaskStatus.ASSIGNED) return "ASSIGNED";
-    if (status == TaskStatus.SUBMITTED) return "SUBMITTED";
-    if (status == TaskStatus.CLOSED) return "CLOSED";
-    return "";
+    status = tasks[orgId][taskId].status;
   }
 
-  /// @dev Returns number of confirmations of a task.
+  /// @dev Returns number of approvals of a task.
   /// @param taskId Task ID.
-  /// @return count Number of confirmations.
-  function getConfirmationCount(uint256 taskId) public view returns (uint256 count)
+  /// @return count Number of approvals.
+  function getApprovalCount(uint256 taskId) public view returns (uint256 count)
   {
     uint256 orgId = taskOrg[taskId];
-    address[] memory reviewers = organization.getReviewers(orgId);
-    for (uint256 i = 0; i < reviewers.length; i++)
-      if (confirmations[taskId][reviewers[i]]) count += 1;
+    address[] memory approvers = organization.getApprovers(orgId);
+    for (uint256 i = 0; i < approvers.length; i++)
+      if (approvals[taskId][approvers[i]]) count += 1;
   }
 
   /// @dev Returns total number of tasks after filers are applied.
@@ -256,116 +255,84 @@ contract TaskContract {
   /// @dev Allows assignees assign task to themselves.
   /// @param taskId Task ID.
   /// @return status Task updated status.
-  function assignSelf(uint256 taskId) public returns (string memory status) {
+  function assignSelf(uint256 taskId) public returns (TaskStatus status) {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    require(sbtToken.balanceOf(msg.sender, task.taskType) >= task.complexityScore, "Not enough reputation tokens");
+    require(task.status == TaskStatus.OPEN, "Task is not opened");
+    require(sbtToken.balanceOf(msg.sender, task.complexityScore) >= task.reputationLevel, "Not enough reputation tokens");
     sbtToken.stake(msg.sender);
     task.assigneeAddress = msg.sender;
     task.status = TaskStatus.ASSIGNED;
     tasks[orgId][taskId] = task;
-    status = getState(taskId);
+    status = task.status;
     orgAssignees[task.orgId][msg.sender] += 1;
     emit Assignment(msg.sender, taskId);
   }
 
-  /// @dev Allows a reviewer to assign task to an assignee.
+  /// @dev Allows assignees drop tasks.
   /// @param taskId Task ID.
   /// @return status Task updated status.
-  function assignOthers(address assignee, uint256 taskId)
-    public
-    taskExists(taskId)
-    onlyReviewer(taskOrg[taskId])
-    returns (string memory status)
-  {
+  function unassignSelf(uint256 taskId) public returns (TaskStatus status) {
     uint256 orgId = taskOrg[taskId];
     Task memory task = tasks[orgId][taskId];
-    require(sbtToken.balanceOf(assignee, task.taskType) >= task.complexityScore, "Not enough reputation tokens");
-    sbtToken.stake(assignee);
-    task.assigneeAddress = assignee;
-    task.status = TaskStatus.ASSIGNED;
+    require(task.assigneeAddress == msg.sender, "Task is not yours");
+    require(task.status == TaskStatus.ASSIGNED, "Task is not opened");
+    sbtToken.unStake(msg.sender);
+    task.assigneeAddress = address(0);
+    task.status = TaskStatus.OPEN;
     tasks[orgId][taskId] = task;
-    status = getState(taskId);
-    orgAssignees[task.orgId][assignee] += 1;
-    emit Assignment(msg.sender, taskId);
+    status = task.status;
+    emit Unassignment(msg.sender, taskId);
   }
 
-  /// @dev Returns array with reviewer addresses, which confirmed task.
+  /// @dev Returns array with approver addresses, which approved task.
   /// @param taskId Task ID.
-  /// @return _confirmations array of owner addresses.
-  function getConfirmations(uint256 taskId) public view returns (address[] memory _confirmations)
+  /// @return _approvals array of owner addresses.
+  function getApprovals(uint256 taskId) public view returns (address[] memory _approvals)
   {
     uint256 orgId = taskOrg[taskId];
-    address[] memory reviewers = organization.getReviewers(orgId);
-    address[] memory confirmationsTemp = new address[](reviewers.length);
+    address[] memory approvers = organization.getApprovers(orgId);
+    address[] memory approvalsTemp = new address[](approvers.length);
     uint256 count = 0;
     uint256 i;
-    for (i = 0; i < reviewers.length; i++)
-      if (confirmations[taskId][reviewers[i]]) {
-        confirmationsTemp[count] = reviewers[i];
+    for (i = 0; i < approvers.length; i++)
+      if (approvals[taskId][approvers[i]]) {
+        approvalsTemp[count] = approvers[i];
         count += 1;
       }
-    _confirmations = new address[](count);
-    for (i = 0; i < count; i++) _confirmations[i] = confirmationsTemp[i];
+    _approvals = new address[](count);
+    for (i = 0; i < count; i++) _approvals[i] = approvalsTemp[i];
   }
 
   /// @dev Returns list of task IDs in defined range.
   /// @param orgId Id of organization.
   /// @param from Index start position of task array.
   /// @param to Index end position of task array.
-  /// @param open Include open tasks.
-  /// @param assigned Include assigned tasks.
-  /// @param submitted Include submitted tasks.
-  /// @param closed Include closed tasks.
   /// @return _taskIds array of task IDs.
   function getTaskIds(
     uint256 orgId,
     uint256 from,
-    uint256 to,
-    bool open,
-    bool assigned,
-    bool submitted,
-    bool closed
+    uint256 to
   ) public view returns (uint256[] memory _taskIds) {
-    uint256 orgTaskTotal = orgTaskCount[orgId];
-    uint256[] memory taskIdsTemp = new uint256[](orgTaskTotal);
-    uint256 count = 0;
-    uint256 i;
-    for (i = 0; i < orgTaskTotal; i++) {
-      uint256 taskId = orgTaskIds[orgId][i];
-      Task memory task = tasks[orgId][taskId];
-      if (
-        (open && task.status == TaskStatus.OPEN) ||
-        (assigned && task.status == TaskStatus.ASSIGNED) ||
-        (submitted && task.status == TaskStatus.SUBMITTED) ||
-        (closed && task.status == TaskStatus.CLOSED)
-      ) {
-        taskIdsTemp[count] = task.id;
-        count += 1;
-      }
-    }
     _taskIds = new uint256[](to - from);
-    for (i = from; i < to; i++)
-      _taskIds[i - from] = taskIdsTemp[i];
+    uint256 i;
+    uint256 totalTaskCount = orgTaskCount[orgId];
+    uint256 max = totalTaskCount > from ? from : totalTaskCount;
+    for (i = from; i < max; i++) {
+      _taskIds[i - from] = orgTaskIds[orgId][i];
+    }
   }
 
   /// @dev Returns list of task IDs in defined range assigned to an address.
   /// @param orgId Id of organization.
   /// @param from Index start position of task array.
   /// @param to Index end position of task array.
-  /// @param assigned Include assigned tasks.
-  /// @param submitted Include submitted tasks.
-  /// @param closed Include closed tasks.
   /// @param assignee Assignee address.
   /// @return _taskIds array of task IDs.
-  /*
   function getTaskIdsByAssignee(
     uint256 orgId,
     uint256 from,
     uint256 to,
-    bool assigned,
-    bool submitted,
-    bool closed,
     address assignee
   ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
     uint256 assignedCount = orgAssignees[orgId][msg.sender];
@@ -375,12 +342,7 @@ contract TaskContract {
     for (i = 0; i < orgTaskCount[orgId]; i++) {
       uint256 taskId = orgTaskIds[orgId][i];
       Task memory task = tasks[orgId][taskId];
-      if (
-        (task.assigneeAddress == assignee) &&
-        (assigned && task.status == TaskStatus.ASSIGNED) ||
-        (submitted && task.status == TaskStatus.SUBMITTED) ||
-        (closed && task.status == TaskStatus.CLOSED)
-      ) {
+      if (task.assigneeAddress == assignee) {
         taskIdsTemp[count] = task.id;
         count += 1;
       }
@@ -389,5 +351,4 @@ contract TaskContract {
     for (i = from; i < to; i++)
       _taskIds[i - from] = taskIdsTemp[i];
   }
-  */
 }

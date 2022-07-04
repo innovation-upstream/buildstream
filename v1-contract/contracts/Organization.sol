@@ -11,9 +11,12 @@ contract Organization {
   event Creation(uint indexed taskId);
   event ReviewerAddition(uint256 _orgId, address indexed _reviewer);
   event ReviewerRemoval(uint256 _orgId, address indexed _reviewer);
+  event ApproverAddition(uint256 _orgId, address indexed _approver);
+  event ApproverRemoval(uint256 _orgId, address indexed _approver);
   event RequirementChange(uint256 _orgId, uint required);
 
   mapping(uint256 => mapping(address => bool)) public isReviewer;
+  mapping(uint256 => mapping(address => bool)) public isApprover;
   mapping(uint256 => Org) public orgs;
   mapping(uint256 => bool) public _orgExists;
   uint256 public orgCount;
@@ -24,7 +27,7 @@ contract Organization {
     string description;
     address adminAddress;
     address[] reviewers;
-    uint256 requiredReviews;
+    address[] approvers;
   }
 
   modifier onlyOwner() {
@@ -38,18 +41,23 @@ contract Organization {
     _;
   }
 
-  modifier onlyReviewer(uint256 _orgId) {
-    require(isReviewer[_orgId][msg.sender], "Permission denied");
-    _;
-  }
-
   modifier reviewerDoesNotExist(uint256 _orgId, address _reviewer) {
-    require(!isReviewer[_orgId][_reviewer], "Owner already exists");
+    require(!isReviewer[_orgId][_reviewer], "Reviewer already exists");
     _;
   }
 
   modifier reviewerExists(uint256 _orgId, address _reviewer) {
-    require(isReviewer[_orgId][_reviewer], "Owner does not exist");
+    require(isReviewer[_orgId][_reviewer], "Reviewer does not exist");
+    _;
+  }
+
+  modifier approverDoesNotExist(uint256 _orgId, address _approver) {
+    require(!isApprover[_orgId][_approver], "Approver already exists");
+    _;
+  }
+
+  modifier approverExists(uint256 _orgId, address _approver) {
+    require(isApprover[_orgId][_approver], "Approver does not exist");
     _;
   }
 
@@ -68,21 +76,6 @@ contract Organization {
     _;
   }
 
-  modifier validRequirement(uint256 _orgId, uint256 reviewerCount, uint256 _requiredReviews) {
-    Org memory org = orgs[_orgId];
-    if (_requiredReviews == 0) {
-      _requiredReviews = org.requiredReviews;
-    }
-    uint256 count = org.reviewers.length + reviewerCount;
-    require(
-      _requiredReviews <= count &&
-      _requiredReviews != 0 &&
-      count != 0,
-      "Invalid requirements"
-    );
-    _;
-  }
-
   /// @dev constructor.
   constructor() {
     owner = msg.sender;
@@ -92,13 +85,13 @@ contract Organization {
   /// @param name Organization name.
   /// @param description Organization description.
   /// @param reviewers List of reviewers.
-  /// @param requiredReviews Required reviews count.
+  /// @param approvers List of approvers.
   /// @return orgId organizaion ID.
   function createOrg(
     string memory name,
     string memory description,
     address[] memory reviewers,
-    uint256 requiredReviews
+    address[] memory approvers
   )
     public returns (uint256 orgId)
   {
@@ -108,13 +101,15 @@ contract Organization {
       name: name,
       description: description,
       reviewers: reviewers,
-      requiredReviews: requiredReviews,
+      approvers: approvers,
       adminAddress: msg.sender
     });
     orgCount += 1;
     _orgExists[orgId] = true;
     for (uint256 i = 0; i < reviewers.length; i++)
       isReviewer[orgId][reviewers[i]] = true;
+    for (uint256 i = 0; i < approvers.length; i++)
+      isApprover[orgId][approvers[i]] = true;
     emit Creation(orgId);
   }
 
@@ -162,7 +157,6 @@ contract Organization {
     onlyAdmin(_orgId)
     reviewerDoesNotExist(_orgId, _reviewer)
     notNull(_reviewer)
-    validRequirement(_orgId, 1, 0)
   {
     isReviewer[_orgId][_reviewer] = true;
     Org storage org = orgs[_orgId];
@@ -188,7 +182,6 @@ contract Organization {
         break;
       }
     org.reviewers = reviewers;
-    if (org.requiredReviews > reviewers.length) changeRequirement(_orgId, reviewers.length);
     emit ReviewerRemoval(_orgId, _reviewer);
   }
 
@@ -216,21 +209,6 @@ contract Organization {
     emit ReviewerRemoval(_orgId, _reviewer);
     emit ReviewerAddition(_orgId, newReviewer);
   }
-
-  /// @dev Allows to change the number of required confirmations.
-  /// @param _orgId Id of organization.
-  /// @param _requiredReviews Number of required confirmations.
-  function changeRequirement(uint256 _orgId, uint256 _requiredReviews)
-    public
-    onlyAdmin(_orgId)
-    orgExists(_orgId)
-    validRequirement(_orgId, 0, _requiredReviews)
-  {
-    Org storage org = orgs[_orgId];
-    org.requiredReviews = _requiredReviews;
-    emit RequirementChange(_orgId, _requiredReviews);
-  }
-
   
   /// @dev Returns list of reviewers.
   /// @param _orgId Id of organization.
@@ -239,15 +217,6 @@ contract Organization {
     Org memory org = orgs[_orgId];
     return org.reviewers;
   }
-
-  /// @dev Returns required reviews count.
-  /// @param _orgId Id of organization.
-  /// @return Required reviews.
-  function getRequiredReviewsCount(uint256 _orgId) public view orgExists(_orgId) returns (uint256) {
-    Org memory org = orgs[_orgId];
-    return org.requiredReviews;
-  }
-
   
   /// @dev Returns if is reviewer.
   /// @param _orgId Id of organization.
@@ -255,5 +224,83 @@ contract Organization {
   /// @return if is reviewer address.
   function isReviewerAddress(uint256 _orgId, address _address) public orgExists(_orgId) view returns (bool) {
     return isReviewer[_orgId][_address];
+  }
+
+  /// @dev Allows to add a new reviewer.
+  /// @param _orgId Id of organization.
+  /// @param _approver Address of new approver.
+  function addApprover(uint256 _orgId, address _approver)
+    public
+    orgExists(_orgId)
+    onlyAdmin(_orgId)
+    approverDoesNotExist(_orgId, _approver)
+    notNull(_approver)
+  {
+    isApprover[_orgId][_approver] = true;
+    Org storage org = orgs[_orgId];
+    org.approvers.push(_approver);
+    emit ApproverAddition(_orgId, _approver);
+  }
+
+  /// @dev Allows to remove an approver.
+  /// @param _orgId Id of organization.
+  /// @param _approver Address of approver.
+  function removeApprover(uint256 _orgId, address _approver)
+    public
+    orgExists(_orgId)
+    onlyAdmin(_orgId)
+    approverExists(_orgId, _approver)
+  {
+    isApprover[_orgId][_approver] = false;
+    Org storage org = orgs[_orgId];
+    address[] memory approvers = org.approvers;
+    for (uint256 i = 0; i < approvers.length - 1; i++)
+      if (approvers[i] == _approver) {
+        approvers[i] = approvers[approvers.length - 1];
+        break;
+      }
+    org.approvers = approvers;
+    emit ApproverRemoval(_orgId, _approver);
+  }
+
+  /// @dev Allows to replace an approver with a new approver.
+  /// @param _orgId Id of organization.
+  /// @param _approver Address of approver to be replaced.
+  /// @param newApprover Address of new approver.
+  function replaceApprover(uint256 _orgId, address _approver, address newApprover)
+    public
+    orgExists(_orgId)
+    onlyAdmin(_orgId)
+    approverExists(_orgId, _approver)
+    approverDoesNotExist(_orgId, newApprover)
+  {
+    Org storage org = orgs[_orgId];
+    address[] memory approvers = org.approvers;
+    for (uint256 i = 0; i < approvers.length; i++)
+      if (approvers[i] == _approver) {
+        approvers[i] = newApprover;
+        break;
+      }
+    org.approvers = approvers;
+    isApprover[_orgId][_approver] = false;
+    isApprover[_orgId][newApprover] = true;
+    emit ApproverRemoval(_orgId, _approver);
+    emit ApproverAddition(_orgId, newApprover);
+  }
+  
+  /// @dev Returns list of approvers.
+  /// @param _orgId Id of organization.
+  /// @return List of approver addresses.
+  function getApprovers(uint256 _orgId) public view orgExists(_orgId) returns (address[] memory) {
+    Org memory org = orgs[_orgId];
+    return org.approvers;
+  }
+  
+  /// @dev Returns if is approver.
+  /// @param _orgId Id of organization.
+  /// @param _address Address of approver.
+  /// @return if is approver address.
+  function isApproverAddress(uint256 _orgId, address _address) public orgExists(_orgId) view returns (bool) {
+    return isApprover[_orgId][_address];
   }
 }
