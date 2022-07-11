@@ -1,6 +1,9 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
+const multiplier = 0.00001;
+const complexityScore = 0;
+
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory("Organization");
   const orgContract = await org.deploy({
@@ -12,10 +15,15 @@ const getContractInstances = async () => {
   const tokenContract = await reputationToken.deploy();
   await tokenContract.deployed();
 
+  const taskStorage = await ethers.getContractFactory("TaskStorageContract");
+  const storageContract = await taskStorage.deploy();
+  await storageContract.deployed();
+
   const task = await ethers.getContractFactory("TaskContract");
   const taskContract = await task.deploy(
     tokenContract.address,
     orgContract.address,
+    storageContract.address,
     {
       gasLimit: 3e7,
     }
@@ -23,13 +31,24 @@ const getContractInstances = async () => {
   await taskContract.deployed();
   await tokenContract.updateTaskContractAddress(taskContract.address);
 
-  return { tokenContract, taskContract, orgContract };
+  await storageContract.updateTaskContractAddress(taskContract.address);
+
+  const treasury = await ethers.getContractFactory("Treasury");
+  const treasuryContract = await treasury.deploy(
+    orgContract.address,
+    taskContract.address
+  );
+  await treasuryContract.deployed();
+
+  await taskContract.updateTreasuryContract(treasuryContract.address);
+
+  return { tokenContract, taskContract, orgContract, treasuryContract };
 };
 
 describe("Integration test: Task flow", function () {
   it("Should successfully complete the task flow", async function () {
-    const [, approver1, approver2, assignee] = await ethers.getSigners();
-    const { orgContract, taskContract, tokenContract } =
+    const [owner, approver1, approver2, assignee] = await ethers.getSigners();
+    const { orgContract, taskContract, tokenContract, treasuryContract } =
       await getContractInstances();
 
     // Create organization
@@ -49,12 +68,22 @@ describe("Integration test: Task flow", function () {
     await orgContract.createOrg(
       "Buildstream",
       "Decentralized task managers",
-      [],
-      [approver1.address, approver2.address]
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      [ethers.constants.AddressZero],
+      [approver1.address, approver2.address],
+      [ethers.constants.AddressZero],
+      1
     );
 
     const orgEvent = await orgCreationEvent;
     const orgId = orgEvent.orgId.toNumber();
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract["deposit(uint256)"](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther("0.001"),
+    });
 
     // Create task using org id created earlier
     const taskCreationEvent = new Promise<any>((resolve, reject) => {
@@ -77,29 +106,38 @@ describe("Integration test: Task flow", function () {
         "update ethers version",
         "update ethers version to v2",
         ["golang"],
-        0,
+        complexityScore,
         0,
         2
       );
 
     const taskEvent = await taskCreationEvent;
-
     const taskId = taskEvent.taskId.toNumber();
 
     // Open task
-    await taskContract.connect(approver1).openTask(taskId);
+    await taskContract.connect(approver1)["openTask(uint256)"](taskId);
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId);
 
     // Submit task
     await taskContract.connect(assignee).submitTask(taskId);
+    const initialBalance = await ethers.provider.getBalance(assignee.address);
 
-    // Reviewers can confirm task
+    // Approvers can confirm task
     await taskContract.connect(approver1).approveTask(taskId);
     await taskContract.connect(approver2).approveTask(taskId);
 
     // Assignee should receive reward
-    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(1);
+
+    const reward = ethers.utils
+      .parseUnits(multiplier.toString())
+      .mul(1 + complexityScore);
+    const newBalance = await ethers.provider.getBalance(assignee.address);
+    const expectedBalance = reward.add(initialBalance);
+    const isEqual = expectedBalance.eq(newBalance);
+
+    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(2);
+    expect(isEqual).to.be.equal(true);
   });
 });

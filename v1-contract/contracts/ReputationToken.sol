@@ -19,7 +19,7 @@ contract SBTToken is ERC1155 {
   uint256 public constant COMPLEX = 4;
 
   uint256 public constant MAX_TOKEN_REWARD = 5;
-  mapping(address => bool) public locked;
+  mapping(address => mapping(uint256 => uint56)) public locked;
   uint256 public tokenTypeCount = 5;
 
   modifier onlyOwner() {
@@ -29,11 +29,6 @@ contract SBTToken is ERC1155 {
 
   modifier onlyTaskContract() {
     require(msg.sender == taskContractAddress, "Permission denied");
-    _;
-  }
-
-  modifier notLocked(address _address) {
-    require(!locked[_address], "Tokens are locked");
     _;
   }
 
@@ -70,7 +65,6 @@ contract SBTToken is ERC1155 {
   /// @param tokenId Reward tokenId.
   function reward(address to, uint256 tokenId) public onlyTaskContract tokenExists(tokenId) returns (bool) {
     _mint(to, tokenId, 1, "");
-    unStake(to);
     return true;
   }
 
@@ -84,17 +78,27 @@ contract SBTToken is ERC1155 {
     require(false, "Feature is disabled");
   }
 
+  function stakableTokens(address _address, uint256 tokenId) public view returns (uint256) {
+    uint256 balance = balanceOf(_address, tokenId);
+    return balance - locked[_address][tokenId];
+  }
+
   /// @dev Allows to lock an assignee tokens.
   /// @param _address Assignee address.
-  function stake(address _address) public onlyTaskContract notLocked(_address) returns (bool) {
-    locked[_address] = true;
+  function stake(address _address, uint256 tokenId) public onlyTaskContract returns (bool) {
+    if (balanceOf(_address, 0) == 0)
+      _mint(_address, 0, 1, "");
+    uint256 balance = balanceOf(_address, tokenId);
+    require(balance > locked[_address][tokenId] , "Tokens are locked");
+    locked[_address][tokenId] += 1;
     return true;
   }
 
   /// @dev Allows to unlock an assignee tokens.
   /// @param _address Assignee address.
-  function unStake(address _address) public onlyTaskContract returns (bool) {
-    locked[_address] = false;
+  function unStake(address _address, uint256 tokenId) public onlyTaskContract returns (bool) {
+    require(locked[_address][tokenId] > 0, "No tokens locked");
+    locked[_address][tokenId] -= 1;
     return true;
   }
 
