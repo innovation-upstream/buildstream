@@ -2,21 +2,22 @@
 import { ethers } from "hardhat";
 const fs = require("fs");
 const path = require("path");
+const OrgContract = require("../abis/Org.json");
 
 async function main() {
-  const contract = await ethers.getContractFactory("SBTToken");
-  const contractInstance = await contract.deploy();
+  const contract = await ethers.getContractFactory("ActionContract");
+  const contractInstance = await contract.deploy(OrgContract.address);
 
   await contractInstance.deployed();
 
-  console.log("Token deployed to:", contractInstance.address);
+  console.log("Action contract deployed to:", contractInstance.address);
 
   const data = {
     address: contractInstance.address,
     abi: JSON.parse(contractInstance.interface.format("json") as string),
   };
   fs.writeFileSync(
-    path.join(__dirname, "../abis/Token.json"),
+    path.join(__dirname, "../abis/Action.json"),
     JSON.stringify(data, null, 2)
   );
 }

@@ -4,19 +4,19 @@ const fs = require("fs");
 const path = require("path");
 
 async function main() {
-  const contract = await ethers.getContractFactory("SBTToken");
+  const contract = await ethers.getContractFactory("TaskStorageContract");
   const contractInstance = await contract.deploy();
 
   await contractInstance.deployed();
 
-  console.log("Token deployed to:", contractInstance.address);
+  console.log("Task storage deployed to:", contractInstance.address);
 
   const data = {
     address: contractInstance.address,
     abi: JSON.parse(contractInstance.interface.format("json") as string),
   };
   fs.writeFileSync(
-    path.join(__dirname, "../abis/Token.json"),
+    path.join(__dirname, "../abis/TaskStorage.json"),
     JSON.stringify(data, null, 2)
   );
 }

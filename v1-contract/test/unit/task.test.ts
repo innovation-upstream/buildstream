@@ -180,58 +180,10 @@ describe("Unit test: Task contract", function () {
       TaskStatus.OPEN
     );
     await storageContract.mock.assign.returns();
-    await contractInstance.connect(addr1).assignSelf(0);
+    await contractInstance.connect(addr1).assignSelf(taskId);
     expect(await contractInstance.getState(taskId)).to.be.equal(
       TaskStatus.ASSIGNED
     );
-  });
-
-  it("Should fail to assign 2 tasks", async function () {
-    const {
-      contractInstance,
-      orgContract,
-      tokenContract,
-      storageContract,
-      treasuryContract,
-    } = await getContractInstances();
-    const [, addr1] = await ethers.getSigners();
-
-    await orgContract.mock.doesOrgExists.returns(true);
-    await orgContract.mock.isApproverAddress.returns(true);
-    await tokenContract.mock.balanceOf.returns(1);
-    await tokenContract.mock.stake.returns(true);
-    await tokenContract.mock.doesTokenExist.returns(true);
-    await storageContract.mock.createTask.returns(0);
-    await contractInstance.createTask(
-      0,
-      "update ethers version",
-      "update ethers version to v2",
-      ["golang"],
-      1,
-      0,
-      1
-    );
-    await storageContract.mock.createTask.returns(1);
-    await contractInstance.createTask(
-      0,
-      "update ethers version",
-      "update ethers version to v2",
-      ["golang"],
-      1,
-      1,
-      1
-    );
-    await storageContract.mock.getTask.returns(getMockTask({}));
-    await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
-    await storageContract.mock["openTask(uint256,uint256)"].returns();
-    await contractInstance["openTask(uint256)"](0);
-    await contractInstance["openTask(uint256)"](1);
-    await storageContract.mock.assign.returns();
-    await contractInstance.connect(addr1).assignSelf(0);
-    await tokenContract.mock.stake.revertsWithReason("Tokens are locked");
-    await expect(
-      contractInstance.connect(addr1).assignSelf(1)
-    ).to.be.revertedWith("Tokens are locked");
   });
 
   it("Should fail to assign task due to low reputation", async function () {
@@ -259,15 +211,17 @@ describe("Unit test: Task contract", function () {
       1,
       1
     );
+    const taskId = 0;
     await storageContract.mock.getTask.returns(
       getMockTask({ reputationLevel: 1 })
     );
     await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
     await storageContract.mock["openTask(uint256,uint256)"].returns();
     await contractInstance["openTask(uint256)"](0);
-    await expect(
-      contractInstance.connect(addr1).assignSelf(0)
-    ).to.be.revertedWith("Not enough reputation");
+    await contractInstance.connect(addr1).assignSelf(taskId);
+    expect(await contractInstance.getState(taskId)).to.be.equal(
+      TaskStatus.OPEN
+    );
   });
 
   it("Should unassign task", async function () {
@@ -342,18 +296,18 @@ describe("Unit test: Task contract", function () {
       0,
       1
     );
-
+    const taskId = 0;
     await storageContract.mock.getTask.returns(
       getMockTask({ assigneeAddress: addr1.address })
     );
     await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
     await storageContract.mock["openTask(uint256,uint256)"].returns();
-    await contractInstance["openTask(uint256)"](0);
+    await contractInstance["openTask(uint256)"](taskId);
     await storageContract.mock.assign.returns();
     await storageContract.mock.submitTask.returns();
-    await contractInstance["openTask(uint256)"](0);
-    await contractInstance.connect(addr1).assignSelf(0);
-    await contractInstance.connect(addr1).submitTask(0);
+    await contractInstance["openTask(uint256)"](taskId);
+    await contractInstance.connect(addr1).assignSelf(taskId);
+    await contractInstance.connect(addr1).submitTask(taskId);
   });
 
   it("Should let approver confirm task", async function () {
@@ -383,18 +337,19 @@ describe("Unit test: Task contract", function () {
       0,
       2
     );
+    const taskId = 0;
     await storageContract.mock.getTask.returns(
       getMockTask({ assigneeAddress: addr1.address, requiredApprovals: 2 })
     );
     await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
     await storageContract.mock["openTask(uint256,uint256)"].returns();
-    await contractInstance["openTask(uint256)"](0);
+    await contractInstance["openTask(uint256)"](taskId);
     await storageContract.mock.assign.returns();
     await storageContract.mock.submitTask.returns();
-    await contractInstance["openTask(uint256)"](0);
-    await contractInstance.connect(addr1).assignSelf(0);
-    await contractInstance.connect(addr1).submitTask(0);
-    await contractInstance.connect(addr2).approveTask(0);
+    await contractInstance["openTask(uint256)"](taskId);
+    await contractInstance.connect(addr1).assignSelf(taskId);
+    await contractInstance.connect(addr1).submitTask(taskId);
+    await contractInstance.connect(addr2).approveTask(taskId);
   });
 
   it("Should fail to confirm unsubmitted task", async function () {
@@ -422,17 +377,18 @@ describe("Unit test: Task contract", function () {
       0,
       1
     );
+    const taskId = 0;
     await storageContract.mock.getTask.returns(
       getMockTask({ assigneeAddress: addr1.address })
     );
     await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
     await storageContract.mock["openTask(uint256,uint256)"].returns();
-    await contractInstance["openTask(uint256)"](0);
+    await contractInstance["openTask(uint256)"](taskId);
     await storageContract.mock.assign.returns();
-    await contractInstance["openTask(uint256)"](0);
-    await contractInstance.connect(addr1).assignSelf(0);
+    await contractInstance["openTask(uint256)"](taskId);
+    await contractInstance.connect(addr1).assignSelf(taskId);
     await expect(
-      contractInstance.connect(addr2).approveTask(0)
+      contractInstance.connect(addr2).approveTask(taskId)
     ).to.be.revertedWith("Task not submitted");
   });
 
@@ -451,6 +407,7 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.getApprovers.returns([addr2.address, addr3.address]);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
+    await tokenContract.mock.unStake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
     await tokenContract.mock.reward.returns(true);
     await storageContract.mock.createTask.returns(0);
@@ -463,24 +420,27 @@ describe("Unit test: Task contract", function () {
       0,
       2
     );
+    const taskId = 0;
     await storageContract.mock.getTask.returns(
       getMockTask({ assigneeAddress: addr1.address, requiredApprovals: 2 })
     );
     await treasuryContract.mock["lockBalance(uint256,uint256)"].returns();
     await treasuryContract.mock.reward.returns();
     await storageContract.mock["openTask(uint256,uint256)"].returns();
-    await contractInstance["openTask(uint256)"](0);
+    await contractInstance["openTask(uint256)"](taskId);
     await storageContract.mock.assign.returns();
     await storageContract.mock.submitTask.returns();
     await storageContract.mock.closeTask.returns();
-    await contractInstance["openTask(uint256)"](0);
-    await contractInstance.connect(addr1).assignSelf(0);
-    await contractInstance.connect(addr1).submitTask(0);
-    await contractInstance.connect(addr2).approveTask(0);
-    expect(await contractInstance.getState(0)).to.be.equal(
+    await contractInstance["openTask(uint256)"](taskId);
+    await contractInstance.connect(addr1).assignSelf(taskId);
+    await contractInstance.connect(addr1).submitTask(taskId);
+    await contractInstance.connect(addr2).approveTask(taskId);
+    expect(await contractInstance.getState(taskId)).to.be.equal(
       TaskStatus.SUBMITTED
     );
-    await contractInstance.connect(addr3).approveTask(0);
-    expect(await contractInstance.getState(0)).to.be.equal(TaskStatus.CLOSED);
+    await contractInstance.connect(addr3).approveTask(taskId);
+    expect(await contractInstance.getState(taskId)).to.be.equal(
+      TaskStatus.CLOSED
+    );
   });
 });

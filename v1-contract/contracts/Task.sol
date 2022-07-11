@@ -31,6 +31,7 @@ contract TaskContract {
   mapping(uint256 => TaskLib.TaskStatus) public taskStatus;
   mapping(uint256 => mapping(address => uint256)) public orgAssignees;
   mapping(uint256 => address) public taskAssignee;
+  mapping(uint256 => address[]) public assignmentRequest;
 
   modifier onlyOwner() {
     require(msg.sender == owner, "Permission denied");
@@ -158,6 +159,8 @@ contract TaskContract {
   function closeTask(uint256 taskId) internal {
     TaskLib.Task memory task = taskStorage.getTask(taskId);
     sbtToken.reward(task.assigneeAddress, task.complexityScore);
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore) > task.reputationLevel)
+      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel);
     if (task.rewardToken == address(0))
       treasury.reward(taskOrg[taskId], task.assigneeAddress, task.rewardAmount);
     else
@@ -209,14 +212,36 @@ contract TaskContract {
   function assignSelf(uint256 taskId) external returns (TaskLib.TaskStatus status) {
     TaskLib.Task memory task = taskStorage.getTask(taskId);
     require(taskStatus[taskId] == TaskLib.TaskStatus.OPEN, "Task not opened");
-    require(sbtToken.balanceOf(msg.sender, task.complexityScore) >= task.reputationLevel, "Not enough reputation");
+
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore) < task.reputationLevel) {
+      assignmentRequest[taskId].push(msg.sender);
+      return taskStatus[taskId];
+    }
+    
     taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
     taskAssignee[taskId] = msg.sender;
-    sbtToken.stake(msg.sender, task.complexityScore);
+    sbtToken.stake(msg.sender, task.complexityScore, task.reputationLevel);
     taskStorage.assign(taskId, msg.sender);
     orgAssignees[taskOrg[taskId]][msg.sender] += 1;
     status = taskStatus[taskId];
     emit Assignment(msg.sender, taskId);
+  }
+
+  function approveAssignRequest(uint256 taskId, address assignee) external onlyApprover(taskOrg[taskId]) {
+    TaskLib.Task memory task = taskStorage.getTask(taskId);
+    require(taskStatus[taskId] == TaskLib.TaskStatus.OPEN, "Task not opened");
+
+    taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
+    taskAssignee[taskId] = assignee;
+    sbtToken.stake(assignee, task.complexityScore, 0);
+    taskStorage.assign(taskId, assignee);
+    orgAssignees[taskOrg[taskId]][assignee] += 1;
+    emit Assignment(assignee, taskId);
+  }
+
+  function getAssignmentRequests(uint256 taskId) external view taskExists(taskId) returns (address[] memory) {
+    require(taskStatus[taskId] == TaskLib.TaskStatus.OPEN, "Task not opened");
+    return assignmentRequest[taskId];
   }
 
   /// @dev Allows assignees drop tasks.
@@ -230,7 +255,8 @@ contract TaskContract {
     taskAssignee[taskId] = address(0);
     taskStorage.unassign(taskId);
     orgAssignees[taskOrg[taskId]][msg.sender] -= 1;
-    sbtToken.unStake(msg.sender, task.complexityScore);
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore) >= task.reputationLevel)
+      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel);
     status = taskStatus[taskId];
     emit Unassignment(msg.sender, taskId);
   }

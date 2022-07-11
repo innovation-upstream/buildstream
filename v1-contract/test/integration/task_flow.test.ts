@@ -107,7 +107,7 @@ describe("Integration test: Task flow", function () {
         "update ethers version to v2",
         ["golang"],
         complexityScore,
-        0,
+        1,
         2
       );
 
@@ -119,6 +119,10 @@ describe("Integration test: Task flow", function () {
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId);
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address);
 
     // Submit task
     await taskContract.connect(assignee).submitTask(taskId);
@@ -137,7 +141,7 @@ describe("Integration test: Task flow", function () {
     const expectedBalance = reward.add(initialBalance);
     const isEqual = expectedBalance.eq(newBalance);
 
-    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(2);
+    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(1);
     expect(isEqual).to.be.equal(true);
   });
 });

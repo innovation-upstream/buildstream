@@ -1,5 +1,5 @@
 {
-  "address": "0xa2F33367B32C233fa5838542517F7F8f12559d96",
+  "address": "0xd1Ea1C3ba07fc92Bd7993335fc3Fed205fbC8C87",
   "abi": [
     {
       "type": "constructor",
@@ -12,6 +12,10 @@
         {
           "type": "address",
           "name": "organizationAddress"
+        },
+        {
+          "type": "address",
+          "name": "taskStorageAddress"
         }
       ]
     },
@@ -103,6 +107,23 @@
       ]
     },
     {
+      "type": "event",
+      "anonymous": false,
+      "name": "Unassignment",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
       "type": "function",
       "name": "_taskExists",
       "constant": true,
@@ -122,77 +143,7 @@
     },
     {
       "type": "function",
-      "name": "assignOthers",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "address",
-          "name": "assignee"
-        },
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "string",
-          "name": "status"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "assignSelf",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "string",
-          "name": "status"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "closeTask",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "confirmTask",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "confirmations",
+      "name": "approvals",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -208,6 +159,39 @@
       "outputs": [
         {
           "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "approveTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "assignSelf",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint8",
+          "name": "status"
         }
       ]
     },
@@ -231,12 +215,20 @@
           "name": "description"
         },
         {
-          "type": "uint256",
-          "name": "taskType"
+          "type": "string[]",
+          "name": "taskTags"
         },
         {
           "type": "uint256",
           "name": "complexityScore"
+        },
+        {
+          "type": "uint256",
+          "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredApprovals"
         }
       ],
       "outputs": [
@@ -248,27 +240,7 @@
     },
     {
       "type": "function",
-      "name": "getConfirmationCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "count"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getConfirmations",
+      "name": "getApprovals",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -282,7 +254,7 @@
       "outputs": [
         {
           "type": "address[]",
-          "name": "_confirmations"
+          "name": "_approvals"
         }
       ]
     },
@@ -301,7 +273,7 @@
       ],
       "outputs": [
         {
-          "type": "string"
+          "type": "uint8"
         }
       ]
     },
@@ -343,8 +315,8 @@
               "name": "assigneeAddress"
             },
             {
-              "type": "uint256",
-              "name": "taskType"
+              "type": "string[]",
+              "name": "taskTags"
             },
             {
               "type": "uint8",
@@ -353,6 +325,22 @@
             {
               "type": "uint256",
               "name": "complexityScore"
+            },
+            {
+              "type": "uint256",
+              "name": "reputationLevel"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
             }
           ]
         }
@@ -376,7 +364,7 @@
         },
         {
           "type": "bool",
-          "name": "executed"
+          "name": "closed"
         }
       ],
       "outputs": [
@@ -405,22 +393,6 @@
         {
           "type": "uint256",
           "name": "to"
-        },
-        {
-          "type": "bool",
-          "name": "open"
-        },
-        {
-          "type": "bool",
-          "name": "assigned"
-        },
-        {
-          "type": "bool",
-          "name": "submitted"
-        },
-        {
-          "type": "bool",
-          "name": "closed"
         }
       ],
       "outputs": [
@@ -432,9 +404,62 @@
     },
     {
       "type": "function",
-      "name": "isConfirmed",
+      "name": "getTaskIdsByAssignee",
       "constant": true,
       "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "uint256",
+          "name": "from"
+        },
+        {
+          "type": "uint256",
+          "name": "to"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256[]",
+          "name": "_taskIds"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "openTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "openTask",
+      "constant": false,
       "payable": false,
       "gas": 1100000,
       "inputs": [
@@ -443,12 +468,7 @@
           "name": "taskId"
         }
       ],
-      "outputs": [
-        {
-          "type": "bool",
-          "name": "confirmationStatus"
-        }
-      ]
+      "outputs": []
     },
     {
       "type": "function",
@@ -512,7 +532,7 @@
     },
     {
       "type": "function",
-      "name": "revokeConfirmation",
+      "name": "revokeApproval",
       "constant": false,
       "payable": false,
       "gas": 1100000,
@@ -537,6 +557,24 @@
         }
       ],
       "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "taskAssignee",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
     },
     {
       "type": "function",
@@ -572,7 +610,7 @@
     },
     {
       "type": "function",
-      "name": "tasks",
+      "name": "taskStatus",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -580,45 +618,46 @@
       "inputs": [
         {
           "type": "uint256"
-        },
-        {
-          "type": "uint256"
         }
       ],
       "outputs": [
         {
-          "type": "uint256",
-          "name": "id"
-        },
+          "type": "uint8"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "unassignSelf",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
         {
           "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "string",
-          "name": "title"
-        },
-        {
-          "type": "string",
-          "name": "description"
-        },
-        {
-          "type": "address",
-          "name": "assigneeAddress"
-        },
-        {
-          "type": "uint256",
-          "name": "taskType"
-        },
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
         {
           "type": "uint8",
           "name": "status"
-        },
-        {
-          "type": "uint256",
-          "name": "complexityScore"
         }
       ]
+    },
+    {
+      "type": "function",
+      "name": "updateTreasuryContract",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": []
     }
   ]
 }

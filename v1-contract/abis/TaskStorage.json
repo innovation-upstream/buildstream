@@ -1,0 +1,327 @@
+{
+  "address": "0xC5E428d09952D9563f73D615faCa1fD72c9040D0",
+  "abi": [
+    {
+      "type": "constructor",
+      "payable": false,
+      "inputs": []
+    },
+    {
+      "type": "function",
+      "name": "_taskExists",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "assign",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "closeTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "createTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "string",
+          "name": "title"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "string[]",
+          "name": "taskTags"
+        },
+        {
+          "type": "uint256",
+          "name": "complexityScore"
+        },
+        {
+          "type": "uint256",
+          "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredApprovals"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTask",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "string",
+              "name": "title"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "assigneeAddress"
+            },
+            {
+              "type": "string[]",
+              "name": "taskTags"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            },
+            {
+              "type": "uint256",
+              "name": "complexityScore"
+            },
+            {
+              "type": "uint256",
+              "name": "reputationLevel"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "openTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "openTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "submitTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "taskCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "tasks",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "id"
+        },
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "string",
+          "name": "title"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "address",
+          "name": "assigneeAddress"
+        },
+        {
+          "type": "uint8",
+          "name": "status"
+        },
+        {
+          "type": "uint256",
+          "name": "complexityScore"
+        },
+        {
+          "type": "uint256",
+          "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredApprovals"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "unassign",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskContractAddress",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": []
+    }
+  ]
+}
