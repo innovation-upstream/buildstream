@@ -19,7 +19,7 @@ contract SBTToken is ERC1155 {
   uint256 public constant COMPLEX = 4;
 
   uint256 public constant MAX_TOKEN_REWARD = 5;
-  mapping(address => mapping(uint256 => uint56)) public locked;
+  mapping(address => mapping(uint256 => uint256)) public locked;
   uint256 public tokenTypeCount = 5;
 
   modifier onlyOwner() {
@@ -85,20 +85,18 @@ contract SBTToken is ERC1155 {
 
   /// @dev Allows to lock an assignee tokens.
   /// @param _address Assignee address.
-  function stake(address _address, uint256 tokenId) public onlyTaskContract returns (bool) {
-    if (balanceOf(_address, 0) == 0)
-      _mint(_address, 0, 1, "");
+  function stake(address _address, uint256 tokenId, uint256 amount) public onlyTaskContract returns (bool) {
     uint256 balance = balanceOf(_address, tokenId);
-    require(balance > locked[_address][tokenId] , "Tokens are locked");
-    locked[_address][tokenId] += 1;
+    require(balance >= locked[_address][tokenId] + amount , "Tokens are locked");
+    locked[_address][tokenId] += amount;
     return true;
   }
 
   /// @dev Allows to unlock an assignee tokens.
   /// @param _address Assignee address.
-  function unStake(address _address, uint256 tokenId) public onlyTaskContract returns (bool) {
-    require(locked[_address][tokenId] > 0, "No tokens locked");
-    locked[_address][tokenId] -= 1;
+  function unStake(address _address, uint256 tokenId, uint256 amount) public onlyTaskContract returns (bool) {
+    require(locked[_address][tokenId] >= amount, "Tokens not locked");
+    locked[_address][tokenId] -= amount;
     return true;
   }
 

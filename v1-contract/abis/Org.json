@@ -1,10 +1,61 @@
 {
-  "address": "0x5656b29c783B14B981c4023E426538D001329FF0",
+  "address": "0x06766e4f3B67aD166e3a662973c999964136aF5E",
   "abi": [
     {
       "type": "constructor",
       "payable": false,
       "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ApproverAddition",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_approver",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ApproverRemoval",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_approver",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Confirmation",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
     },
     {
       "type": "event",
@@ -70,6 +121,40 @@
       ]
     },
     {
+      "type": "event",
+      "anonymous": false,
+      "name": "SignerAddition",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_signer",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "SignerRemoval",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "_signer",
+          "indexed": true
+        }
+      ]
+    },
+    {
       "type": "function",
       "name": "_orgExists",
       "constant": true,
@@ -89,42 +174,6 @@
     },
     {
       "type": "function",
-      "name": "addReviewer",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId"
-        },
-        {
-          "type": "address",
-          "name": "_reviewer"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "changeRequirement",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId"
-        },
-        {
-          "type": "uint256",
-          "name": "_requiredReviews"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
       "name": "createOrg",
       "constant": false,
       "payable": false,
@@ -139,12 +188,28 @@
           "name": "description"
         },
         {
+          "type": "uint256",
+          "name": "rewardMultiplier"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
+        },
+        {
           "type": "address[]",
           "name": "reviewers"
         },
         {
+          "type": "address[]",
+          "name": "approvers"
+        },
+        {
+          "type": "address[]",
+          "name": "signers"
+        },
+        {
           "type": "uint256",
-          "name": "requiredReviews"
+          "name": "requiredConfirmations"
         }
       ],
       "outputs": [
@@ -170,6 +235,39 @@
       "outputs": [
         {
           "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "executeAction",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "getApprovers",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
         }
       ]
     },
@@ -242,37 +340,30 @@
               "name": "description"
             },
             {
-              "type": "address",
-              "name": "adminAddress"
-            },
-            {
               "type": "address[]",
               "name": "reviewers"
             },
             {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "address[]",
+              "name": "signers"
+            },
+            {
               "type": "uint256",
-              "name": "requiredReviews"
+              "name": "requiredConfirmations"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardMultiplier"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getRequiredReviewsCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
         }
       ]
     },
@@ -292,6 +383,69 @@
       "outputs": [
         {
           "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getSigners",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isApprover",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isApproverAddress",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
         }
       ]
     },
@@ -319,6 +473,50 @@
     {
       "type": "function",
       "name": "isReviewerAddress",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isSigner",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isSignerAddress",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -379,51 +577,43 @@
           "name": "description"
         },
         {
-          "type": "address",
-          "name": "adminAddress"
+          "type": "uint256",
+          "name": "requiredConfirmations"
         },
         {
           "type": "uint256",
-          "name": "requiredReviews"
+          "name": "rewardMultiplier"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
         }
       ]
     },
     {
       "type": "function",
-      "name": "removeReviewer",
+      "name": "updateActionContract",
       "constant": false,
       "payable": false,
       "gas": 1100000,
       "inputs": [
         {
-          "type": "uint256",
-          "name": "_orgId"
-        },
-        {
           "type": "address",
-          "name": "_reviewer"
+          "name": "_address"
         }
       ],
       "outputs": []
     },
     {
       "type": "function",
-      "name": "replaceReviewer",
+      "name": "updateTreasuryContract",
       "constant": false,
       "payable": false,
       "gas": 1100000,
       "inputs": [
         {
-          "type": "uint256",
-          "name": "_orgId"
-        },
-        {
           "type": "address",
-          "name": "_reviewer"
-        },
-        {
-          "type": "address",
-          "name": "newReviewer"
+          "name": "_address"
         }
       ],
       "outputs": []

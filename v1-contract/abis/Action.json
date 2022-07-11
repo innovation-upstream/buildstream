@@ -1,0 +1,437 @@
+{
+  "address": "0xA476B3A1fA83DB5947DBD43723164Bbe724d8cc6",
+  "abi": [
+    {
+      "type": "constructor",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_organizationAddress"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Confirmation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "actionId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "Creation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "actionId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "_actionExists",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "actionCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "actionOrg",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "actions",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "id"
+        },
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "address",
+          "name": "targetAddress"
+        },
+        {
+          "type": "uint256",
+          "name": "value"
+        },
+        {
+          "type": "bytes",
+          "name": "data"
+        },
+        {
+          "type": "bool",
+          "name": "executed"
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        },
+        {
+          "type": "uint8",
+          "name": "actionType"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "confirmAction",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "confirmationCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "confirmations",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "createAction",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "targetAddress"
+        },
+        {
+          "type": "uint8",
+          "name": "actionType"
+        },
+        {
+          "type": "bytes",
+          "name": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "actionId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "createAction",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        },
+        {
+          "type": "address",
+          "name": "targetAddress"
+        },
+        {
+          "type": "uint256",
+          "name": "value"
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        },
+        {
+          "type": "uint8",
+          "name": "actionType"
+        },
+        {
+          "type": "bytes",
+          "name": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "actionId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "doesActionExist",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "executeAction",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "getAction",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "address",
+              "name": "targetAddress"
+            },
+            {
+              "type": "uint256",
+              "name": "value"
+            },
+            {
+              "type": "bytes",
+              "name": "data"
+            },
+            {
+              "type": "bool",
+              "name": "executed"
+            },
+            {
+              "type": "address",
+              "name": "tokenAddress"
+            },
+            {
+              "type": "uint8",
+              "name": "actionType"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isActionConfirmed",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "isActionExecuted",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orgActionCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "orgActionIds",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    }
+  ]
+}
