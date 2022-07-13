@@ -6,8 +6,9 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "declaration": true,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "rootDir": "./",
   },
-  "include": ["./scripts", "./test", "./deploy", "./typechain", "./abis"],
+  "include": ["./scripts", "./test", "./deploy", "./typechain", "./abis", "./utils"],
   "files": ["./hardhat.config.ts"]
 }

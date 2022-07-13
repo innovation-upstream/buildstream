@@ -5,14 +5,7 @@ import TaskStorageDeploy from "./task_storage";
 import ActionDeploy from "./action";
 import TaskDeploy from "./task";
 import TreasuryDeploy from "./treasury";
-const pressAnyKey = require("press-any-key");
-
-const waitForInput = async (message: string) => {
-  console.log(message);
-  await pressAnyKey("Press any key to continue, or CTRL+C to reject", {
-    ctrlC: "reject",
-  });
-};
+import { waitForInput } from "../utils/helpers";
 
 const deploySteps = [
   { func: OrgDeploy, message: "Will deploy Org" },
