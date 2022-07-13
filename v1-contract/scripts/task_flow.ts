@@ -1,10 +1,8 @@
 /* eslint-disable node/no-unpublished-import */
 import { ethers } from "hardhat";
-const pressAnyKey = require("press-any-key");
-const OrgContract = require("../abis/Org.json");
-const SBTToken = require("../abis/Token.json");
-const Task = require("../abis/Task.json");
-const Treasury = require("../abis/Treasury.json");
+const { waitForInput } = require("../utils/helpers.ts");
+const fs = require("fs");
+const path = require("path");
 
 const multiplier = 0.000001;
 const complexityScore = 0;
@@ -12,15 +10,16 @@ const requiredConfirmations = 1;
 const requiredApprovals = 1;
 const reputationLevel = 1;
 
-const waitForInput = async (message: string) => {
-  console.log(message);
-  await pressAnyKey("Press any key to continue, or CTRL+C to reject", {
-    ctrlC: "reject",
-  });
-};
-
 async function main() {
   await waitForInput("Contracts: initialize contracts");
+
+  const OrgContract = fs.readFileSync(path.join(__dirname, "../abis/Org.json"));
+  const SBTToken = fs.readFileSync(path.join(__dirname, "../abis/Token.json"));
+  const Task = fs.readFileSync(path.join(__dirname, "../abis/Task.json"));
+  const Treasury = fs.readFileSync(
+    path.join(__dirname, "../abis/Treasury.json")
+  );
+
   const [signer] = await ethers.getSigners();
   const org = await ethers.getContractFactory("Organization");
   const orgContract = await org.attach(OrgContract.address);

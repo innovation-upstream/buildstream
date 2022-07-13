@@ -2,10 +2,12 @@
 import { ethers } from "hardhat";
 const fs = require("fs");
 const path = require("path");
-const OrgContract = require("../abis/Org.json");
+const { readJson } = require("../utils/helpers.ts");
 
 async function main() {
   const contract = await ethers.getContractFactory("ActionContract");
+
+  const OrgContract = readJson(path.join(__dirname, "../abis/Org.json"));
   const contractInstance = await contract.deploy(OrgContract.address);
 
   await contractInstance.deployed();
