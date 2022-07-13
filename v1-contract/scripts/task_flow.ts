@@ -1,7 +1,6 @@
 /* eslint-disable node/no-unpublished-import */
 import { ethers } from "hardhat";
-const { waitForInput } = require("../utils/helpers.ts");
-const fs = require("fs");
+const { waitForInput, readJson } = require("../utils/helpers.ts");
 const path = require("path");
 
 const multiplier = 0.000001;
@@ -13,12 +12,10 @@ const reputationLevel = 1;
 async function main() {
   await waitForInput("Contracts: initialize contracts");
 
-  const OrgContract = fs.readFileSync(path.join(__dirname, "../abis/Org.json"));
-  const SBTToken = fs.readFileSync(path.join(__dirname, "../abis/Token.json"));
-  const Task = fs.readFileSync(path.join(__dirname, "../abis/Task.json"));
-  const Treasury = fs.readFileSync(
-    path.join(__dirname, "../abis/Treasury.json")
-  );
+  const OrgContract = readJson(path.join(__dirname, "../abis/Org.json"));
+  const SBTToken = readJson(path.join(__dirname, "../abis/Token.json"));
+  const Task = readJson(path.join(__dirname, "../abis/Task.json"));
+  const Treasury = readJson(path.join(__dirname, "../abis/Treasury.json"));
 
   const [signer] = await ethers.getSigners();
   const org = await ethers.getContractFactory("Organization");
