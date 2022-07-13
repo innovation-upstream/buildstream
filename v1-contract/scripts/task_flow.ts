@@ -94,6 +94,10 @@ async function main() {
   const taskEvent = await taskCreationEvent;
   const taskId = taskEvent.taskId.toNumber();
 
+  // Open task
+  await waitForInput("Task: open task");
+  await taskContract["openTask(uint256)"](taskId);
+
   // Assign task created above to self
   await waitForInput("Task: assign task");
   await taskContract.assignSelf(taskId);
