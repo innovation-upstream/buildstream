@@ -43,6 +43,7 @@ describe("Unit test: Org contract", function () {
       [ethers.constants.AddressZero],
       [approver1.address, approver2.address],
       [ethers.constants.AddressZero],
+      1,
       1
     );
 

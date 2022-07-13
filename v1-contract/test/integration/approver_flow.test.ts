@@ -3,6 +3,7 @@ import { ethers } from "hardhat";
 
 const multiplier = 0.00001;
 const requiredConfirmations = 2;
+const requiredApprovals = 1;
 
 const actionType = {
   WITHDRAWAL: 0,
@@ -57,7 +58,8 @@ describe("Integration test: Approver flow", function () {
       [ethers.constants.AddressZero],
       [approver1.address],
       [signer.address],
-      requiredConfirmations
+      requiredConfirmations,
+      requiredApprovals
     );
 
     const orgEvent = await orgCreationEvent;
@@ -123,7 +125,8 @@ describe("Integration test: Approver flow", function () {
       [ethers.constants.AddressZero],
       [approver1.address, approver2.address, approver3.address],
       [signer.address],
-      requiredConfirmations
+      requiredConfirmations,
+      requiredApprovals
     );
 
     const orgEvent = await orgCreationEvent;

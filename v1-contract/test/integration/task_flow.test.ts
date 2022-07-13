@@ -3,6 +3,9 @@ import { ethers } from "hardhat";
 
 const multiplier = 0.00001;
 const complexityScore = 0;
+const requiredConfirmations = 1;
+const requiredApprovals = 2;
+const reputationLevel = 1;
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory("Organization");
@@ -73,7 +76,8 @@ describe("Integration test: Task flow", function () {
       [ethers.constants.AddressZero],
       [approver1.address, approver2.address],
       [ethers.constants.AddressZero],
-      1
+      requiredConfirmations,
+      requiredApprovals
     );
 
     const orgEvent = await orgCreationEvent;
@@ -107,8 +111,7 @@ describe("Integration test: Task flow", function () {
         "update ethers version to v2",
         ["golang"],
         complexityScore,
-        1,
-        2
+        reputationLevel
       );
 
     const taskEvent = await taskCreationEvent;
@@ -141,7 +144,9 @@ describe("Integration test: Task flow", function () {
     const expectedBalance = reward.add(initialBalance);
     const isEqual = expectedBalance.eq(newBalance);
 
-    expect(await tokenContract.balanceOf(assignee.address, 0)).to.be.equal(1);
+    expect(
+      await tokenContract.balanceOf(assignee.address, complexityScore)
+    ).to.be.equal(1);
     expect(isEqual).to.be.equal(true);
   });
 });

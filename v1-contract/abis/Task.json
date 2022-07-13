@@ -1,5 +1,5 @@
 {
-  "address": "0xd1Ea1C3ba07fc92Bd7993335fc3Fed205fbC8C87",
+  "address": "0x49Af141a254C9f7D4be688938B284fED037dd0A8",
   "abi": [
     {
       "type": "constructor",
@@ -125,24 +125,6 @@
     },
     {
       "type": "function",
-      "name": "_taskExists",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "approvals",
       "constant": true,
       "stateMutability": "view",
@@ -161,6 +143,24 @@
           "type": "bool"
         }
       ]
+    },
+    {
+      "type": "function",
+      "name": "approveAssignRequest",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",
@@ -197,6 +197,27 @@
     },
     {
       "type": "function",
+      "name": "assignmentRequest",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256"
+        },
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "createTask",
       "constant": false,
       "payable": false,
@@ -225,10 +246,6 @@
         {
           "type": "uint256",
           "name": "reputationLevel"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredApprovals"
         }
       ],
       "outputs": [
@@ -255,6 +272,25 @@
         {
           "type": "address[]",
           "name": "_approvals"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getAssignmentRequests",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
         }
       ]
     },

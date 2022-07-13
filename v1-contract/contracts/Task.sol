@@ -22,7 +22,6 @@ contract TaskContract {
   event Submission(uint indexed taskId);
   event Closed(uint indexed taskId);
 
-  mapping(uint256 => bool) public _taskExists;
   mapping(uint256 => mapping(address => bool)) public approvals;
   uint256 public taskCount;
   mapping(uint256 => uint256) public orgTaskCount;
@@ -74,7 +73,6 @@ contract TaskContract {
   /// @param taskTags Token id.
   /// @param complexityScore Task complexity score.
   /// @param reputationLevel Number of tokens.
-  /// @param requiredApprovals Number of approvers required.
   /// @return taskId task ID.
   function createTask(
     uint256 orgId,
@@ -82,12 +80,12 @@ contract TaskContract {
     string memory description,
     string[] memory taskTags,
     uint256 complexityScore,
-    uint256 reputationLevel,
-    uint256 requiredApprovals
+    uint256 reputationLevel
   ) external returns (uint256 taskId) {
     require(organization.doesOrgExists(orgId), "Org not exist");
     require(sbtToken.doesTokenExist(complexityScore), "Token not exist");
-    taskId = taskStorage.createTask(orgId, title, description, taskTags, complexityScore, reputationLevel, requiredApprovals);
+    uint256 requiredTaskApprovals = organization.getTaskApprovals(orgId);
+    taskId = taskStorage.createTask(orgId, title, description, taskTags, complexityScore, reputationLevel, requiredTaskApprovals);
     taskCount += 1;
     taskStatus[taskId] = TaskLib.TaskStatus.PROPOSED;
     taskOrg[taskId] = orgId;

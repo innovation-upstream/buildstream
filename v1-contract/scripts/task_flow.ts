@@ -4,14 +4,23 @@ const pressAnyKey = require("press-any-key");
 const OrgContract = require("../abis/Org.json");
 const SBTToken = require("../abis/Token.json");
 const Task = require("../abis/Task.json");
+const Treasury = require("../abis/Treasury.json");
 
-const waitForInput = async () => {
+const multiplier = 0.000001;
+const complexityScore = 0;
+const requiredConfirmations = 1;
+const requiredApprovals = 1;
+const reputationLevel = 1;
+
+const waitForInput = async (message: string) => {
+  console.log(message);
   await pressAnyKey("Press any key to continue, or CTRL+C to reject", {
     ctrlC: "reject",
   });
 };
 
 async function main() {
+  await waitForInput("Contracts: initialize contracts");
   const [signer] = await ethers.getSigners();
   const org = await ethers.getContractFactory("Organization");
   const orgContract = await org.attach(OrgContract.address);
@@ -22,22 +31,11 @@ async function main() {
   const task = await ethers.getContractFactory("TaskContract");
   const taskContract = await task.attach(Task.address);
 
-  console.log("======== initialized contracts");
-  await waitForInput();
-
-  // Update task contract address in token contract
-  await tokenContract.updateTaskContractAddress(Task.address);
-
-  console.log("========= updated task contract address");
-  await waitForInput();
-
-  // Create new token
-  await tokenContract.creatNewToken(0);
-
-  console.log("========= created token");
-  await waitForInput();
+  const treasury = await ethers.getContractFactory("Treasury");
+  const treasuryContract = await treasury.attach(Treasury.address);
 
   // Create organization
+  await waitForInput("Organization: create organization");
   const orgCreationEvent = new Promise<any>((resolve, reject) => {
     orgContract.on("Creation", (orgId, event) => {
       event.removeListener();
@@ -54,17 +52,27 @@ async function main() {
   await orgContract.createOrg(
     "Buildstream",
     "Decentralized task managers",
-    ["0xC41Fb0beD6e5d0DC637aE6Ab97292f4908f8C7cc"],
-    1
+    ethers.utils.parseUnits(multiplier.toString()),
+    ethers.constants.AddressZero,
+    [signer.address],
+    [signer.address],
+    [signer.address],
+    requiredConfirmations,
+    requiredApprovals
   );
 
   const orgEvent = await orgCreationEvent;
   const orgId = orgEvent.orgId.toNumber();
 
-  console.log("========= created org", orgId);
-  await waitForInput();
+  // Make deposit in treasury for orgainization
+  await waitForInput("Treasury: make deposit for organization");
+  await treasuryContract["deposit(uint256)"](orgId, {
+    from: signer.address,
+    value: ethers.utils.parseEther("0.00001"),
+  });
 
   // Create task using org id created earlier
+  await waitForInput("Task: create task");
   const taskCreationEvent = new Promise<any>((resolve, reject) => {
     taskContract.on("Creation", (taskId, event) => {
       event.removeListener();
@@ -79,48 +87,50 @@ async function main() {
   });
 
   await taskContract.createTask(
-    0,
+    orgId,
     "update ethers version",
     "update ethers version to v2",
-    0,
-    0
+    ["golang"],
+    complexityScore,
+    reputationLevel
   );
 
   const taskEvent = await taskCreationEvent;
-
   const taskId = taskEvent.taskId.toNumber();
 
-  console.log("========= created task", taskId);
-  await waitForInput();
-
   // Assign task created above to self
-  await taskContract.assignSelf(0);
+  await waitForInput("Task: assign task");
+  await taskContract.assignSelf(taskId);
 
-  console.log("========= assigned");
-  await waitForInput();
+  // Approve assign task request
+  await waitForInput("Task: approve assign task");
+  await taskContract.approveAssignRequest(taskId, signer.address);
 
   // Submit task
+  await waitForInput("Task: submit task");
   await taskContract.submitTask(taskId);
 
-  console.log("========= submitted");
-  await waitForInput();
+  const initialBalance = await ethers.provider.getBalance(signer.address);
 
-  // Reviewers can confirm task
-  await taskContract.confirmTask(taskId);
-
-  console.log("========= confirmed");
-  await waitForInput();
-
-  // Anyone can close task
-  await taskContract.closeTask(taskId);
-
-  console.log("========= closed");
-  await waitForInput();
+  // Approvers can confirm task
+  await waitForInput("Task: approve task");
+  await taskContract.approveTask(taskId);
 
   // Assignee should receive reward
-  const balance = await tokenContract.balanceOf(signer.address, 1);
+  await waitForInput("Task: check reward");
+  const reward = ethers.utils
+    .parseUnits(multiplier.toString())
+    .mul(1 + complexityScore);
+  const newBalance = await ethers.provider.getBalance(signer.address);
+  const expectedBalance = reward.add(initialBalance);
 
-  console.log("My balance:", balance);
+  const tokenBal = await tokenContract.balanceOf(
+    signer.address,
+    complexityScore
+  );
+  console.log("Token balance: ", tokenBal);
+  console.log("ETH balance: ", newBalance);
+  console.log("expected ETH balance: ", expectedBalance);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

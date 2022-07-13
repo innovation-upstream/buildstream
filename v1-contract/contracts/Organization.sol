@@ -15,6 +15,7 @@ library OrgLib {
     address[] reviewers;
     address[] approvers;
     address[] signers;
+    uint256 requiredTaskApprovals;
     uint256 requiredConfirmations;
     uint256 rewardMultiplier;
     address rewardToken;
@@ -90,6 +91,7 @@ contract Organization {
   /// @param description Organization description.
   /// @param reviewers List of reviewers.
   /// @param approvers List of approvers.
+  /// @param requiredTaskApprovals Number of approvers required.
   /// @return orgId organizaion ID.
   function createOrg(
     string memory name,
@@ -99,7 +101,8 @@ contract Organization {
     address[] memory reviewers,
     address[] memory approvers,
     address[] memory signers,
-    uint256 requiredConfirmations
+    uint256 requiredConfirmations,
+    uint256 requiredTaskApprovals
   ) external returns (uint256 orgId) {
     require(reviewers.length > 0 && approvers.length > 0, "approvers or reviewers is empty");
     orgId = orgCount;
@@ -126,7 +129,8 @@ contract Organization {
       approvers: approvers,
       signers: found ? signers : _signers,
       rewardMultiplier: rewardMultiplier,
-      requiredConfirmations: requiredConfirmations
+      requiredConfirmations: requiredConfirmations,
+      requiredTaskApprovals: requiredTaskApprovals
     });
     orgCount += 1;
     _orgExists[orgId] = true;
@@ -344,5 +348,9 @@ contract Organization {
   /// @return if is signer address.
   function isSignerAddress(uint256 _orgId, address _address) external orgExists(_orgId) view returns (bool) {
     return isSigner[_orgId][_address];
+  }
+
+  function getTaskApprovals(uint256 _orgId) external orgExists(_orgId) view returns (uint256) {
+    return orgs[_orgId].requiredTaskApprovals;
   }
 }
