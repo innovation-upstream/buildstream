@@ -43,6 +43,7 @@ const getMockOrganization = ({
   signers,
   requiredConfirmations: 2,
   rewardMultiplier: 2,
+  requiredTaskApprovals: 1,
   rewardToken: ethers.constants.AddressZero,
 });
 
@@ -121,6 +122,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.doesTokenExist.returns(true);
     await storageContract.mock.createTask.returns(0);
     await contractInstance.createTask(
@@ -129,8 +131,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      1
+      0
     );
 
     const event = await creationEvent;
@@ -155,6 +156,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -165,8 +167,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      1
+      0
     );
     const taskId = 0;
     expect(await contractInstance.getState(taskId)).to.be.equal(
@@ -198,6 +199,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.balanceOf.returns(0);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -208,7 +210,6 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       4,
-      1,
       1
     );
     const taskId = 0;
@@ -236,6 +237,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.unStake.returns(true);
@@ -247,8 +249,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      1
+      0
     );
     const taskId = 0;
     await storageContract.mock.getTask.returns(
@@ -283,6 +284,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -293,8 +295,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      1
+      0
     );
     const taskId = 0;
     await storageContract.mock.getTask.returns(
@@ -323,6 +324,7 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
     await orgContract.mock.getApprovers.returns([addr2.address]);
+    await orgContract.mock.getTaskApprovals.returns(2);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -334,8 +336,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      2
+      0
     );
     const taskId = 0;
     await storageContract.mock.getTask.returns(
@@ -364,6 +365,7 @@ describe("Unit test: Task contract", function () {
 
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
+    await orgContract.mock.getTaskApprovals.returns(1);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.doesTokenExist.returns(true);
@@ -374,8 +376,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      1
+      0
     );
     const taskId = 0;
     await storageContract.mock.getTask.returns(
@@ -405,6 +406,7 @@ describe("Unit test: Task contract", function () {
     await orgContract.mock.doesOrgExists.returns(true);
     await orgContract.mock.isApproverAddress.returns(true);
     await orgContract.mock.getApprovers.returns([addr2.address, addr3.address]);
+    await orgContract.mock.getTaskApprovals.returns(2);
     await tokenContract.mock.balanceOf.returns(1);
     await tokenContract.mock.stake.returns(true);
     await tokenContract.mock.unStake.returns(true);
@@ -417,8 +419,7 @@ describe("Unit test: Task contract", function () {
       "update ethers version to v2",
       ["golang"],
       1,
-      0,
-      2
+      0
     );
     const taskId = 0;
     await storageContract.mock.getTask.returns(

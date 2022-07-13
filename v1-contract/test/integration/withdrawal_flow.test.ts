@@ -3,6 +3,8 @@ import { ethers } from "hardhat";
 
 const multiplier = 0.00001;
 const withdrawAmount = 0.0001;
+const requiredConfirmations = 2;
+const requiredApprovals = 1;
 
 const actionType = {
   WITHDRAWAL: 0,
@@ -66,7 +68,8 @@ describe("Integration test: Withdrawal", function () {
       [ethers.constants.AddressZero],
       [ethers.constants.AddressZero],
       [signer.address],
-      2
+      requiredConfirmations,
+      requiredApprovals
     );
 
     const orgEvent = await orgCreationEvent;

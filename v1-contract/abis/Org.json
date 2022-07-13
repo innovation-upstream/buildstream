@@ -1,5 +1,5 @@
 {
-  "address": "0x06766e4f3B67aD166e3a662973c999964136aF5E",
+  "address": "0x1Eb261A8528469de4A523a54c595C66347Eaa01F",
   "abi": [
     {
       "type": "constructor",
@@ -210,6 +210,10 @@
         {
           "type": "uint256",
           "name": "requiredConfirmations"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredTaskApprovals"
         }
       ],
       "outputs": [
@@ -353,6 +357,10 @@
             },
             {
               "type": "uint256",
+              "name": "requiredTaskApprovals"
+            },
+            {
+              "type": "uint256",
               "name": "requiredConfirmations"
             },
             {
@@ -402,6 +410,25 @@
       "outputs": [
         {
           "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTaskApprovals",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
         }
       ]
     },
@@ -575,6 +602,10 @@
         {
           "type": "string",
           "name": "description"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredTaskApprovals"
         },
         {
           "type": "uint256",
