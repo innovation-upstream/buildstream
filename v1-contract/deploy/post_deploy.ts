@@ -1,19 +1,22 @@
 /* eslint-disable node/no-unpublished-import */
 import { ethers } from "hardhat";
+const fs = require("fs");
 const path = require("path");
-const { waitForInput, readJson } = require("../utils/helpers.ts");
+const { waitForInput } = require("../utils/helpers.ts");
 
 async function main() {
   await waitForInput("Contracts: initialize contracts");
 
-  const OrgContract = readJson(path.join(__dirname, "../abis/Org.json"));
-  const SBTToken = readJson(path.join(__dirname, "../abis/Token.json"));
-  const TaskStorage = readJson(
+  const OrgContract = fs.readFileSync(path.join(__dirname, "../abis/Org.json"));
+  const SBTToken = fs.readFileSync(path.join(__dirname, "../abis/Token.json"));
+  const TaskStorage = fs.readFileSync(
     path.join(__dirname, "../abis/TaskStorage.json")
   );
-  const Task = readJson(path.join(__dirname, "../abis/Task.json"));
-  const Action = readJson(path.join(__dirname, "../abis/Action.json"));
-  const Treasury = readJson(path.join(__dirname, "../abis/Treasury.json"));
+  const Task = fs.readFileSync(path.join(__dirname, "../abis/Task.json"));
+  const Action = fs.readFileSync(path.join(__dirname, "../abis/Action.json"));
+  const Treasury = fs.readFileSync(
+    path.join(__dirname, "../abis/Treasury.json")
+  );
 
   const org = await ethers.getContractFactory("Organization");
   const orgContract = await org.attach(OrgContract.address);
