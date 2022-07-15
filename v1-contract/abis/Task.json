@@ -1,5 +1,5 @@
 {
-  "address": "0xCF20a4655F7Cbf77AFD589F8F94580ddCcfC1bd3",
+  "address": "0x1EFce8ad9ef1285c3379e6D923ab701fD1bfa52C",
   "abi": [
     {
       "type": "constructor",
@@ -429,38 +429,6 @@
         {
           "type": "uint256",
           "name": "to"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256[]",
-          "name": "_taskIds"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getTaskIdsByAssignee",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "uint256",
-          "name": "from"
-        },
-        {
-          "type": "uint256",
-          "name": "to"
-        },
-        {
-          "type": "address",
-          "name": "assignee"
         }
       ],
       "outputs": [
