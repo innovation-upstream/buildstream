@@ -145,7 +145,11 @@ describe("Integration test: Task flow", function () {
     const isEqual = expectedBalance.eq(newBalance);
 
     expect(
-      await tokenContract.balanceOf(assignee.address, complexityScore)
+      await tokenContract["balanceOf(address,uint256,uint256)"](
+        assignee.address,
+        complexityScore,
+        orgId
+      )
     ).to.be.equal(1);
     expect(isEqual).to.be.equal(true);
   });

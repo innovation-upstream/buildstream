@@ -19,7 +19,8 @@ contract SBTToken is ERC1155 {
   uint256 public constant COMPLEX = 4;
 
   uint256 public constant MAX_TOKEN_REWARD = 5;
-  mapping(address => mapping(uint256 => uint256)) public locked;
+  mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public locked;
+  mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public balances;
   uint256 public tokenTypeCount = 5;
 
   modifier onlyOwner() {
@@ -54,6 +55,12 @@ contract SBTToken is ERC1155 {
     return tokenTypeCount > tokenId;
   }
 
+  /// @dev Get token if a token exists.
+  /// @param tokenId Id of token.
+  function balanceOf(address _address, uint tokenId, uint orgId) public view returns (uint) {
+    return balances[_address][tokenId][orgId];
+  }
+
   /// @dev Allows to change task contract address.
   /// @param _taskContractAddress new task contract address.
   function updateTaskContractAddress(address _taskContractAddress) public onlyOwner {
@@ -63,8 +70,9 @@ contract SBTToken is ERC1155 {
   /// @dev Allows organization to reward a user with tokens.
   /// @param to Assignee address.
   /// @param tokenId Reward tokenId.
-  function reward(address to, uint256 tokenId) public onlyTaskContract tokenExists(tokenId) returns (bool) {
+  function reward(address to, uint256 tokenId, uint256 orgId) public onlyTaskContract tokenExists(tokenId) returns (bool) {
     _mint(to, tokenId, 1, "");
+    balances[to][tokenId][orgId] += 1;
     return true;
   }
 
@@ -78,25 +86,25 @@ contract SBTToken is ERC1155 {
     require(false, "Feature is disabled");
   }
 
-  function stakableTokens(address _address, uint256 tokenId) public view returns (uint256) {
-    uint256 balance = balanceOf(_address, tokenId);
-    return balance - locked[_address][tokenId];
+  function stakableTokens(address _address, uint256 tokenId, uint256 orgId) public view returns (uint256) {
+    uint256 balance = balances[_address][tokenId][orgId];
+    return balance - locked[_address][tokenId][orgId];
   }
 
   /// @dev Allows to lock an assignee tokens.
   /// @param _address Assignee address.
-  function stake(address _address, uint256 tokenId, uint256 amount) public onlyTaskContract returns (bool) {
-    uint256 balance = balanceOf(_address, tokenId);
-    require(balance >= locked[_address][tokenId] + amount , "Tokens are locked");
-    locked[_address][tokenId] += amount;
+  function stake(address _address, uint256 tokenId, uint256 amount, uint256 orgId) public onlyTaskContract returns (bool) {
+    uint256 balance = balances[_address][tokenId][orgId];
+    require(balance >= locked[_address][tokenId][orgId] + amount , "Tokens are locked");
+    locked[_address][tokenId][orgId] += amount;
     return true;
   }
 
   /// @dev Allows to unlock an assignee tokens.
   /// @param _address Assignee address.
-  function unStake(address _address, uint256 tokenId, uint256 amount) public onlyTaskContract returns (bool) {
-    require(locked[_address][tokenId] >= amount, "Tokens not locked");
-    locked[_address][tokenId] -= amount;
+  function unStake(address _address, uint256 tokenId, uint256 amount, uint256 orgId) public onlyTaskContract returns (bool) {
+    require(locked[_address][tokenId][orgId] >= amount, "Tokens not locked");
+    locked[_address][tokenId][orgId] -= amount;
     return true;
   }
 

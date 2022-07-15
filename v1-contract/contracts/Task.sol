@@ -156,9 +156,9 @@ contract TaskContract {
   /// @param taskId Task ID.
   function closeTask(uint256 taskId) internal {
     TaskLib.Task memory task = taskStorage.getTask(taskId);
-    sbtToken.reward(task.assigneeAddress, task.complexityScore);
-    if (sbtToken.balanceOf(msg.sender, task.complexityScore) > task.reputationLevel)
-      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel);
+    sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) > task.reputationLevel)
+      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel, task.orgId);
     if (task.rewardToken == address(0))
       treasury.reward(taskOrg[taskId], task.assigneeAddress, task.rewardAmount);
     else
@@ -211,14 +211,14 @@ contract TaskContract {
     TaskLib.Task memory task = taskStorage.getTask(taskId);
     require(taskStatus[taskId] == TaskLib.TaskStatus.OPEN, "Task not opened");
 
-    if (sbtToken.balanceOf(msg.sender, task.complexityScore) < task.reputationLevel) {
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) < task.reputationLevel) {
       assignmentRequest[taskId].push(msg.sender);
       return taskStatus[taskId];
     }
     
     taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
     taskAssignee[taskId] = msg.sender;
-    sbtToken.stake(msg.sender, task.complexityScore, task.reputationLevel);
+    sbtToken.stake(msg.sender, task.complexityScore, task.reputationLevel, task.orgId);
     taskStorage.assign(taskId, msg.sender);
     orgAssignees[taskOrg[taskId]][msg.sender] += 1;
     status = taskStatus[taskId];
@@ -231,9 +231,9 @@ contract TaskContract {
 
     taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
     taskAssignee[taskId] = assignee;
-    sbtToken.stake(assignee, task.complexityScore, 0);
+    sbtToken.stake(assignee, task.complexityScore, 0, task.orgId);
     taskStorage.assign(taskId, assignee);
-    orgAssignees[taskOrg[taskId]][assignee] += 1;
+    orgAssignees[task.orgId][assignee] += 1;
     emit Assignment(assignee, taskId);
   }
 
@@ -253,8 +253,8 @@ contract TaskContract {
     taskAssignee[taskId] = address(0);
     taskStorage.unassign(taskId);
     orgAssignees[taskOrg[taskId]][msg.sender] -= 1;
-    if (sbtToken.balanceOf(msg.sender, task.complexityScore) >= task.reputationLevel)
-      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel);
+    if (sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) >= task.reputationLevel)
+      sbtToken.unStake(msg.sender, task.complexityScore, task.reputationLevel, task.orgId);
     status = taskStatus[taskId];
     emit Unassignment(msg.sender, taskId);
   }
@@ -294,32 +294,5 @@ contract TaskContract {
     for (i = from; i < max; i++) {
       _taskIds[i - from] = orgTaskIds[orgId][i];
     }
-  }
-
-  /// @dev Returns list of task IDs in defined range assigned to an address.
-  /// @param orgId Id of organization.
-  /// @param from Index start position of task array.
-  /// @param to Index end position of task array.
-  /// @param assignee Assignee address.
-  /// @return _taskIds array of task IDs.
-  function getTaskIdsByAssignee(
-    uint256 orgId,
-    uint256 from,
-    uint256 to,
-    address assignee
-  ) public view notNull(assignee) returns (uint256[] memory _taskIds) {
-    uint256[] memory taskIdsTemp = new uint256[](orgAssignees[orgId][msg.sender]);
-    uint256 count = 0;
-    uint256 i;
-    for (i = 0; i < orgTaskCount[orgId]; i++) {
-      uint256 taskId = orgTaskIds[orgId][i];
-      if (taskAssignee[taskId] == assignee) {
-        taskIdsTemp[count] = taskId;
-        count += 1;
-      }
-    }
-    _taskIds = new uint256[](to - from);
-    for (i = from; i < to; i++)
-      _taskIds[i - from] = taskIdsTemp[i];
   }
 }

@@ -124,9 +124,10 @@ async function main() {
   const newBalance = await ethers.provider.getBalance(signer.address);
   const expectedBalance = reward.add(initialBalance);
 
-  const tokenBal = await tokenContract.balanceOf(
+  const tokenBal = await tokenContract["balanceOf(address,uint256,uint256)"](
     signer.address,
-    complexityScore
+    complexityScore,
+    orgId
   );
   console.log("Token balance: ", tokenBal);
   console.log("ETH balance: ", newBalance);
