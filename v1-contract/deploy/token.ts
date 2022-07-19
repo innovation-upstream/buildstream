@@ -16,7 +16,7 @@ async function main() {
     abi: JSON.parse(contractInstance.interface.format("json") as string),
   };
   fs.writeFileSync(
-    path.join(__dirname, "../abis/Token.json"),
+    path.join(__dirname, "../../app/src/contracts/Token.json"),
     JSON.stringify(data, null, 2)
   );
 }

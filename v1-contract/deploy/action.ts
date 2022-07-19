@@ -7,7 +7,9 @@ const { readJson } = require("../utils/helpers.ts");
 async function main() {
   const contract = await ethers.getContractFactory("ActionContract");
 
-  const OrgContract = readJson(path.join(__dirname, "../abis/Org.json"));
+  const OrgContract = readJson(
+    path.join(__dirname, "../../app/src/contracts/Org.json")
+  );
   const contractInstance = await contract.deploy(OrgContract.address);
 
   await contractInstance.deployed();
@@ -19,7 +21,7 @@ async function main() {
     abi: JSON.parse(contractInstance.interface.format("json") as string),
   };
   fs.writeFileSync(
-    path.join(__dirname, "../abis/Action.json"),
+    path.join(__dirname, "../../app/src/contracts/Action.json"),
     JSON.stringify(data, null, 2)
   );
 }
