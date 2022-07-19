@@ -12,10 +12,18 @@ const reputationLevel = 1;
 async function main() {
   await waitForInput("Contracts: initialize contracts");
 
-  const OrgContract = readJson(path.join(__dirname, "../abis/Org.json"));
-  const SBTToken = readJson(path.join(__dirname, "../abis/Token.json"));
-  const Task = readJson(path.join(__dirname, "../abis/Task.json"));
-  const Treasury = readJson(path.join(__dirname, "../abis/Treasury.json"));
+  const OrgContract = readJson(
+    path.join(__dirname, "../../app/src/contracts/Org.json")
+  );
+  const SBTToken = readJson(
+    path.join(__dirname, "../../app/src/contracts/Token.json")
+  );
+  const Task = readJson(
+    path.join(__dirname, "../../app/src/contracts/Task.json")
+  );
+  const Treasury = readJson(
+    path.join(__dirname, "../../app/src/contracts/Treasury.json")
+  );
 
   const [signer] = await ethers.getSigners();
   const org = await ethers.getContractFactory("Organization");

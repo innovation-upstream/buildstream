@@ -9,6 +9,6 @@
     "baseUrl": "./",
     "rootDir": "./",
   },
-  "include": ["./scripts", "./test", "./deploy", "./typechain", "./abis", "./utils"],
+  "include": ["./scripts", "./test", "./deploy", "./typechain", "./utils"],
   "files": ["./hardhat.config.ts"]
 }
