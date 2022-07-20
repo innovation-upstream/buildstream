@@ -3,10 +3,11 @@ import Logo from '../../../public/vercel.svg'
 import { useWeb3React } from '@web3-react/core'
 import injected from 'config/Walletconnectors'
 import Image from 'next/image'
+import Balances from 'components/Balances/Balances'
+import styles from './Header.module.css'
 
 const Header = () => {
   const { account: address, activate, deactivate } = useWeb3React()
-  const balance = '0.00'
 
   async function connect() {
     try {
@@ -51,14 +52,14 @@ const Header = () => {
                 onClick={disconnect}
                 className="mr-2 inline-flex items-center bg-neutral-300 border-0 py-1 px-5 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0"
               >
-                Connected
+                Disconnect
               </button>
-              <div className="inline-flex items-center bg-neutral-100 border border-neutral-300 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0">
-                <h3 className="py-1 px-4 font-mono">{balance} SBT</h3>
+              <div className={`relative inline-flex items-center bg-neutral-100 border border-neutral-300 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0 ${styles.accountContainer}`}>
                 <div className="inline-flex font-mono items-center bg-white border-0 py-1 px-4 focus:outline-none rounded-lg text-base text-black mt-4 mt-0">
                   {address.substring(0, 6)}...
                   {address.substring(address.length - 4)}
                 </div>
+                <Balances className={styles.balances} />
               </div>
             </>
           ) : (
