@@ -1,6 +1,5 @@
 import useOrganizations from 'hooks/organization/useOrganization'
 import type { NextPage, GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
 import {
   getOrganizationCount,
   getOrganizationIds,
@@ -28,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const serializedOrgs = orgs.map((o) => ({
     ...o,
-    rewardMultiplier: JSON.parse(JSON.stringify(o.rewardMultiplier))
+    rewardMultiplier: o.rewardMultiplier.toNumber()
   }))
 
   return {
@@ -41,13 +40,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const OrganizationPage: NextPage<PageProps> = ({ orgs }) => {
   const { organizations } = useOrganizations(orgs)
   const [selectedOrg, setSelectedOrg] = useState(0)
-  const router = useRouter()
 
   const selected = organizations.find((o) => o.id === selectedOrg)
 
   const onSelect = (id: number) => {
     setSelectedOrg(id)
-    router.push(`/organization/${id}`, undefined, { shallow: true })
   }
 
   return (
