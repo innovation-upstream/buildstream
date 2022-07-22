@@ -10,14 +10,13 @@ import { Organization } from 'hooks/organization/types'
 import { ethers } from 'ethers'
 import { useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 
 interface PageProps {
-  id: number
   orgs: Organization[]
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const orgId = context.params?.id?.[0]
   const orgCount = await getOrganizationCount()
   const orgIds = await getOrganizationIds(0, orgCount)
   const orgs = await Promise.all(
@@ -34,15 +33,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      id: orgId ? parseInt(orgId) : 0,
       orgs: serializedOrgs
     }
   }
 }
 
-const OrganizationPage: NextPage<PageProps> = ({ id, orgs }) => {
+const OrganizationPage: NextPage<PageProps> = ({ orgs }) => {
   const { organizations } = useOrganizations(orgs)
-  const [selectedOrg, setSelectedOrg] = useState(id)
+  const [selectedOrg, setSelectedOrg] = useState(0)
   const router = useRouter()
 
   const selected = organizations.find((o) => o.id === selectedOrg)
@@ -122,6 +120,9 @@ const OrganizationPage: NextPage<PageProps> = ({ id, orgs }) => {
               : selected?.rewardToken}
           </span>
         </p>
+        <Link href={`/organization/${selected?.id}`}>
+          <a className="block mt-10 text-blue-700">{`view ${selected?.name}`}</a>
+        </Link>
       </div>
     </div>
   )
