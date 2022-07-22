@@ -1,7 +1,7 @@
-import { useDebugValue, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import SBT from 'contracts/Token.json'
 import { useWeb3React } from '@web3-react/core'
-import useContract from '../hooks/useContract'
+import getContract from 'utils/getContract'
 import { ethers } from 'ethers'
 
 const tokenList = [
@@ -19,7 +19,7 @@ type TokenBalance = {
   orgId?: number
 }
 
-const defaultValue: TokenBalance[] = tokenList.map(t => ({
+const defaultValue: TokenBalance[] = tokenList.map((t) => ({
   tokenId: t.id,
   name: t.name,
   balance: 0
@@ -28,11 +28,10 @@ const defaultValue: TokenBalance[] = tokenList.map(t => ({
 const useBalance = (orgId = 0) => {
   const [balance, setBalance] = useState<TokenBalance[]>(defaultValue)
   const [orgBalance, setOrgBalance] = useState<TokenBalance[]>(defaultValue)
-  const { account } = useWeb3React()
-  const { contract } = useContract(SBT.address, SBT.abi)
-  useDebugValue([balance, orgBalance])
+  const { account, library } = useWeb3React()
 
   const fetchBalances = async () => {
+    const contract = getContract(SBT.address, SBT.abi, library)
     tokenList.forEach(async (token) => {
       const bal: ethers.BigNumber = await contract[
         'balanceOf(address,uint256)'
