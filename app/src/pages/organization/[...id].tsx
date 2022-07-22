@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       org: {
         ...org,
-        rewardMultiplier: JSON.parse(JSON.stringify(org.rewardMultiplier))
+        rewardMultiplier: org.rewardMultiplier.toNumber()
       }
     }
   }
