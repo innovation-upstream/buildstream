@@ -1,59 +1,44 @@
-import React, { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import getContract from 'utils/getContract'
+import Spinner from 'components/Spinner/Spinner'
 import OrgContract from 'contracts/Org.json'
 import { ethers } from 'ethers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import getContract from 'utils/getContract'
 
-type orgDataType = {
-  name: string
-  description: string
-  rewardMultiplier: number
-  rewardToken: string
-  reviewers: string[]
-  approvers: string[]
-  signers: string[]
-  requiredConfirmations: number
-  requiredTaskApprovals: number
+const initialData = {
+  name: '',
+  description: '',
+  rewardMultiplier: 0,
+  rewardToken: ethers.constants.AddressZero,
+  reviewers: [''],
+  approvers: [''],
+  signers: [],
+  requiredConfirmations: 1,
+  requiredTaskApprovals: 1
 }
 
-const CreateOrganisation: React.FC = () => {
+type OrgData = typeof initialData & { [keyof: string]: any }
+
+const CreateOrganization: React.FC = () => {
   const router = useRouter()
   const { account, library } = useWeb3React()
   const [processing, setProcessing] = useState(false)
-  const [orgData, setOrgData] = useState<orgDataType>({
-    name: '',
-    description: '',
-    rewardMultiplier: 1,
-    rewardToken: ethers.constants.AddressZero,
-    reviewers: [],
-    approvers: [],
-    signers: [],
-    requiredConfirmations: 1,
-    requiredTaskApprovals: 1,
-  })
-  const [status, setStatus] = useState<any>({ text: '', error: false })
+  const [orgData, setOrgData] = useState<OrgData>(initialData)
+  const [status, setStatus] = useState({ text: '', error: false })
 
   const handleChange = (ev: any) => {
-    const targetName: string = ev.target.name
+    const targetName = ev.target.name
     let targetValue: string | number = ev.target.value
 
-    if (
-      targetName === 'rewardMultiplier' ||
-      targetName === 'requiredConfirmations' ||
-      targetName === 'requiredTaskApprovals'
-    ) {
+    if (ev.target.type === 'number') {
       if (targetValue) {
         targetValue = Number(targetValue)
       }
     }
 
-    if (
-      targetName === 'reviewers' ||
-      targetName === 'approvers' ||
-      targetName === 'signers'
-    ) {
+    if (ev.target.dataset.type === 'addressArray') {
       let prevData = [...orgData[targetName]]
       prevData[ev.target.id] = ev.target.value
       setOrgData((prev: any) => ({ ...prev, [targetName]: [...prevData] }))
@@ -62,53 +47,39 @@ const CreateOrganisation: React.FC = () => {
     setOrgData((prev: any) => ({ ...prev, [targetName]: targetValue }))
   }
 
-  const addReviewer = () => {
-    let preReviewers = [...orgData.reviewers]
-    preReviewers.push('')
-    setOrgData((prev: any) => ({ ...prev, reviewers: preReviewers }))
-  }
-  const addApprovers = () => {
-    let prevData = [...orgData.approvers]
-    prevData.push('')
-    setOrgData((prev: any) => ({ ...prev, approvers: prevData }))
-  }
-  const addSigners = () => {
-    let prevData = [...orgData.signers]
-    prevData.push('')
-    setOrgData((prev: any) => ({ ...prev, signers: prevData }))
+  const addToAddressArray = (e: any) => {
+    const targetName = e.target.dataset.name
+    setOrgData((prev: any) => ({
+      ...prev,
+      [targetName]: [...orgData[targetName], '']
+    }))
   }
 
-  const createOrg: any = async () => {
-    const name = orgData.name
-    const description = orgData.description
-    const rewardMultiplier = orgData.rewardMultiplier
-
-    if (!name || !description || !rewardMultiplier) {
-      setStatus({ text: 'Invalid Input. Complete all Fields', error: true })
-      return
-    }
-
+  const createOrg: any = async (e: any) => {
+    e.preventDefault()
     if (!account) {
       setStatus({ text: 'Wallet Not Connected', error: true })
       return
     }
     try {
       setProcessing(true)
-      await getContract(OrgContract.address, OrgContract.abi as any)
+      const tx = await getContract(OrgContract.address, OrgContract.abi as any)
         .connect(library.getSigner())
         .createOrg(
-          name,
-          description,
-          rewardMultiplier,
+          orgData.name,
+          orgData.description,
+          ethers.utils.parseUnits(orgData.rewardMultiplier.toString()),
           orgData.rewardToken,
           orgData.reviewers,
-          [account],
-          [account],
+          orgData.approvers,
+          orgData.signers,
           orgData.requiredConfirmations,
           orgData.requiredTaskApprovals,
-          { gasLimit: 40000 }
+          { gasLimit: 2100000 }
         )
-      router.push('/organization')
+      const receipt = await tx.wait()
+      const event = receipt.events.find((e: any) => e.event === 'Creation')
+      router.push(`/organization/${event?.args?.[0]}`)
     } catch (error) {
       setProcessing(false)
       setStatus({ text: 'Error! Not created', error: true })
@@ -124,10 +95,10 @@ const CreateOrganisation: React.FC = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <section className='text-gray-600 body-font relative'>
-        <div className='container px-5 py-24 mx-auto'>
+        <form onSubmit={createOrg} className='container px-5 py-24 mx-auto'>
           <div className='flex flex-col text-center w-full mb-12'>
             <h1 className='sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900'>
-              Create Organisation
+              Create Organization
             </h1>
             <p
               className={`lg:w-2/3 mx-auto leading-relaxed text-base ${
@@ -151,6 +122,7 @@ const CreateOrganisation: React.FC = () => {
                     type='text'
                     id='name'
                     name='name'
+                    required
                     value={orgData.name}
                     onChange={handleChange}
                     className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
@@ -169,6 +141,7 @@ const CreateOrganisation: React.FC = () => {
                     type='number'
                     id='rewardMultiplier'
                     name='rewardMultiplier'
+                    required
                     value={orgData.rewardMultiplier}
                     onChange={handleChange}
                     className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
@@ -186,6 +159,7 @@ const CreateOrganisation: React.FC = () => {
                   <input
                     type='number'
                     id='requiredConfirmations'
+                    required
                     name='requiredConfirmations'
                     value={orgData.requiredConfirmations}
                     onChange={handleChange}
@@ -205,6 +179,7 @@ const CreateOrganisation: React.FC = () => {
                     type='number'
                     id='requiredTaskApprovals'
                     name='requiredTaskApprovals'
+                    required
                     value={orgData.requiredTaskApprovals}
                     onChange={handleChange}
                     className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
@@ -229,136 +204,101 @@ const CreateOrganisation: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className='accordion w-full pt-3 pb-3' id='accordionExample'>
-                <div className='relative accordion-item bg-white border border-gray-200'>
-                  <h2
-                    className='accordion-header mb-0 p-3 mx-2'
-                    id='headingOne'
-                  >
-                    Add Reviewers
-                  </h2>
-                  <div
-                    id='collapseOne'
-                    className='accordion-collapse collapse show'
-                    aria-labelledby='headingOne'
-                    data-bs-parent='#accordionExample'
-                  >
-                    <div className='accordion-body px-5'>
-                      {orgData.reviewers.map((input, ind) => {
-                        return (
-                          <div key={ind} className='p-0 mb-4'>
-                            <div className='relative'>
-                              <input
-                                id={`${ind}`}
-                                name='reviewers'
-                                value={input}
-                                onChange={handleChange}
-                                className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                              />
-                            </div>
+              <div className='w-full p-2 pt-5 pb-3'>
+                <div className='relative'>
+                  <h2 className='text-sm gray-600 mb-1'>Reviewers</h2>
+                  <div>
+                    {orgData.reviewers.map((input, ind) => {
+                      return (
+                        <div key={ind} className='p-0 mb-2'>
+                          <div className='relative'>
+                            <input
+                              id={`${ind}`}
+                              data-type='addressArray'
+                              required
+                              name='reviewers'
+                              value={input}
+                              onChange={handleChange}
+                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                            />
                           </div>
-                        )
-                      })}
-                    </div>
-                    <button
-                      className='flex my-3 mx-5 text-white bg-slate-600 border-0 py-2 px-8 focus:outline-none hover:bg-slate-800 rounded text-lg'
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#collapseOne'
-                      aria-expanded='true'
-                      aria-controls='collapseOne'
-                      onClick={addReviewer}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div className='accordion-item bg-white border border-gray-200'>
-                  <h2
-                    className='accordion-header mb-0 mx-5 py-3'
-                    id='headingTwo'
-                  >
-                    Add Approvers
-                  </h2>
-                  <div
-                    id='collapseTwo'
-                    className='accordion-collapse collapse show'
-                    aria-labelledby='headingTwo'
-                    data-bs-parent='#accordionExample'
-                  >
-                    <div className='accordion-body px-5'>
-                      {orgData.approvers.map((input, ind) => {
-                        return (
-                          <div key={ind} className='p-0 mb-4'>
-                            <div className='relative'>
-                              <input
-                                id={`${ind}`}
-                                name='approvers'
-                                value={input}
-                                onChange={handleChange}
-                                className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                              />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                    <button
-                      className='my-3 mx-5 text-white bg-slate-600 border-0 py-2 px-8 focus:outline-none hover:bg-slate-800 rounded text-lg'
-                      type='button'
-                      data-bs-toggle='collapse'
-                      data-bs-target='#collapseTwo'
-                      aria-expanded='true'
-                      aria-controls='collapseTwo'
-                      onClick={addApprovers}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div className='accordion-item bg-white border border-gray-200'>
-                  <h2
-                    className='accordion-header mb-0 mx-5 py-3'
-                    id='headingThree'
-                  >
-                    Add Signers
-                  </h2>
-                  <div
-                    id='collapseThree'
-                    className='accordion-collapse collapse'
-                    aria-labelledby='headingThree'
-                    data-bs-parent='#accordionExample'
-                  >
-                    <div className='accordion-body px-5'>
-                      {orgData.signers.map((input, ind) => {
-                        return (
-                          <div key={ind} className='p-0 mb-4'>
-                            <div className='relative'>
-                              <input
-                                id={`${ind}`}
-                                name='signers'
-                                value={input}
-                                onChange={handleChange}
-                                className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                              />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
+                        </div>
+                      )
+                    })}
                   </div>
                   <button
-                    className='flex my-3 mx-5 text-white bg-slate-600 mt-4 border-0 py-2 px-8 focus:outline-none hover:bg-slate-800 rounded text-lg'
+                    className='flex my-1 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
                     type='button'
-                    data-bs-toggle='collapse'
-                    data-bs-target='#collapseThree'
-                    aria-expanded='true'
-                    aria-controls='collapseThree'
-                    onClick={addSigners}
+                    data-name='reviewers'
+                    onClick={addToAddressArray}
                   >
                     +
                   </button>
                 </div>
+              </div>
+              <div className='w-full p-2 pt-5 pb-3'>
+                <div className='relative'>
+                  <h2 className='text-sm gray-600 mb-1'>Approvers</h2>
+                  <div>
+                    {orgData.approvers.map((input, ind) => {
+                      return (
+                        <div key={ind} className='p-0 mb-2'>
+                          <div className='relative'>
+                            <input
+                              id={`${ind}`}
+                              data-type='addressArray'
+                              required
+                              name='approvers'
+                              value={input}
+                              onChange={handleChange}
+                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <button
+                    className='flex my-1 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
+                    type='button'
+                    data-name='approvers'
+                    onClick={addToAddressArray}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div className='w-full p-2 pt-5 pb-3'>
+                <div className='relative'>
+                  <h2 className='text-sm gray-600 mb-1'>Signers</h2>
+                  <div>
+                    {orgData.signers.map((input, ind) => {
+                      return (
+                        <div key={ind} className='p-0 mb-2'>
+                          <div className='relative'>
+                            <input
+                              data-type='addressArray'
+                              id={`${ind}`}
+                              required
+                              name='signers'
+                              value={input}
+                              onChange={handleChange}
+                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+                <button
+                  className='flex my-2 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
+                  type='button'
+                  data-name='signers'
+                  onClick={addToAddressArray}
+                >
+                  +
+                </button>
               </div>
               <div className='p-2 w-full'>
                 <div className='relative'>
@@ -370,6 +310,7 @@ const CreateOrganisation: React.FC = () => {
                   </label>
                   <textarea
                     id='description'
+                    required
                     name='description'
                     value={orgData.description}
                     onChange={handleChange}
@@ -377,20 +318,21 @@ const CreateOrganisation: React.FC = () => {
                   ></textarea>
                 </div>
               </div>
-              <div className='p-2 w-full'>
-                <button
-                  onClick={createOrg}
-                  className='flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg'
-                >
-                  {processing ? 'Processing...' : 'Create'}
-                </button>
-              </div>
+            </div>
+            <div className='p-2 w-full'>
+              <button
+                type='submit'
+                disabled={processing}
+                className='flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+              >
+                {processing ? <Spinner /> : 'Create'}
+              </button>
             </div>
           </div>
-        </div>
+        </form>
       </section>
     </div>
   )
 }
 
-export default CreateOrganisation
+export default CreateOrganization
