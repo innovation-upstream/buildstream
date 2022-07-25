@@ -1,36 +1,36 @@
 /* eslint-disable node/no-unpublished-import */
-import { ethers } from "hardhat";
-const fs = require("fs");
-const path = require("path");
-const { readJson } = require("../utils/helpers.ts");
+import { ethers } from 'hardhat'
+const fs = require('fs')
+const path = require('path')
+const { readJson } = require('../utils/helpers.ts')
 
 async function main() {
-  const contract = await ethers.getContractFactory("Treasury");
+  const contract = await ethers.getContractFactory('Treasury')
 
   const OrgContract = readJson(
-    path.join(__dirname, "../../app/src/contracts/Org.json")
-  );
+    path.join(__dirname, '../../app/src/contracts/Org.json')
+  )
   const Task = readJson(
-    path.join(__dirname, "../../app/src/contracts/Task.json")
-  );
+    path.join(__dirname, '../../app/src/contracts/Task.json')
+  )
 
   const contractInstance = await contract.deploy(
     OrgContract.address,
     Task.address
-  );
+  )
 
-  await contractInstance.deployed();
+  await contractInstance.deployed()
 
-  console.log("Treasury contract deployed to:", contractInstance.address);
+  console.log('Treasury contract deployed to:', contractInstance.address)
 
   const data = {
     address: contractInstance.address,
-    abi: JSON.parse(contractInstance.interface.format("json") as string),
-  };
+    abi: JSON.parse(contractInstance.interface.format('json') as string)
+  }
   fs.writeFileSync(
-    path.join(__dirname, "../../app/src/contracts/Treasury.json"),
+    path.join(__dirname, '../../app/src/contracts/Treasury.json'),
     JSON.stringify(data, null, 2)
-  );
+  )
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -40,4 +40,4 @@ async function main() {
 //   process.exitCode = 1;
 // });
 
-export default main;
+export default main
