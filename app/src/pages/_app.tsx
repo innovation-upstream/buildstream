@@ -12,7 +12,7 @@ export const getLibrary = (provider: any): Web3Provider => {
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
-      <div className='relative py-20' style={{ minHeight: '100vh' }}>
+      <div className='relative sm:py-20 py-40' style={{ minHeight: '100vh' }}>
         <Header />
         <Component {...pageProps} />
         <Footer />
