@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { tokenList, TokenBalance } from './types'
-import { fetchBalances, fetchOrgBalances } from './functions'
 import { BigNumber } from 'ethers'
+import { useEffect, useState } from 'react'
+import { fetchBalances, fetchOrgBalances } from './functions'
+import { TokenBalance, tokenList } from './types'
 
 const defaultValue: TokenBalance[] = tokenList.map((t) => ({
   tokenId: t.id,

@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Organization } from './types'
+import { useEffect, useState } from 'react'
 import {
+  getOrganization,
   getOrganizationCount,
-  getOrganizationIds,
-  getOrganization
+  getOrganizationIds
 } from './functions'
+import { Organization } from './types'
 
 const useOrganizations = (initialState: Organization[] = []) => {
-  const [organizations, setOrganizations] = useState<Organization[]>(initialState)
+  const [organizations, setOrganizations] =
+    useState<Organization[]>(initialState)
   const { library } = useWeb3React()
 
   const refetchOrganizations = async () => {
