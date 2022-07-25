@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import {
   getOrganization,
   getOrganizationCount,
-  getOrganizationIds,
+  getOrganizationIds
 } from 'hooks/organization/functions'
 import { Organization } from 'hooks/organization/types'
 import useOrganizations from 'hooks/organization/useOrganization'
@@ -27,13 +27,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const serializedOrgs = orgs.map((o) => ({
     ...o,
-    rewardMultiplier: o.rewardMultiplier.toNumber(),
+    rewardMultiplier: o.rewardMultiplier.toNumber()
   }))
 
   return {
     props: {
-      orgs: serializedOrgs,
-    },
+      orgs: serializedOrgs
+    }
   }
 }
 
