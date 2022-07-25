@@ -1,7 +1,7 @@
-import { ethers } from 'ethers'
-import { tokenList, TokenBalance } from './types'
-import getContract from 'utils/getContract'
 import SBT from 'contracts/Token.json'
+import { ethers } from 'ethers'
+import getContract from 'utils/getContract'
+import { TokenBalance, tokenList } from './types'
 
 export const fetchBalances = async (
   account: string,

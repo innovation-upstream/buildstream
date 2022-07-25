@@ -1,0 +1,20 @@
+{
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.organizeImports": true
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true,
+  "html.completion.attributeDefaultValue": "singlequotes",
+  "yaml.format.singleQuote": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

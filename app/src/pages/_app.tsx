@@ -1,10 +1,9 @@
-import '../styles/globals.css'
-import React from 'react'
-import type { AppProps } from 'next/app'
-import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
-import Header from 'components/Header/Header'
+import { Web3ReactProvider } from '@web3-react/core'
 import Footer from 'components/Footer/Footer'
+import Header from 'components/Header/Header'
+import type { AppProps } from 'next/app'
+import '../styles/globals.css'
 
 export const getLibrary = (provider: any): Web3Provider => {
   return new Web3Provider(provider, 'any')

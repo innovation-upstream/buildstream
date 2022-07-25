@@ -1,7 +1,7 @@
-import { Organization } from './types'
-import getContract from 'utils/getContract'
 import OrgContractInterface from 'contracts/Org.json'
 import { BigNumber } from 'ethers'
+import getContract from 'utils/getContract'
+import { Organization } from './types'
 
 export const getOrganizationCount = async (provider?: any): Promise<number> => {
   const contract = getContract(
