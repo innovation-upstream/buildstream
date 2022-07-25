@@ -1,3 +1,4 @@
+import Deposit from 'components/Deposit/Deposit'
 import { ethers } from 'ethers'
 import { getOrganization } from 'hooks/organization/functions'
 import { Organization } from 'hooks/organization/types'
@@ -81,6 +82,9 @@ const OrganizationPage: NextPage<PageProps> = ({ org }) => {
               : org?.rewardToken}
           </span>
         </p>
+      </div>
+      <div className='w-full md:basis-6/12 bg-gray-100 rounded-lg p-8'>
+        <Deposit org={org} />
       </div>
     </div>
   )
