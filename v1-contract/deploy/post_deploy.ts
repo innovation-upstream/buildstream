@@ -6,12 +6,24 @@ const { waitForInput, readJson } = require('../utils/helpers.ts')
 async function main() {
   await waitForInput('Contracts: initialize contracts')
 
-  const OrgContract = readJson(path.join(__dirname, '../abis/Org.json'))
-  const SBTToken = readJson(path.join(__dirname, '../abis/Token.json'))
-  const TaskStorage = readJson(path.join(__dirname, '../abis/TaskStorage.json'))
-  const Task = readJson(path.join(__dirname, '../abis/Task.json'))
-  const Action = readJson(path.join(__dirname, '../abis/Action.json'))
-  const Treasury = readJson(path.join(__dirname, '../abis/Treasury.json'))
+  const OrgContract = readJson(
+    path.join(__dirname, '../../app/src/contracts/Org.json')
+  )
+  const SBTToken = readJson(
+    path.join(__dirname, '../../app/src/contracts/Token.json')
+  )
+  const TaskStorage = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskStorage.json')
+  )
+  const Task = readJson(
+    path.join(__dirname, '../../app/src/contracts/Task.json')
+  )
+  const Action = readJson(
+    path.join(__dirname, '../../app/src/contracts/Action.json')
+  )
+  const Treasury = readJson(
+    path.join(__dirname, '../../app/src/contracts/Treasury.json')
+  )
 
   const org = await ethers.getContractFactory('Organization')
   const orgContract = await org.attach(OrgContract.address)
