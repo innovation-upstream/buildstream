@@ -73,7 +73,7 @@ contract ActionContract {
     organization = Organization(_organizationAddress);
   }
 
-  /// @dev Check if an organization exists.
+  /// @dev Create an action.
   /// @param _orgId Id of organization.
   function createAction(
     uint256 _orgId,
@@ -102,7 +102,7 @@ contract ActionContract {
     emit Creation(_orgId, actionId);
   }
 
-  /// @dev Check if an organization exists.
+  /// @dev Create an action.
   /// @param _orgId Id of organization.
   function createAction(
     uint256 _orgId,
@@ -129,8 +129,8 @@ contract ActionContract {
     emit Creation(_orgId, actionId);
   }
 
-  /// @dev Check if an organization exists.
-  /// @param _actionId Id of organization.
+  /// @dev Confirm an action.
+  /// @param _actionId Id of action.
   function confirmAction(uint256 _actionId)
     external
     actionExists(_actionId)
@@ -144,26 +144,52 @@ contract ActionContract {
     emit Confirmation(actions[_actionId].orgId, msg.sender, _actionId);
   }
 
-  /// @dev Check if an organization exists.
-  /// @param _actionId Id of organization.
+  /// @dev Get action.
+  /// @param _actionId Id of action.
   function getAction(uint256 _actionId) external view actionExists(_actionId) returns (ActionLib.Action memory) {
     return actions[_actionId];
   }
 
-  /// @dev Check if an organization exists.
-  /// @param _actionId Id of organization.
+  /// @dev Returns action count.
+  /// @param _orgId organization Id.
+  /// @return action count.
+  function getActionCount(uint256 _orgId) public view returns (uint256) {
+    return orgActionCount[_orgId];
+  }
+
+  /// @dev Returns list of action IDs in defined range.
+  /// @param orgId Id of organization.
+  /// @param from Index start position of action array.
+  /// @param to Index end position of action array.
+  /// @return _actionIds array of task IDs.
+  function getActionIds(
+    uint256 orgId,
+    uint256 from,
+    uint256 to
+  ) external view returns (uint256[] memory _actionIds) {
+    _actionIds = new uint256[](to - from);
+    uint256 i;
+    uint256 totalActionCount = orgActionCount[orgId];
+    uint256 max = totalActionCount > from ? from : totalActionCount;
+    for (i = from; i < max; i++) {
+      _actionIds[i - from] = orgActionIds[orgId][i];
+    }
+  }
+
+  /// @dev Check if an action exists.
+  /// @param _actionId Id of an action.
   function doesActionExist(uint256 _actionId) external view returns (bool) {
     return _actionExists[_actionId];
   }
 
-  /// @dev Check if an organization exists.
-  /// @param _actionId Id of organization.
+  /// @dev Check if an action is executed.
+  /// @param _actionId Id of action.
   function isActionExecuted(uint256 _actionId) external view actionExists(_actionId) returns (bool) {
     return actions[_actionId].executed;
   }
 
-  /// @dev Check if an organization exists.
-  /// @param _actionId Id of organization.
+  /// @dev Check if an action is confirmed.
+  /// @param _actionId Id of action.
   function isActionConfirmed(uint256 _actionId) external view actionExists(_actionId) returns (bool) {
     return confirmationCount[_actionId] == organization.getOrganization(actions[_actionId].orgId).requiredConfirmations;
   }
