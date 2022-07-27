@@ -44,7 +44,7 @@ const Header = () => {
             <Link href='/organization'>
               <a className='mr-5 hover:text-gray-900'>Organizations</a>
             </Link>
-            <Link href='/'>
+            <Link href='/task'>
               <a className='mr-5 hover:text-gray-900'>Tasks</a>
             </Link>
           </nav>
