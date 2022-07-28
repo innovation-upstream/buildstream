@@ -1,8 +1,8 @@
+import { ethers } from 'ethers'
+import { fetchTask } from 'hooks/task/functions'
+import { Task } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import { getTask } from 'hooks/task/functions'
-import { Task } from 'hooks/task/types'
-import { ethers } from 'ethers'
 
 interface PageProps {
   task: Task
@@ -10,7 +10,7 @@ interface PageProps {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const taskId = context.params?.id?.[0] || '0'
-  const task = await getTask(parseInt(taskId))
+  const task = await fetchTask(parseInt(taskId))
 
   return {
     props: {

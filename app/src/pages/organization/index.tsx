@@ -1,44 +1,47 @@
 import { ethers } from 'ethers'
 import {
-  getOrganization,
-  getOrganizationCount,
-  getOrganizationIds
+  fetchOrganizationCount,
+  fetchOrganizations
 } from 'hooks/organization/functions'
-import { Organization } from 'hooks/organization/types'
 import useOrganizations from 'hooks/organization/useOrganization'
-import type { GetServerSideProps, NextPage } from 'next'
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import { updateCount, updateOrganizations } from 'state/organization/slice'
+import { wrapper } from 'state/store'
 
-interface PageProps {
-  orgs: Organization[]
-}
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    (store) => async (context: GetServerSidePropsContext) => {
+      const orgCount = await fetchOrganizationCount()
+      const orgs = await fetchOrganizations(0, orgCount)
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const orgCount = await getOrganizationCount()
-  const orgIds = await getOrganizationIds(0, orgCount)
-  const orgs = await Promise.all(
-    orgIds.map(async (orgId): Promise<Organization> => {
-      const org = await getOrganization(orgId)
-      return org
-    })
+      const serializedOrgs = orgs.map((o) => ({
+        ...o,
+        rewardMultiplier: o.rewardMultiplier.toNumber()
+      }))
+
+      store.dispatch(updateCount(orgCount))
+      store.dispatch(
+        updateOrganizations({
+          data: serializedOrgs as any,
+          page: { from: 0, to: orgCount }
+        })
+      )
+
+      return {
+        props: {}
+      }
+    }
   )
 
-  const serializedOrgs = orgs.map((o) => ({
-    ...o,
-    rewardMultiplier: o.rewardMultiplier.toNumber()
-  }))
-
-  return {
-    props: {
-      orgs: serializedOrgs
-    }
-  }
-}
-
-const OrganizationPage: NextPage<PageProps> = ({ orgs }) => {
-  const { organizations } = useOrganizations(orgs)
+const OrganizationPage: NextPage = () => {
+  const { organizations } = useOrganizations()
   const [selectedOrg, setSelectedOrg] = useState(0)
 
   const selected = organizations.find((o) => o.id === selectedOrg)

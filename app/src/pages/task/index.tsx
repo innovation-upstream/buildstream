@@ -1,51 +1,56 @@
-import { useState } from 'react'
-import type { GetServerSideProps, NextPage } from 'next'
+import { ethers } from 'ethers'
+import {
+  fetchOrganizationCount,
+  fetchOrganizationIds
+} from 'hooks/organization/functions'
+import { fetchTaskCountByOrg, fetchTasksByOrg } from 'hooks/task/functions'
+import useTasks from 'hooks/task/useTask'
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { getTask, getTaskCount, getTaskIds } from 'hooks/task/functions'
-import { Task } from 'hooks/task/types'
-import { useTasks } from 'hooks/task/useTask'
-import {
-  getOrganizationCount,
-  getOrganizationIds,
-} from 'hooks/organization/functions'
-import { ethers } from 'ethers'
+import { useState } from 'react'
+import { wrapper } from 'state/store'
+import { updateCount, updateTasks } from 'state/task/slice'
 
-interface PageProps {
-  tasks: Task[]
-}
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    (store) => async (context: GetServerSidePropsContext) => {
+      const orgCount = await fetchOrganizationCount()
+      const orgIds = await fetchOrganizationIds(0, orgCount)
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const orgCount = await getOrganizationCount()
-  const orgIds = await getOrganizationIds(0, orgCount)
+      const allTasks = await Promise.all(
+        orgIds.map(async (orgId) => {
+          const taskCount = await fetchTaskCountByOrg(orgId, true, true)
+          const tasks = await fetchTasksByOrg(orgId, 0, taskCount)
 
-  const allTasks = await Promise.all(
-    orgIds.map(async (orgId) => {
-      const taskCount = await getTaskCount(orgId, true, true)
-      const ids = await getTaskIds(0, taskCount)
-
-      const ts = await Promise.all(
-        ids.map(async (taskId): Promise<Task> => {
-          return await getTask(taskId)
+          return tasks
         })
       )
-      return ts
-    })
+
+      const tasks = allTasks.flat()
+      store.dispatch(updateCount(tasks.length))
+      store.dispatch(
+        updateTasks({
+          data: tasks,
+          page: { from: 0, to: tasks.length }
+        })
+      )
+
+      return {
+        props: {}
+      }
+    }
   )
-  const res = allTasks.flat()
 
-  return {
-    props: {
-      tasks: res,
-    },
-  }
-}
-
-const TasksPage: NextPage<PageProps> = ({ tasks = [] }) => {
-  const { tasks: allTasks } = useTasks(tasks)
+const TasksPage: NextPage = () => {
+  const { tasks } = useTasks()
   const [selectedTask, setSelectedTask] = useState(0)
 
-  const selected = allTasks.find((o) => o.id === selectedTask)
+  const selected = tasks.find((o) => o.id === selectedTask)
 
   const onSelect = (id: number) => {
     setSelectedTask(id)
@@ -68,7 +73,7 @@ const TasksPage: NextPage<PageProps> = ({ tasks = [] }) => {
       </div>
       <div className='container justify-between mx-auto flex flex-wrap p-5 flex-col md:flex-row'>
         <ul className='w-full md:basis-6/12 divide-y divide-gray-100'>
-          {allTasks.map((task, index) => (
+          {tasks.map((task, index) => (
             <li
               key={`${task.id}-${index}`}
               className='p-3 hover:bg-blue-600 hover:text-blue-200'

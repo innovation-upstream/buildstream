@@ -3,7 +3,9 @@ import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
 import { Organization } from './types'
 
-export const getOrganizationCount = async (provider?: any): Promise<number> => {
+export const fetchOrganizationCount = async (
+  provider?: any
+): Promise<number> => {
   const contract = getContract(
     OrgContractInterface.address,
     OrgContractInterface.abi,
@@ -15,7 +17,7 @@ export const getOrganizationCount = async (provider?: any): Promise<number> => {
   return orgCount.toNumber()
 }
 
-export const getOrganizationIds = async (
+export const fetchOrganizationIds = async (
   from: number,
   to: number,
   provider?: any
@@ -31,7 +33,7 @@ export const getOrganizationIds = async (
   return orgIds.map((id) => id.toNumber())
 }
 
-export const getOrganization = async (
+export const fetchOrganization = async (
   orgId: number,
   provider?: any
 ): Promise<Organization> => {
@@ -55,4 +57,20 @@ export const getOrganization = async (
     rewardMultiplier: organization.rewardMultiplier,
     rewardToken: organization.rewardToken
   }
+}
+
+export const fetchOrganizations = async (
+  from: number,
+  to: number,
+  provider?: any
+) => {
+  const orgIds = await fetchOrganizationIds(from, to, provider)
+  const orgs = await Promise.all(
+    orgIds.map(async (orgId): Promise<Organization> => {
+      const org = await fetchOrganization(orgId, provider)
+      return org
+    })
+  )
+
+  return orgs
 }

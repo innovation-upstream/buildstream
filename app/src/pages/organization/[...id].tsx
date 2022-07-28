@@ -1,26 +1,47 @@
 import Deposit from 'components/Deposit/Deposit'
 import { ethers } from 'ethers'
-import { getOrganization } from 'hooks/organization/functions'
+import { fetchOrganization } from 'hooks/organization/functions'
 import { Organization } from 'hooks/organization/types'
-import type { GetServerSideProps, NextPage } from 'next'
+import { fetchTaskCountByOrg, fetchTasksByOrg } from 'hooks/task/functions'
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from 'next'
 import Head from 'next/head'
+import { wrapper } from 'state/store'
+import { updateCount as updateTaskCount, updateTasks } from 'state/task/slice'
+
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    (store) => async (context: GetServerSidePropsContext) => {
+      const orgId = parseInt(context.params?.id?.[0] || '0')
+      const org = await fetchOrganization(orgId)
+
+      const taskCount = await fetchTaskCountByOrg(orgId, true, true)
+      const tasks = await fetchTasksByOrg(orgId, 0, taskCount)
+
+      store.dispatch(updateTaskCount(tasks.length))
+      store.dispatch(
+        updateTasks({
+          data: tasks,
+          page: { from: 0, to: tasks.length }
+        })
+      )
+
+      return {
+        props: {
+          org: {
+            ...org,
+            rewardMultiplier: org.rewardMultiplier.toNumber()
+          }
+        }
+      }
+    }
+  )
 
 interface PageProps {
   org: Organization
-}
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const orgId = context.params?.id?.[0] || '0'
-  const org = await getOrganization(parseInt(orgId))
-
-  return {
-    props: {
-      org: {
-        ...org,
-        rewardMultiplier: org.rewardMultiplier.toNumber()
-      }
-    }
-  }
 }
 
 const OrganizationPage: NextPage<PageProps> = ({ org }) => {
