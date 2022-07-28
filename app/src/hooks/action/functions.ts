@@ -3,7 +3,7 @@ import { BigNumber, ethers } from 'ethers'
 import getContract from 'utils/getContract'
 import { Action, ActionType } from './types'
 
-export const getActionCount = async (
+export const fetchActionCount = async (
   orgId: number,
   provider?: any
 ): Promise<number> => {
@@ -18,7 +18,7 @@ export const getActionCount = async (
   return actionCount.toNumber()
 }
 
-export const getActionIds = async (
+export const fetchActionIds = async (
   orgId: number,
   from: number,
   to: number,
@@ -35,7 +35,7 @@ export const getActionIds = async (
   return actionIds.map((id) => id.toNumber())
 }
 
-export const getAction = async (
+export const fetchAction = async (
   actionId: number,
   provider?: any
 ): Promise<Action> => {
@@ -59,10 +59,27 @@ export const getAction = async (
   }
 }
 
+export const fetchActions = async (
+  orgId: number,
+  from: number,
+  to: number,
+  provider?: any
+) => {
+  const actionIds = await fetchActionIds(orgId, from, to, provider)
+  const actions = await Promise.all(
+    actionIds.map(async (actionId): Promise<Action> => {
+      const action = await fetchAction(actionId, provider)
+      return action
+    })
+  )
+
+  return actions
+}
+
 export const createAction = async (
   orgId: number,
   targetAddress: string,
-  actionType: number,
+  actionType: ActionType,
   provider?: any
 ): Promise<number> => {
   const contract = getContract(
@@ -76,7 +93,7 @@ export const createAction = async (
   ](
     orgId,
     targetAddress,
-    ActionType.WITHDRAWAL,
+    actionType,
     ethers.utils.toUtf8Bytes('')
   )
 
