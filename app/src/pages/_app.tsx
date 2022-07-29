@@ -23,7 +23,7 @@ function WrappedApp({ Component, pageProps }: AppProps) {
     const handleChange =
       (state = false) =>
       () =>
-        setLoading(true)
+        setLoading(state)
     router.events.on('routeChangeStart', handleChange(true))
     router.events.on('routeChangeComplete', handleChange())
 
