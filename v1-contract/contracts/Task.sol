@@ -290,7 +290,7 @@ contract TaskContract {
     _taskIds = new uint256[](to - from);
     uint256 i;
     uint256 totalTaskCount = orgTaskCount[orgId];
-    uint256 max = totalTaskCount > from ? from : totalTaskCount;
+    uint256 max = totalTaskCount > to ? to : totalTaskCount;
     for (i = from; i < max; i++) {
       _taskIds[i - from] = orgTaskIds[orgId][i];
     }

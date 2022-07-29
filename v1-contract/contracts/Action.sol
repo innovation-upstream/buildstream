@@ -170,7 +170,7 @@ contract ActionContract {
     _actionIds = new uint256[](to - from);
     uint256 i;
     uint256 totalActionCount = orgActionCount[orgId];
-    uint256 max = totalActionCount > from ? from : totalActionCount;
+    uint256 max = totalActionCount > to ? to : totalActionCount;
     for (i = from; i < max; i++) {
       _actionIds[i - from] = orgActionIds[orgId][i];
     }
