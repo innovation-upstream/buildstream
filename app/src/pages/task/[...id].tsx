@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { fetchTask } from 'hooks/task/functions'
-import { Task } from 'hooks/task/types'
+import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 
@@ -14,8 +14,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      task: task,
-    },
+      task: task
+    }
   }
 }
 
@@ -35,10 +35,14 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
           {task?.description}
         </p>
         <p className='text-lg mt-10 break-all'>
-          Organization: <span className='text-sm text-gray-500'>{task?.orgId}</span>
+          Organization:{' '}
+          <span className='text-sm text-gray-500'>{task?.orgId}</span>
         </p>
         <p className='text-lg mt-3 break-all'>
-          Status: <span className='text-sm text-gray-500'>{task?.status}</span>
+          Status:{' '}
+          <span className='text-sm text-gray-500'>
+            {Object.entries(TaskStatusMap)[task?.status]?.[1]}
+          </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Assignee Address:{' '}
@@ -54,7 +58,9 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
         </p>
         <p className='text-lg mt-3 break-all'>
           Complexity Score:{' '}
-          <span className='text-sm text-gray-500'>{task?.complexityScore}</span>
+          <span className='text-sm text-gray-500'>
+            {Object.entries(ComplexityScoreMap)[task?.complexityScore]?.[1]}
+          </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Reputation Level:{' '}
