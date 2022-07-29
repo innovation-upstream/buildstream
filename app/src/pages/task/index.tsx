@@ -4,6 +4,7 @@ import {
   fetchOrganizationIds
 } from 'hooks/organization/functions'
 import { fetchTaskCountByOrg, fetchTasksByOrg } from 'hooks/task/functions'
+import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import useTasks from 'hooks/task/useTask'
 import type {
   GetServerSideProps,
@@ -92,12 +93,16 @@ const TasksPage: NextPage = () => {
             {selected?.description}
           </p>
           <p className='text-lg mt-10 break-all'>
-            Organization: <span className='text-sm text-gray-500'>{selected?.orgId}</span>
+            Organization:{' '}
+            <span className='text-sm text-gray-500'>{selected?.orgId}</span>
           </p>
           <p className='text-lg mt-3 break-all'>
-            Status: <span className='text-sm text-gray-500'>{selected?.status}</span>
+            Status:{' '}
+            <span className='text-sm text-gray-500'>
+              {Object.entries(TaskStatusMap)[selected?.status || 0]?.[1]}
+            </span>
           </p>
-          <p className='text-lg mt-10 break-all'>
+          <p className='text-lg mt-3 break-all'>
             Assignee Address:{' '}
             <span className='text-sm text-gray-500'>
               {selected?.assigneeAddress.toString()}
@@ -116,7 +121,11 @@ const TasksPage: NextPage = () => {
           <p className='text-lg mt-3 break-all'>
             Complexity Score:{' '}
             <span className='text-sm text-gray-500'>
-              {selected?.complexityScore}
+              {
+                Object.entries(ComplexityScoreMap)[
+                  selected?.complexityScore || 0
+                ]?.[1]
+              }
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>
