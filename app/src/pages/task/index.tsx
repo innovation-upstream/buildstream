@@ -92,8 +92,10 @@ const TasksPage: NextPage = () => {
             {selected?.description}
           </p>
           <p className='text-lg mt-10 break-all'>
-            Status:{' '}
-            <span className='text-sm text-gray-500'>{selected?.status}</span>
+            Organization: <span className='text-sm text-gray-500'>{selected?.orgId}</span>
+          </p>
+          <p className='text-lg mt-3 break-all'>
+            Status: <span className='text-sm text-gray-500'>{selected?.status}</span>
           </p>
           <p className='text-lg mt-10 break-all'>
             Assignee Address:{' '}
