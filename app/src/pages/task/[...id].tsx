@@ -35,9 +35,12 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
           {task?.description}
         </p>
         <p className='text-lg mt-10 break-all'>
+          Organization: <span className='text-sm text-gray-500'>{task?.orgId}</span>
+        </p>
+        <p className='text-lg mt-3 break-all'>
           Status: <span className='text-sm text-gray-500'>{task?.status}</span>
         </p>
-        <p className='text-lg mt-10 break-all'>
+        <p className='text-lg mt-3 break-all'>
           Assignee Address:{' '}
           <span className='text-sm text-gray-500'>
             {task?.assigneeAddress.toString()}
