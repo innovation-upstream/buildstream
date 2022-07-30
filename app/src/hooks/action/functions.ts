@@ -50,6 +50,7 @@ export const fetchAction = async (
   return {
     id: action.id.toNumber(),
     orgId: action.orgId.toNumber(),
+    initiator: action.initiator,
     targetAddress: action.targetAddress,
     value: action.value,
     data: action.data,

@@ -10,6 +10,7 @@ library ActionLib {
   struct Action {
     uint256 id;
     uint256 orgId;
+    address initiator;
     address targetAddress;
     uint value;
     bytes data;
@@ -88,6 +89,7 @@ contract ActionContract {
     actions[actionId] = ActionLib.Action({
       id: actionId,
       orgId: _orgId,
+      initiator: msg.sender,
       targetAddress: targetAddress,
       value: value,
       data: data,
@@ -115,6 +117,7 @@ contract ActionContract {
     actions[actionId] = ActionLib.Action({
       id: actionId,
       orgId: _orgId,
+      initiator: msg.sender,
       targetAddress: targetAddress,
       value: 0,
       data: data,
