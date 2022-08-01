@@ -1,5 +1,5 @@
 {
-  "address": "0xd399A4A4a63E95783899E82D95DB1E545199EC25",
+  "address": "0x6d32579c14d98f1Bc5D5EEc065Cb2baDd7DF23Fa",
   "abi": [
     {
       "type": "constructor",
@@ -408,6 +408,26 @@
         {
           "type": "uint256[]",
           "name": "_actionIds"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getConfirmers",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_actionId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]",
+          "name": "confirmers"
         }
       ]
     },

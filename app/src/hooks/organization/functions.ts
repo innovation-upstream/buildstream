@@ -74,3 +74,17 @@ export const fetchOrganizations = async (
 
   return orgs
 }
+
+export const executeAction = async (
+  actionId: number,
+  provider?: any
+) => {
+  const contract = getContract(
+    OrgContractInterface.address,
+    OrgContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.executeAction(actionId)
+  await tx.wait()
+}
