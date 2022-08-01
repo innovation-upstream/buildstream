@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps =
 
       const serializedOrgs = orgs.map((o) => ({
         ...o,
-        rewardMultiplier: o.rewardMultiplier.toNumber()
+        rewardMultiplier: o.rewardMultiplier.toString()
       }))
 
       store.dispatch(updateCount(orgCount))

@@ -55,7 +55,7 @@ describe('Integration test: Reviewer flow', function () {
       'Decentralized task managers',
       ethers.utils.parseUnits(multiplier.toString()),
       ethers.constants.AddressZero,
-      [reviewer1.address],
+      [signer.address],
       [ethers.constants.AddressZero],
       [signer.address],
       requiredConfirmations,

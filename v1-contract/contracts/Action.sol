@@ -147,6 +147,29 @@ contract ActionContract {
     emit Confirmation(actions[_actionId].orgId, msg.sender, _actionId);
   }
 
+  /// @dev Returns list of action confirmers.
+  /// @param _actionId action Id.
+  /// @return confirmers list of confirmers.
+  function getConfirmers(uint256 _actionId)
+    public
+    view
+    actionExists(_actionId)
+    returns (address[] memory confirmers)
+  {
+    ActionLib.Action memory action = actions[_actionId];
+    address[] memory signers = organization.getSigners(action.orgId);
+    address[] memory confirmersTemp = new address[](signers.length);
+    uint256 count = 0;
+    uint256 i;
+    for (i = 0; i < signers.length; i++)
+      if (confirmations[_actionId][signers[i]]) {
+        confirmersTemp[count] = signers[i];
+        count += 1;
+      }
+    confirmers = new address[](count);
+    for (i = 0; i < count; i++) confirmers[i] = confirmersTemp[i];
+  }
+
   /// @dev Get action.
   /// @param _actionId Id of action.
   function getAction(uint256 _actionId) external view actionExists(_actionId) returns (ActionLib.Action memory) {
