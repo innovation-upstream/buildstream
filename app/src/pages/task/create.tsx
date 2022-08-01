@@ -86,7 +86,7 @@ const CreateTaskPage = () => {
 
     let tagUpdate = [...taskData.taskTags]
     tagUpdate.splice(index, 1)
-    console.log(tagUpdate)
+
     setTaskData((prev) => ({ ...prev, taskTags: [...tagUpdate] }))
   }
 
