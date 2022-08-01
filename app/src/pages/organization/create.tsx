@@ -4,7 +4,7 @@ import OrgContract from 'contracts/Org.json'
 import { ethers } from 'ethers'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import getContract from 'utils/getContract'
 
 const initialData = {
@@ -12,11 +12,11 @@ const initialData = {
   description: '',
   rewardMultiplier: 0,
   rewardToken: ethers.constants.AddressZero,
-  reviewers: [''],
-  approvers: [''],
+  reviewers: [],
+  approvers: [],
   signers: [],
   requiredConfirmations: 1,
-  requiredTaskApprovals: 1
+  requiredTaskApprovals: 1,
 }
 
 type OrgData = typeof initialData & { [keyof: string]: any }
@@ -39,24 +39,28 @@ const CreateOrganization: React.FC = () => {
     }
 
     if (ev.target.dataset.type === 'addressArray') {
-      let prevData = [...orgData[targetName]]
-      prevData[ev.target.id] = ev.target.value
-      setOrgData((prev: any) => ({ ...prev, [targetName]: [...prevData] }))
+      if (ev.key === 'Enter' && targetValue) {
+        setOrgData((prev: any) => ({
+          ...prev,
+          [targetName]: [...prev[targetName], targetValue],
+        }))
+        ev.target.value = ''
+      }
       return
     }
     setOrgData((prev: any) => ({ ...prev, [targetName]: targetValue }))
   }
 
-  const addToAddressArray = (e: any) => {
-    const targetName = e.target.dataset.name
-    setOrgData((prev: any) => ({
-      ...prev,
-      [targetName]: [...orgData[targetName], '']
-    }))
+  const deleteTag = (ev: any) => {
+    const index = parseInt(ev.target.id)
+    const targetName = ev.target.dataset.name
+    let addressUpdate = [...orgData[targetName]]
+
+    addressUpdate.splice(index, 1)
+    setOrgData((prev: any) => ({ ...prev, [targetName]: [...addressUpdate] }))
   }
 
   const createOrg: any = async (e: any) => {
-    e.preventDefault()
     if (!account) {
       setStatus({ text: 'Wallet Not Connected', error: true })
       return
@@ -95,7 +99,7 @@ const CreateOrganization: React.FC = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <section className='text-gray-600 body-font relative'>
-        <form onSubmit={createOrg} className='container px-5 py-24 mx-auto'>
+        <div className='container px-5 py-24 mx-auto'>
           <div className='flex flex-col text-center w-full mb-12'>
             <h1 className='sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900'>
               Create Organization
@@ -204,101 +208,125 @@ const CreateOrganization: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className='w-full p-2 pt-5 pb-3'>
+              <div className='p-2 w-full'>
                 <div className='relative'>
-                  <h2 className='text-sm gray-600 mb-1'>Reviewers</h2>
-                  <div>
-                    {orgData.reviewers.map((input, ind) => {
-                      return (
-                        <div key={ind} className='p-0 mb-2'>
-                          <div className='relative'>
-                            <input
-                              id={`${ind}`}
-                              data-type='addressArray'
-                              required
-                              name='reviewers'
-                              value={input}
-                              onChange={handleChange}
-                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                            />
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <button
-                    className='flex my-1 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
-                    type='button'
-                    data-name='reviewers'
-                    onClick={addToAddressArray}
+                  <label
+                    htmlFor='reputationLevel'
+                    className='leading-7 text-sm text-gray-600'
                   >
-                    +
-                  </button>
+                    Reviewers
+                  </label>
+                  <div className='h-auto flex flex-wrap item-center gap-x-1 gap-y-1'>
+                    {orgData.reviewers.length > 0 &&
+                      orgData.reviewers.map((reviewer, index) => {
+                        return (
+                          <div
+                            key={reviewer}
+                            className='flex items-center border-2 rounded-full px-2 py-1 w-max mb-3'
+                          >
+                            {reviewer}
+                            <div
+                              onClick={deleteTag}
+                              data-name='reviewers'
+                              id={`${index}`}
+                              className='py-1 px-3 ml-3 rounded-full bg-indigo-400 text-red-50 hover:bg-indigo-500 cursor-pointer'
+                            >
+                              x
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                  <input
+                    type='text'
+                    id='reviewers'
+                    name='reviewers'
+                    onKeyPress={handleChange}
+                    data-type='addressArray'
+                    placeholder='Type and Press Enter Key'
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
                 </div>
               </div>
-              <div className='w-full p-2 pt-5 pb-3'>
+              <div className='p-2 w-full'>
                 <div className='relative'>
-                  <h2 className='text-sm gray-600 mb-1'>Approvers</h2>
-                  <div>
-                    {orgData.approvers.map((input, ind) => {
-                      return (
-                        <div key={ind} className='p-0 mb-2'>
-                          <div className='relative'>
-                            <input
-                              id={`${ind}`}
-                              data-type='addressArray'
-                              required
-                              name='approvers'
-                              value={input}
-                              onChange={handleChange}
-                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                            />
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <button
-                    className='flex my-1 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
-                    type='button'
-                    data-name='approvers'
-                    onClick={addToAddressArray}
+                  <label
+                    htmlFor='reputationLevel'
+                    className='leading-7 text-sm text-gray-600'
                   >
-                    +
-                  </button>
+                    Approvers
+                  </label>
+                  <div className='h-auto flex flex-wrap item-center gap-x-1 gap-y-1'>
+                    {orgData.approvers.length > 0 &&
+                      orgData.approvers.map((approver, index) => {
+                        return (
+                          <div
+                            key={approver}
+                            className='flex items-center border-2 rounded-full px-2 py-1 w-max mb-3'
+                          >
+                            {approver}
+                            <div
+                              onClick={deleteTag}
+                              data-name='approvers'
+                              id={`${index}`}
+                              className='py-1 px-3 ml-3 rounded-full bg-indigo-400 text-red-50 hover:bg-indigo-500 cursor-pointer'
+                            >
+                              x
+                            </div>
+                          </div>
+                        )
+                      })}
+                  </div>
+                  <input
+                    type='text'
+                    id='approvers'
+                    name='approvers'
+                    onKeyPress={handleChange}
+                    data-type='addressArray'
+                    placeholder='Type and Press Enter Key'
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
                 </div>
               </div>
-              <div className='w-full p-2 pt-5 pb-3'>
+              <div className='p-2 w-full'>
                 <div className='relative'>
-                  <h2 className='text-sm gray-600 mb-1'>Signers</h2>
-                  <div>
-                    {orgData.signers.map((input, ind) => {
-                      return (
-                        <div key={ind} className='p-0 mb-2'>
-                          <div className='relative'>
-                            <input
-                              data-type='addressArray'
-                              id={`${ind}`}
-                              required
-                              name='signers'
-                              value={input}
-                              onChange={handleChange}
-                              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                            />
+                  <label
+                    htmlFor='reputationLevel'
+                    className='leading-7 text-sm text-gray-600'
+                  >
+                    Signers
+                  </label>
+                  <div className='h-auto flex flex-wrap item-center gap-x-1 gap-y-1'>
+                    {orgData.signers.length > 0 &&
+                      orgData.signers.map((signer, index) => {
+                        return (
+                          <div
+                            key={signer}
+                            className='flex items-center border-2 rounded-full px-2 py-1 w-max mb-3'
+                          >
+                            {signer}
+                            <div
+                              onClick={deleteTag}
+                              data-name='signers'
+                              id={`${index}`}
+                              className='py-1 px-3 ml-3 rounded-full bg-indigo-400 text-red-50 hover:bg-indigo-500 cursor-pointer'
+                            >
+                              x
+                            </div>
                           </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
                   </div>
+                  <input
+                    type='text'
+                    id='signers'
+                    name='signers'
+                    onKeyPress={handleChange}
+                    data-type='addressArray'
+                    placeholder='Type and Press Enter Key'
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
                 </div>
-                <button
-                  className='flex my-2 text-white bg-slate-600 border-0 w-7 h-7 justify-center items-center focus:outline-none hover:bg-slate-800 rounded text-lg'
-                  type='button'
-                  data-name='signers'
-                  onClick={addToAddressArray}
-                >
-                  +
-                </button>
               </div>
               <div className='p-2 w-full'>
                 <div className='relative'>
@@ -323,13 +351,14 @@ const CreateOrganization: React.FC = () => {
               <button
                 type='submit'
                 disabled={processing}
+                onClick={createOrg}
                 className='flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg'
               >
                 {processing ? <Spinner /> : 'Create'}
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </section>
     </div>
   )
