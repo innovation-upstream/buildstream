@@ -68,6 +68,7 @@ const ListView: React.FC<ListViewProps> = ({
       style={{
         maxHeight: `${height}px`,
         overflowY: 'auto',
+        overflowX: 'hidden',
         listStyleType: 'none',
         border: '1px solid lightgray',
         borderRadius: '10px'

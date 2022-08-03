@@ -27,8 +27,9 @@ export const getServerSideProps: GetServerSideProps =
       const taskCount = await fetchTaskCountByOrg(orgId, true, true)
       const tasks = await fetchTasksByOrg(orgId, 0, taskCount)
 
-      const actionCount = await fetchActionCount(orgId)
-      const actions = await fetchActions(orgId, 0, actionCount)
+      const toValue = await fetchActionCount(orgId)
+      const fromValue = Math.max(0, toValue - 15)
+      const actions = await fetchActions(orgId, fromValue, toValue)
 
       const confirmers = await Promise.all(
         actions.map(async (action) => {
@@ -44,7 +45,7 @@ export const getServerSideProps: GetServerSideProps =
       store.dispatch(
         updateTasks({
           data: tasks,
-          page: { from: 0, to: Math.ceil(tasks.length / 10) }
+          page: { from: fromValue, to: toValue }
         })
       )
       store.dispatch(updateActionCount(actions.length))
@@ -141,7 +142,7 @@ const OrganizationPage: NextPage<PageProps> = ({ org }) => {
       </div>
       <div className='justify-between flex flex-wrap p-5 flex-col md:flex-row'>
         <div className='w-full h-full mt-10 md:basis-5/12'>
-          <ActionList />
+          <ActionList orgId={org.id} />
         </div>
         <div className='w-full h-full mt-10 md:basis-6/12 bg-gray-100 rounded-lg p-8'>
           <ActionForm org={org} />

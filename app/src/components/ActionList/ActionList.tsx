@@ -8,8 +8,12 @@ import useActions from 'hooks/action/useAction'
 import { executeAction } from 'hooks/organization/functions'
 import { useState } from 'react'
 
-const ActionList = () => {
-  const { actions, confirmers } = useActions()
+interface ActionListProps {
+  orgId: number
+}
+
+const ActionList = ({ orgId }: ActionListProps) => {
+  const { actions, confirmers, refetchActions } = useActions()
   const [isConfirming, setIsConfirming] = useState(false)
   const [isExecuting, setIsExecuting] = useState(false)
   const [selected, setSelected] = useState(-1)
@@ -20,6 +24,7 @@ const ActionList = () => {
     setIsConfirming(true)
     try {
       await confirmAction(actionId, library.getSigner())
+      refetchActions(orgId)
     } catch (e) {
       console.error(e)
     }
@@ -31,6 +36,7 @@ const ActionList = () => {
     setIsExecuting(true)
     try {
       await executeAction(actionId, library.getSigner())
+      refetchActions(orgId)
     } catch (e) {
       console.error(e)
     }
@@ -63,6 +69,12 @@ const ActionList = () => {
                 {action.executed ? 'executed' : 'not executed'}
               </h3>
               <p className='mt-1 text-gray-500'>{action.initiator}</p>
+              <p className='mt-1'>
+                Target:{' '}
+                <span className='text-gray-500'>
+                  {action.targetAddress}
+                </span>
+              </p>
               <p className='mt-1'>
                 Confirmers count:{' '}
                 <span className='text-gray-500'>
