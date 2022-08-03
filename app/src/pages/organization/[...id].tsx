@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps =
         props: {
           org: {
             ...org,
-            rewardMultiplier: org.rewardMultiplier.toNumber()
+            rewardMultiplier: org.rewardMultiplier.toString()
           }
         }
       }
