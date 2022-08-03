@@ -64,7 +64,7 @@ export const fetchTask = async (
     reputationLevel: task.reputationLevel.toNumber(),
     requiredApprovals: task.requiredApprovals.toNumber(),
     rewardAmount: task.rewardAmount.toNumber(),
-    rewardToken: task.rewardToken
+    rewardToken: task.rewardToken,
   }
 }
 
@@ -83,4 +83,69 @@ export const fetchTasksByOrg = async (
   )
 
   return tasks
+}
+
+export const openTask = async (
+  taskId: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract['openTask(uint256)'](taskId)
+  await tx.wait()
+
+  return true
+}
+
+export const assignToSelf = async (
+  taskId: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.assignSelf(taskId)
+  await tx.wait()
+
+  return true
+}
+
+export const approveAssignedRequest = async (
+  taskId: number,
+  account: string,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.approveAssignRequest(taskId, account)
+  await tx.wait()
+
+  return true
+}
+
+export const taskSubmission = async (
+  taskId: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.submitTask(taskId)
+  await tx.wait()
+
+  return true
 }
