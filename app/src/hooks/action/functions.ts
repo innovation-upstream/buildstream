@@ -100,7 +100,7 @@ export const createAction = async (
 
   const receipt = await tx.wait()
   const event = receipt.events.find((e: any) => e.event === 'Creation')
-  const actionId: BigNumber = event?.args?.[0]
+  const actionId: BigNumber = event?.args?.[1]
 
   return actionId.toNumber()
 }
@@ -131,7 +131,7 @@ export const createWithdrawalAction = async (
 
   const receipt = await tx.wait()
   const event = receipt.events.find((e: any) => e.event === 'Creation')
-  const actionId: BigNumber = event?.args?.[0]
+  const actionId: BigNumber = event?.args?.[1]
 
   return actionId.toNumber()
 }

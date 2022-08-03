@@ -33,7 +33,7 @@ const getContractInstances = async () => {
 
 describe('Integration test: Reviewer flow', function () {
   it('Should add reviewer', async function () {
-    const [, signer, reviewer1, reviewer2] = await ethers.getSigners()
+    const [, signer, reviewer1] = await ethers.getSigners()
     const { actionContract, orgContract } = await getContractInstances()
 
     // Create organization
@@ -80,7 +80,7 @@ describe('Integration test: Reviewer flow', function () {
 
     await actionContract['createAction(uint256,address,uint8,bytes)'](
       orgId,
-      reviewer2.address,
+      reviewer1.address,
       actionType.ADD_REVIEWER,
       ethers.utils.toUtf8Bytes('')
     )
@@ -94,7 +94,7 @@ describe('Integration test: Reviewer flow', function () {
     await orgContract.executeAction(actionId)
 
     expect(
-      await (await orgContract.getReviewers(orgId)).includes(reviewer2.address)
+      await (await orgContract.getReviewers(orgId)).includes(reviewer1.address)
     ).to.be.equal(true)
   })
 
@@ -122,7 +122,7 @@ describe('Integration test: Reviewer flow', function () {
       'Decentralized task managers',
       ethers.utils.parseUnits(multiplier.toString()),
       ethers.constants.AddressZero,
-      [reviewer1.address, reviewer2.address, reviewer3.address],
+      [reviewer1.address, reviewer2.address],
       [ethers.constants.AddressZero],
       [signer.address],
       requiredConfirmations,
@@ -132,36 +132,46 @@ describe('Integration test: Reviewer flow', function () {
     const orgEvent = await orgCreationEvent
     const orgId = orgEvent.orgId.toNumber()
 
-    const actionCreationEvent = new Promise<any>((resolve, reject) => {
-      actionContract.on('Creation', (orgId, actionId, event) => {
-        event.removeListener()
-        resolve({
-          actionId: actionId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await actionContract['createAction(uint256,address,uint8,bytes)'](
+    const tx0 = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
       orgId,
-      reviewer2.address,
+      reviewer3.address,
+      actionType.ADD_REVIEWER,
+      ethers.utils.toUtf8Bytes('')
+    )
+
+    const receipt0 = await tx0.wait()
+    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const actionId0 = event?.args?.[1]?.toNumber()
+
+    await actionContract.confirmAction(actionId0)
+    await actionContract.connect(signer).confirmAction(actionId0)
+
+    await orgContract.executeAction(actionId0)
+
+    const tx = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
+      orgId,
+      reviewer3.address,
       actionType.REMOVE_REVIEWER,
       ethers.utils.toUtf8Bytes('')
     )
 
-    const actionEvent = await actionCreationEvent
-    const actionId = actionEvent.actionId.toNumber()
+    const receipt = await tx.wait()
+    const actionEvent = receipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const actionId = actionEvent?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     await orgContract.executeAction(actionId)
 
-    expect(
-      await (await orgContract.getReviewers(orgId)).includes(reviewer2.address)
-    ).to.be.equal(false)
+    const reviewers = await orgContract.getReviewers(orgId)
+
+    expect(await reviewers.includes(reviewer3.address)).to.be.equal(false)
   })
 })

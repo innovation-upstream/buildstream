@@ -99,7 +99,7 @@ describe('Integration test: Signer flow', function () {
   })
 
   it('Should remove signer', async function () {
-    const [, signer, signer1, signer2] = await ethers.getSigners()
+    const [, signer, signer1, signer2, signer3] = await ethers.getSigners()
     const { actionContract, orgContract } = await getContractInstances()
 
     // Create organization
@@ -131,36 +131,46 @@ describe('Integration test: Signer flow', function () {
     const orgEvent = await orgCreationEvent
     const orgId = orgEvent.orgId.toNumber()
 
-    const actionCreationEvent = new Promise<any>((resolve, reject) => {
-      actionContract.on('Creation', (orgId, actionId, event) => {
-        event.removeListener()
-        resolve({
-          actionId: actionId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await actionContract['createAction(uint256,address,uint8,bytes)'](
+    const tx0 = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
       orgId,
-      signer1.address,
+      signer3.address,
+      actionType.ADD_SIGNER,
+      ethers.utils.toUtf8Bytes('')
+    )
+
+    const receipt0 = await tx0.wait()
+    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const actionId0 = event?.args?.[1]?.toNumber()
+
+    await actionContract.confirmAction(actionId0)
+    await actionContract.connect(signer).confirmAction(actionId0)
+
+    await orgContract.executeAction(actionId0)
+
+    const tx = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
+      orgId,
+      signer3.address,
       actionType.REMOVE_SIGNER,
       ethers.utils.toUtf8Bytes('')
     )
 
-    const actionEvent = await actionCreationEvent
-    const actionId = actionEvent.actionId.toNumber()
+    const receipt = await tx.wait()
+    const actionEvent = receipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const actionId = actionEvent?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     await orgContract.executeAction(actionId)
 
-    expect(
-      await (await orgContract.getSigners(orgId)).includes(signer1.address)
-    ).to.be.equal(false)
+    const reviewers = await orgContract.getSigners(orgId)
+
+    expect(await reviewers.includes(signer3.address)).to.be.equal(false)
   })
 })

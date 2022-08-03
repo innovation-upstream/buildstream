@@ -237,7 +237,7 @@ contract Organization {
     isReviewer[_orgId][_reviewer] = false;
     OrgLib.Org storage org = orgs[_orgId];
     address[] memory reviewers = org.reviewers;
-    for (uint256 i = 0; i < reviewers.length - 1; i++)
+    for (uint256 i = 0; i < reviewers.length; i++)
       if (reviewers[i] == _reviewer) {
         uint256 index = i == reviewers.length - 1 ? reviewers.length - 2 : reviewers.length - 1;
         reviewers[i] = reviewers[index];

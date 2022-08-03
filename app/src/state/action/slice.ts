@@ -32,7 +32,7 @@ export const actionSlice = createSlice({
       state,
       action: PayloadAction<Pick<ActionState, 'page' | 'data'>>
     ) => {
-      state.data = action.payload.data
+      state.data = action.payload.data.reverse()
       state.page = action.payload.page
     },
     updateConfirmers: (

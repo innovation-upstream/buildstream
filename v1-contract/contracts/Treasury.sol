@@ -11,14 +11,16 @@ contract Treasury {
   address private organizationAddress;
   address private taskContractAddress;
 
-  event Creation(uint indexed taskId);
-  event Confirmation(address indexed sender, uint256 indexed taskId);
+  event Deposit(uint256 indexed orgId, address indexed tokenAddress, uint amount);
+  event Withdraw(uint256 indexed orgId, address indexed tokenAddress, address indexed recipient, uint256 amount);
 
   mapping(uint256 => mapping(address => uint256)) public tokenBalances;
   mapping(uint256 => mapping(address => uint256)) public lockedTokenBalances;
   mapping(uint256 => uint256) public balances;
   mapping(uint256 => uint256) public lockedBalances;
   mapping(uint256 => bool) public payments;
+  mapping(uint256 => address[]) public orgTokens;
+  mapping(uint256 => mapping(address => bool)) public orgTokenMap;
   
   modifier onlyOwner() {
     require(msg.sender == owner, "Permission denied");
@@ -56,17 +58,25 @@ contract Treasury {
     return tokenBalances[orgId][tokenAddress];
   }
 
+  function getOrgTokens(uint256 orgId) external view orgExists(orgId) returns (address[] memory) {
+    return orgTokens[orgId];
+  }
+
   function deposit(uint256 orgId) public payable {
     balances[orgId] += msg.value;
+    emit Deposit(orgId, address(0), msg.value);
   }
 
   function deposit(uint256 orgId, address tokenAddress, uint256 amount) public orgExists(orgId) {
     IERC20 _token = IERC20(tokenAddress);
+    if (!orgTokenMap[orgId][tokenAddress])
+      orgTokens[orgId].push(tokenAddress);
     uint256 allowance = _token.allowance(msg.sender, address(this));
     require(allowance >= amount, "Check the token allowance");
     (bool sent) = _token.transferFrom(msg.sender, address(this), amount);
     require(sent, "Failed to deposit tokens");
     tokenBalances[orgId][tokenAddress] += amount;
+    emit Deposit(orgId, tokenAddress, amount);
   }
 
   function withdraw(uint256 orgId, address to, uint256 amount) internal orgExists(orgId) {
@@ -74,6 +84,7 @@ contract Treasury {
     lockedBalances[orgId] -= amount;
     address payable recipient = payable(to);
     recipient.transfer(amount);
+    emit Withdraw(orgId, address(0), to, amount);
   }
 
   function withdraw(uint256 orgId, address to, address tokenAddress, uint256 amount) internal orgExists(orgId) {
@@ -82,6 +93,7 @@ contract Treasury {
     lockedTokenBalances[orgId][tokenAddress] -= amount;
     (bool sent) = _token.transfer(to, amount);
     require(sent, "Failed to transfer token to user");
+    emit Withdraw(orgId, tokenAddress, to, amount);
   }
 
   function withdrawForce(uint256 actionId, uint256 orgId, address to, uint256 amount) external onlyOrgContract orgExists(orgId) {
@@ -91,6 +103,7 @@ contract Treasury {
     balances[orgId] -= amount;
     address payable recipient = payable(to);
     recipient.transfer(amount);
+    emit Withdraw(orgId, address(0), to, amount);
   }
 
   function withdrawForce(uint256 actionId, uint256 orgId, address to, address tokenAddress, uint256 amount) external onlyOrgContract orgExists(orgId) {
@@ -100,6 +113,7 @@ contract Treasury {
     payments[actionId] = true;
     tokenBalances[orgId][tokenAddress] -= amount;
     _token.transfer(to, amount);
+    emit Withdraw(orgId, tokenAddress, to, amount);
   }
 
   function lockBalance(uint256 orgId, uint256 amount) external onlyTaskContract orgExists(orgId) {
