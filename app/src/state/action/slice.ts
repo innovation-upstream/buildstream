@@ -17,8 +17,8 @@ const initialState: ActionState = {
   confirmers: [],
   page: {
     from: 0,
-    to: 0
-  }
+    to: 0,
+  },
 }
 
 export const actionSlice = createSlice({
@@ -40,10 +40,11 @@ export const actionSlice = createSlice({
       action: PayloadAction<ActionState['confirmers']>
     ) => {
       state.confirmers = action.payload
-    }
-  }
+    },
+  },
 })
 
-export const { updateCount, updateActions, updateConfirmers } = actionSlice.actions
+export const { updateCount, updateActions, updateConfirmers } =
+  actionSlice.actions
 
 export default actionSlice.reducer

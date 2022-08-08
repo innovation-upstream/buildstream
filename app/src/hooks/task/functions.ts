@@ -149,3 +149,17 @@ export const taskSubmission = async (
 
   return true
 }
+
+export const fetchAssignedRequests = async (
+  taskId: number,
+  provider?: any
+): Promise<[]> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+  const accounts = await contract.getAssignmentRequests(taskId)
+
+  return accounts
+}

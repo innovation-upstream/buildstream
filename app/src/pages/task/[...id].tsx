@@ -1,18 +1,13 @@
 import { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { ethers } from 'ethers'
-import { useRouter } from 'next/router'
 import { fetchTask } from 'hooks/task/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import {
-  openTask,
-  assignToSelf,
-  approveAssignedRequest,
-  taskSubmission,
-} from 'hooks/task/functions'
+import { openTask, assignToSelf, taskSubmission } from 'hooks/task/functions'
 import Spinner from 'components/Spinner/Spinner'
+import AssignmentRequest from 'components/Task/AssignmentRequest'
 
 interface PageProps {
   task: Task
@@ -32,14 +27,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const TaskPage: NextPage<PageProps> = ({ task }) => {
   const { account, library } = useWeb3React()
   const [processing, setProcessing] = useState(false)
-  const router = useRouter()
-  const taskStatus = Object.entries(TaskStatusMap)[task?.status]?.[1]
+  const [currentTask, setCurrentTask] = useState<Task>(task)
+  const taskStatus = Object.entries(TaskStatusMap)[currentTask?.status]?.[1]
+
+  const getTask = async () => {
+    const task = await fetchTask(currentTask?.id, library.getSigner())
+    setCurrentTask(task)
+  }
 
   const openCreatedTask = async () => {
     setProcessing(true)
     try {
-      const tx = await openTask(task.id, library.getSigner())
-      if (tx) router.push(`/task/${task.id}`)
+      const tx = await openTask(currentTask?.id, library.getSigner())
+      if (tx) {
+        await getTask()
+      }
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -50,26 +52,10 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
   const assignTaskToSelf = async () => {
     try {
       setProcessing(true)
-      const tx = await assignToSelf(task.id, library.getSigner())
-      if (tx) router.replace(router.asPath)
-      setProcessing(false)
-    } catch (e) {
-      setProcessing(false)
-      console.error('ERROR===', e)
-    }
-  }
-
-  const approveTaskAssigned = async () => {
-    if (!account) return
-
-    try {
-      setProcessing(true)
-      const tx = await approveAssignedRequest(
-        task.id,
-        account,
-        library.getSigner()
-      )
-      if (tx) router.replace(router.asPath)
+      const tx = await assignToSelf(currentTask?.id, library.getSigner())
+      if (tx) {
+        await getTask()
+      }
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -79,11 +65,12 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
 
   const submitTask = async () => {
     if (!account) return
-
+    setProcessing(true)
     try {
-      setProcessing(true)
-      const tx = await taskSubmission(task.id, library.getSigner())
-      if (tx) router.replace(router.asPath)
+      const tx = await taskSubmission(currentTask?.id, library.getSigner())
+      if (tx) {
+        await getTask()
+      }
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -100,191 +87,204 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
       </Head>
       <div className='w-full h-full top-20 sticky px-5 py-10 bg-white md:basis-4/12 rounded-sm shadow'>
         <h1 className='sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900'>
-          {task?.title}
+          {currentTask?.title}
         </h1>
         <p className='lg:w-2/3 leading-relaxed text-base text-gray-500'>
-          {task?.description}
+          {currentTask?.description}
         </p>
         <p className='text-lg mt-10 break-all'>
           Organization:{' '}
-          <span className='text-sm text-gray-500'>{task?.orgId}</span>
+          <span className='text-sm text-gray-500'>{currentTask?.orgId}</span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Status:{' '}
           <span className='text-sm text-gray-500'>
-            {Object.entries(TaskStatusMap)[task?.status]?.[1]}
+            {Object.entries(TaskStatusMap)[currentTask?.status]?.[1]}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Assignee Address:{' '}
           <span className='text-sm text-gray-500'>
-            {task?.assigneeAddress.toString()}
+            {currentTask?.assigneeAddress.toString()}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Task Tags:{' '}
           <span className='text-sm text-gray-500'>
-            {task?.taskTags.toString()}
+            {currentTask?.taskTags.toString()}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Complexity Score:{' '}
           <span className='text-sm text-gray-500'>
-            {Object.entries(ComplexityScoreMap)[task?.complexityScore]?.[1]}
+            {
+              Object.entries(ComplexityScoreMap)[
+                currentTask?.complexityScore
+              ]?.[1]
+            }
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Reputation Level:{' '}
-          <span className='text-sm text-gray-500'>{task?.reputationLevel}</span>
+          <span className='text-sm text-gray-500'>
+            {currentTask?.reputationLevel}
+          </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Required approvals:{' '}
           <span className='text-sm text-gray-500'>
-            {task?.requiredApprovals}
+            {currentTask?.requiredApprovals}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Reward amount:{' '}
           <span className='text-sm text-gray-500'>
-            {task?.rewardAmount.toString()}
+            {currentTask?.rewardAmount.toString()}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
           Reward token:{' '}
           <span className='text-sm text-gray-500'>
-            {task?.rewardToken === ethers.constants.AddressZero
+            {currentTask?.rewardToken === ethers.constants.AddressZero
               ? null
-              : task?.rewardToken}
+              : currentTask?.rewardToken}
           </span>
         </p>
       </div>
-      <div className='w-full h-full mt-10 md:basis-6/12 bg-gray-100 rounded-lg p-8'>
-        <h2 className='text-gray-900 text-lg font-medium title-font mb-5'>
-          Task Status
-        </h2>
-        <div className='mb-3'>
-          {!account && (
-            <p className='text-base text-red-500'>Connect your wallet</p>
-          )}
-        </div>
+      <div className='w-full h-full md:basis-6/12'>
+        <div className='w-full h-full mt-10 bg-gray-100 rounded-lg p-8'>
+          <h2 className='text-gray-900 text-lg font-medium title-font mb-5'>
+            Task Status
+          </h2>
+          <div className='mb-3'>
+            {!account && (
+              <p className='text-base text-red-500'>Connect your wallet</p>
+            )}
+          </div>
 
-        <ol className='relative border-l border-gray-200 dark:border-gray-200'>
-          <li className='mb-10 ml-4'>
-            <div
-              className={`absolute w-5 h-5 bg-green-200 mt-1 rounded-full -left-2.5 border border-white ${
-                task.status > 0 ? 'bg-green-500' : 'bg-gray-900'
-              }`}
-            ></div>
-            <h3
-              className={`text-lg font-semibold ${
-                task.status > 0 ? 'text-green-500' : 'text-gray-900'
-              } `}
-            >
-              Open
-            </h3>
-            {taskStatus === 'proposed' && (
-              <div>
-                <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
-                  Open task for assignment
-                </p>
-                <button
-                  onClick={openCreatedTask}
-                  type='submit'
-                  disabled={processing}
-                  className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
-                >
-                  {processing ? <Spinner /> : 'Open Task'}
-                </button>
-              </div>
-            )}
-          </li>
-          <li className='mb-10 ml-4'>
-            <div
-              className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
-                task.status > 1 ? 'bg-green-500' : 'bg-gray-500'
-              }`}
-            ></div>
-            <h3
-              className={`text-lg font-semibold ${
-                task.status > 1 ? 'text-green-500' : 'text-gray-900'
-              }`}
-            >
-              Assign
-            </h3>
-            {taskStatus === 'open' && (
-              <div>
-                <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
-                  Assign Task
-                  <div className='mb-4 text-sm font-normal text-gray-500 dark:text-gray-400'>
-                    {task.reputationLevel < task.complexityScore &&
-                      'You have low reputation level for this task'}
+          <ol className='relative border-l border-gray-200 dark:border-gray-200'>
+            <li className='mb-10 ml-4'>
+              <div
+                className={`absolute w-5 h-5 bg-green-200 mt-1 rounded-full -left-2.5 border border-white ${
+                  currentTask?.status > 0 ? 'bg-green-500' : 'bg-gray-900'
+                }`}
+              ></div>
+              <h3
+                className={`text-lg font-semibold ${
+                  currentTask?.status > 0 ? 'text-green-500' : 'text-gray-900'
+                } `}
+              >
+                Open
+              </h3>
+              {taskStatus === 'proposed' && (
+                <div>
+                  <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
+                    Open task for assignment
+                  </p>
+                  <button
+                    onClick={openCreatedTask}
+                    type='submit'
+                    disabled={processing}
+                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                  >
+                    {processing ? <Spinner /> : 'Open Task'}
+                  </button>
+                </div>
+              )}
+            </li>
+            <li className='mb-10 ml-4'>
+              <div
+                className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
+                  currentTask?.status > 1 ? 'bg-green-500' : 'bg-gray-500'
+                }`}
+              ></div>
+              <h3
+                className={`text-lg font-semibold ${
+                  currentTask?.status > 1 ? 'text-green-500' : 'text-gray-900'
+                }`}
+              >
+                Assign
+              </h3>
+              {taskStatus === 'open' && (
+                <div>
+                  <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
+                    Assign Task
+                    <div className='mb-4 text-sm font-normal text-gray-500 dark:text-gray-400'>
+                      {currentTask?.reputationLevel <
+                        currentTask?.complexityScore &&
+                        'You have low reputation level for this task'}
+                    </div>
+                  </p>
+                  <button
+                    onClick={assignTaskToSelf}
+                    type='submit'
+                    disabled={processing}
+                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                  >
+                    {processing ? (
+                      <Spinner />
+                    ) : currentTask?.reputationLevel >=
+                      currentTask?.complexityScore ? (
+                      'Assign to self'
+                    ) : (
+                      'Request Assignment'
+                    )}
+                  </button>
+                </div>
+              )}
+            </li>
+            <li className='mb-10 ml-4'>
+              <div
+                className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
+                  currentTask?.status > 2 ? 'bg-green-500' : 'bg-gray-500'
+                }`}
+              ></div>
+              <h3
+                className={`text-lg font-semibold ${
+                  currentTask?.status > 2 ? 'text-green-500' : 'text-gray-900'
+                }`}
+              >
+                Submit
+              </h3>
+              {taskStatus === 'assigned' &&
+                currentTask?.assigneeAddress === account && (
+                  <div>
+                    <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
+                      Ready for submission?
+                    </p>
+                    <button
+                      onClick={submitTask}
+                      type='submit'
+                      disabled={processing}
+                      className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                    >
+                      {processing ? <Spinner /> : 'Submit'}
+                    </button>
                   </div>
-                </p>
-                <button
-                  onClick={
-                    task.reputationLevel >= task.complexityScore
-                      ? assignTaskToSelf
-                      : approveTaskAssigned
-                  }
-                  type='submit'
-                  disabled={processing}
-                  className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
-                >
-                  {processing ? (
-                    <Spinner />
-                  ) : task.reputationLevel >= task.complexityScore ? (
-                    'Assign to self'
-                  ) : (
-                    'Request Assignment'
-                  )}
-                </button>
-              </div>
-            )}
-          </li>
-          <li className='mb-10 ml-4'>
-            <div
-              className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
-                task.status > 2 ? 'bg-green-500' : 'bg-gray-500'
-              }`}
-            ></div>
-            <h3
-              className={`text-lg font-semibold ${
-                task.status > 2 ? 'text-green-500' : 'text-gray-900'
-              }`}
-            >
-              Submit
-            </h3>
-            {taskStatus === 'assigned' && task.assigneeAddress === account && (
-              <div>
-                <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
-                  Ready for submission?
-                </p>
-                <button
-                  onClick={submitTask}
-                  type='submit'
-                  disabled={processing}
-                  className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
-                >
-                  {processing ? <Spinner /> : 'Submit'}
-                </button>
-              </div>
-            )}
-          </li>
-          <li className='ml-4'>
-            <div
-              className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
-                task.status > 3 ? 'bg-green-500' : 'bg-gray-500'
-              }`}
-            ></div>
-            <h3
-              className={`text-lg font-semibold ${
-                task.status > 3 ? 'text-green-500' : 'text-gray-900'
-              }`}
-            >
-              Closed
-            </h3>
-          </li>
-        </ol>
+                )}
+            </li>
+            <li className='ml-4'>
+              <div
+                className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
+                  currentTask?.status > 3 ? 'bg-green-500' : 'bg-gray-500'
+                }`}
+              ></div>
+              <h3
+                className={`text-lg font-semibold ${
+                  currentTask?.status > 3 ? 'text-green-500' : 'text-gray-900'
+                }`}
+              >
+                Closed
+              </h3>
+            </li>
+          </ol>
+        </div>
+        {currentTask.status === 1 && (
+          <AssignmentRequest
+            taskId={currentTask?.id}
+            onAssign={() => getTask()}
+          />
+        )}
       </div>
     </div>
   )
