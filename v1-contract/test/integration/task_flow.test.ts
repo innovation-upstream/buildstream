@@ -6,6 +6,7 @@ const complexityScore = 0
 const requiredConfirmations = 1
 const requiredApprovals = 2
 const reputationLevel = 1
+const dueDate = 10
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -111,7 +112,8 @@ describe('Integration test: Task flow', function () {
         'update ethers version to v2',
         ['golang'],
         complexityScore,
-        reputationLevel
+        reputationLevel,
+        dueDate
       )
 
     const taskEvent = await taskCreationEvent

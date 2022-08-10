@@ -27,7 +27,9 @@ const getMockTask = ({
   reputationLevel,
   requiredApprovals,
   rewardAmount: 0,
-  rewardToken: ethers.constants.AddressZero
+  rewardToken: ethers.constants.AddressZero,
+  assignDate: 0,
+  dueDate: 10
 })
 
 const getMockOrganization = ({
@@ -131,7 +133,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
 
     const event = await creationEvent
@@ -167,7 +170,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     expect(await contractInstance.getState(taskId)).to.be.equal(
@@ -208,7 +212,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       4,
-      1
+      1,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
@@ -245,7 +250,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
@@ -289,7 +295,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
@@ -330,7 +337,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
@@ -370,7 +378,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
@@ -413,7 +422,8 @@ describe('Unit test: Task contract', function () {
       'update ethers version to v2',
       ['golang'],
       1,
-      0
+      0,
+      10
     )
     const taskId = 0
     await storageContract.mock.getTask.returns(
