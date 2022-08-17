@@ -2,7 +2,11 @@ import ActionForm from 'components/ActionForm/ActionForm'
 import ActionList from 'components/ActionList/ActionList'
 import Deposit from 'components/Deposit/Deposit'
 import { ethers } from 'ethers'
-import { fetchActionCount, fetchActions, fetchConfirmers } from 'hooks/action/functions'
+import {
+  fetchActionCount,
+  fetchActions,
+  fetchConfirmers
+} from 'hooks/action/functions'
 import { fetchOrganization } from 'hooks/organization/functions'
 import { Organization } from 'hooks/organization/types'
 import { fetchTaskCountByOrg, fetchTasksByOrg } from 'hooks/task/functions'
@@ -13,7 +17,9 @@ import type {
 } from 'next'
 import Head from 'next/head'
 import {
-  updateActions, updateConfirmers, updateCount as updateActionCount
+  updateActions,
+  updateConfirmers,
+  updateCount as updateActionCount
 } from 'state/action/slice'
 import { wrapper } from 'state/store'
 import { updateCount as updateTaskCount, updateTasks } from 'state/task/slice'
@@ -51,7 +57,7 @@ export const getServerSideProps: GetServerSideProps =
       store.dispatch(updateActionCount(actions.length))
       store.dispatch(
         updateActions({
-          data: actions.map(action => ({
+          data: actions.map((action) => ({
             ...action,
             value: action.value.toString() as any
           })),
@@ -124,7 +130,11 @@ const OrganizationPage: NextPage<PageProps> = ({ org }) => {
           <p className='text-lg mt-3 break-all'>
             Reward multiplier:{' '}
             <span className='text-sm text-gray-500'>
-              {org?.rewardMultiplier.toString()}
+              {org?.rewardMultiplier
+                ? ethers.utils
+                    .formatEther(org?.rewardMultiplier.toString())
+                    .toString()
+                : ''}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>

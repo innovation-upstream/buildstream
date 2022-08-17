@@ -1,13 +1,12 @@
-import { useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
+import Spinner from 'components/Spinner/Spinner'
+import AssignmentRequest from 'components/Task/AssignmentRequest'
 import { ethers } from 'ethers'
-import { fetchTask } from 'hooks/task/functions'
+import { assignToSelf, fetchTask, openTask, taskSubmission } from 'hooks/task/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import { openTask, assignToSelf, taskSubmission } from 'hooks/task/functions'
-import Spinner from 'components/Spinner/Spinner'
-import AssignmentRequest from 'components/Task/AssignmentRequest'
+import { useState } from 'react'
 
 interface PageProps {
   task: Task
@@ -19,8 +18,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      task: task,
-    },
+      task: task
+    }
   }
 }
 
@@ -139,7 +138,11 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
         <p className='text-lg mt-3 break-all'>
           Reward amount:{' '}
           <span className='text-sm text-gray-500'>
-            {currentTask?.rewardAmount.toString()}
+            {currentTask?.rewardAmount
+              ? ethers.utils
+                  .formatEther(currentTask?.rewardAmount.toString())
+                  .toString()
+              : ''}
           </span>
         </p>
         <p className='text-lg mt-3 break-all'>
