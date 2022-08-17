@@ -143,7 +143,11 @@ const TasksPage: NextPage = () => {
           <p className='text-lg mt-3 break-all'>
             Reward amount:{' '}
             <span className='text-sm text-gray-500'>
-              {selected?.rewardAmount.toString()}
+              {selected?.rewardAmount
+                ? ethers.utils
+                    .formatEther(selected?.rewardAmount.toString())
+                    .toString()
+                : ''}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>

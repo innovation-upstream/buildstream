@@ -119,7 +119,9 @@ const OrganizationPage: NextPage = () => {
           <p className='text-lg mt-3 break-all'>
             Reward multiplier:{' '}
             <span className='text-sm text-gray-500'>
-              {selected?.rewardMultiplier.toString()}
+              {selected?.rewardMultiplier
+                ? ethers.utils.formatEther(selected?.rewardMultiplier.toString()).toString()
+                : ''}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>
