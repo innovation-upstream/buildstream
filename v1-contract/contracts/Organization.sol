@@ -15,10 +15,17 @@ library OrgLib {
         address[] reviewers;
         address[] approvers;
         address[] signers;
+        bool isInitialized;
+    }
+
+    struct OrgConfig {
+        uint256 orgId;
         uint256 requiredTaskApprovals;
         uint256 requiredConfirmations;
         uint256 rewardMultiplier;
         address rewardToken;
+        uint256 rewardSlashDivisor; // 4 decimal places
+        uint256 slashRewardEvery;
     }
 }
 
@@ -41,6 +48,7 @@ contract Organization {
     mapping(uint256 => mapping(address => bool)) private isApprover;
     mapping(uint256 => mapping(address => bool)) private isSigner;
     mapping(uint256 => OrgLib.Org) private orgs;
+    mapping(uint256 => OrgLib.OrgConfig) private orgConfigs;
     mapping(uint256 => bool) private _orgExists;
     uint256 private orgCount;
 
@@ -98,18 +106,13 @@ contract Organization {
     /// @param description Organization description.
     /// @param reviewers List of reviewers.
     /// @param approvers List of approvers.
-    /// @param requiredTaskApprovals Number of approvers required.
     /// @return orgId organizaion ID.
     function createOrg(
-        string memory name,
-        string memory description,
-        uint256 rewardMultiplier,
-        address rewardToken,
-        address[] memory reviewers,
-        address[] memory approvers,
-        address[] memory signers,
-        uint256 requiredConfirmations,
-        uint256 requiredTaskApprovals
+        string calldata name,
+        string calldata description,
+        address[] calldata reviewers,
+        address[] calldata approvers,
+        address[] calldata signers
     ) external returns (uint256 orgId) {
         require(
             reviewers.length > 0 && approvers.length > 0,
@@ -134,13 +137,10 @@ contract Organization {
             id: orgId,
             name: name,
             description: description,
-            rewardToken: rewardToken,
+            isInitialized: false,
             reviewers: reviewers,
             approvers: approvers,
-            signers: found ? signers : _signers,
-            rewardMultiplier: rewardMultiplier,
-            requiredConfirmations: requiredConfirmations,
-            requiredTaskApprovals: requiredTaskApprovals
+            signers: found ? signers : _signers
         });
         orgCount += 1;
         _orgExists[orgId] = true;
@@ -151,20 +151,56 @@ contract Organization {
         emit Creation(orgId);
     }
 
+    /// @dev Allows to add a new organization config.
+    /// @param orgId Organization Id.
+    /// @param requiredTaskApprovals Number of approvals required per task.
+    function addOrgConfig(
+        uint256 orgId,
+        uint256 rewardMultiplier,
+        address rewardToken,
+        uint256 requiredConfirmations,
+        uint256 requiredTaskApprovals,
+        uint256 rewardSlashDivisor,
+        uint256 slashRewardEvery
+    ) external {
+        require(!orgs[orgId].isInitialized, "org is initialized");
+        orgs[orgId].isInitialized = true;
+        orgConfigs[orgId] = OrgLib.OrgConfig({
+            orgId: orgId,
+            rewardToken: rewardToken,
+            rewardMultiplier: rewardMultiplier,
+            requiredConfirmations: requiredConfirmations,
+            requiredTaskApprovals: requiredTaskApprovals,
+            rewardSlashDivisor: rewardSlashDivisor,
+            slashRewardEvery: slashRewardEvery
+        });
+    }
+
     /// @dev Get organization.
     /// @param _orgId Id of organization.
     function getOrganization(uint256 _orgId)
         external
         view
         orgExists(_orgId)
-        returns (OrgLib.Org memory org)
+        returns (OrgLib.Org memory)
     {
         return orgs[_orgId];
     }
 
+    /// @dev Get organization config.
+    /// @param _orgId Id of organization.
+    function getOrganizationConfig(uint256 _orgId)
+        external
+        view
+        orgExists(_orgId)
+        returns (OrgLib.OrgConfig memory)
+    {
+        return orgConfigs[_orgId];
+    }
+
     /// @dev Returns org count.
     /// @return Organization count.
-    function getOrgCount() public view returns (uint256) {
+    function getOrgCount() external view returns (uint256) {
         return orgCount;
     }
 
@@ -235,23 +271,35 @@ contract Organization {
                 action.tokenAddress,
                 action.value
             );
-        
-        if (action.actionType == ActionLib.ActionType.UPDATE_REQUIRED_TASK_APPROVALS)
-            orgs[action.orgId].requiredTaskApprovals = action.value;
 
-        if (action.actionType == ActionLib.ActionType.UPDATE_REQUIRED_CONFIRMATIONS)
-            orgs[action.orgId].requiredConfirmations = action.value;
+        if (
+            action.actionType ==
+            ActionLib.ActionType.UPDATE_REQUIRED_TASK_APPROVALS
+        ) orgConfigs[action.orgId].requiredTaskApprovals = action.value;
+
+        if (
+            action.actionType ==
+            ActionLib.ActionType.UPDATE_REQUIRED_CONFIRMATIONS
+        ) orgConfigs[action.orgId].requiredConfirmations = action.value;
 
         if (action.actionType == ActionLib.ActionType.UPDATE_REWARD_MULTIPLIER)
-            orgs[action.orgId].rewardMultiplier = action.value;
+            orgConfigs[action.orgId].rewardMultiplier = action.value;
 
         if (action.actionType == ActionLib.ActionType.UPDATE_REWARD_TOKEN)
-            orgs[action.orgId].rewardToken = action.targetAddress;
+            orgConfigs[action.orgId].rewardToken = action.targetAddress;
+
+        if (
+            action.actionType ==
+            ActionLib.ActionType.UPDATE_REWARD_SLASH_DIVISOR
+        ) orgConfigs[action.orgId].rewardSlashDivisor = action.value;
+
+        if (action.actionType == ActionLib.ActionType.UPDATE_SLASH_REWARD_EVERY)
+            orgConfigs[action.orgId].slashRewardEvery = action.value;
 
         string memory val = string(abi.encodePacked(action.data));
         if (action.actionType == ActionLib.ActionType.UPDATE_NAME)
             orgs[action.orgId].name = val;
-        
+
         if (action.actionType == ActionLib.ActionType.UPDATE_DESCRIPTION)
             orgs[action.orgId].description = val;
     }
@@ -262,7 +310,7 @@ contract Organization {
         address targetAddress,
         address tokenAddress,
         uint256 value
-    ) internal {
+    ) private {
         if (tokenAddress == address(0))
             treasury.withdrawForce(_actionId, orgId, targetAddress, value);
         else
@@ -278,7 +326,7 @@ contract Organization {
     /// @dev Allows to add a new reviewer.
     /// @param _orgId Id of organization.
     /// @param _reviewer Address of new reviewer.
-    function addReviewer(uint256 _orgId, address _reviewer) internal {
+    function addReviewer(uint256 _orgId, address _reviewer) private {
         require(!isReviewer[_orgId][_reviewer], "Reviewer exists");
         isReviewer[_orgId][_reviewer] = true;
         orgs[_orgId].reviewers.push(_reviewer);
@@ -288,7 +336,7 @@ contract Organization {
     /// @dev Allows to remove an reviewer.
     /// @param _orgId Id of organization.
     /// @param _reviewer Address of reviewer.
-    function removeReviewer(uint256 _orgId, address _reviewer) internal {
+    function removeReviewer(uint256 _orgId, address _reviewer) private {
         require(isReviewer[_orgId][_reviewer], "Reviewer not exist");
         require(
             orgs[_orgId].reviewers.length > 1,
@@ -337,7 +385,7 @@ contract Organization {
     /// @dev Allows to add a new reviewer.
     /// @param _orgId Id of organization.
     /// @param _approver Address of new approver.
-    function addApprover(uint256 _orgId, address _approver) internal {
+    function addApprover(uint256 _orgId, address _approver) private {
         require(!isApprover[_orgId][_approver], "Approver exists");
         isApprover[_orgId][_approver] = true;
         orgs[_orgId].approvers.push(_approver);
@@ -347,7 +395,7 @@ contract Organization {
     /// @dev Allows to remove an approver.
     /// @param _orgId Id of organization.
     /// @param _approver Address of approver.
-    function removeApprover(uint256 _orgId, address _approver) internal {
+    function removeApprover(uint256 _orgId, address _approver) private {
         require(isApprover[_orgId][_approver], "Approver not exist");
         require(
             orgs[_orgId].approvers.length > 1,
@@ -396,7 +444,7 @@ contract Organization {
     /// @dev Allows to add a new signer.
     /// @param _orgId Id of organization.
     /// @param _signer Address of new signer.
-    function addSigner(uint256 _orgId, address _signer) internal {
+    function addSigner(uint256 _orgId, address _signer) private {
         require(!isSigner[_orgId][_signer], "Signer exists");
         isSigner[_orgId][_signer] = true;
         orgs[_orgId].signers.push(_signer);
@@ -406,7 +454,7 @@ contract Organization {
     /// @dev Allows to remove an signer.
     /// @param _orgId Id of organization.
     /// @param _signer Address of signer.
-    function removeSigner(uint256 _orgId, address _signer) internal {
+    function removeSigner(uint256 _orgId, address _signer) private {
         require(isSigner[_orgId][_signer], "Signer not exist");
         require(orgs[_orgId].signers.length > 1, "signers must not be empty");
         isSigner[_orgId][_signer] = false;
@@ -455,6 +503,6 @@ contract Organization {
         orgExists(_orgId)
         returns (uint256)
     {
-        return orgs[_orgId].requiredTaskApprovals;
+        return orgConfigs[_orgId].requiredTaskApprovals;
     }
 }

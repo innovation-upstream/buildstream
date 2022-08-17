@@ -18,7 +18,9 @@ library ActionLib {
         UPDATE_REQUIRED_TASK_APPROVALS,
         UPDATE_REQUIRED_CONFIRMATIONS,
         UPDATE_REWARD_MULTIPLIER,
-        UPDATE_REWARD_TOKEN
+        UPDATE_REWARD_TOKEN,
+        UPDATE_REWARD_SLASH_DIVISOR,
+        UPDATE_SLASH_REWARD_EVERY
     }
 
     struct Action {
@@ -262,7 +264,7 @@ contract ActionContract {
         return
             confirmationCount[_actionId] ==
             organization
-                .getOrganization(actions[_actionId].orgId)
+                .getOrganizationConfig(actions[_actionId].orgId)
                 .requiredConfirmations;
     }
 

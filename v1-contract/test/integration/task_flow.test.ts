@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
+const rewardSlashDivisor = 20
+const slashRewardEvery = 1
 const multiplier = 0.00001
 const complexityScore = 0
 const requiredConfirmations = 1
@@ -56,33 +58,30 @@ describe('Integration test: Task flow', function () {
       await getContractInstances()
 
     // Create organization
-    const orgCreationEvent = new Promise<any>((resolve, reject) => {
-      orgContract.on('Creation', (orgId, event) => {
-        event.removeListener()
-        resolve({
-          orgId: orgId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await orgContract.createOrg(
+    const createOrgTx = await orgContract.createOrg(
       'Buildstream',
       'Decentralized task managers',
-      ethers.utils.parseUnits(multiplier.toString()),
-      ethers.constants.AddressZero,
       [ethers.constants.AddressZero],
       [approver1.address, approver2.address],
-      [ethers.constants.AddressZero],
-      requiredConfirmations,
-      requiredApprovals
+      [ethers.constants.AddressZero]
     )
 
-    const orgEvent = await orgCreationEvent
-    const orgId = orgEvent.orgId.toNumber()
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      rewardSlashDivisor,
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
 
     // Make deposit in treasury for orgainization
     await treasuryContract['deposit(uint256)'](orgId, {
@@ -91,20 +90,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
-    const taskCreationEvent = new Promise<any>((resolve, reject) => {
-      taskContract.on('Creation', (taskId, event) => {
-        event.removeListener()
-        resolve({
-          taskId: taskId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await taskContract
+    const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
         orgId,
@@ -113,11 +99,14 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        dueDate
+        (await ethers.provider.getBlockNumber()) + dueDate
       )
 
-    const taskEvent = await taskCreationEvent
-    const taskId = taskEvent.taskId.toNumber()
+    const taskCreateReceipt = await createTaskTx.wait()
+    const taskEvent = taskCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const taskId = taskEvent?.args?.[0]?.toNumber()
 
     // Open task
     await taskContract.connect(approver1)['openTask(uint256)'](taskId)
@@ -144,6 +133,108 @@ describe('Integration test: Task flow', function () {
       .mul(1 + complexityScore)
     const newBalance = await ethers.provider.getBalance(assignee.address)
     const expectedBalance = reward.add(initialBalance)
+    const isEqual = expectedBalance.eq(newBalance)
+
+    expect(
+      await tokenContract['balanceOf(address,uint256,uint256)'](
+        assignee.address,
+        complexityScore,
+        orgId
+      )
+    ).to.be.equal(1)
+    expect(isEqual).to.be.equal(true)
+  })
+
+  it('Should successfully slash reward', async function () {
+    const [owner, approver1, approver2, assignee] = await ethers.getSigners()
+    const { orgContract, taskContract, tokenContract, treasuryContract } =
+      await getContractInstances()
+
+    // Create organization
+    const createOrgTx = await orgContract.createOrg(
+      'Buildstream',
+      'Decentralized task managers',
+      [ethers.constants.AddressZero],
+      [approver1.address, approver2.address],
+      [ethers.constants.AddressZero]
+    )
+
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      rewardSlashDivisor,
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract['deposit(uint256)'](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther('0.001')
+    })
+
+    // Create task using org id created earlier
+    const taskDueDate = (await ethers.provider.getBlockNumber()) + dueDate
+    const createTaskTx = await taskContract
+      .connect(approver1)
+      .createTask(
+        orgId,
+        'update ethers version',
+        'update ethers version to v2',
+        ['golang'],
+        complexityScore,
+        reputationLevel,
+        taskDueDate
+      )
+
+    const taskCreateReceipt = await createTaskTx.wait()
+    const taskEvent = taskCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const taskId = taskEvent?.args?.[0]?.toNumber()
+
+    // Open task
+    await taskContract.connect(approver1)['openTask(uint256)'](taskId)
+
+    // Assign task created above to self
+    await taskContract.connect(assignee).assignSelf(taskId)
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address)
+
+    const blocksToMine =
+      taskDueDate + 5 - (await ethers.provider.getBlockNumber())
+    await ethers.provider.send('hardhat_mine', [
+      `0x${(blocksToMine >= 0 ? blocksToMine : 0).toString(16)}`
+    ])
+
+    // Submit task
+    await taskContract.connect(assignee).submitTask(taskId)
+    const initialBalance = await ethers.provider.getBalance(assignee.address)
+
+    // Approvers can confirm task
+    await taskContract.connect(approver1).approveTask(taskId)
+    await taskContract.connect(approver2).approveTask(taskId)
+
+    // Assignee should receive reward
+
+    const reward = ethers.utils
+      .parseUnits(multiplier.toString())
+      .mul(1 + complexityScore)
+      .mul(rewardSlashDivisor - 6)
+      .div(rewardSlashDivisor)
+    const newBalance = await ethers.provider.getBalance(assignee.address)
+    const expectedBalance = initialBalance.add(reward.isNegative() ? 0 : reward)
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(

@@ -193,7 +193,7 @@ contract Treasury {
         lockedTokenBalances[orgId][tokenAddress] += amount;
     }
 
-    function unlockBalance(uint256 orgId, uint256 amount) internal {
+    function unlockBalance(uint256 orgId, uint256 amount) external {
         lockedBalances[orgId] -= amount;
         balances[orgId] += amount;
     }
@@ -202,7 +202,7 @@ contract Treasury {
         uint256 orgId,
         address tokenAddress,
         uint256 amount
-    ) internal {
+    ) external {
         lockedTokenBalances[orgId][tokenAddress] -= amount;
         tokenBalances[orgId][tokenAddress] += amount;
     }

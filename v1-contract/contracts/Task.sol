@@ -119,7 +119,10 @@ contract TaskContract {
         uint256 reputationLevel,
         uint256 dueDate
     ) external taskExists(taskId) onlyApprover(taskOrg[taskId]) {
-        require(taskStatus[taskId] == TaskLib.TaskStatus.PROPOSED, "Task is opened");
+        require(
+            taskStatus[taskId] == TaskLib.TaskStatus.PROPOSED,
+            "Task is opened"
+        );
         taskStorage.updateTaskRequirement(
             taskId,
             complexityScore,
@@ -137,11 +140,13 @@ contract TaskContract {
     {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
-        OrgLib.Org memory org = organization.getOrganization(task.orgId);
-        uint256 rewardAmount = org.rewardMultiplier *
+        OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
+            task.orgId
+        );
+        uint256 rewardAmount = orgConfig.rewardMultiplier *
             (task.complexityScore + 1);
-        if (org.rewardToken != address(0))
-            return openTask(taskId, rewardAmount, org.rewardToken);
+        if (orgConfig.rewardToken != address(0))
+            return openTask(taskId, rewardAmount, orgConfig.rewardToken);
         treasury.lockBalance(task.orgId, rewardAmount);
         taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
         taskStorage.openTask(taskId, rewardAmount);
@@ -202,29 +207,49 @@ contract TaskContract {
     /// @param taskId Task ID.
     function closeTask(uint256 taskId) internal {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
+        OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
+            task.orgId
+        );
         sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
-        if (
-            sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) >
-            task.reputationLevel
-        )
+        if (task.assigneeAddress == task.assigner)
             sbtToken.unStake(
                 msg.sender,
                 task.complexityScore,
                 task.reputationLevel,
                 task.orgId
             );
+        uint256 rewardAmount = 0;
+        if (task.dueDate >= task.submitDate) rewardAmount = task.rewardAmount;
+        else {
+            uint256 overtime = task.submitDate - task.dueDate;
+            uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
+            uint256 slashAmount = (slashRatio * task.rewardAmount) /
+                orgConfig.rewardSlashDivisor;
+            if (slashAmount > task.rewardAmount) rewardAmount = 0;
+            else {
+                rewardAmount = task.rewardAmount - slashAmount;
+                if (task.rewardToken == address(0))
+                    treasury.unlockBalance(taskOrg[taskId], slashAmount);
+                else
+                    treasury.unlockBalance(
+                        taskOrg[taskId],
+                        task.rewardToken,
+                        slashAmount
+                    );
+            }
+        }
         if (task.rewardToken == address(0))
             treasury.reward(
                 taskOrg[taskId],
                 task.assigneeAddress,
-                task.rewardAmount
+                rewardAmount
             );
         else
             treasury.reward(
                 taskOrg[taskId],
                 task.assigneeAddress,
                 task.rewardToken,
-                task.rewardAmount
+                rewardAmount
             );
         taskStorage.closeTask(taskId);
         taskStatus[taskId] = TaskLib.TaskStatus.CLOSED;
@@ -309,7 +334,7 @@ contract TaskContract {
             task.reputationLevel,
             task.orgId
         );
-        taskStorage.assign(taskId, msg.sender);
+        taskStorage.assign(taskId, msg.sender, msg.sender);
         orgAssignees[taskOrg[taskId]][msg.sender] += 1;
         status = taskStatus[taskId];
         emit Assignment(msg.sender, taskId);
@@ -328,7 +353,7 @@ contract TaskContract {
         taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
         taskAssignee[taskId] = assignee;
         sbtToken.stake(assignee, task.complexityScore, 0, task.orgId);
-        taskStorage.assign(taskId, assignee);
+        taskStorage.assign(taskId, assignee, msg.sender);
         orgAssignees[task.orgId][assignee] += 1;
         emit Assignment(assignee, taskId);
     }

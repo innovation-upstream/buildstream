@@ -4,6 +4,8 @@ import { ethers } from 'hardhat'
 const multiplier = 0.00001
 const requiredConfirmations = 2
 const requiredApprovals = 1
+const rewardSlashDivisor = 0.01
+const slashRewardEvery = 1
 
 const actionType = {
   WITHDRAWAL: 0,
@@ -39,56 +41,43 @@ describe('Integration test: Organization update flow', function () {
     const { actionContract, orgContract } = await getContractInstances()
 
     // Create organization
-    const orgCreationEvent = new Promise<any>((resolve, reject) => {
-      orgContract.on('Creation', (orgId, event) => {
-        event.removeListener()
-        resolve({
-          orgId: orgId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await orgContract.createOrg(
+    const createOrgTx = await orgContract.createOrg(
       'Buildstream',
       'Decentralized task managers',
-      ethers.utils.parseUnits(multiplier.toString()),
-      ethers.constants.AddressZero,
       [ethers.constants.AddressZero],
       [approver1.address],
-      [signer.address],
-      requiredConfirmations,
-      requiredApprovals
+      [signer.address]
     )
 
-    const orgEvent = await orgCreationEvent
-    const orgId = orgEvent.orgId.toNumber()
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
-    const actionCreationEvent = new Promise<any>((resolve, reject) => {
-      actionContract.on('Creation', (orgId, actionId, event) => {
-        event.removeListener()
-        resolve({
-          actionId: actionId
-        })
-      })
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashDivisor.toString(), 4),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
 
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await actionContract['createAction(uint256,address,uint8,bytes)'](
+    const tx0 = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_NAME,
       ethers.utils.toUtf8Bytes('Builder stream')
     )
 
-    const actionEvent = await actionCreationEvent
-    const actionId = actionEvent.actionId.toNumber()
+    const receipt0 = await tx0.wait()
+    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const actionId = event?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
@@ -105,56 +94,43 @@ describe('Integration test: Organization update flow', function () {
     const { actionContract, orgContract } = await getContractInstances()
 
     // Create organization
-    const orgCreationEvent = new Promise<any>((resolve, reject) => {
-      orgContract.on('Creation', (orgId, event) => {
-        event.removeListener()
-        resolve({
-          orgId: orgId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await orgContract.createOrg(
+    const createOrgTx = await orgContract.createOrg(
       'Buildstream',
       'Decentralized task managers',
-      ethers.utils.parseUnits(multiplier.toString()),
-      ethers.constants.AddressZero,
       [ethers.constants.AddressZero],
       [approver1.address],
-      [signer.address],
-      requiredConfirmations,
-      requiredApprovals
+      [signer.address]
     )
 
-    const orgEvent = await orgCreationEvent
-    const orgId = orgEvent.orgId.toNumber()
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'Creation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
-    const actionCreationEvent = new Promise<any>((resolve, reject) => {
-      actionContract.on('Creation', (orgId, actionId, event) => {
-        event.removeListener()
-        resolve({
-          actionId: actionId
-        })
-      })
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashDivisor.toString(), 4),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
 
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await actionContract['createAction(uint256,address,uint8,bytes)'](
+    const tx0 = await actionContract[
+      'createAction(uint256,address,uint8,bytes)'
+    ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_DESCRIPTION,
       ethers.utils.toUtf8Bytes('Decentralized task managers app')
     )
 
-    const actionEvent = await actionCreationEvent
-    const actionId = actionEvent.actionId.toNumber()
+    const receipt0 = await tx0.wait()
+    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const actionId = event?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
