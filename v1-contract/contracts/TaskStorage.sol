@@ -20,6 +20,7 @@ library TaskLib {
         uint256 orgId;
         string title;
         string description;
+        address assigner;
         address assigneeAddress;
         string[] taskTags;
         TaskStatus status;
@@ -29,6 +30,7 @@ library TaskLib {
         uint256 rewardAmount;
         address rewardToken;
         uint256 assignDate;
+        uint256 submitDate;
         uint256 dueDate;
     }
 }
@@ -99,10 +101,12 @@ contract TaskStorageContract {
             complexityScore: complexityScore,
             reputationLevel: reputationLevel,
             requiredApprovals: requiredApprovals,
+            assigner: address(0),
             assigneeAddress: address(0),
             rewardAmount: 0,
             rewardToken: address(0),
             assignDate: 0,
+            submitDate: 0,
             dueDate: dueDate,
             status: TaskLib.TaskStatus.PROPOSED
         });
@@ -189,11 +193,12 @@ contract TaskStorageContract {
         taskExists(taskId)
     {
         tasks[taskId].status = TaskLib.TaskStatus.SUBMITTED;
+        tasks[taskId].submitDate = block.number;
     }
 
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
-    function assign(uint256 taskId, address assignee)
+    function assign(uint256 taskId, address assignee, address assigner)
         external
         onlyTaskContract
         taskExists(taskId)
@@ -202,6 +207,7 @@ contract TaskStorageContract {
         task.assigneeAddress = assignee;
         task.status = TaskLib.TaskStatus.ASSIGNED;
         task.assignDate = block.number;
+        task.assigner = assigner;
         tasks[taskId] = task;
     }
 
@@ -212,6 +218,7 @@ contract TaskStorageContract {
         task.assigneeAddress = address(0);
         task.status = TaskLib.TaskStatus.OPEN;
         task.assignDate = 0;
+        task.submitDate = 0;
         tasks[taskId] = task;
     }
 }
