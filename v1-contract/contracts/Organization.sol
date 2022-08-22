@@ -50,6 +50,7 @@ contract Organization {
     mapping(uint256 => OrgLib.Org) private orgs;
     mapping(uint256 => OrgLib.OrgConfig) private orgConfigs;
     mapping(uint256 => bool) private _orgExists;
+    mapping(uint256 => mapping(bytes32 => uint256)) private multipliers;
     uint256 private orgCount;
 
     modifier onlyOwner() {
@@ -196,6 +197,19 @@ contract Organization {
         returns (OrgLib.OrgConfig memory)
     {
         return orgConfigs[_orgId];
+    }
+
+    function getRewardMultiplier(uint256 orgId, string[] calldata tags)
+        external
+        view
+        returns (uint256 mul)
+    {
+        mul = orgConfigs[orgId].rewardMultiplier;
+        for (uint256 i = 0; i < tags.length; i++) {
+            bytes32 key = keccak256(bytes(tags[i]));
+            uint256 m = multipliers[orgId][key];
+            if (m > mul) mul = m;
+        }
     }
 
     /// @dev Returns org count.

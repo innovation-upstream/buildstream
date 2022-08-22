@@ -119,7 +119,9 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract.connect(assignee).submitTask(taskId)
+    await taskContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
 
     // Approvers can confirm task
@@ -219,7 +221,9 @@ describe('Integration test: Task flow', function () {
     ])
 
     // Submit task
-    await taskContract.connect(assignee).submitTask(taskId)
+    await taskContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
 
     // Approvers can confirm task

@@ -143,8 +143,11 @@ contract TaskContract {
         OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
             task.orgId
         );
-        uint256 rewardAmount = orgConfig.rewardMultiplier *
-            (task.complexityScore + 1);
+        uint256 multiplier = organization.getRewardMultiplier(
+            task.orgId,
+            task.taskTags
+        );
+        uint256 rewardAmount = multiplier * (task.complexityScore + 1);
         if (orgConfig.rewardToken != address(0))
             return openTask(taskId, rewardAmount, orgConfig.rewardToken);
         treasury.lockBalance(task.orgId, rewardAmount);
@@ -225,18 +228,17 @@ contract TaskContract {
             uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
             uint256 slashAmount = (slashRatio * task.rewardAmount) /
                 orgConfig.rewardSlashDivisor;
-            if (slashAmount > task.rewardAmount) rewardAmount = 0;
-            else {
-                rewardAmount = task.rewardAmount - slashAmount;
-                if (task.rewardToken == address(0))
-                    treasury.unlockBalance(taskOrg[taskId], slashAmount);
-                else
-                    treasury.unlockBalance(
-                        taskOrg[taskId],
-                        task.rewardToken,
-                        slashAmount
-                    );
-            }
+            if (slashAmount > task.rewardAmount)
+                slashAmount = task.rewardAmount;
+            rewardAmount = task.rewardAmount - slashAmount;
+            if (task.rewardToken == address(0))
+                treasury.unlockBalance(taskOrg[taskId], slashAmount);
+            else
+                treasury.unlockBalance(
+                    taskOrg[taskId],
+                    task.rewardToken,
+                    slashAmount
+                );
         }
         if (task.rewardToken == address(0))
             treasury.reward(
@@ -279,9 +281,9 @@ contract TaskContract {
 
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
-    function submitTask(uint256 taskId) external taskExists(taskId) {
+    function submitTask(uint256 taskId, string memory comment) external taskExists(taskId) {
         require(taskAssignee[taskId] == msg.sender, "Task not yours");
-        taskStorage.submitTask(taskId);
+        taskStorage.submitTask(taskId, comment);
         taskStatus[taskId] = TaskLib.TaskStatus.SUBMITTED;
         emit Submission(taskId);
     }

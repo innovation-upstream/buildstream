@@ -32,6 +32,7 @@ library TaskLib {
         uint256 assignDate;
         uint256 submitDate;
         uint256 dueDate;
+        string comment;
     }
 }
 
@@ -108,7 +109,8 @@ contract TaskStorageContract {
             assignDate: 0,
             submitDate: 0,
             dueDate: dueDate,
-            status: TaskLib.TaskStatus.PROPOSED
+            status: TaskLib.TaskStatus.PROPOSED,
+            comment: ""
         });
         taskCount += 1;
         _taskExists[taskId] = true;
@@ -187,13 +189,14 @@ contract TaskStorageContract {
 
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
-    function submitTask(uint256 taskId)
+    function submitTask(uint256 taskId, string memory comment)
         external
         onlyTaskContract
         taskExists(taskId)
     {
         tasks[taskId].status = TaskLib.TaskStatus.SUBMITTED;
         tasks[taskId].submitDate = block.number;
+        tasks[taskId].comment = comment;
     }
 
     /// @dev Allows assignees assign task to themselves.
