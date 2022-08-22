@@ -1,8 +1,14 @@
 import { useWeb3React } from '@web3-react/core'
 import Spinner from 'components/Spinner/Spinner'
 import AssignmentRequest from 'components/Task/AssignmentRequest'
+import ApprovalRequest from 'components/Task/ApprovalRequest'
 import { ethers } from 'ethers'
-import { assignToSelf, fetchTask, openTask, taskSubmission } from 'hooks/task/functions'
+import {
+  assignToSelf,
+  fetchTask,
+  openTask,
+  taskSubmission,
+} from 'hooks/task/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
@@ -18,8 +24,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      task: task
-    }
+      task: task,
+    },
   }
 }
 
@@ -269,12 +275,12 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
             <li className='ml-4'>
               <div
                 className={`absolute w-5 h-5 mt-1 rounded-full -left-2.5 border border-white ${
-                  currentTask?.status > 3 ? 'bg-green-500' : 'bg-gray-500'
+                  currentTask?.status === 4 ? 'bg-green-500' : 'bg-gray-500'
                 }`}
               ></div>
               <h3
                 className={`text-lg font-semibold ${
-                  currentTask?.status > 3 ? 'text-green-500' : 'text-gray-900'
+                  currentTask?.status === 4 ? 'text-green-500' : 'text-gray-900'
                 }`}
               >
                 Closed
@@ -286,6 +292,12 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
           <AssignmentRequest
             taskId={currentTask?.id}
             onAssign={() => getTask()}
+          />
+        )}
+        {currentTask.status === 3 && (
+          <ApprovalRequest
+            taskId={currentTask?.id}
+            onApprove={() => getTask()}
           />
         )}
       </div>

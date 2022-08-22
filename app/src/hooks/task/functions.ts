@@ -150,6 +150,22 @@ export const taskSubmission = async (
   return true
 }
 
+export const approveTask = async (
+  taskId: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.approveTask(taskId)
+  await tx.wait()
+
+  return true
+}
+
 export const fetchAssignedRequests = async (
   taskId: number,
   provider?: any
@@ -162,4 +178,19 @@ export const fetchAssignedRequests = async (
   const accounts = await contract.getAssignmentRequests(taskId)
 
   return accounts
+}
+
+export const fetchApprovals = async (
+  taskId: number,
+  address: string,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+  const approvals = await contract.approvals(taskId, address)
+
+  return approvals
 }
