@@ -69,6 +69,8 @@ const ActionForm = ({ org }: ActionProps) => {
           org.id,
           formData.targetAddress,
           amount,
+          customToken ? formData.tokenAddress : ethers.constants.AddressZero,
+          account,
           library.getSigner()
         )
       }
