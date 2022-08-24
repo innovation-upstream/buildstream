@@ -110,6 +110,7 @@ export const createWithdrawalAction = async (
   targetAddress: string,
   value: ethers.BigNumber,
   tokenAddress: string,
+  account: string,
   provider?: any
 ): Promise<number> => {
   const contract = getContract(
@@ -126,7 +127,10 @@ export const createWithdrawalAction = async (
     value,
     tokenAddress,
     ActionType.WITHDRAWAL,
-    ethers.utils.toUtf8Bytes('')
+    ethers.utils.toUtf8Bytes(''),
+    {
+      from: account
+    }
   )
 
   const receipt = await tx.wait()
