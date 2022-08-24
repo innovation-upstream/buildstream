@@ -3,11 +3,13 @@ import { createWrapper, HYDRATE } from 'next-redux-wrapper'
 import actionReducer from 'state/action/slice'
 import organizationReducer from 'state/organization/slice'
 import taskReducer from 'state/task/slice'
+import treasuryReducer from 'state/treasury/slice'
 
 const combinedReducer = combineReducers({
   organizations: organizationReducer,
   actions: actionReducer,
-  tasks: taskReducer
+  tasks: taskReducer,
+  treasury: treasuryReducer
 })
 
 const reducer: typeof combinedReducer = (state, action) => {

@@ -133,13 +133,14 @@ contract TaskContract {
 
     /// @dev Allows an approver to move a task to open.
     /// @param taskId Task ID.
-    function openTask(uint256 taskId)
+    function openTask(uint256 taskId, address rewardToken)
         external
         taskExists(taskId)
         onlyApprover(taskOrg[taskId])
     {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
+        taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
         OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
             task.orgId
         );
@@ -148,27 +149,25 @@ contract TaskContract {
             task.taskTags
         );
         uint256 rewardAmount = multiplier * (task.complexityScore + 1);
-        if (orgConfig.rewardToken != address(0))
-            return openTask(taskId, rewardAmount, orgConfig.rewardToken);
+        if (rewardToken != address(0)) {
+            treasury.lockBalance(taskOrg[taskId], rewardToken, rewardAmount);
+            return taskStorage.openTask(taskId, rewardAmount, rewardToken);
+        }
+        if (orgConfig.rewardToken != address(0)) {
+            treasury.lockBalance(
+                taskOrg[taskId],
+                orgConfig.rewardToken,
+                rewardAmount
+            );
+            return
+                taskStorage.openTask(
+                    taskId,
+                    rewardAmount,
+                    orgConfig.rewardToken
+                );
+        }
         treasury.lockBalance(task.orgId, rewardAmount);
-        taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
         taskStorage.openTask(taskId, rewardAmount);
-    }
-
-    /// @dev Allows an approver to move a task to open.
-    /// @param taskId Task ID.
-    function openTask(
-        uint256 taskId,
-        uint256 rewardAmount,
-        address rewardToken
-    ) public taskExists(taskId) onlyApprover(taskOrg[taskId]) {
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.PROPOSED,
-            "Task is opened"
-        );
-        treasury.lockBalance(taskOrg[taskId], rewardToken, rewardAmount);
-        taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
-        taskStorage.openTask(taskId, rewardAmount, rewardToken);
     }
 
     /// @dev Allows a approver to approve a task.
@@ -281,7 +280,10 @@ contract TaskContract {
 
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
-    function submitTask(uint256 taskId, string memory comment) external taskExists(taskId) {
+    function submitTask(uint256 taskId, string memory comment)
+        external
+        taskExists(taskId)
+    {
         require(taskAssignee[taskId] == msg.sender, "Task not yours");
         taskStorage.submitTask(taskId, comment);
         taskStatus[taskId] = TaskLib.TaskStatus.SUBMITTED;
@@ -324,7 +326,12 @@ contract TaskContract {
             sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) <
             task.reputationLevel
         ) {
-            assignmentRequest[taskId].push(msg.sender);
+            uint256 i;
+            bool requestExist;
+            for (i = 0; i < assignmentRequest[taskId].length; i++)
+                if (assignmentRequest[taskId][i] == msg.sender)
+                    requestExist = true;
+            if (!requestExist) assignmentRequest[taskId].push(msg.sender);
             return taskStatus[taskId];
         }
 
