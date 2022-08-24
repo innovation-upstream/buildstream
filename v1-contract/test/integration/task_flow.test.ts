@@ -109,7 +109,9 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber()
 
     // Open task
-    await taskContract.connect(approver1)['openTask(uint256)'](taskId)
+    await taskContract
+      .connect(approver1)
+      .openTask(taskId, ethers.constants.AddressZero)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -205,7 +207,9 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber()
 
     // Open task
-    await taskContract.connect(approver1)['openTask(uint256)'](taskId)
+    await taskContract
+      .connect(approver1)
+      .openTask(taskId, ethers.constants.AddressZero)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)

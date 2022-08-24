@@ -77,6 +77,24 @@ contract Treasury {
         return tokenBalances[orgId][tokenAddress];
     }
 
+    function getLockedBalance(uint256 orgId)
+        external
+        view
+        orgExists(orgId)
+        returns (uint256)
+    {
+        return lockedBalances[orgId];
+    }
+
+    function getLockedBalance(uint256 orgId, address tokenAddress)
+        external
+        view
+        orgExists(orgId)
+        returns (uint256)
+    {
+        return lockedTokenBalances[orgId][tokenAddress];
+    }
+
     function getOrgTokens(uint256 orgId)
         external
         view

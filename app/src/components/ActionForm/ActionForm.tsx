@@ -36,7 +36,7 @@ const ActionForm = ({ org }: ActionProps) => {
 
   const handleChange = (e: any) => {
     let value = e.target.value
-    if (e.target.type === 'number') value = parseInt(value)
+    if (e.target.type === 'number') value = parseFloat(value)
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: value
