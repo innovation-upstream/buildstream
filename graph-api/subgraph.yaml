@@ -1,0 +1,36 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Organization
+    network: goerli
+    source:
+      address: "0x244468244207f431aECBBbAEabAC1907b1ab34d1"
+      abi: Organization
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Organization
+      abis:
+        - name: Organization
+          file: ./abis/Organization.json
+      eventHandlers:
+        - event: OrganizationApproverAddition(uint256,indexed address)
+          handler: handleOrganizationApproverAddition
+        - event: OrganizationApproverRemoval(uint256,indexed address)
+          handler: handleOrganizationApproverRemoval
+        - event: OrganizationCreation(indexed uint256)
+          handler: handleOrganizationCreation
+        - event: OrganizationReviewerAddition(uint256,indexed address)
+          handler: handleOrganizationReviewerAddition
+        - event: OrganizationReviewerRemoval(uint256,indexed address)
+          handler: handleOrganizationReviewerRemoval
+        - event: OrganizationSignerAddition(uint256,indexed address)
+          handler: handleOrganizationSignerAddition
+        - event: OrganizationSignerRemoval(uint256,indexed address)
+          handler: handleOrganizationSignerRemoval
+      file: ./src/organization.ts

@@ -1,5 +1,5 @@
 {
-  "address": "0xaaFaAad14fe5aA66E93a5284496aba4b6a13Fbe7",
+  "address": "0x54A12f8375D8064f3BaBaEe65997509082A6E106",
   "abi": [
     {
       "type": "constructor",
@@ -14,7 +14,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Confirmation",
+      "name": "ActionConfirmation",
       "inputs": [
         {
           "type": "uint256",
@@ -36,7 +36,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Creation",
+      "name": "ActionCreation",
       "inputs": [
         {
           "type": "uint256",
@@ -47,107 +47,6 @@
           "type": "uint256",
           "name": "actionId",
           "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "_actionExists",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "actionCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "actionOrg",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "actions",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "id"
-        },
-        {
-          "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "address",
-          "name": "initiator"
-        },
-        {
-          "type": "address",
-          "name": "targetAddress"
-        },
-        {
-          "type": "uint256",
-          "name": "value"
-        },
-        {
-          "type": "bytes",
-          "name": "data"
-        },
-        {
-          "type": "bool",
-          "name": "executed"
-        },
-        {
-          "type": "address",
-          "name": "tokenAddress"
-        },
-        {
-          "type": "uint8",
-          "name": "actionType"
         }
       ]
     },
@@ -164,45 +63,6 @@
         }
       ],
       "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "confirmationCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "confirmations",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
     },
     {
       "type": "function",
@@ -466,45 +326,6 @@
       "outputs": [
         {
           "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgActionCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgActionIds",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
         }
       ]
     }

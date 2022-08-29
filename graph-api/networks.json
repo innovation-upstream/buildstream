@@ -1,0 +1,12 @@
+{
+  "mainnet": {
+    "Organization": {
+      "address": "0xbe1C29409f587205c57233bB482c242AeC25c7B5"
+    }
+  },
+  "goerli": {
+    "Organization": {
+      "address": "0x244468244207f431aECBBbAEabAC1907b1ab34d1"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "address": "0xddb51ac598fF99f1452e927ABD2117fD03d90045",
+  "address": "0x4518b4bd56B34c9D6f84907f36AcDa827fB52f33",
   "abi": [
     {
       "type": "constructor",
@@ -22,7 +22,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Assignment",
+      "name": "TaskAssignment",
       "inputs": [
         {
           "type": "address",
@@ -39,7 +39,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Closed",
+      "name": "TaskClosed",
       "inputs": [
         {
           "type": "uint256",
@@ -51,7 +51,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Confirmation",
+      "name": "TaskConfirmation",
       "inputs": [
         {
           "type": "address",
@@ -68,7 +68,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Creation",
+      "name": "TaskCreation",
       "inputs": [
         {
           "type": "uint256",
@@ -80,7 +80,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Revocation",
+      "name": "TaskRevocation",
       "inputs": [
         {
           "type": "address",
@@ -97,7 +97,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Submission",
+      "name": "TaskSubmission",
       "inputs": [
         {
           "type": "uint256",
@@ -109,7 +109,7 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Unassignment",
+      "name": "TaskUnassignment",
       "inputs": [
         {
           "type": "address",
@@ -120,27 +120,6 @@
           "type": "uint256",
           "name": "taskId",
           "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "approvals",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
         }
       ]
     },
@@ -197,27 +176,6 @@
     },
     {
       "type": "function",
-      "name": "assignmentRequest",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "createTask",
       "constant": false,
       "payable": false,
@@ -246,6 +204,10 @@
         {
           "type": "uint256",
           "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "dueDate"
         }
       ],
       "outputs": [
@@ -348,6 +310,10 @@
             },
             {
               "type": "address",
+              "name": "assigner"
+            },
+            {
+              "type": "address",
               "name": "assigneeAddress"
             },
             {
@@ -377,6 +343,22 @@
             {
               "type": "address",
               "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "uint256",
+              "name": "dueDate"
+            },
+            {
+              "type": "string",
+              "name": "comment"
             }
           ]
         }
@@ -450,89 +432,11 @@
           "name": "taskId"
         },
         {
-          "type": "uint256",
-          "name": "rewardAmount"
-        },
-        {
           "type": "address",
           "name": "rewardToken"
         }
       ],
       "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "openTask",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "orgAssignees",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgTaskCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgTaskIds",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
     },
     {
       "type": "function",
@@ -558,77 +462,13 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "string",
+          "name": "comment"
         }
       ],
       "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "taskAssignee",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "taskCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "taskOrg",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "taskStatus",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint8"
-        }
-      ]
     },
     {
       "type": "function",
@@ -648,6 +488,32 @@
           "name": "status"
         }
       ]
+    },
+    {
+      "type": "function",
+      "name": "updateTaskRequirement",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "complexityScore"
+        },
+        {
+          "type": "uint256",
+          "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "dueDate"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",

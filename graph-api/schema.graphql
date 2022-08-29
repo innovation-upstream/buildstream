@@ -1,0 +1,30 @@
+type UserRoles @entity(immutable: true) {
+  id: ID!
+  approver: [Organization!]! @derivedFrom(field: "approvers")
+  signer: [Organization!]! @derivedFrom(field: "signers")
+  reviewer: [Organization!]! @derivedFrom(field: "reviewers")
+}
+
+type UserOrganizations @entity(immutable: true) {
+  id: ID!
+  roles: UserRoles!
+}
+
+type User @entity(immutable: true) {
+  id: ID!
+  organizations: UserOrganizations!
+}
+
+type Organization @entity {
+  id: ID!
+  orgId: BigInt
+  name: String!
+  description: String!
+  reviewers: [UserRoles!]!
+  approvers: [UserRoles!]!
+  signers: [UserRoles!]!
+  requiredTaskApprovals: BigInt!
+  requiredConfirmations: BigInt!
+  rewardMultiplier: BigInt!
+  rewardToken: Bytes!
+}

@@ -1,28 +1,10 @@
 {
-  "address": "0x998B888546Ab74e4200a8dFfa4D08703fa9CD48B",
+  "address": "0xe07a6ac5590D22D52ef06A51f7976701B197371b",
   "abi": [
     {
       "type": "constructor",
       "payable": false,
       "inputs": []
-    },
-    {
-      "type": "function",
-      "name": "_taskExists",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
     },
     {
       "type": "function",
@@ -38,6 +20,10 @@
         {
           "type": "address",
           "name": "assignee"
+        },
+        {
+          "type": "address",
+          "name": "assigner"
         }
       ],
       "outputs": []
@@ -90,6 +76,10 @@
         {
           "type": "uint256",
           "name": "requiredApprovals"
+        },
+        {
+          "type": "uint256",
+          "name": "dueDate"
         }
       ],
       "outputs": [
@@ -134,6 +124,10 @@
             },
             {
               "type": "address",
+              "name": "assigner"
+            },
+            {
+              "type": "address",
               "name": "assigneeAddress"
             },
             {
@@ -163,6 +157,22 @@
             {
               "type": "address",
               "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "uint256",
+              "name": "dueDate"
+            },
+            {
+              "type": "string",
+              "name": "comment"
             }
           ]
         }
@@ -218,82 +228,13 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "string",
+          "name": "comment"
         }
       ],
       "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "taskCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "tasks",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "id"
-        },
-        {
-          "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "string",
-          "name": "title"
-        },
-        {
-          "type": "string",
-          "name": "description"
-        },
-        {
-          "type": "address",
-          "name": "assigneeAddress"
-        },
-        {
-          "type": "uint8",
-          "name": "status"
-        },
-        {
-          "type": "uint256",
-          "name": "complexityScore"
-        },
-        {
-          "type": "uint256",
-          "name": "reputationLevel"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredApprovals"
-        },
-        {
-          "type": "uint256",
-          "name": "rewardAmount"
-        },
-        {
-          "type": "address",
-          "name": "rewardToken"
-        }
-      ]
     },
     {
       "type": "function",
@@ -319,6 +260,32 @@
         {
           "type": "address",
           "name": "_address"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskRequirement",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "complexityScore"
+        },
+        {
+          "type": "uint256",
+          "name": "reputationLevel"
+        },
+        {
+          "type": "uint256",
+          "name": "dueDate"
         }
       ],
       "outputs": []
