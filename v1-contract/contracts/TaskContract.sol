@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ReputationToken.sol";
+import "./SBTToken.sol";
 import "./Organization.sol";
 import "./Treasury.sol";
-import "./TaskStorage.sol";
-import "hardhat/console.sol";
+import "./TaskStorageContract.sol";
 
 contract TaskContract {
     address private owner;
@@ -14,13 +13,13 @@ contract TaskContract {
     Organization private organization;
     Treasury private treasury;
 
-    event Confirmation(address indexed sender, uint256 indexed taskId);
-    event Revocation(address indexed sender, uint256 indexed taskId);
-    event Creation(uint256 indexed taskId);
-    event Assignment(address indexed sender, uint256 indexed taskId);
-    event Unassignment(address indexed sender, uint256 indexed taskId);
-    event Submission(uint256 indexed taskId);
-    event Closed(uint256 indexed taskId);
+    event TaskConfirmation(address indexed sender, uint256 indexed taskId);
+    event TaskRevocation(address indexed sender, uint256 indexed taskId);
+    event TaskCreation(uint256 indexed taskId);
+    event TaskAssignment(address indexed sender, uint256 indexed taskId);
+    event TaskUnassignment(address indexed sender, uint256 indexed taskId);
+    event TaskSubmission(uint256 indexed taskId);
+    event TaskClosed(uint256 indexed taskId);
 
     mapping(uint256 => mapping(address => bool)) private approvals;
     uint256 private taskCount;
@@ -108,7 +107,7 @@ contract TaskContract {
         taskOrg[taskId] = orgId;
         orgTaskCount[orgId] += 1;
         orgTaskIds[orgId].push(taskId);
-        emit Creation(taskId);
+        emit TaskCreation(taskId);
     }
 
     /// @dev Allows an approver to update a task requirement.
@@ -183,7 +182,7 @@ contract TaskContract {
             "Task not submitted"
         );
         approvals[taskId][msg.sender] = true;
-        emit Confirmation(msg.sender, taskId);
+        emit TaskConfirmation(msg.sender, taskId);
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         if (getApprovals(taskId).length == task.requiredApprovals)
             closeTask(taskId);
@@ -202,7 +201,7 @@ contract TaskContract {
         );
         require(approvals[taskId][msg.sender], "Task not approved");
         approvals[taskId][msg.sender] = false;
-        emit Revocation(msg.sender, taskId);
+        emit TaskRevocation(msg.sender, taskId);
     }
 
     /// @dev Allows closing an approved task.
@@ -254,7 +253,7 @@ contract TaskContract {
             );
         taskStorage.closeTask(taskId);
         taskStatus[taskId] = TaskLib.TaskStatus.CLOSED;
-        emit Closed(taskId);
+        emit TaskClosed(taskId);
     }
 
     /// @dev Allows to retrieve a task.
@@ -287,7 +286,7 @@ contract TaskContract {
         require(taskAssignee[taskId] == msg.sender, "Task not yours");
         taskStorage.submitTask(taskId, comment);
         taskStatus[taskId] = TaskLib.TaskStatus.SUBMITTED;
-        emit Submission(taskId);
+        emit TaskSubmission(taskId);
     }
 
     /// @dev Returns total number of tasks after filers are applied.
@@ -346,7 +345,7 @@ contract TaskContract {
         taskStorage.assign(taskId, msg.sender, msg.sender);
         orgAssignees[taskOrg[taskId]][msg.sender] += 1;
         status = taskStatus[taskId];
-        emit Assignment(msg.sender, taskId);
+        emit TaskAssignment(msg.sender, taskId);
     }
 
     function approveAssignRequest(uint256 taskId, address assignee)
@@ -364,7 +363,7 @@ contract TaskContract {
         sbtToken.stake(assignee, task.complexityScore, 0, task.orgId);
         taskStorage.assign(taskId, assignee, msg.sender);
         orgAssignees[task.orgId][assignee] += 1;
-        emit Assignment(assignee, taskId);
+        emit TaskAssignment(assignee, taskId);
     }
 
     function getAssignmentRequests(uint256 taskId)
@@ -408,7 +407,7 @@ contract TaskContract {
                 task.orgId
             );
         status = taskStatus[taskId];
-        emit Unassignment(msg.sender, taskId);
+        emit TaskUnassignment(msg.sender, taskId);
     }
 
     /// @dev Returns array with approver addresses, which approved task.

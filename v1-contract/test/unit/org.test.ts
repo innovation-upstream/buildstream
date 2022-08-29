@@ -22,7 +22,7 @@ describe('Unit test: Org contract', function () {
     const [, approver1, approver2] = await ethers.getSigners()
 
     const creationEvent = new Promise<any>((resolve, reject) => {
-      contractInstance.on('Creation', (orgId, event) => {
+      contractInstance.on('OrganizationCreation', (orgId, event) => {
         event.removeListener()
 
         resolve({

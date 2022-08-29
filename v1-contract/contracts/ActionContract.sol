@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "./Organization.sol";
 
 library ActionLib {
@@ -41,8 +40,8 @@ contract ActionContract {
     Organization private organization;
     address private organizationAddress;
 
-    event Creation(uint256 indexed orgId, uint256 indexed actionId);
-    event Confirmation(
+    event ActionCreation(uint256 indexed orgId, uint256 indexed actionId);
+    event ActionConfirmation(
         uint256 indexed orgId,
         address indexed sender,
         uint256 indexed actionId
@@ -127,7 +126,7 @@ contract ActionContract {
         orgActionCount[_orgId] += 1;
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
-        emit Creation(_orgId, actionId);
+        emit ActionCreation(_orgId, actionId);
     }
 
     /// @dev Create an action.
@@ -158,7 +157,7 @@ contract ActionContract {
         orgActionCount[_orgId] += 1;
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
-        emit Creation(_orgId, actionId);
+        emit ActionCreation(_orgId, actionId);
     }
 
     /// @dev Confirm an action.
@@ -173,7 +172,7 @@ contract ActionContract {
         require(!confirmations[_actionId][msg.sender], "Already confirmed");
         confirmations[_actionId][msg.sender] = true;
         confirmationCount[_actionId] += 1;
-        emit Confirmation(actions[_actionId].orgId, msg.sender, _actionId);
+        emit ActionConfirmation(actions[_actionId].orgId, msg.sender, _actionId);
     }
 
     /// @dev Returns list of action confirmers.

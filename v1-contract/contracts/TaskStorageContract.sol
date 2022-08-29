@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./ReputationToken.sol";
-import "./Organization.sol";
-import "./Treasury.sol";
-import "hardhat/console.sol";
-
 library TaskLib {
     enum TaskStatus {
         PROPOSED,

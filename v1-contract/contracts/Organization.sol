@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-import "./ReputationToken.sol";
-import "./Task.sol";
-import "./Action.sol";
+import "./ActionContract.sol";
 import "./Treasury.sol";
 
 library OrgLib {
@@ -34,15 +31,13 @@ contract Organization {
     ActionContract private actionContract;
     Treasury private treasury;
 
-    event Creation(uint256 indexed taskId);
-    event ReviewerAddition(uint256 _orgId, address indexed _reviewer);
-    event ReviewerRemoval(uint256 _orgId, address indexed _reviewer);
-    event ApproverAddition(uint256 _orgId, address indexed _approver);
-    event ApproverRemoval(uint256 _orgId, address indexed _approver);
-    event SignerAddition(uint256 _orgId, address indexed _signer);
-    event SignerRemoval(uint256 _orgId, address indexed _signer);
-    event RequirementChange(uint256 _orgId, uint256 required);
-    event Confirmation(address indexed sender, uint256 indexed taskId);
+    event OrganizationCreation(uint256 indexed orgId);
+    event OrganizationReviewerAddition(uint256 _orgId, address indexed _reviewer);
+    event OrganizationReviewerRemoval(uint256 _orgId, address indexed _reviewer);
+    event OrganizationApproverAddition(uint256 _orgId, address indexed _approver);
+    event OrganizationApproverRemoval(uint256 _orgId, address indexed _approver);
+    event OrganizationSignerAddition(uint256 _orgId, address indexed _signer);
+    event OrganizationSignerRemoval(uint256 _orgId, address indexed _signer);
 
     mapping(uint256 => mapping(address => bool)) private isReviewer;
     mapping(uint256 => mapping(address => bool)) private isApprover;
@@ -149,7 +144,7 @@ contract Organization {
             isReviewer[orgId][reviewers[i]] = true;
         for (i = 0; i < approvers.length; i++)
             isApprover[orgId][approvers[i]] = true;
-        emit Creation(orgId);
+        emit OrganizationCreation(orgId);
     }
 
     /// @dev Allows to add a new organization config.
@@ -344,7 +339,7 @@ contract Organization {
         require(!isReviewer[_orgId][_reviewer], "Reviewer exists");
         isReviewer[_orgId][_reviewer] = true;
         orgs[_orgId].reviewers.push(_reviewer);
-        emit ReviewerAddition(_orgId, _reviewer);
+        emit OrganizationReviewerAddition(_orgId, _reviewer);
     }
 
     /// @dev Allows to remove an reviewer.
@@ -368,7 +363,7 @@ contract Organization {
                 break;
             }
         org.reviewers = reviewers;
-        emit ReviewerRemoval(_orgId, _reviewer);
+        emit OrganizationReviewerRemoval(_orgId, _reviewer);
     }
 
     /// @dev Returns list of reviewers.
@@ -403,7 +398,7 @@ contract Organization {
         require(!isApprover[_orgId][_approver], "Approver exists");
         isApprover[_orgId][_approver] = true;
         orgs[_orgId].approvers.push(_approver);
-        emit ApproverAddition(_orgId, _approver);
+        emit OrganizationApproverAddition(_orgId, _approver);
     }
 
     /// @dev Allows to remove an approver.
@@ -427,7 +422,7 @@ contract Organization {
                 break;
             }
         org.approvers = approvers;
-        emit ApproverRemoval(_orgId, _approver);
+        emit OrganizationApproverRemoval(_orgId, _approver);
     }
 
     /// @dev Returns list of approvers.
@@ -462,7 +457,7 @@ contract Organization {
         require(!isSigner[_orgId][_signer], "Signer exists");
         isSigner[_orgId][_signer] = true;
         orgs[_orgId].signers.push(_signer);
-        emit SignerAddition(_orgId, _signer);
+        emit OrganizationSignerAddition(_orgId, _signer);
     }
 
     /// @dev Allows to remove an signer.
@@ -483,7 +478,7 @@ contract Organization {
                 break;
             }
         org.signers = signers;
-        emit SignerRemoval(_orgId, _signer);
+        emit OrganizationSignerRemoval(_orgId, _signer);
     }
 
     /// @dev Returns list of signers.

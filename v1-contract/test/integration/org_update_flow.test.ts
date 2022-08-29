@@ -51,7 +51,7 @@ describe('Integration test: Organization update flow', function () {
 
     const orgCreateReceipt = await createOrgTx.wait()
     const orgCreateEvent = orgCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'OrganizationCreation'
     )
     const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
@@ -76,7 +76,9 @@ describe('Integration test: Organization update flow', function () {
     )
 
     const receipt0 = await tx0.wait()
-    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const event = receipt0?.events?.find(
+      (e: any) => e.event === 'ActionCreation'
+    )
     const actionId = event?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
@@ -104,7 +106,7 @@ describe('Integration test: Organization update flow', function () {
 
     const orgCreateReceipt = await createOrgTx.wait()
     const orgCreateEvent = orgCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'OrganizationCreation'
     )
     const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
@@ -129,7 +131,9 @@ describe('Integration test: Organization update flow', function () {
     )
 
     const receipt0 = await tx0.wait()
-    const event = receipt0?.events?.find((e: any) => e.event === 'Creation')
+    const event = receipt0?.events?.find(
+      (e: any) => e.event === 'ActionCreation'
+    )
     const actionId = event?.args?.[1]?.toNumber()
 
     await actionContract.confirmAction(actionId)
