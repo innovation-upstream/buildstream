@@ -68,7 +68,7 @@ describe('Integration test: Task flow', function () {
 
     const orgCreateReceipt = await createOrgTx.wait()
     const orgCreateEvent = orgCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'OrganizationCreation'
     )
     const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
@@ -104,7 +104,7 @@ describe('Integration test: Task flow', function () {
 
     const taskCreateReceipt = await createTaskTx.wait()
     const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'TaskCreation'
     )
     const taskId = taskEvent?.args?.[0]?.toNumber()
 
@@ -165,7 +165,7 @@ describe('Integration test: Task flow', function () {
 
     const orgCreateReceipt = await createOrgTx.wait()
     const orgCreateEvent = orgCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'OrganizationCreation'
     )
     const orgId = orgCreateEvent?.args?.[0]?.toNumber()
 
@@ -202,7 +202,7 @@ describe('Integration test: Task flow', function () {
 
     const taskCreateReceipt = await createTaskTx.wait()
     const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'Creation'
+      (e: any) => e.event === 'TaskCreation'
     )
     const taskId = taskEvent?.args?.[0]?.toNumber()
 

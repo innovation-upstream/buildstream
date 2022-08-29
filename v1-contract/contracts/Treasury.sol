@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Organization.sol";
 
@@ -11,12 +10,12 @@ contract Treasury {
     address private organizationAddress;
     address private taskContractAddress;
 
-    event Deposit(
+    event TreasuryDeposit(
         uint256 indexed orgId,
         address indexed tokenAddress,
         uint256 amount
     );
-    event Withdraw(
+    event TreasuryWithdraw(
         uint256 indexed orgId,
         address indexed tokenAddress,
         address indexed recipient,
@@ -106,7 +105,7 @@ contract Treasury {
 
     function deposit(uint256 orgId) public payable {
         balances[orgId] += msg.value;
-        emit Deposit(orgId, address(0), msg.value);
+        emit TreasuryDeposit(orgId, address(0), msg.value);
     }
 
     function deposit(
@@ -122,7 +121,7 @@ contract Treasury {
         bool sent = _token.transferFrom(msg.sender, address(this), amount);
         require(sent, "Failed to deposit tokens");
         tokenBalances[orgId][tokenAddress] += amount;
-        emit Deposit(orgId, tokenAddress, amount);
+        emit TreasuryDeposit(orgId, tokenAddress, amount);
     }
 
     function withdraw(
@@ -134,7 +133,7 @@ contract Treasury {
         lockedBalances[orgId] -= amount;
         address payable recipient = payable(to);
         recipient.transfer(amount);
-        emit Withdraw(orgId, address(0), to, amount);
+        emit TreasuryWithdraw(orgId, address(0), to, amount);
     }
 
     function withdraw(
@@ -151,7 +150,7 @@ contract Treasury {
         lockedTokenBalances[orgId][tokenAddress] -= amount;
         bool sent = _token.transfer(to, amount);
         require(sent, "Failed to transfer token to user");
-        emit Withdraw(orgId, tokenAddress, to, amount);
+        emit TreasuryWithdraw(orgId, tokenAddress, to, amount);
     }
 
     function withdrawForce(
@@ -166,7 +165,7 @@ contract Treasury {
         balances[orgId] -= amount;
         address payable recipient = payable(to);
         recipient.transfer(amount);
-        emit Withdraw(orgId, address(0), to, amount);
+        emit TreasuryWithdraw(orgId, address(0), to, amount);
     }
 
     function withdrawForce(
@@ -185,7 +184,7 @@ contract Treasury {
         payments[actionId] = true;
         tokenBalances[orgId][tokenAddress] -= amount;
         _token.transfer(to, amount);
-        emit Withdraw(orgId, tokenAddress, to, amount);
+        emit TreasuryWithdraw(orgId, tokenAddress, to, amount);
     }
 
     function lockBalance(uint256 orgId, uint256 amount)
