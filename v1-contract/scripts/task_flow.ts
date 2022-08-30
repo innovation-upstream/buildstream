@@ -2,11 +2,14 @@ import { ethers } from 'hardhat'
 const { waitForInput, readJson } = require('../utils/helpers.ts')
 const path = require('path')
 
+const rewardSlashDivisor = 20
+const slashRewardEvery = 1
 const multiplier = 0.000001
 const complexityScore = 0
 const requiredConfirmations = 1
 const requiredApprovals = 1
 const reputationLevel = 1
+const dueDate = 10
 
 async function main() {
   await waitForInput('Contracts: initialize contracts')
@@ -39,33 +42,30 @@ async function main() {
 
   // Create organization
   await waitForInput('Organization: create organization')
-  const orgCreationEvent = new Promise<any>((resolve, reject) => {
-    orgContract.on('Creation', (orgId, event) => {
-      event.removeListener()
-      resolve({
-        orgId: orgId
-      })
-    })
-
-    setTimeout(() => {
-      reject(new Error('timeout'))
-    }, 60000)
-  })
-
-  await orgContract.createOrg(
+  const createOrgTx = await orgContract.createOrg(
     'Buildstream',
     'Decentralized task managers',
-    ethers.utils.parseUnits(multiplier.toString()),
-    ethers.constants.AddressZero,
     [signer.address],
     [signer.address],
-    [signer.address],
-    requiredConfirmations,
-    requiredApprovals
+    [signer.address]
   )
 
-  const orgEvent = await orgCreationEvent
-  const orgId = orgEvent.orgId.toNumber()
+  const orgCreateReceipt = await createOrgTx.wait()
+  const orgCreateEvent = orgCreateReceipt?.events?.find(
+    (e: any) => e.event === 'OrganizationCreation'
+  )
+  const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+  const addOrgConfigTx = await orgContract.addOrgConfig(
+    orgId,
+    ethers.utils.parseUnits(multiplier.toString()),
+    ethers.constants.AddressZero,
+    requiredConfirmations,
+    requiredApprovals,
+    rewardSlashDivisor,
+    slashRewardEvery
+  )
+  await addOrgConfigTx.wait()
 
   // Make deposit in treasury for orgainization
   await waitForInput('Treasury: make deposit for organization')
@@ -76,34 +76,25 @@ async function main() {
 
   // Create task using org id created earlier
   await waitForInput('Task: create task')
-  const taskCreationEvent = new Promise<any>((resolve, reject) => {
-    taskContract.on('Creation', (taskId, event) => {
-      event.removeListener()
-      resolve({
-        taskId: taskId
-      })
-    })
-
-    setTimeout(() => {
-      reject(new Error('timeout'))
-    }, 60000)
-  })
-
-  await taskContract.createTask(
+  const createTaskTx = await taskContract.createTask(
     orgId,
     'update ethers version',
     'update ethers version to v2',
     ['golang'],
     complexityScore,
-    reputationLevel
+    reputationLevel,
+    (await ethers.provider.getBlockNumber()) + dueDate
   )
 
-  const taskEvent = await taskCreationEvent
-  const taskId = taskEvent.taskId.toNumber()
+  const taskCreateReceipt = await createTaskTx.wait()
+  const taskEvent = taskCreateReceipt?.events?.find(
+    (e: any) => e.event === 'TaskCreation'
+  )
+  const taskId = taskEvent?.args?.[0]?.toNumber()
 
   // Open task
   await waitForInput('Task: open task')
-  await taskContract['openTask(uint256)'](taskId)
+  await taskContract.openTask(taskId, ethers.constants.AddressZero)
 
   // Assign task created above to self
   await waitForInput('Task: assign task')
@@ -115,7 +106,7 @@ async function main() {
 
   // Submit task
   await waitForInput('Task: submit task')
-  await taskContract.submitTask(taskId)
+  await taskContract.submitTask(taskId, 'https:github.com')
 
   const initialBalance = await ethers.provider.getBalance(signer.address)
 
