@@ -4,33 +4,112 @@ schema:
 dataSources:
   - kind: ethereum
     name: Organization
-    network: goerli
+    network: mainnet
     source:
-      address: "0x244468244207f431aECBBbAEabAC1907b1ab34d1"
+      address: "0xC83Dc06b47aEeB2F29fb3e8d3c4090758026de65"
       abi: Organization
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - User
         - Organization
       abis:
         - name: Organization
           file: ./abis/Organization.json
       eventHandlers:
-        - event: OrganizationApproverAddition(uint256,indexed address)
+        - event: OrganizationApproverAddition(indexed uint256,indexed address)
           handler: handleOrganizationApproverAddition
-        - event: OrganizationApproverRemoval(uint256,indexed address)
+        - event: OrganizationApproverRemoval(indexed uint256,indexed address)
           handler: handleOrganizationApproverRemoval
         - event: OrganizationCreation(indexed uint256)
           handler: handleOrganizationCreation
-        - event: OrganizationReviewerAddition(uint256,indexed address)
+        - event: OrganizationReviewerAddition(indexed uint256,indexed address)
           handler: handleOrganizationReviewerAddition
-        - event: OrganizationReviewerRemoval(uint256,indexed address)
+        - event: OrganizationReviewerRemoval(indexed uint256,indexed address)
           handler: handleOrganizationReviewerRemoval
-        - event: OrganizationSignerAddition(uint256,indexed address)
+        - event: OrganizationSignerAddition(indexed uint256,indexed address)
           handler: handleOrganizationSignerAddition
-        - event: OrganizationSignerRemoval(uint256,indexed address)
+        - event: OrganizationSignerRemoval(indexed uint256,indexed address)
           handler: handleOrganizationSignerRemoval
       file: ./src/organization.ts
+  - kind: ethereum
+    name: TaskContract
+    network: mainnet
+    source:
+      address: "0x0ac3c16d87f154989d6628D250e9Cc63d6FFD0E4"
+      abi: TaskContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Task
+      abis:
+        - name: TaskContract
+          file: ./abis/TaskContract.json
+      eventHandlers:
+        - event: TaskAssignment(indexed address,indexed uint256)
+          handler: handleTaskAssignment
+        - event: TaskClosed(indexed uint256)
+          handler: handleTaskClosed
+        - event: TaskConfirmation(indexed address,indexed uint256)
+          handler: handleTaskConfirmation
+        - event: TaskCreation(indexed uint256)
+          handler: handleTaskCreation
+        - event: TaskOpened(indexed uint256)
+          handler: handleTaskOpened
+        - event: TaskRevocation(indexed address,indexed uint256)
+          handler: handleTaskRevocation
+        - event: TaskSubmission(indexed uint256)
+          handler: handleTaskSubmission
+        - event: TaskUnassignment(indexed address,indexed uint256)
+          handler: handleTaskUnassignment
+        - event: TaskRequirementUpdated(indexed uint256)
+          handler: handleTaskRequirementUpdate
+      file: ./src/task-contract.ts
+  - kind: ethereum
+    name: Treasury
+    network: mainnet
+    source:
+      address: "0x2332093FDc73Ce94627a748640455fdc1B8C0C61"
+      abi: Treasury
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Treasury
+        - TreasuryToken
+      abis:
+        - name: Treasury
+          file: ./abis/Treasury.json
+      eventHandlers:
+        - event: TreasuryDeposit(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryDeposit
+        - event: TreasuryWithdraw(indexed uint256,indexed address,address,indexed uint256)
+          handler: handleTreasuryWithdraw
+      file: ./src/treasury.ts
+  - kind: ethereum
+    name: ActionContract
+    network: mainnet
+    source:
+      address: "0x5DA6C0a9eeb666d06349B99882EE9ABA72416C05"
+      abi: ActionContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Action
+      abis:
+        - name: ActionContract
+          file: ./abis/ActionContract.json
+      eventHandlers:
+        - event: ActionConfirmation(indexed uint256,indexed address,indexed uint256)
+          handler: handleActionConfirmation
+        - event: ActionCreation(indexed uint256,indexed uint256)
+          handler: handleActionCreation
+        - event: ActionExecution(indexed uint256,indexed uint256)
+          handler: handleActionExecution
+      file: ./src/action-contract.ts

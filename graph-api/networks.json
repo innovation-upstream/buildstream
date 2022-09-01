@@ -1,12 +1,24 @@
 {
   "mainnet": {
     "Organization": {
-      "address": "0xbe1C29409f587205c57233bB482c242AeC25c7B5"
+      "address": "0xC83Dc06b47aEeB2F29fb3e8d3c4090758026de65"
+    },
+    "TaskContract": {
+      "address": "0x0ac3c16d87f154989d6628D250e9Cc63d6FFD0E4"
+    },
+    "Treasury": {
+      "address": "0x2332093FDc73Ce94627a748640455fdc1B8C0C61"
+    },
+    "ActionContract": {
+      "address": "0x5DA6C0a9eeb666d06349B99882EE9ABA72416C05"
     }
   },
   "goerli": {
     "Organization": {
       "address": "0x244468244207f431aECBBbAEabAC1907b1ab34d1"
+    },
+    "TaskContract": {
+      "address": "0x1600A76Ce57F5A75739C6470bDd05A8e734Dd843"
     }
   }
 }

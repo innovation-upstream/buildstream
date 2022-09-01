@@ -1,5 +1,5 @@
 {
-  "address": "0x4518b4bd56B34c9D6f84907f36AcDa827fB52f33",
+  "address": "0x0ac3c16d87f154989d6628D250e9Cc63d6FFD0E4",
   "abi": [
     {
       "type": "constructor",
@@ -69,6 +69,30 @@
       "type": "event",
       "anonymous": false,
       "name": "TaskCreation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskOpened",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRequirementUpdated",
       "inputs": [
         {
           "type": "uint256",

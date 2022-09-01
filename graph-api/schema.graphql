@@ -1,30 +1,63 @@
-type UserRoles @entity(immutable: true) {
-  id: ID!
-  approver: [Organization!]! @derivedFrom(field: "approvers")
-  signer: [Organization!]! @derivedFrom(field: "signers")
-  reviewer: [Organization!]! @derivedFrom(field: "reviewers")
-}
-
-type UserOrganizations @entity(immutable: true) {
-  id: ID!
-  roles: UserRoles!
-}
-
-type User @entity(immutable: true) {
-  id: ID!
-  organizations: UserOrganizations!
-}
-
 type Organization @entity {
   id: ID!
-  orgId: BigInt
+  orgId: BigInt!
   name: String!
   description: String!
-  reviewers: [UserRoles!]!
-  approvers: [UserRoles!]!
-  signers: [UserRoles!]!
+  reviewers: [String!]!
+  approvers: [String!]!
+  signers: [String!]!
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
   rewardToken: Bytes!
+  tasks: [Task!] @derivedFrom(field: "orgId")
+}
+
+type Task @entity {
+  id: ID!
+  taskId: BigInt!
+  orgId: Organization!
+  title: String
+  description: String
+  assigner: String!
+  assignee: String
+  taskTags: [String!]!
+  status: Int!
+  complexityScore: BigInt!
+  reputationLevel: BigInt!
+  requiredApprovals: BigInt!
+  rewardAmount: BigInt
+  rewardToken: Bytes
+  assignDate: BigInt
+  submitDate: BigInt
+  dueDate: BigInt!
+  comment: String
+  approvedBy: [String!]
+}
+
+type TreasuryToken @entity {
+  id: ID!
+  orgId: Treasury!
+  token: String!
+  balance: BigInt!
+}
+
+type Treasury @entity {
+  id: ID!
+  orgId: BigInt!
+  tokens: [TreasuryToken!] @derivedFrom(field: "orgId")
+}
+
+type Action @entity {
+  id: ID!
+  actionId: BigInt!
+  orgId: BigInt!
+  initiator: String!
+  targetAddress: String
+  value: BigInt
+  data: Bytes
+  executed: Boolean!
+  tokenAddress: String
+  actionType: Int!
+  approvedBy: [String!]
 }

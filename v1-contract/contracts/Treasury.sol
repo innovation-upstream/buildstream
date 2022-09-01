@@ -13,13 +13,13 @@ contract Treasury {
     event TreasuryDeposit(
         uint256 indexed orgId,
         address indexed tokenAddress,
-        uint256 amount
+        uint256 indexed amount
     );
     event TreasuryWithdraw(
         uint256 indexed orgId,
         address indexed tokenAddress,
-        address indexed recipient,
-        uint256 amount
+        address recipient,
+        uint256 indexed amount
     );
 
     mapping(uint256 => mapping(address => uint256)) private tokenBalances;

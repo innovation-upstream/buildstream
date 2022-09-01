@@ -32,12 +32,30 @@ contract Organization {
     Treasury private treasury;
 
     event OrganizationCreation(uint256 indexed orgId);
-    event OrganizationReviewerAddition(uint256 _orgId, address indexed _reviewer);
-    event OrganizationReviewerRemoval(uint256 _orgId, address indexed _reviewer);
-    event OrganizationApproverAddition(uint256 _orgId, address indexed _approver);
-    event OrganizationApproverRemoval(uint256 _orgId, address indexed _approver);
-    event OrganizationSignerAddition(uint256 _orgId, address indexed _signer);
-    event OrganizationSignerRemoval(uint256 _orgId, address indexed _signer);
+    event OrganizationReviewerAddition(
+        uint256 indexed _orgId,
+        address indexed _reviewer
+    );
+    event OrganizationReviewerRemoval(
+        uint256 indexed _orgId,
+        address indexed _reviewer
+    );
+    event OrganizationApproverAddition(
+        uint256 indexed _orgId,
+        address indexed _approver
+    );
+    event OrganizationApproverRemoval(
+        uint256 indexed _orgId,
+        address indexed _approver
+    );
+    event OrganizationSignerAddition(
+        uint256 indexed _orgId,
+        address indexed _signer
+    );
+    event OrganizationSignerRemoval(
+        uint256 indexed _orgId,
+        address indexed _signer
+    );
 
     mapping(uint256 => mapping(address => bool)) private isReviewer;
     mapping(uint256 => mapping(address => bool)) private isApprover;

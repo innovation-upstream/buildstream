@@ -1,5 +1,5 @@
 {
-  "address": "0xBF80F42919D21Ba0b5bEAB801Db595B17A1DBaa1",
+  "address": "0x2332093FDc73Ce94627a748640455fdc1B8C0C61",
   "abi": [
     {
       "type": "constructor",
@@ -33,7 +33,7 @@
         {
           "type": "uint256",
           "name": "amount",
-          "indexed": false
+          "indexed": true
         }
       ]
     },
@@ -55,12 +55,12 @@
         {
           "type": "address",
           "name": "recipient",
-          "indexed": true
+          "indexed": false
         },
         {
           "type": "uint256",
           "name": "amount",
-          "indexed": false
+          "indexed": true
         }
       ]
     },

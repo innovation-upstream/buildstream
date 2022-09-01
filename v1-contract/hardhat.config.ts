@@ -33,6 +33,12 @@ const config: HardhatUserConfig = {
       gasPrice: 20000000000,
       gas: 2100000,
       accounts: [PRIVATE_KEY]
+    },
+    ganache: {
+      url: 'http://127.0.0.1:8545',
+      chainId: 1337,
+      gasPrice: 20000000000,
+      gas: 2100000
     }
   },
   gasReporter: {
