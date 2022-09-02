@@ -15,10 +15,16 @@
   },
   "goerli": {
     "Organization": {
-      "address": "0x244468244207f431aECBBbAEabAC1907b1ab34d1"
+      "address": "0x407528CaEE0dC433680D3Ad2495665Ce9Ef46868"
     },
     "TaskContract": {
-      "address": "0x1600A76Ce57F5A75739C6470bDd05A8e734Dd843"
+      "address": "0x7eeab444428563B185b759a0C042Bd2407F8d757"
+    },
+    "Treasury": {
+      "address": "0xe015eF8122dfFa47d819b1121A3BC2342Cd7fA73"
+    },
+    "ActionContract": {
+      "address": "0x17B4C0f9DC4Dca8370c684fEcbDc4C488AdC6724"
     }
   }
 }
