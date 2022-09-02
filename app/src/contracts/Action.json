@@ -1,5 +1,5 @@
 {
-  "address": "0x54A12f8375D8064f3BaBaEe65997509082A6E106",
+  "address": "0x17B4C0f9DC4Dca8370c684fEcbDc4C488AdC6724",
   "abi": [
     {
       "type": "constructor",
@@ -37,6 +37,23 @@
       "type": "event",
       "anonymous": false,
       "name": "ActionCreation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "actionId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "ActionExecution",
       "inputs": [
         {
           "type": "uint256",

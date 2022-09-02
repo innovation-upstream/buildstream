@@ -46,6 +46,7 @@ contract ActionContract {
         address indexed sender,
         uint256 indexed actionId
     );
+    event ActionExecution(uint256 indexed orgId, uint256 indexed actionId);
 
     mapping(uint256 => ActionLib.Action) private actions;
     mapping(uint256 => bool) private _actionExists;
@@ -172,7 +173,11 @@ contract ActionContract {
         require(!confirmations[_actionId][msg.sender], "Already confirmed");
         confirmations[_actionId][msg.sender] = true;
         confirmationCount[_actionId] += 1;
-        emit ActionConfirmation(actions[_actionId].orgId, msg.sender, _actionId);
+        emit ActionConfirmation(
+            actions[_actionId].orgId,
+            msg.sender,
+            _actionId
+        );
     }
 
     /// @dev Returns list of action confirmers.
@@ -273,5 +278,6 @@ contract ActionContract {
         actionExists(_actionId)
     {
         actions[_actionId].executed = true;
+        emit ActionExecution(actions[_actionId].orgId, _actionId);
     }
 }

@@ -16,10 +16,12 @@ contract TaskContract {
     event TaskConfirmation(address indexed sender, uint256 indexed taskId);
     event TaskRevocation(address indexed sender, uint256 indexed taskId);
     event TaskCreation(uint256 indexed taskId);
+    event TaskOpened(uint256 indexed taskId);
     event TaskAssignment(address indexed sender, uint256 indexed taskId);
     event TaskUnassignment(address indexed sender, uint256 indexed taskId);
     event TaskSubmission(uint256 indexed taskId);
     event TaskClosed(uint256 indexed taskId);
+    event TaskRequirementUpdated(uint256 indexed taskId);
 
     mapping(uint256 => mapping(address => bool)) private approvals;
     uint256 private taskCount;
@@ -119,8 +121,8 @@ contract TaskContract {
         uint256 dueDate
     ) external taskExists(taskId) onlyApprover(taskOrg[taskId]) {
         require(
-            taskStatus[taskId] == TaskLib.TaskStatus.PROPOSED,
-            "Task is opened"
+            taskStatus[taskId] <= TaskLib.TaskStatus.OPEN,
+            "Task is assigned"
         );
         taskStorage.updateTaskRequirement(
             taskId,
@@ -128,6 +130,7 @@ contract TaskContract {
             reputationLevel,
             dueDate
         );
+        emit TaskRequirementUpdated(taskId);
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -167,6 +170,7 @@ contract TaskContract {
         }
         treasury.lockBalance(task.orgId, rewardAmount);
         taskStorage.openTask(taskId, rewardAmount);
+        emit TaskOpened(taskId);
     }
 
     /// @dev Allows a approver to approve a task.

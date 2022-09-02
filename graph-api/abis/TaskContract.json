@@ -1,6 +1,22 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "organizationAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "taskStorageAddress",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -9,18 +25,18 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "_approver",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
       }
     ],
-    "name": "OrganizationApproverAddition",
+    "name": "TaskAssignment",
     "type": "event"
   },
   {
@@ -29,17 +45,30 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
         "type": "uint256"
-      },
+      }
+    ],
+    "name": "TaskClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "_approver",
+        "name": "sender",
         "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
       }
     ],
-    "name": "OrganizationApproverRemoval",
+    "name": "TaskConfirmation",
     "type": "event"
   },
   {
@@ -48,11 +77,11 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "orgId",
+        "name": "taskId",
         "type": "uint256"
       }
     ],
-    "name": "OrganizationCreation",
+    "name": "TaskCreation",
     "type": "event"
   },
   {
@@ -61,17 +90,11 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
         "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_reviewer",
-        "type": "address"
       }
     ],
-    "name": "OrganizationReviewerAddition",
+    "name": "TaskOpened",
     "type": "event"
   },
   {
@@ -80,17 +103,30 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
         "type": "uint256"
-      },
+      }
+    ],
+    "name": "TaskRequirementUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "_reviewer",
+        "name": "sender",
         "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
       }
     ],
-    "name": "OrganizationReviewerRemoval",
+    "name": "TaskRevocation",
     "type": "event"
   },
   {
@@ -99,17 +135,11 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
         "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "_signer",
-        "type": "address"
       }
     ],
-    "name": "OrganizationSignerAddition",
+    "name": "TaskSubmission",
     "type": "event"
   },
   {
@@ -117,32 +147,19 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "_signer",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
       }
     ],
-    "name": "OrganizationSignerRemoval",
+    "name": "TaskUnassignment",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "updateActionContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
   },
   {
     "inputs": [
@@ -160,8 +177,13 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "orgId",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
-        "name": "name",
+        "name": "title",
         "type": "string"
       },
       {
@@ -170,26 +192,31 @@
         "type": "string"
       },
       {
-        "internalType": "address[]",
-        "name": "reviewers",
-        "type": "address[]"
+        "internalType": "string[]",
+        "name": "taskTags",
+        "type": "string[]"
       },
       {
-        "internalType": "address[]",
-        "name": "approvers",
-        "type": "address[]"
+        "internalType": "uint256",
+        "name": "complexityScore",
+        "type": "uint256"
       },
       {
-        "internalType": "address[]",
-        "name": "signers",
-        "type": "address[]"
+        "internalType": "uint256",
+        "name": "reputationLevel",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dueDate",
+        "type": "uint256"
       }
     ],
-    "name": "createOrg",
+    "name": "createTask",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "orgId",
+        "name": "taskId",
         "type": "uint256"
       }
     ],
@@ -200,41 +227,26 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "orgId",
+        "name": "taskId",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "rewardMultiplier",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "requiredConfirmations",
+        "name": "complexityScore",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "requiredTaskApprovals",
+        "name": "reputationLevel",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "rewardSlashDivisor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "slashRewardEvery",
+        "name": "dueDate",
         "type": "uint256"
       }
     ],
-    "name": "addOrgConfig",
+    "name": "updateTaskRequirement",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -243,11 +255,55 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "rewardToken",
+        "type": "address"
+      }
+    ],
+    "name": "openTask",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
         "type": "uint256"
       }
     ],
-    "name": "getOrganization",
+    "name": "approveTask",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "revokeApproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTask",
     "outputs": [
       {
         "components": [
@@ -257,8 +313,13 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "orgId",
+            "type": "uint256"
+          },
+          {
             "internalType": "string",
-            "name": "name",
+            "name": "title",
             "type": "string"
           },
           {
@@ -267,27 +328,72 @@
             "type": "string"
           },
           {
-            "internalType": "address[]",
-            "name": "reviewers",
-            "type": "address[]"
+            "internalType": "address",
+            "name": "assigner",
+            "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "approvers",
-            "type": "address[]"
+            "internalType": "address",
+            "name": "assigneeAddress",
+            "type": "address"
           },
           {
-            "internalType": "address[]",
-            "name": "signers",
-            "type": "address[]"
+            "internalType": "string[]",
+            "name": "taskTags",
+            "type": "string[]"
           },
           {
-            "internalType": "bool",
-            "name": "isInitialized",
-            "type": "bool"
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "complexityScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reputationLevel",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredApprovals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "assignDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dueDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "comment",
+            "type": "string"
           }
         ],
-        "internalType": "struct OrgLib.Org",
+        "internalType": "struct TaskLib.Task",
         "name": "",
         "type": "tuple"
       }
@@ -299,53 +405,157 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_orgId",
+        "name": "taskId",
         "type": "uint256"
       }
     ],
-    "name": "getOrganizationConfig",
+    "name": "getState",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "orgId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "requiredTaskApprovals",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "requiredConfirmations",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rewardMultiplier",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "rewardToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rewardSlashDivisor",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "slashRewardEvery",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct OrgLib.OrgConfig",
+        "internalType": "enum TaskLib.TaskStatus",
         "name": "",
-        "type": "tuple"
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "comment",
+        "type": "string"
+      }
+    ],
+    "name": "submitTask",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "orgId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "pending",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "closed",
+        "type": "bool"
+      }
+    ],
+    "name": "getTaskCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "assignSelf",
+    "outputs": [
+      {
+        "internalType": "enum TaskLib.TaskStatus",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "assignee",
+        "type": "address"
+      }
+    ],
+    "name": "approveAssignRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAssignmentRequests",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "unassignSelf",
+    "outputs": [
+      {
+        "internalType": "enum TaskLib.TaskStatus",
+        "name": "status",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getApprovals",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_approvals",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -358,38 +568,6 @@
         "name": "orgId",
         "type": "uint256"
       },
-      {
-        "internalType": "string[]",
-        "name": "tags",
-        "type": "string[]"
-      }
-    ],
-    "name": "getRewardMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "mul",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getOrgCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
         "internalType": "uint256",
         "name": "from",
@@ -401,192 +579,12 @@
         "type": "uint256"
       }
     ],
-    "name": "getOrgIds",
+    "name": "getTaskIds",
     "outputs": [
       {
         "internalType": "uint256[]",
-        "name": "_orgIds",
+        "name": "_taskIds",
         "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "doesOrgExists",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_actionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "executeAction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getReviewers",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "isReviewerAddress",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getApprovers",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "isApproverAddress",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getSigners",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "isSignerAddress",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getTaskApprovals",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
