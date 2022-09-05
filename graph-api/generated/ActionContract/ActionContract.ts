@@ -127,16 +127,18 @@ export class ActionContract extends ethereum.SmartContract {
     _orgId: BigInt,
     targetAddress: Address,
     actionType: i32,
-    data: Bytes
+    data: Bytes,
+    value: BigInt
   ): BigInt {
     let result = super.call(
       "createAction",
-      "createAction(uint256,address,uint8,bytes):(uint256)",
+      "createAction(uint256,address,uint8,bytes,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromBytes(data),
+        ethereum.Value.fromUnsignedBigInt(value)
       ]
     );
 
@@ -147,16 +149,18 @@ export class ActionContract extends ethereum.SmartContract {
     _orgId: BigInt,
     targetAddress: Address,
     actionType: i32,
-    data: Bytes
+    data: Bytes,
+    value: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createAction",
-      "createAction(uint256,address,uint8,bytes):(uint256)",
+      "createAction(uint256,address,uint8,bytes,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromBytes(data),
+        ethereum.Value.fromUnsignedBigInt(value)
       ]
     );
     if (result.reverted) {
@@ -217,27 +221,27 @@ export class ActionContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getConfirmers(_actionId: BigInt): Array<Address> {
+  doesActionExist(_actionId: BigInt): boolean {
     let result = super.call(
-      "getConfirmers",
-      "getConfirmers(uint256):(address[])",
+      "doesActionExist",
+      "doesActionExist(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
 
-    return result[0].toAddressArray();
+    return result[0].toBoolean();
   }
 
-  try_getConfirmers(_actionId: BigInt): ethereum.CallResult<Array<Address>> {
+  try_doesActionExist(_actionId: BigInt): ethereum.CallResult<boolean> {
     let result = super.tryCall(
-      "getConfirmers",
-      "getConfirmers(uint256):(address[])",
+      "doesActionExist",
+      "doesActionExist(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   getAction(_actionId: BigInt): ActionContract__getActionResultValue0Struct {
@@ -329,20 +333,43 @@ export class ActionContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigIntArray());
   }
 
-  doesActionExist(_actionId: BigInt): boolean {
+  getConfirmers(_actionId: BigInt): Array<Address> {
     let result = super.call(
-      "doesActionExist",
-      "doesActionExist(uint256):(bool)",
+      "getConfirmers",
+      "getConfirmers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_actionId)]
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getConfirmers(_actionId: BigInt): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getConfirmers",
+      "getConfirmers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_actionId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  isActionConfirmed(_actionId: BigInt): boolean {
+    let result = super.call(
+      "isActionConfirmed",
+      "isActionConfirmed(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
 
     return result[0].toBoolean();
   }
 
-  try_doesActionExist(_actionId: BigInt): ethereum.CallResult<boolean> {
+  try_isActionConfirmed(_actionId: BigInt): ethereum.CallResult<boolean> {
     let result = super.tryCall(
-      "doesActionExist",
-      "doesActionExist(uint256):(bool)",
+      "isActionConfirmed",
+      "isActionConfirmed(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
     if (result.reverted) {
@@ -366,29 +393,6 @@ export class ActionContract extends ethereum.SmartContract {
     let result = super.tryCall(
       "isActionExecuted",
       "isActionExecuted(uint256):(bool)",
-      [ethereum.Value.fromUnsignedBigInt(_actionId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  isActionConfirmed(_actionId: BigInt): boolean {
-    let result = super.call(
-      "isActionConfirmed",
-      "isActionConfirmed(uint256):(bool)",
-      [ethereum.Value.fromUnsignedBigInt(_actionId)]
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_isActionConfirmed(_actionId: BigInt): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "isActionConfirmed",
-      "isActionConfirmed(uint256):(bool)",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
     if (result.reverted) {
@@ -429,6 +433,36 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class ConfirmActionCall extends ethereum.Call {
+  get inputs(): ConfirmActionCall__Inputs {
+    return new ConfirmActionCall__Inputs(this);
+  }
+
+  get outputs(): ConfirmActionCall__Outputs {
+    return new ConfirmActionCall__Outputs(this);
+  }
+}
+
+export class ConfirmActionCall__Inputs {
+  _call: ConfirmActionCall;
+
+  constructor(call: ConfirmActionCall) {
+    this._call = call;
+  }
+
+  get _actionId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class ConfirmActionCall__Outputs {
+  _call: ConfirmActionCall;
+
+  constructor(call: ConfirmActionCall) {
+    this._call = call;
+  }
+}
+
 export class CreateActionCall extends ethereum.Call {
   get inputs(): CreateActionCall__Inputs {
     return new CreateActionCall__Inputs(this);
@@ -460,6 +494,10 @@ export class CreateActionCall__Inputs {
 
   get data(): Bytes {
     return this._call.inputValues[3].value.toBytes();
+  }
+
+  get value(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
   }
 }
 
@@ -526,36 +564,6 @@ export class CreateAction1Call__Outputs {
 
   get actionId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
-  }
-}
-
-export class ConfirmActionCall extends ethereum.Call {
-  get inputs(): ConfirmActionCall__Inputs {
-    return new ConfirmActionCall__Inputs(this);
-  }
-
-  get outputs(): ConfirmActionCall__Outputs {
-    return new ConfirmActionCall__Outputs(this);
-  }
-}
-
-export class ConfirmActionCall__Inputs {
-  _call: ConfirmActionCall;
-
-  constructor(call: ConfirmActionCall) {
-    this._call = call;
-  }
-
-  get _actionId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class ConfirmActionCall__Outputs {
-  _call: ConfirmActionCall;
-
-  constructor(call: ConfirmActionCall) {
-    this._call = call;
   }
 }
 

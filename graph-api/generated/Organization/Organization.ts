@@ -72,6 +72,24 @@ export class OrganizationCreation__Params {
   }
 }
 
+export class OrganizationInitialized extends ethereum.Event {
+  get params(): OrganizationInitialized__Params {
+    return new OrganizationInitialized__Params(this);
+  }
+}
+
+export class OrganizationInitialized__Params {
+  _event: OrganizationInitialized;
+
+  constructor(event: OrganizationInitialized) {
+    this._event = event;
+  }
+
+  get orgId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class OrganizationReviewerAddition extends ethereum.Event {
   get params(): OrganizationReviewerAddition__Params {
     return new OrganizationReviewerAddition__Params(this);
@@ -272,6 +290,94 @@ export class Organization extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  doesOrgExists(_orgId: BigInt): boolean {
+    let result = super.call("doesOrgExists", "doesOrgExists(uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(_orgId)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_doesOrgExists(_orgId: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "doesOrgExists",
+      "doesOrgExists(uint256):(bool)",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  getApprovers(_orgId: BigInt): Array<Address> {
+    let result = super.call(
+      "getApprovers",
+      "getApprovers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getApprovers(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getApprovers",
+      "getApprovers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  getOrgCount(): BigInt {
+    let result = super.call("getOrgCount", "getOrgCount():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getOrgCount(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getOrgCount", "getOrgCount():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOrgIds(from: BigInt, to: BigInt): Array<BigInt> {
+    let result = super.call(
+      "getOrgIds",
+      "getOrgIds(uint256,uint256):(uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigInt(from),
+        ethereum.Value.fromUnsignedBigInt(to)
+      ]
+    );
+
+    return result[0].toBigIntArray();
+  }
+
+  try_getOrgIds(from: BigInt, to: BigInt): ethereum.CallResult<Array<BigInt>> {
+    let result = super.tryCall(
+      "getOrgIds",
+      "getOrgIds(uint256,uint256):(uint256[])",
+      [
+        ethereum.Value.fromUnsignedBigInt(from),
+        ethereum.Value.fromUnsignedBigInt(to)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
+  }
+
   getOrganization(
     _orgId: BigInt
   ): Organization__getOrganizationResultValue0Struct {
@@ -340,6 +446,29 @@ export class Organization extends ethereum.SmartContract {
     );
   }
 
+  getReviewers(_orgId: BigInt): Array<Address> {
+    let result = super.call(
+      "getReviewers",
+      "getReviewers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_getReviewers(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getReviewers",
+      "getReviewers(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
   getRewardMultiplier(orgId: BigInt, tags: Array<string>): BigInt {
     let result = super.call(
       "getRewardMultiplier",
@@ -372,147 +501,48 @@ export class Organization extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getOrgCount(): BigInt {
-    let result = super.call("getOrgCount", "getOrgCount():(uint256)", []);
+  getSigners(_orgId: BigInt): Array<Address> {
+    let result = super.call("getSigners", "getSigners(uint256):(address[])", [
+      ethereum.Value.fromUnsignedBigInt(_orgId)
+    ]);
+
+    return result[0].toAddressArray();
+  }
+
+  try_getSigners(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "getSigners",
+      "getSigners(uint256):(address[])",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  getTaskApprovals(_orgId: BigInt): BigInt {
+    let result = super.call(
+      "getTaskApprovals",
+      "getTaskApprovals(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
 
     return result[0].toBigInt();
   }
 
-  try_getOrgCount(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("getOrgCount", "getOrgCount():(uint256)", []);
+  try_getTaskApprovals(_orgId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getTaskApprovals",
+      "getTaskApprovals(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getOrgIds(from: BigInt, to: BigInt): Array<BigInt> {
-    let result = super.call(
-      "getOrgIds",
-      "getOrgIds(uint256,uint256):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(from),
-        ethereum.Value.fromUnsignedBigInt(to)
-      ]
-    );
-
-    return result[0].toBigIntArray();
-  }
-
-  try_getOrgIds(from: BigInt, to: BigInt): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall(
-      "getOrgIds",
-      "getOrgIds(uint256,uint256):(uint256[])",
-      [
-        ethereum.Value.fromUnsignedBigInt(from),
-        ethereum.Value.fromUnsignedBigInt(to)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
-  }
-
-  doesOrgExists(_orgId: BigInt): boolean {
-    let result = super.call("doesOrgExists", "doesOrgExists(uint256):(bool)", [
-      ethereum.Value.fromUnsignedBigInt(_orgId)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_doesOrgExists(_orgId: BigInt): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "doesOrgExists",
-      "doesOrgExists(uint256):(bool)",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  getReviewers(_orgId: BigInt): Array<Address> {
-    let result = super.call(
-      "getReviewers",
-      "getReviewers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-
-    return result[0].toAddressArray();
-  }
-
-  try_getReviewers(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
-    let result = super.tryCall(
-      "getReviewers",
-      "getReviewers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
-  }
-
-  isReviewerAddress(_orgId: BigInt, _address: Address): boolean {
-    let result = super.call(
-      "isReviewerAddress",
-      "isReviewerAddress(uint256,address):(bool)",
-      [
-        ethereum.Value.fromUnsignedBigInt(_orgId),
-        ethereum.Value.fromAddress(_address)
-      ]
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_isReviewerAddress(
-    _orgId: BigInt,
-    _address: Address
-  ): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "isReviewerAddress",
-      "isReviewerAddress(uint256,address):(bool)",
-      [
-        ethereum.Value.fromUnsignedBigInt(_orgId),
-        ethereum.Value.fromAddress(_address)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
-  getApprovers(_orgId: BigInt): Array<Address> {
-    let result = super.call(
-      "getApprovers",
-      "getApprovers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-
-    return result[0].toAddressArray();
-  }
-
-  try_getApprovers(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
-    let result = super.tryCall(
-      "getApprovers",
-      "getApprovers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
   isApproverAddress(_orgId: BigInt, _address: Address): boolean {
@@ -547,25 +577,36 @@ export class Organization extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  getSigners(_orgId: BigInt): Array<Address> {
-    let result = super.call("getSigners", "getSigners(uint256):(address[])", [
-      ethereum.Value.fromUnsignedBigInt(_orgId)
-    ]);
+  isReviewerAddress(_orgId: BigInt, _address: Address): boolean {
+    let result = super.call(
+      "isReviewerAddress",
+      "isReviewerAddress(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_orgId),
+        ethereum.Value.fromAddress(_address)
+      ]
+    );
 
-    return result[0].toAddressArray();
+    return result[0].toBoolean();
   }
 
-  try_getSigners(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
+  try_isReviewerAddress(
+    _orgId: BigInt,
+    _address: Address
+  ): ethereum.CallResult<boolean> {
     let result = super.tryCall(
-      "getSigners",
-      "getSigners(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
+      "isReviewerAddress",
+      "isReviewerAddress(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_orgId),
+        ethereum.Value.fromAddress(_address)
+      ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   isSignerAddress(_orgId: BigInt, _address: Address): boolean {
@@ -599,29 +640,6 @@ export class Organization extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
-
-  getTaskApprovals(_orgId: BigInt): BigInt {
-    let result = super.call(
-      "getTaskApprovals",
-      "getTaskApprovals(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_getTaskApprovals(_orgId: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getTaskApprovals",
-      "getTaskApprovals(uint256):(uint256)",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -646,6 +664,140 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class AddOrgConfigCall extends ethereum.Call {
+  get inputs(): AddOrgConfigCall__Inputs {
+    return new AddOrgConfigCall__Inputs(this);
+  }
+
+  get outputs(): AddOrgConfigCall__Outputs {
+    return new AddOrgConfigCall__Outputs(this);
+  }
+}
+
+export class AddOrgConfigCall__Inputs {
+  _call: AddOrgConfigCall;
+
+  constructor(call: AddOrgConfigCall) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get rewardMultiplier(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+
+  get requiredConfirmations(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get requiredTaskApprovals(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get rewardSlashDivisor(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get slashRewardEvery(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+}
+
+export class AddOrgConfigCall__Outputs {
+  _call: AddOrgConfigCall;
+
+  constructor(call: AddOrgConfigCall) {
+    this._call = call;
+  }
+}
+
+export class CreateOrgCall extends ethereum.Call {
+  get inputs(): CreateOrgCall__Inputs {
+    return new CreateOrgCall__Inputs(this);
+  }
+
+  get outputs(): CreateOrgCall__Outputs {
+    return new CreateOrgCall__Outputs(this);
+  }
+}
+
+export class CreateOrgCall__Inputs {
+  _call: CreateOrgCall;
+
+  constructor(call: CreateOrgCall) {
+    this._call = call;
+  }
+
+  get name(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get description(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get reviewers(): Array<Address> {
+    return this._call.inputValues[2].value.toAddressArray();
+  }
+
+  get approvers(): Array<Address> {
+    return this._call.inputValues[3].value.toAddressArray();
+  }
+
+  get signers(): Array<Address> {
+    return this._call.inputValues[4].value.toAddressArray();
+  }
+}
+
+export class CreateOrgCall__Outputs {
+  _call: CreateOrgCall;
+
+  constructor(call: CreateOrgCall) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class ExecuteActionCall extends ethereum.Call {
+  get inputs(): ExecuteActionCall__Inputs {
+    return new ExecuteActionCall__Inputs(this);
+  }
+
+  get outputs(): ExecuteActionCall__Outputs {
+    return new ExecuteActionCall__Outputs(this);
+  }
+}
+
+export class ExecuteActionCall__Inputs {
+  _call: ExecuteActionCall;
+
+  constructor(call: ExecuteActionCall) {
+    this._call = call;
+  }
+
+  get _actionId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class ExecuteActionCall__Outputs {
+  _call: ExecuteActionCall;
+
+  constructor(call: ExecuteActionCall) {
     this._call = call;
   }
 }
@@ -706,140 +858,6 @@ export class UpdateTreasuryContractCall__Outputs {
   _call: UpdateTreasuryContractCall;
 
   constructor(call: UpdateTreasuryContractCall) {
-    this._call = call;
-  }
-}
-
-export class CreateOrgCall extends ethereum.Call {
-  get inputs(): CreateOrgCall__Inputs {
-    return new CreateOrgCall__Inputs(this);
-  }
-
-  get outputs(): CreateOrgCall__Outputs {
-    return new CreateOrgCall__Outputs(this);
-  }
-}
-
-export class CreateOrgCall__Inputs {
-  _call: CreateOrgCall;
-
-  constructor(call: CreateOrgCall) {
-    this._call = call;
-  }
-
-  get name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get description(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get reviewers(): Array<Address> {
-    return this._call.inputValues[2].value.toAddressArray();
-  }
-
-  get approvers(): Array<Address> {
-    return this._call.inputValues[3].value.toAddressArray();
-  }
-
-  get signers(): Array<Address> {
-    return this._call.inputValues[4].value.toAddressArray();
-  }
-}
-
-export class CreateOrgCall__Outputs {
-  _call: CreateOrgCall;
-
-  constructor(call: CreateOrgCall) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-}
-
-export class AddOrgConfigCall extends ethereum.Call {
-  get inputs(): AddOrgConfigCall__Inputs {
-    return new AddOrgConfigCall__Inputs(this);
-  }
-
-  get outputs(): AddOrgConfigCall__Outputs {
-    return new AddOrgConfigCall__Outputs(this);
-  }
-}
-
-export class AddOrgConfigCall__Inputs {
-  _call: AddOrgConfigCall;
-
-  constructor(call: AddOrgConfigCall) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get rewardMultiplier(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get rewardToken(): Address {
-    return this._call.inputValues[2].value.toAddress();
-  }
-
-  get requiredConfirmations(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get requiredTaskApprovals(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get rewardSlashDivisor(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
-  }
-
-  get slashRewardEvery(): BigInt {
-    return this._call.inputValues[6].value.toBigInt();
-  }
-}
-
-export class AddOrgConfigCall__Outputs {
-  _call: AddOrgConfigCall;
-
-  constructor(call: AddOrgConfigCall) {
-    this._call = call;
-  }
-}
-
-export class ExecuteActionCall extends ethereum.Call {
-  get inputs(): ExecuteActionCall__Inputs {
-    return new ExecuteActionCall__Inputs(this);
-  }
-
-  get outputs(): ExecuteActionCall__Outputs {
-    return new ExecuteActionCall__Outputs(this);
-  }
-}
-
-export class ExecuteActionCall__Inputs {
-  _call: ExecuteActionCall;
-
-  constructor(call: ExecuteActionCall) {
-    this._call = call;
-  }
-
-  get _actionId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class ExecuteActionCall__Outputs {
-  _call: ExecuteActionCall;
-
-  constructor(call: ExecuteActionCall) {
     this._call = call;
   }
 }

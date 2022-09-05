@@ -32,6 +32,7 @@ contract Organization {
     Treasury private treasury;
 
     event OrganizationCreation(uint256 indexed orgId);
+    event OrganizationInitialized(uint256 indexed orgId);
     event OrganizationReviewerAddition(
         uint256 indexed _orgId,
         address indexed _reviewer
@@ -188,6 +189,7 @@ contract Organization {
             rewardSlashDivisor: rewardSlashDivisor,
             slashRewardEvery: slashRewardEvery
         });
+        emit OrganizationInitialized(orgId);
     }
 
     /// @dev Get organization.
@@ -322,6 +324,11 @@ contract Organization {
 
         if (action.actionType == ActionLib.ActionType.UPDATE_SLASH_REWARD_EVERY)
             orgConfigs[action.orgId].slashRewardEvery = action.value;
+        
+        if (action.actionType == ActionLib.ActionType.UPDATE_TAG_REWARD_MULTIPLIER) {
+            bytes32 key = keccak256(action.data);
+            multipliers[action.orgId][key] = action.value;
+        }
 
         string memory val = string(abi.encodePacked(action.data));
         if (action.actionType == ActionLib.ActionType.UPDATE_NAME)

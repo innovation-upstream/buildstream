@@ -6,7 +6,7 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0x407528CaEE0dC433680D3Ad2495665Ce9Ef46868"
+      address: "0x3b5Cf0B6f3e32dcC74B3Ec5dfd746F3670A2F0bf"
       abi: Organization
     mapping:
       kind: ethereum/events
@@ -24,6 +24,8 @@ dataSources:
           handler: handleOrganizationApproverRemoval
         - event: OrganizationCreation(indexed uint256)
           handler: handleOrganizationCreation
+        - event: OrganizationInitialized(indexed uint256)
+          handler: handleOrganizationInitialized
         - event: OrganizationReviewerAddition(indexed uint256,indexed address)
           handler: handleOrganizationReviewerAddition
         - event: OrganizationReviewerRemoval(indexed uint256,indexed address)
@@ -34,45 +36,10 @@ dataSources:
           handler: handleOrganizationSignerRemoval
       file: ./src/organization.ts
   - kind: ethereum
-    name: TaskContract
-    network: goerli
-    source:
-      address: "0x7eeab444428563B185b759a0C042Bd2407F8d757"
-      abi: TaskContract
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Task
-      abis:
-        - name: TaskContract
-          file: ./abis/TaskContract.json
-      eventHandlers:
-        - event: TaskAssignment(indexed address,indexed uint256)
-          handler: handleTaskAssignment
-        - event: TaskClosed(indexed uint256)
-          handler: handleTaskClosed
-        - event: TaskConfirmation(indexed address,indexed uint256)
-          handler: handleTaskConfirmation
-        - event: TaskCreation(indexed uint256)
-          handler: handleTaskCreation
-        - event: TaskOpened(indexed uint256)
-          handler: handleTaskOpened
-        - event: TaskRevocation(indexed address,indexed uint256)
-          handler: handleTaskRevocation
-        - event: TaskSubmission(indexed uint256)
-          handler: handleTaskSubmission
-        - event: TaskUnassignment(indexed address,indexed uint256)
-          handler: handleTaskUnassignment
-        - event: TaskRequirementUpdated(indexed uint256)
-          handler: handleTaskRequirementUpdate
-      file: ./src/task-contract.ts
-  - kind: ethereum
     name: Treasury
     network: goerli
     source:
-      address: "0xe015eF8122dfFa47d819b1121A3BC2342Cd7fA73"
+      address: "0x8f953B8B08bD908790cEC0a8d9e7003b51e0e0A8"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -94,7 +61,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0x17B4C0f9DC4Dca8370c684fEcbDc4C488AdC6724"
+      address: "0xd8d958b28c48Ffa4F89c9A6512671b7c04a7E9f0"
       abi: ActionContract
     mapping:
       kind: ethereum/events
@@ -113,3 +80,44 @@ dataSources:
         - event: ActionExecution(indexed uint256,indexed uint256)
           handler: handleActionExecution
       file: ./src/action-contract.ts
+  - kind: ethereum
+    name: TaskStorageContract
+    network: goerli
+    source:
+      address: "0x479FB1D04244eB06Fe3eC83152738287c887F2a1"
+      abi: TaskStorageContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Task
+      abis:
+        - name: TaskStorageContract
+          file: ./abis/TaskStorageContract.json
+        - name: TaskContract
+          file: ./abis/TaskContract.json
+      eventHandlers:
+        - event: TaskArchived(indexed uint256)
+          handler: handleTaskArchived
+        - event: TaskAssignment(indexed address,indexed uint256)
+          handler: handleTaskAssignment
+        - event: TaskAssignmentRequested(indexed address,indexed uint256)
+          handler: handleTaskAssignmentRequested
+        - event: TaskClosed(indexed uint256)
+          handler: handleTaskClosed
+        - event: TaskConfirmation(indexed address,indexed uint256)
+          handler: handleTaskConfirmation
+        - event: TaskCreation(indexed uint256)
+          handler: handleTaskCreation
+        - event: TaskOpened(indexed uint256)
+          handler: handleTaskOpened
+        - event: TaskRequirementUpdated(indexed uint256)
+          handler: handleTaskRequirementUpdated
+        - event: TaskRevocation(indexed address,indexed uint256)
+          handler: handleTaskRevocation
+        - event: TaskSubmission(indexed uint256)
+          handler: handleTaskSubmission
+        - event: TaskUnassignment(indexed address,indexed uint256)
+          handler: handleTaskUnassignment
+      file: ./src/task-storage-contract.ts

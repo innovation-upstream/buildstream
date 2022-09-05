@@ -33,6 +33,7 @@ type Task @entity {
   dueDate: BigInt!
   comment: String
   approvedBy: [String!]
+  assignmentRequest: [String!]
 }
 
 type TreasuryToken @entity {

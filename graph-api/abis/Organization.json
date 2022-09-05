@@ -61,6 +61,19 @@
       {
         "indexed": true,
         "internalType": "uint256",
+        "name": "orgId",
+        "type": "uint256"
+      }
+    ],
+    "name": "OrganizationInitialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
         "name": "_orgId",
         "type": "uint256"
       },
@@ -134,25 +147,42 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      }
-    ],
-    "name": "updateActionContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "uint256",
+        "name": "orgId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardMultiplier",
+        "type": "uint256"
+      },
       {
         "internalType": "address",
-        "name": "_address",
+        "name": "rewardToken",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "requiredConfirmations",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "requiredTaskApprovals",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardSlashDivisor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "slashRewardEvery",
+        "type": "uint256"
       }
     ],
-    "name": "updateTreasuryContract",
+    "name": "addOrgConfig",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -200,43 +230,88 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "orgId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardMultiplier",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "requiredConfirmations",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "requiredTaskApprovals",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardSlashDivisor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "slashRewardEvery",
+        "name": "_orgId",
         "type": "uint256"
       }
     ],
-    "name": "addOrgConfig",
+    "name": "doesOrgExists",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_actionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "executeAction",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orgId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getApprovers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getOrgCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "from",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "to",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrgIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_orgIds",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -355,6 +430,25 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_orgId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getReviewers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "orgId",
         "type": "uint256"
       },
@@ -376,43 +470,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getOrgCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "from",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "to",
-        "type": "uint256"
-      }
-    ],
-    "name": "getOrgIds",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "_orgIds",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -420,39 +477,7 @@
         "type": "uint256"
       }
     ],
-    "name": "doesOrgExists",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_actionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "executeAction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getReviewers",
+    "name": "getSigners",
     "outputs": [
       {
         "internalType": "address[]",
@@ -469,38 +494,14 @@
         "internalType": "uint256",
         "name": "_orgId",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
       }
     ],
-    "name": "isReviewerAddress",
+    "name": "getTaskApprovals",
     "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
         "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getApprovers",
-    "outputs": [
-      {
-        "internalType": "address[]",
         "name": "",
-        "type": "address[]"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -536,14 +537,19 @@
         "internalType": "uint256",
         "name": "_orgId",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
       }
     ],
-    "name": "getSigners",
+    "name": "isReviewerAddress",
     "outputs": [
       {
-        "internalType": "address[]",
+        "internalType": "bool",
         "name": "",
-        "type": "address[]"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -576,20 +582,27 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_orgId",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
       }
     ],
-    "name": "getTaskApprovals",
-    "outputs": [
+    "name": "updateActionContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "updateTreasuryContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

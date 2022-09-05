@@ -1,5 +1,5 @@
 {
-  "address": "0x7eeab444428563B185b759a0C042Bd2407F8d757",
+  "address": "0xd1C2238C8b2bf93505208831086C00bDD46159bD",
   "abi": [
     {
       "type": "constructor",
@@ -16,134 +16,6 @@
         {
           "type": "address",
           "name": "taskStorageAddress"
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskAssignment",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "sender",
-          "indexed": true
-        },
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskClosed",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskConfirmation",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "sender",
-          "indexed": true
-        },
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskCreation",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskOpened",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskRequirementUpdated",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskRevocation",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "sender",
-          "indexed": true
-        },
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskSubmission",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "TaskUnassignment",
-      "inputs": [
-        {
-          "type": "address",
-          "name": "sender",
-          "indexed": true
-        },
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
         }
       ]
     },
@@ -181,6 +53,20 @@
     },
     {
       "type": "function",
+      "name": "archive",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "assignSelf",
       "constant": false,
       "payable": false,
@@ -191,12 +77,7 @@
           "name": "taskId"
         }
       ],
-      "outputs": [
-        {
-          "type": "uint8",
-          "name": "status"
-        }
-      ]
+      "outputs": []
     },
     {
       "type": "function",
@@ -390,62 +271,6 @@
     },
     {
       "type": "function",
-      "name": "getTaskCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "bool",
-          "name": "pending"
-        },
-        {
-          "type": "bool",
-          "name": "closed"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "count"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getTaskIds",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "orgId"
-        },
-        {
-          "type": "uint256",
-          "name": "from"
-        },
-        {
-          "type": "uint256",
-          "name": "to"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256[]",
-          "name": "_taskIds"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "openTask",
       "constant": false,
       "payable": false,
@@ -506,12 +331,7 @@
           "name": "taskId"
         }
       ],
-      "outputs": [
-        {
-          "type": "uint8",
-          "name": "status"
-        }
-      ]
+      "outputs": []
     },
     {
       "type": "function",

@@ -1,30 +1,33 @@
 {
   "mainnet": {
     "Organization": {
-      "address": "0xC83Dc06b47aEeB2F29fb3e8d3c4090758026de65"
+      "address": "0x388b451F5c9416fc337a4FA1f917041c4a5f7517"
     },
     "TaskContract": {
-      "address": "0x0ac3c16d87f154989d6628D250e9Cc63d6FFD0E4"
+      "address": "0xa481835E79db52116DDD81CF6f5130f07872b8Ac"
     },
     "Treasury": {
-      "address": "0x2332093FDc73Ce94627a748640455fdc1B8C0C61"
+      "address": "0x1124de744E4d3A0A8248D9888078be174C663E35"
     },
     "ActionContract": {
-      "address": "0x5DA6C0a9eeb666d06349B99882EE9ABA72416C05"
+      "address": "0x96bf3917f132c3F8F230b0ACd93bd036988E7a5d"
+    },
+    "TaskStorageContract": {
+      "address": "0x0A8F4c07C6bfE56ecBe6E125BF52F616f6cB86e1"
     }
   },
   "goerli": {
     "Organization": {
-      "address": "0x407528CaEE0dC433680D3Ad2495665Ce9Ef46868"
+      "address": "0x3b5Cf0B6f3e32dcC74B3Ec5dfd746F3670A2F0bf"
     },
-    "TaskContract": {
-      "address": "0x7eeab444428563B185b759a0C042Bd2407F8d757"
+    "TaskStorageContract": {
+      "address": "0x479FB1D04244eB06Fe3eC83152738287c887F2a1"
     },
     "Treasury": {
-      "address": "0xe015eF8122dfFa47d819b1121A3BC2342Cd7fA73"
+      "address": "0x8f953B8B08bD908790cEC0a8d9e7003b51e0e0A8"
     },
     "ActionContract": {
-      "address": "0x17B4C0f9DC4Dca8370c684fEcbDc4C488AdC6724"
+      "address": "0xd8d958b28c48Ffa4F89c9A6512671b7c04a7E9f0"
     }
   }
 }

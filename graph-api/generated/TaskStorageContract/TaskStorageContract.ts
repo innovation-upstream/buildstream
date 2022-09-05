@@ -228,7 +228,7 @@ export class TaskUnassignment__Params {
   }
 }
 
-export class TaskContract__getTaskResultValue0Struct extends ethereum.Tuple {
+export class TaskStorageContract__getTaskResultValue0Struct extends ethereum.Tuple {
   get id(): BigInt {
     return this[0].toBigInt();
   }
@@ -298,9 +298,9 @@ export class TaskContract__getTaskResultValue0Struct extends ethereum.Tuple {
   }
 }
 
-export class TaskContract extends ethereum.SmartContract {
-  static bind(address: Address): TaskContract {
-    return new TaskContract("TaskContract", address);
+export class TaskStorageContract extends ethereum.SmartContract {
+  static bind(address: Address): TaskStorageContract {
+    return new TaskStorageContract("TaskStorageContract", address);
   }
 
   createTask(
@@ -310,11 +310,12 @@ export class TaskContract extends ethereum.SmartContract {
     taskTags: Array<string>,
     complexityScore: BigInt,
     reputationLevel: BigInt,
+    requiredApprovals: BigInt,
     dueDate: BigInt
   ): BigInt {
     let result = super.call(
       "createTask",
-      "createTask(uint256,string,string,string[],uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string[],uint256,uint256,uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(title),
@@ -322,6 +323,7 @@ export class TaskContract extends ethereum.SmartContract {
         ethereum.Value.fromStringArray(taskTags),
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
+        ethereum.Value.fromUnsignedBigInt(requiredApprovals),
         ethereum.Value.fromUnsignedBigInt(dueDate)
       ]
     );
@@ -336,11 +338,12 @@ export class TaskContract extends ethereum.SmartContract {
     taskTags: Array<string>,
     complexityScore: BigInt,
     reputationLevel: BigInt,
+    requiredApprovals: BigInt,
     dueDate: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createTask",
-      "createTask(uint256,string,string,string[],uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string[],uint256,uint256,uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(title),
@@ -348,6 +351,7 @@ export class TaskContract extends ethereum.SmartContract {
         ethereum.Value.fromStringArray(taskTags),
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
+        ethereum.Value.fromUnsignedBigInt(requiredApprovals),
         ethereum.Value.fromUnsignedBigInt(dueDate)
       ]
     );
@@ -358,27 +362,36 @@ export class TaskContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getApprovals(taskId: BigInt): Array<Address> {
+  didApprove(taskId: BigInt, approver: Address): boolean {
     let result = super.call(
-      "getApprovals",
-      "getApprovals(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(taskId)]
+      "didApprove",
+      "didApprove(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(taskId),
+        ethereum.Value.fromAddress(approver)
+      ]
     );
 
-    return result[0].toAddressArray();
+    return result[0].toBoolean();
   }
 
-  try_getApprovals(taskId: BigInt): ethereum.CallResult<Array<Address>> {
+  try_didApprove(
+    taskId: BigInt,
+    approver: Address
+  ): ethereum.CallResult<boolean> {
     let result = super.tryCall(
-      "getApprovals",
-      "getApprovals(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(taskId)]
+      "didApprove",
+      "didApprove(uint256,address):(bool)",
+      [
+        ethereum.Value.fromUnsignedBigInt(taskId),
+        ethereum.Value.fromAddress(approver)
+      ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   getAssignmentRequests(taskId: BigInt): Array<Address> {
@@ -406,40 +419,21 @@ export class TaskContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
-  getState(taskId: BigInt): i32 {
-    let result = super.call("getState", "getState(uint256):(uint8)", [
-      ethereum.Value.fromUnsignedBigInt(taskId)
-    ]);
-
-    return result[0].toI32();
-  }
-
-  try_getState(taskId: BigInt): ethereum.CallResult<i32> {
-    let result = super.tryCall("getState", "getState(uint256):(uint8)", [
-      ethereum.Value.fromUnsignedBigInt(taskId)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toI32());
-  }
-
-  getTask(taskId: BigInt): TaskContract__getTaskResultValue0Struct {
+  getTask(taskId: BigInt): TaskStorageContract__getTaskResultValue0Struct {
     let result = super.call(
       "getTask",
       "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
-    return changetype<TaskContract__getTaskResultValue0Struct>(
+    return changetype<TaskStorageContract__getTaskResultValue0Struct>(
       result[0].toTuple()
     );
   }
 
   try_getTask(
     taskId: BigInt
-  ): ethereum.CallResult<TaskContract__getTaskResultValue0Struct> {
+  ): ethereum.CallResult<TaskStorageContract__getTaskResultValue0Struct> {
     let result = super.tryCall(
       "getTask",
       "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))",
@@ -450,8 +444,25 @@ export class TaskContract extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<TaskContract__getTaskResultValue0Struct>(value[0].toTuple())
+      changetype<TaskStorageContract__getTaskResultValue0Struct>(
+        value[0].toTuple()
+      )
     );
+  }
+
+  getTaskCount(): BigInt {
+    let result = super.call("getTaskCount", "getTaskCount():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getTaskCount(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("getTaskCount", "getTaskCount():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 }
 
@@ -471,58 +482,12 @@ export class ConstructorCall__Inputs {
   constructor(call: ConstructorCall) {
     this._call = call;
   }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get organizationAddress(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get taskStorageAddress(): Address {
-    return this._call.inputValues[2].value.toAddress();
-  }
 }
 
 export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call;
-  }
-}
-
-export class ApproveAssignRequestCall extends ethereum.Call {
-  get inputs(): ApproveAssignRequestCall__Inputs {
-    return new ApproveAssignRequestCall__Inputs(this);
-  }
-
-  get outputs(): ApproveAssignRequestCall__Outputs {
-    return new ApproveAssignRequestCall__Outputs(this);
-  }
-}
-
-export class ApproveAssignRequestCall__Inputs {
-  _call: ApproveAssignRequestCall;
-
-  constructor(call: ApproveAssignRequestCall) {
-    this._call = call;
-  }
-
-  get taskId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get assignee(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-}
-
-export class ApproveAssignRequestCall__Outputs {
-  _call: ApproveAssignRequestCall;
-
-  constructor(call: ApproveAssignRequestCall) {
     this._call = call;
   }
 }
@@ -546,6 +511,10 @@ export class ApproveTaskCall__Inputs {
 
   get taskId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get approver(): Address {
+    return this._call.inputValues[1].value.toAddress();
   }
 }
 
@@ -587,20 +556,58 @@ export class ArchiveCall__Outputs {
   }
 }
 
-export class AssignSelfCall extends ethereum.Call {
-  get inputs(): AssignSelfCall__Inputs {
-    return new AssignSelfCall__Inputs(this);
+export class AssignCall extends ethereum.Call {
+  get inputs(): AssignCall__Inputs {
+    return new AssignCall__Inputs(this);
   }
 
-  get outputs(): AssignSelfCall__Outputs {
-    return new AssignSelfCall__Outputs(this);
+  get outputs(): AssignCall__Outputs {
+    return new AssignCall__Outputs(this);
   }
 }
 
-export class AssignSelfCall__Inputs {
-  _call: AssignSelfCall;
+export class AssignCall__Inputs {
+  _call: AssignCall;
 
-  constructor(call: AssignSelfCall) {
+  constructor(call: AssignCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get assignee(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get assigner(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+}
+
+export class AssignCall__Outputs {
+  _call: AssignCall;
+
+  constructor(call: AssignCall) {
+    this._call = call;
+  }
+}
+
+export class CloseTaskCall extends ethereum.Call {
+  get inputs(): CloseTaskCall__Inputs {
+    return new CloseTaskCall__Inputs(this);
+  }
+
+  get outputs(): CloseTaskCall__Outputs {
+    return new CloseTaskCall__Outputs(this);
+  }
+}
+
+export class CloseTaskCall__Inputs {
+  _call: CloseTaskCall;
+
+  constructor(call: CloseTaskCall) {
     this._call = call;
   }
 
@@ -609,10 +616,10 @@ export class AssignSelfCall__Inputs {
   }
 }
 
-export class AssignSelfCall__Outputs {
-  _call: AssignSelfCall;
+export class CloseTaskCall__Outputs {
+  _call: CloseTaskCall;
 
-  constructor(call: AssignSelfCall) {
+  constructor(call: CloseTaskCall) {
     this._call = call;
   }
 }
@@ -658,8 +665,12 @@ export class CreateTaskCall__Inputs {
     return this._call.inputValues[5].value.toBigInt();
   }
 
-  get dueDate(): BigInt {
+  get requiredApprovals(): BigInt {
     return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get dueDate(): BigInt {
+    return this._call.inputValues[7].value.toBigInt();
   }
 }
 
@@ -672,6 +683,40 @@ export class CreateTaskCall__Outputs {
 
   get taskId(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class MakeAssignmentRequestCall extends ethereum.Call {
+  get inputs(): MakeAssignmentRequestCall__Inputs {
+    return new MakeAssignmentRequestCall__Inputs(this);
+  }
+
+  get outputs(): MakeAssignmentRequestCall__Outputs {
+    return new MakeAssignmentRequestCall__Outputs(this);
+  }
+}
+
+export class MakeAssignmentRequestCall__Inputs {
+  _call: MakeAssignmentRequestCall;
+
+  constructor(call: MakeAssignmentRequestCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get assignee(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class MakeAssignmentRequestCall__Outputs {
+  _call: MakeAssignmentRequestCall;
+
+  constructor(call: MakeAssignmentRequestCall) {
+    this._call = call;
   }
 }
 
@@ -696,8 +741,12 @@ export class OpenTaskCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
+  get rewardAmount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
   get rewardToken(): Address {
-    return this._call.inputValues[1].value.toAddress();
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 
@@ -728,6 +777,10 @@ export class RevokeApprovalCall__Inputs {
 
   get taskId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get approver(): Address {
+    return this._call.inputValues[1].value.toAddress();
   }
 }
 
@@ -760,8 +813,12 @@ export class SubmitTaskCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
+  get assignee(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
   get comment(): string {
-    return this._call.inputValues[1].value.toString();
+    return this._call.inputValues[2].value.toString();
   }
 }
 
@@ -773,32 +830,66 @@ export class SubmitTaskCall__Outputs {
   }
 }
 
-export class UnassignSelfCall extends ethereum.Call {
-  get inputs(): UnassignSelfCall__Inputs {
-    return new UnassignSelfCall__Inputs(this);
+export class UnassignCall extends ethereum.Call {
+  get inputs(): UnassignCall__Inputs {
+    return new UnassignCall__Inputs(this);
   }
 
-  get outputs(): UnassignSelfCall__Outputs {
-    return new UnassignSelfCall__Outputs(this);
+  get outputs(): UnassignCall__Outputs {
+    return new UnassignCall__Outputs(this);
   }
 }
 
-export class UnassignSelfCall__Inputs {
-  _call: UnassignSelfCall;
+export class UnassignCall__Inputs {
+  _call: UnassignCall;
 
-  constructor(call: UnassignSelfCall) {
+  constructor(call: UnassignCall) {
     this._call = call;
   }
 
   get taskId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
+
+  get assignee(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
 }
 
-export class UnassignSelfCall__Outputs {
-  _call: UnassignSelfCall;
+export class UnassignCall__Outputs {
+  _call: UnassignCall;
 
-  constructor(call: UnassignSelfCall) {
+  constructor(call: UnassignCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateTaskContractAddressCall extends ethereum.Call {
+  get inputs(): UpdateTaskContractAddressCall__Inputs {
+    return new UpdateTaskContractAddressCall__Inputs(this);
+  }
+
+  get outputs(): UpdateTaskContractAddressCall__Outputs {
+    return new UpdateTaskContractAddressCall__Outputs(this);
+  }
+}
+
+export class UpdateTaskContractAddressCall__Inputs {
+  _call: UpdateTaskContractAddressCall;
+
+  constructor(call: UpdateTaskContractAddressCall) {
+    this._call = call;
+  }
+
+  get _address(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class UpdateTaskContractAddressCall__Outputs {
+  _call: UpdateTaskContractAddressCall;
+
+  constructor(call: UpdateTaskContractAddressCall) {
     this._call = call;
   }
 }
@@ -841,36 +932,6 @@ export class UpdateTaskRequirementCall__Outputs {
   _call: UpdateTaskRequirementCall;
 
   constructor(call: UpdateTaskRequirementCall) {
-    this._call = call;
-  }
-}
-
-export class UpdateTreasuryContractCall extends ethereum.Call {
-  get inputs(): UpdateTreasuryContractCall__Inputs {
-    return new UpdateTreasuryContractCall__Inputs(this);
-  }
-
-  get outputs(): UpdateTreasuryContractCall__Outputs {
-    return new UpdateTreasuryContractCall__Outputs(this);
-  }
-}
-
-export class UpdateTreasuryContractCall__Inputs {
-  _call: UpdateTreasuryContractCall;
-
-  constructor(call: UpdateTreasuryContractCall) {
-    this._call = call;
-  }
-
-  get _address(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class UpdateTreasuryContractCall__Outputs {
-  _call: UpdateTreasuryContractCall;
-
-  constructor(call: UpdateTreasuryContractCall) {
     this._call = call;
   }
 }

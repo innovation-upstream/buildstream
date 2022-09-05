@@ -1,10 +1,199 @@
 {
-  "address": "0x051c2562f603855c8d92777a13d4e35ed0A3037f",
+  "address": "0x479FB1D04244eB06Fe3eC83152738287c887F2a1",
   "abi": [
     {
       "type": "constructor",
       "payable": false,
       "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskArchived",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskAssignment",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskAssignmentRequested",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskClosed",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskConfirmation",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskCreation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskOpened",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRequirementUpdated",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRevocation",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskSubmission",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskUnassignment",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "approveTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "approver"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "archive",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",
@@ -86,6 +275,48 @@
         {
           "type": "uint256",
           "name": "taskId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "didApprove",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "approver"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getAssignmentRequests",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
         }
       ]
     },
@@ -180,7 +411,22 @@
     },
     {
       "type": "function",
-      "name": "openTask",
+      "name": "getTaskCount",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "count"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "makeAssignmentRequest",
       "constant": false,
       "payable": false,
       "gas": 1100000,
@@ -190,8 +436,8 @@
           "name": "taskId"
         },
         {
-          "type": "uint256",
-          "name": "rewardAmount"
+          "type": "address",
+          "name": "assignee"
         }
       ],
       "outputs": []
@@ -220,6 +466,24 @@
     },
     {
       "type": "function",
+      "name": "revokeApproval",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "approver"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "submitTask",
       "constant": false,
       "payable": false,
@@ -228,6 +492,10 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
         },
         {
           "type": "string",
@@ -246,6 +514,10 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
         }
       ],
       "outputs": []

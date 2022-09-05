@@ -77,6 +77,19 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "_actionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "confirmAction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "_orgId",
         "type": "uint256"
       },
@@ -94,6 +107,11 @@
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
       }
     ],
     "name": "createAction",
@@ -159,9 +177,15 @@
         "type": "uint256"
       }
     ],
-    "name": "confirmAction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "doesActionExist",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -172,15 +196,9 @@
         "type": "uint256"
       }
     ],
-    "name": "getConfirmers",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "confirmers",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "executeAction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -305,31 +323,12 @@
         "type": "uint256"
       }
     ],
-    "name": "doesActionExist",
+    "name": "getConfirmers",
     "outputs": [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_actionId",
-        "type": "uint256"
-      }
-    ],
-    "name": "isActionExecuted",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType": "address[]",
+        "name": "confirmers",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -362,9 +361,15 @@
         "type": "uint256"
       }
     ],
-    "name": "executeAction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "isActionExecuted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

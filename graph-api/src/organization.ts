@@ -3,6 +3,7 @@ import {
   OrganizationApproverAddition as OrganizationApproverAdditionEvent,
   OrganizationApproverRemoval as OrganizationApproverRemovalEvent,
   OrganizationCreation as OrganizationCreationEvent,
+  OrganizationInitialized as OrganizationInitializedEvent,
   OrganizationReviewerAddition as OrganizationReviewerAdditionEvent,
   OrganizationReviewerRemoval as OrganizationReviewerRemovalEvent,
   OrganizationSignerAddition as OrganizationSignerAdditionEvent,
@@ -55,6 +56,21 @@ export function handleOrganizationCreation(
   entity.reviewers = org.reviewers.map<string>((a) => a.toHexString())
   entity.approvers = org.approvers.map<string>((a) => a.toHexString())
   entity.signers = org.signers.map<string>((a) => a.toHexString())
+  entity.requiredTaskApprovals = orgConfig.requiredTaskApprovals
+  entity.requiredConfirmations = orgConfig.requiredConfirmations
+  entity.rewardMultiplier = orgConfig.rewardMultiplier
+  entity.rewardToken = orgConfig.rewardToken
+  entity.save()
+}
+
+export function handleOrganizationInitialized(event: OrganizationInitializedEvent): void {
+  const orgId = event.params.orgId
+  let contract = Contract.bind(event.address)
+  const orgConfig = contract.getOrganizationConfig(orgId)
+  const entity = Organization.load(orgId.toString())
+
+  if (!entity) return
+
   entity.requiredTaskApprovals = orgConfig.requiredTaskApprovals
   entity.requiredConfirmations = orgConfig.requiredConfirmations
   entity.rewardMultiplier = orgConfig.rewardMultiplier
