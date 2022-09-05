@@ -111,7 +111,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "dueDate",
+        "name": "taskDuration",
         "type": "uint256"
       }
     ],
@@ -272,7 +272,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "dueDate",
+            "name": "taskDuration",
             "type": "uint256"
           },
           {
@@ -370,7 +370,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "dueDate",
+        "name": "taskDuration",
         "type": "uint256"
       }
     ],

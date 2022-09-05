@@ -30,7 +30,7 @@ type Task @entity {
   rewardToken: Bytes
   assignDate: BigInt
   submitDate: BigInt
-  dueDate: BigInt!
+  taskDuration: BigInt!
   comment: String
   approvedBy: [String!]
   assignmentRequest: [String!]

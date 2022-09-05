@@ -15,12 +15,11 @@ import {
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address } from '@graphprotocol/graph-ts'
-import { TaskContract as Contract } from '../generated/TaskContract/TaskContract'
+import { TaskContract as Contract } from '../generated/TaskStorageContract/TaskContract'
 
 const taskContractAddress = Address.fromString(
   '0x58d96b16CE4c4c8ABFE72f352A108da7C606C931'
 )
-
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
@@ -61,7 +60,7 @@ export function handleTaskRequirementUpdate(
   if (!taskEntity) return
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
-  taskEntity.dueDate = task.dueDate
+  taskEntity.taskDuration = task.taskDuration
   taskEntity.save()
 }
 
@@ -96,7 +95,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.rewardToken = task.rewardToken
   taskEntity.assignDate = task.assignDate
   taskEntity.submitDate = task.submitDate
-  taskEntity.dueDate = task.dueDate
+  taskEntity.taskDuration = task.taskDuration
   taskEntity.comment = task.comment
 
   taskEntity.save()

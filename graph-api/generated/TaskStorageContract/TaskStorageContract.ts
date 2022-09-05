@@ -289,7 +289,7 @@ export class TaskStorageContract__getTaskResultValue0Struct extends ethereum.Tup
     return this[14].toBigInt();
   }
 
-  get dueDate(): BigInt {
+  get taskDuration(): BigInt {
     return this[15].toBigInt();
   }
 
@@ -311,7 +311,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    dueDate: BigInt
+    taskDuration: BigInt
   ): BigInt {
     let result = super.call(
       "createTask",
@@ -324,7 +324,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(dueDate)
+        ethereum.Value.fromUnsignedBigInt(taskDuration)
       ]
     );
 
@@ -339,7 +339,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    dueDate: BigInt
+    taskDuration: BigInt
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createTask",
@@ -352,7 +352,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(dueDate)
+        ethereum.Value.fromUnsignedBigInt(taskDuration)
       ]
     );
     if (result.reverted) {
@@ -669,7 +669,7 @@ export class CreateTaskCall__Inputs {
     return this._call.inputValues[6].value.toBigInt();
   }
 
-  get dueDate(): BigInt {
+  get taskDuration(): BigInt {
     return this._call.inputValues[7].value.toBigInt();
   }
 }
@@ -923,7 +923,7 @@ export class UpdateTaskRequirementCall__Inputs {
     return this._call.inputValues[2].value.toBigInt();
   }
 
-  get dueDate(): BigInt {
+  get taskDuration(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
   }
 }
