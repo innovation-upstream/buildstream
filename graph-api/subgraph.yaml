@@ -108,7 +108,7 @@ dataSources:
         - event: TaskAssignment(indexed address,indexed uint256)
           handler: handleTaskAssignment
         - event: TaskAssignmentRequested(indexed address,indexed uint256)
-          handler: handleTaskAssignmentRequested
+          handler: handleTaskAssignmentRequest
         - event: TaskClosed(indexed uint256)
           handler: handleTaskClosed
         - event: TaskConfirmation(indexed address,indexed uint256)

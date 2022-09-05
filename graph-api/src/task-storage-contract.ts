@@ -103,7 +103,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   let tCountEntity = TaskCount.load(task.orgId.toString())
   if (!tCountEntity) {
     tCountEntity = new TaskCount(task.orgId.toString())
-    tCountEntity.orgId = tCountEntity.orgId
+    tCountEntity.orgId = task.orgId
     tCountEntity.count = new BigInt(0)
   }
   tCountEntity.count = tCountEntity.count.plus(BigInt.fromI32(1))
@@ -147,7 +147,7 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 1
-  taskEntity.assignee = '0x0000000000000000000000000000000000000000'
+  taskEntity.assignee = Address.zero().toHexString()
   taskEntity.save()
 }
 
