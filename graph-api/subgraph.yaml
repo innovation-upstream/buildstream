@@ -39,7 +39,7 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0xD381e4b56075302bdCc81FeB834e8ee654Cd2fe8"
+      address: "0x09f81b5103fe020d72F335fC6AC6d9EeDba809cf"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -56,6 +56,10 @@ dataSources:
           handler: handleTreasuryDeposit
         - event: TreasuryWithdraw(indexed uint256,indexed address,address,indexed uint256)
           handler: handleTreasuryWithdraw
+        - event: TreasuryTokenLocked(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryTokenLocked
+        - event: TreasuryTokenUnlocked(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryTokenUnlocked
       file: ./src/treasury.ts
   - kind: ethereum
     name: ActionContract

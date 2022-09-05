@@ -1,5 +1,5 @@
 {
-  "address": "0xD381e4b56075302bdCc81FeB834e8ee654Cd2fe8",
+  "address": "0x09f81b5103fe020d72F335fC6AC6d9EeDba809cf",
   "abi": [
     {
       "type": "constructor",
@@ -19,6 +19,50 @@
       "type": "event",
       "anonymous": false,
       "name": "TreasuryDeposit",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TreasuryTokenLocked",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TreasuryTokenUnlocked",
       "inputs": [
         {
           "type": "uint256",

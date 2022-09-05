@@ -543,6 +543,15 @@ export class TreasuryToken extends Entity {
   set balance(value: BigInt) {
     this.set("balance", Value.fromBigInt(value));
   }
+
+  get lockedBalance(): BigInt {
+    let value = this.get("lockedBalance");
+    return value!.toBigInt();
+  }
+
+  set lockedBalance(value: BigInt) {
+    this.set("lockedBalance", Value.fromBigInt(value));
+  }
 }
 
 export class Treasury extends Entity {

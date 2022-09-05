@@ -106,7 +106,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
     tCountEntity.orgId = tCountEntity.orgId
     tCountEntity.count = new BigInt(0)
   }
-  tCountEntity.count = tCountEntity.count.plus(new BigInt(1))
+  tCountEntity.count = tCountEntity.count.plus(BigInt.fromI32(1))
   tCountEntity.save()
 }
 

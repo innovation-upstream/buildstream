@@ -47,6 +47,7 @@ type TreasuryToken @entity {
   orgId: Treasury!
   token: String!
   balance: BigInt!
+  lockedBalance: BigInt!
 }
 
 type Treasury @entity {

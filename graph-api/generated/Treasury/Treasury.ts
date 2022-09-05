@@ -36,6 +36,58 @@ export class TreasuryDeposit__Params {
   }
 }
 
+export class TreasuryTokenLocked extends ethereum.Event {
+  get params(): TreasuryTokenLocked__Params {
+    return new TreasuryTokenLocked__Params(this);
+  }
+}
+
+export class TreasuryTokenLocked__Params {
+  _event: TreasuryTokenLocked;
+
+  constructor(event: TreasuryTokenLocked) {
+    this._event = event;
+  }
+
+  get orgId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get tokenAddress(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
+export class TreasuryTokenUnlocked extends ethereum.Event {
+  get params(): TreasuryTokenUnlocked__Params {
+    return new TreasuryTokenUnlocked__Params(this);
+  }
+}
+
+export class TreasuryTokenUnlocked__Params {
+  _event: TreasuryTokenUnlocked;
+
+  constructor(event: TreasuryTokenUnlocked) {
+    this._event = event;
+  }
+
+  get orgId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get tokenAddress(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class TreasuryWithdraw extends ethereum.Event {
   get params(): TreasuryWithdraw__Params {
     return new TreasuryWithdraw__Params(this);
