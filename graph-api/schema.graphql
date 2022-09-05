@@ -36,6 +36,12 @@ type Task @entity {
   assignmentRequest: [String!]
 }
 
+type TaskCount @entity {
+  id: ID!
+  orgId: BigInt!
+  count: BigInt!
+}
+
 type TreasuryToken @entity {
   id: ID!
   orgId: Treasury!

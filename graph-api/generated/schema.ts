@@ -436,6 +436,56 @@ export class Task extends Entity {
   }
 }
 
+export class TaskCount extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TaskCount entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type TaskCount must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TaskCount", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TaskCount | null {
+    return changetype<TaskCount | null>(store.get("TaskCount", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get orgId(): BigInt {
+    let value = this.get("orgId");
+    return value!.toBigInt();
+  }
+
+  set orgId(value: BigInt) {
+    this.set("orgId", Value.fromBigInt(value));
+  }
+
+  get count(): BigInt {
+    let value = this.get("count");
+    return value!.toBigInt();
+  }
+
+  set count(value: BigInt) {
+    this.set("count", Value.fromBigInt(value));
+  }
+}
+
 export class TreasuryToken extends Entity {
   constructor(id: string) {
     super();

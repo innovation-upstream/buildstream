@@ -1,5 +1,5 @@
 {
-  "address": "0x229Ba773Db10F2a72F655Df1Ea5936eC85304814",
+  "address": "0xD381e4b56075302bdCc81FeB834e8ee654Cd2fe8",
   "abi": [
     {
       "type": "constructor",
@@ -328,6 +328,20 @@
         {
           "type": "uint256",
           "name": "amount"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskContractAddress",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
         }
       ],
       "outputs": []

@@ -1,4 +1,4 @@
-import { Task } from '../generated/schema'
+import { Task, TaskCount } from '../generated/schema'
 
 import {
   TaskArchived as TaskArchivedEvent,
@@ -14,7 +14,7 @@ import {
   TaskUnassignment as TaskUnassignmentEvent
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { TaskContract as Contract } from '../generated/TaskStorageContract/TaskContract'
 
 const taskContractAddress = Address.fromString(
@@ -99,6 +99,15 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.comment = task.comment
 
   taskEntity.save()
+
+  let tCountEntity = TaskCount.load(task.orgId.toString())
+  if (!tCountEntity) {
+    tCountEntity = new TaskCount(task.orgId.toString())
+    tCountEntity.orgId = tCountEntity.orgId
+    tCountEntity.count = new BigInt(0)
+  }
+  tCountEntity.count = tCountEntity.count.plus(new BigInt(1))
+  tCountEntity.save()
 }
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {

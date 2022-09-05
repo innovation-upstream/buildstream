@@ -527,6 +527,36 @@ export class UnlockBalance1Call__Outputs {
   }
 }
 
+export class UpdateTaskContractAddressCall extends ethereum.Call {
+  get inputs(): UpdateTaskContractAddressCall__Inputs {
+    return new UpdateTaskContractAddressCall__Inputs(this);
+  }
+
+  get outputs(): UpdateTaskContractAddressCall__Outputs {
+    return new UpdateTaskContractAddressCall__Outputs(this);
+  }
+}
+
+export class UpdateTaskContractAddressCall__Inputs {
+  _call: UpdateTaskContractAddressCall;
+
+  constructor(call: UpdateTaskContractAddressCall) {
+    this._call = call;
+  }
+
+  get _address(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class UpdateTaskContractAddressCall__Outputs {
+  _call: UpdateTaskContractAddressCall;
+
+  constructor(call: UpdateTaskContractAddressCall) {
+    this._call = call;
+  }
+}
+
 export class WithdrawForceCall extends ethereum.Call {
   get inputs(): WithdrawForceCall__Inputs {
     return new WithdrawForceCall__Inputs(this);

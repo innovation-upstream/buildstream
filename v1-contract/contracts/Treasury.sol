@@ -58,6 +58,10 @@ contract Treasury {
         organization = Organization(_organizationAddress);
     }
 
+    function updateTaskContractAddress(address _address) external onlyOwner {
+        taskContractAddress = _address;
+    }
+
     function getBalance(uint256 orgId)
         external
         view
