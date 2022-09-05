@@ -65,7 +65,7 @@ contract TaskContract {
         string[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 dueDate
+        uint256 taskDuration
     ) external returns (uint256 taskId) {
         require(organization.doesOrgExists(orgId), "Org not exist");
         require(sbtToken.doesTokenExist(complexityScore), "Token not exist");
@@ -80,7 +80,7 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             requiredTaskApprovals,
-            dueDate
+            taskDuration
         );
     }
 
@@ -90,13 +90,13 @@ contract TaskContract {
         uint256 taskId,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 dueDate
+        uint256 taskDuration
     ) external onlyApprover(taskId) {
         taskStorage.updateTaskRequirement(
             taskId,
             complexityScore,
             reputationLevel,
-            dueDate
+            taskDuration
         );
     }
 
@@ -161,9 +161,10 @@ contract TaskContract {
                 task.orgId
             );
         uint256 rewardAmount = 0;
-        if (task.dueDate >= task.submitDate) rewardAmount = task.rewardAmount;
+        if (task.taskDuration >= task.submitDate - task.assignDate)
+            rewardAmount = task.rewardAmount;
         else {
-            uint256 overtime = task.submitDate - task.dueDate;
+            uint256 overtime = task.submitDate - task.assignDate - task.taskDuration;
             uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
             uint256 slashAmount = (slashRatio * task.rewardAmount) /
                 orgConfig.rewardSlashDivisor;

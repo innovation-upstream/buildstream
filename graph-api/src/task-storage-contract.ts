@@ -18,7 +18,7 @@ import { Address } from '@graphprotocol/graph-ts'
 import { TaskContract as Contract } from '../generated/TaskContract/TaskContract'
 
 const taskContractAddress = Address.fromString(
-  '0xd1C2238C8b2bf93505208831086C00bDD46159bD'
+  '0x58d96b16CE4c4c8ABFE72f352A108da7C606C931'
 )
 
 

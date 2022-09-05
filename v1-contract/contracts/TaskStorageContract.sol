@@ -27,7 +27,7 @@ library TaskLib {
         address rewardToken;
         uint256 assignDate;
         uint256 submitDate;
-        uint256 dueDate;
+        uint256 taskDuration;
         string comment;
     }
 }
@@ -100,7 +100,7 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 requiredApprovals,
-        uint256 dueDate
+        uint256 taskDuration
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
         tasks[taskId] = TaskLib.Task({
@@ -118,7 +118,7 @@ contract TaskStorageContract {
             rewardToken: address(0),
             assignDate: 0,
             submitDate: 0,
-            dueDate: dueDate,
+            taskDuration: taskDuration,
             status: TaskLib.TaskStatus.PROPOSED,
             comment: ""
         });
@@ -133,13 +133,13 @@ contract TaskStorageContract {
         uint256 taskId,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 dueDate
+        uint256 taskDuration
     ) external taskExists(taskId) onlyTaskContract {
         TaskLib.Task memory task = tasks[taskId];
         require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
         task.complexityScore = complexityScore;
         task.reputationLevel = reputationLevel;
-        task.dueDate = dueDate;
+        task.taskDuration = taskDuration;
         tasks[taskId] = task;
         emit TaskRequirementUpdated(taskId);
     }
