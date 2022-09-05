@@ -48,14 +48,25 @@ const getContractInstances = async () => {
 
   await taskContract.updateTreasuryContract(treasuryContract.address)
 
-  return { tokenContract, taskContract, orgContract, treasuryContract }
+  return {
+    tokenContract,
+    taskContract,
+    orgContract,
+    treasuryContract,
+    storageContract
+  }
 }
 
 describe('Integration test: Task flow', function () {
   it('Should successfully complete the task flow', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
-    const { orgContract, taskContract, tokenContract, treasuryContract } =
-      await getContractInstances()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract
+    } = await getContractInstances()
 
     // Create organization
     const createOrgTx = await orgContract.createOrg(
@@ -103,10 +114,14 @@ describe('Integration test: Task flow', function () {
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
-    const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'TaskCreation'
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
     )
-    const taskId = taskEvent?.args?.[0]?.toNumber()
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
     await taskContract
@@ -151,8 +166,13 @@ describe('Integration test: Task flow', function () {
 
   it('Should successfully slash reward', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
-    const { orgContract, taskContract, tokenContract, treasuryContract } =
-      await getContractInstances()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract
+    } = await getContractInstances()
 
     // Create organization
     const createOrgTx = await orgContract.createOrg(
@@ -201,10 +221,13 @@ describe('Integration test: Task flow', function () {
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
-    const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'TaskCreation'
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
     )
-    const taskId = taskEvent?.args?.[0]?.toNumber()
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
     await taskContract

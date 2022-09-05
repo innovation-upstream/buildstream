@@ -19,7 +19,8 @@ library ActionLib {
         UPDATE_REWARD_MULTIPLIER,
         UPDATE_REWARD_TOKEN,
         UPDATE_REWARD_SLASH_DIVISOR,
-        UPDATE_SLASH_REWARD_EVERY
+        UPDATE_SLASH_REWARD_EVERY,
+        UPDATE_TAG_REWARD_MULTIPLIER
     }
 
     struct Action {
@@ -136,7 +137,8 @@ contract ActionContract {
         uint256 _orgId,
         address targetAddress,
         ActionLib.ActionType actionType,
-        bytes memory data
+        bytes memory data,
+        uint256 value
     ) external orgExists(_orgId) onlySigner(_orgId) returns (uint256 actionId) {
         require(
             actionType != ActionLib.ActionType.WITHDRAWAL,
@@ -148,7 +150,7 @@ contract ActionContract {
             orgId: _orgId,
             initiator: msg.sender,
             targetAddress: targetAddress,
-            value: 0,
+            value: value,
             data: data,
             executed: false,
             tokenAddress: address(0),

@@ -20,6 +20,9 @@ async function main() {
   const SBTToken = readJson(
     path.join(__dirname, '../../app/src/contracts/Token.json')
   )
+  const TaskStorage = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskStorage.json')
+  )
   const Task = readJson(
     path.join(__dirname, '../../app/src/contracts/Task.json')
   )
@@ -33,6 +36,9 @@ async function main() {
 
   const token = await ethers.getContractFactory('SBTToken')
   const tokenContract = await token.attach(SBTToken.address)
+
+  const taskStorage = await ethers.getContractFactory('TaskStorageContract')
+  const taskStorageContract = await taskStorage.attach(TaskStorage.address)
 
   const task = await ethers.getContractFactory('TaskContract')
   const taskContract = await task.attach(Task.address)
@@ -87,10 +93,14 @@ async function main() {
   )
 
   const taskCreateReceipt = await createTaskTx.wait()
-  const taskEvent = taskCreateReceipt?.events?.find(
-    (e: any) => e.event === 'TaskCreation'
+
+  const eventFilter = taskStorageContract.filters.TaskCreation()
+  const events = await taskStorageContract.queryFilter(eventFilter)
+
+  const taskEvent = events?.find(
+    (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
   )
-  const taskId = taskEvent?.args?.[0]?.toNumber()
+  const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
   // Open task
   await waitForInput('Task: open task')

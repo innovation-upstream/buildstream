@@ -1,5 +1,5 @@
 {
-  "address": "0x407528CaEE0dC433680D3Ad2495665Ce9Ef46868",
+  "address": "0x3b5Cf0B6f3e32dcC74B3Ec5dfd746F3670A2F0bf",
   "abi": [
     {
       "type": "constructor",
@@ -44,6 +44,18 @@
       "type": "event",
       "anonymous": false,
       "name": "OrganizationCreation",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "OrganizationInitialized",
       "inputs": [
         {
           "type": "uint256",

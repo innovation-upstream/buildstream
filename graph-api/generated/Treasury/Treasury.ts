@@ -303,6 +303,230 @@ export class Deposit1Call__Outputs {
   }
 }
 
+export class LockBalanceCall extends ethereum.Call {
+  get inputs(): LockBalanceCall__Inputs {
+    return new LockBalanceCall__Inputs(this);
+  }
+
+  get outputs(): LockBalanceCall__Outputs {
+    return new LockBalanceCall__Outputs(this);
+  }
+}
+
+export class LockBalanceCall__Inputs {
+  _call: LockBalanceCall;
+
+  constructor(call: LockBalanceCall) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class LockBalanceCall__Outputs {
+  _call: LockBalanceCall;
+
+  constructor(call: LockBalanceCall) {
+    this._call = call;
+  }
+}
+
+export class LockBalance1Call extends ethereum.Call {
+  get inputs(): LockBalance1Call__Inputs {
+    return new LockBalance1Call__Inputs(this);
+  }
+
+  get outputs(): LockBalance1Call__Outputs {
+    return new LockBalance1Call__Outputs(this);
+  }
+}
+
+export class LockBalance1Call__Inputs {
+  _call: LockBalance1Call;
+
+  constructor(call: LockBalance1Call) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class LockBalance1Call__Outputs {
+  _call: LockBalance1Call;
+
+  constructor(call: LockBalance1Call) {
+    this._call = call;
+  }
+}
+
+export class RewardCall extends ethereum.Call {
+  get inputs(): RewardCall__Inputs {
+    return new RewardCall__Inputs(this);
+  }
+
+  get outputs(): RewardCall__Outputs {
+    return new RewardCall__Outputs(this);
+  }
+}
+
+export class RewardCall__Inputs {
+  _call: RewardCall;
+
+  constructor(call: RewardCall) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+}
+
+export class RewardCall__Outputs {
+  _call: RewardCall;
+
+  constructor(call: RewardCall) {
+    this._call = call;
+  }
+}
+
+export class Reward1Call extends ethereum.Call {
+  get inputs(): Reward1Call__Inputs {
+    return new Reward1Call__Inputs(this);
+  }
+
+  get outputs(): Reward1Call__Outputs {
+    return new Reward1Call__Outputs(this);
+  }
+}
+
+export class Reward1Call__Inputs {
+  _call: Reward1Call;
+
+  constructor(call: Reward1Call) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class Reward1Call__Outputs {
+  _call: Reward1Call;
+
+  constructor(call: Reward1Call) {
+    this._call = call;
+  }
+}
+
+export class UnlockBalanceCall extends ethereum.Call {
+  get inputs(): UnlockBalanceCall__Inputs {
+    return new UnlockBalanceCall__Inputs(this);
+  }
+
+  get outputs(): UnlockBalanceCall__Outputs {
+    return new UnlockBalanceCall__Outputs(this);
+  }
+}
+
+export class UnlockBalanceCall__Inputs {
+  _call: UnlockBalanceCall;
+
+  constructor(call: UnlockBalanceCall) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class UnlockBalanceCall__Outputs {
+  _call: UnlockBalanceCall;
+
+  constructor(call: UnlockBalanceCall) {
+    this._call = call;
+  }
+}
+
+export class UnlockBalance1Call extends ethereum.Call {
+  get inputs(): UnlockBalance1Call__Inputs {
+    return new UnlockBalance1Call__Inputs(this);
+  }
+
+  get outputs(): UnlockBalance1Call__Outputs {
+    return new UnlockBalance1Call__Outputs(this);
+  }
+}
+
+export class UnlockBalance1Call__Inputs {
+  _call: UnlockBalance1Call;
+
+  constructor(call: UnlockBalance1Call) {
+    this._call = call;
+  }
+
+  get orgId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get amount(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class UnlockBalance1Call__Outputs {
+  _call: UnlockBalance1Call;
+
+  constructor(call: UnlockBalance1Call) {
+    this._call = call;
+  }
+}
+
 export class WithdrawForceCall extends ethereum.Call {
   get inputs(): WithdrawForceCall__Inputs {
     return new WithdrawForceCall__Inputs(this);
@@ -387,230 +611,6 @@ export class WithdrawForce1Call__Outputs {
   _call: WithdrawForce1Call;
 
   constructor(call: WithdrawForce1Call) {
-    this._call = call;
-  }
-}
-
-export class LockBalanceCall extends ethereum.Call {
-  get inputs(): LockBalanceCall__Inputs {
-    return new LockBalanceCall__Inputs(this);
-  }
-
-  get outputs(): LockBalanceCall__Outputs {
-    return new LockBalanceCall__Outputs(this);
-  }
-}
-
-export class LockBalanceCall__Inputs {
-  _call: LockBalanceCall;
-
-  constructor(call: LockBalanceCall) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class LockBalanceCall__Outputs {
-  _call: LockBalanceCall;
-
-  constructor(call: LockBalanceCall) {
-    this._call = call;
-  }
-}
-
-export class LockBalance1Call extends ethereum.Call {
-  get inputs(): LockBalance1Call__Inputs {
-    return new LockBalance1Call__Inputs(this);
-  }
-
-  get outputs(): LockBalance1Call__Outputs {
-    return new LockBalance1Call__Outputs(this);
-  }
-}
-
-export class LockBalance1Call__Inputs {
-  _call: LockBalance1Call;
-
-  constructor(call: LockBalance1Call) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-}
-
-export class LockBalance1Call__Outputs {
-  _call: LockBalance1Call;
-
-  constructor(call: LockBalance1Call) {
-    this._call = call;
-  }
-}
-
-export class UnlockBalanceCall extends ethereum.Call {
-  get inputs(): UnlockBalanceCall__Inputs {
-    return new UnlockBalanceCall__Inputs(this);
-  }
-
-  get outputs(): UnlockBalanceCall__Outputs {
-    return new UnlockBalanceCall__Outputs(this);
-  }
-}
-
-export class UnlockBalanceCall__Inputs {
-  _call: UnlockBalanceCall;
-
-  constructor(call: UnlockBalanceCall) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class UnlockBalanceCall__Outputs {
-  _call: UnlockBalanceCall;
-
-  constructor(call: UnlockBalanceCall) {
-    this._call = call;
-  }
-}
-
-export class UnlockBalance1Call extends ethereum.Call {
-  get inputs(): UnlockBalance1Call__Inputs {
-    return new UnlockBalance1Call__Inputs(this);
-  }
-
-  get outputs(): UnlockBalance1Call__Outputs {
-    return new UnlockBalance1Call__Outputs(this);
-  }
-}
-
-export class UnlockBalance1Call__Inputs {
-  _call: UnlockBalance1Call;
-
-  constructor(call: UnlockBalance1Call) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-}
-
-export class UnlockBalance1Call__Outputs {
-  _call: UnlockBalance1Call;
-
-  constructor(call: UnlockBalance1Call) {
-    this._call = call;
-  }
-}
-
-export class RewardCall extends ethereum.Call {
-  get inputs(): RewardCall__Inputs {
-    return new RewardCall__Inputs(this);
-  }
-
-  get outputs(): RewardCall__Outputs {
-    return new RewardCall__Outputs(this);
-  }
-}
-
-export class RewardCall__Inputs {
-  _call: RewardCall;
-
-  constructor(call: RewardCall) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get to(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[2].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-}
-
-export class RewardCall__Outputs {
-  _call: RewardCall;
-
-  constructor(call: RewardCall) {
-    this._call = call;
-  }
-}
-
-export class Reward1Call extends ethereum.Call {
-  get inputs(): Reward1Call__Inputs {
-    return new Reward1Call__Inputs(this);
-  }
-
-  get outputs(): Reward1Call__Outputs {
-    return new Reward1Call__Outputs(this);
-  }
-}
-
-export class Reward1Call__Inputs {
-  _call: Reward1Call;
-
-  constructor(call: Reward1Call) {
-    this._call = call;
-  }
-
-  get orgId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get to(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-}
-
-export class Reward1Call__Outputs {
-  _call: Reward1Call;
-
-  constructor(call: Reward1Call) {
     this._call = call;
   }
 }
