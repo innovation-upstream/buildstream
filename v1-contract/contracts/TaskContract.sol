@@ -153,7 +153,13 @@ contract TaskContract {
             task.orgId
         );
         sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
-        if (task.assigneeAddress == task.assigner)
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        bool shouldUnstake = task.assigneeAddress == task.assigner;
+        if (shouldUnstake)
+            for (uint i = 0; i < assignmentRequests.length; i++)
+                if (assignmentRequests[i] == task.assigneeAddress)
+                    shouldUnstake = false;
+        if (shouldUnstake)
             sbtToken.unStake(
                 msg.sender,
                 task.complexityScore,
@@ -259,11 +265,14 @@ contract TaskContract {
     /// @param taskId Task ID.
     function unassignSelf(uint256 taskId) external {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        bool shouldUnstake = task.assigneeAddress == task.assigner;
+        if (shouldUnstake)
+            for (uint i = 0; i < assignmentRequests.length; i++)
+                if (assignmentRequests[i] == task.assigneeAddress)
+                    shouldUnstake = false;
         taskStorage.unassign(taskId, msg.sender);
-        if (
-            sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) >=
-            task.reputationLevel
-        )
+        if (shouldUnstake)
             sbtToken.unStake(
                 msg.sender,
                 task.complexityScore,

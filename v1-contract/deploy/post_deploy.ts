@@ -37,20 +37,45 @@ async function main() {
   const taskStorage = await ethers.getContractFactory('TaskStorageContract')
   const taskStorageContract = await taskStorage.attach(TaskStorage.address)
 
-  await waitForInput('Organization: update action contract address')
-  await orgContract.updateActionContract(Action.address)
+  const treasury = await ethers.getContractFactory('Treasury')
+  const treasuryContract = await treasury.attach(Treasury.address)
 
-  await waitForInput('Organization: update treasury contract address')
-  await orgContract.updateTreasuryContract(Treasury.address)
+  const postdeploySteps = [
+    {
+      func: () => orgContract.updateActionContract(Action.address),
+      message: 'Organization: update action contract address'
+    },
+    {
+      func: () => orgContract.updateTreasuryContract(Treasury.address),
+      message: 'Organization: update treasury contract address'
+    },
+    {
+      func: () => taskContract.updateTreasuryContract(Treasury.address),
+      message: 'Task: update treasury contract address'
+    },
+    {
+      func: () => tokenContract.updateTaskContractAddress(Task.address),
+      message: 'Token: update task contract address'
+    },
+    {
+      func: () => taskStorageContract.updateTaskContractAddress(Task.address),
+      message: 'Task Storage: updated task contract address'
+    },
+    {
+      func: () => treasuryContract.updateTaskContractAddress(Task.address),
+      message: 'Treasury: updated task contract address'
+    }
+  ]
 
-  await waitForInput('Task: update treasury contract address')
-  await taskContract.updateTreasuryContract(Treasury.address)
-
-  await waitForInput('Token: update task contract address')
-  await tokenContract.updateTaskContractAddress(Task.address)
-
-  await waitForInput('Task Storage: updated task contract address')
-  await taskStorageContract.updateTaskContractAddress(Task.address)
+  for (let i = 0; i < postdeploySteps.length; i++) {
+    const step = postdeploySteps[i]
+    try {
+      await waitForInput(step.message)
+    } catch {
+      continue
+    }
+    await step.func()
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

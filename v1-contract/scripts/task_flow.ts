@@ -30,7 +30,7 @@ async function main() {
     path.join(__dirname, '../../app/src/contracts/Treasury.json')
   )
 
-  const [signer, approver] = await ethers.getSigners()
+  const [signer] = await ethers.getSigners()
   const org = await ethers.getContractFactory('Organization')
   const orgContract = await org.attach(OrgContract.address)
 
@@ -52,7 +52,7 @@ async function main() {
     'Buildstream',
     'Decentralized task managers',
     [signer.address],
-    [signer.address, approver.address],
+    [signer.address],
     [signer.address]
   )
 
@@ -112,9 +112,7 @@ async function main() {
 
   // Approve assign task request
   await waitForInput('Task: approve assign task')
-  await taskContract
-    .connect(approver)
-    .approveAssignRequest(taskId, signer.address)
+  await taskContract.approveAssignRequest(taskId, signer.address)
 
   // Submit task
   await waitForInput('Task: submit task')
