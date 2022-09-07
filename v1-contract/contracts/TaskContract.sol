@@ -161,7 +161,7 @@ contract TaskContract {
         else {
             uint256 overtime = task.submitDate - task.assignDate - task.taskDuration;
             uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
-            uint256 slashAmount = (slashRatio * task.rewardAmount) /
+            uint256 slashAmount = (slashRatio * task.rewardAmount * 10 ** 18) /
                 orgConfig.rewardSlashDivisor;
             if (slashAmount > task.rewardAmount)
                 slashAmount = task.rewardAmount;

@@ -18,7 +18,7 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { TaskContract as Contract } from '../generated/TaskStorageContract/TaskContract'
 
 const taskContractAddress = Address.fromString(
-  '0x0EbBaEdFba46873A49881aAA528DBbe1df4EA047'
+  '0xBd0D4CB67f17890aC670A310113f06907961da1c'
 )
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {

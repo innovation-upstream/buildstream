@@ -195,7 +195,7 @@ describe('Integration test: Task flow', function () {
       ethers.constants.AddressZero,
       requiredConfirmations,
       requiredApprovals,
-      rewardSlashDivisor,
+      ethers.utils.parseUnits(rewardSlashDivisor.toString()),
       slashRewardEvery
     )
     await addOrgConfigTx.wait()

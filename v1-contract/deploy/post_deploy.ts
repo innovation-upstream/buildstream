@@ -74,7 +74,8 @@ async function main() {
     } catch {
       continue
     }
-    await step.func()
+    const tx = await step.func()
+    await tx.wait()
   }
 }
 
