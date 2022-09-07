@@ -107,9 +107,6 @@ contract TaskContract {
         onlyApprover(taskId)
     {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
-            task.orgId
-        );
         uint256 multiplier = organization.getRewardMultiplier(
             task.orgId,
             task.taskTags
@@ -117,15 +114,7 @@ contract TaskContract {
         uint256 rewardAmount = multiplier * (task.complexityScore + 1);
         if (rewardToken != address(0))
             treasury.lockBalance(task.orgId, rewardToken, rewardAmount);
-        else if (orgConfig.rewardToken != address(0)) {
-            rewardToken = orgConfig.rewardToken;
-            treasury.lockBalance(
-                task.orgId,
-                orgConfig.rewardToken,
-                rewardAmount
-            );
-        }
-        treasury.lockBalance(task.orgId, rewardAmount);
+        else treasury.lockBalance(task.orgId, rewardAmount);
         taskStorage.openTask(taskId, rewardAmount, rewardToken);
     }
 

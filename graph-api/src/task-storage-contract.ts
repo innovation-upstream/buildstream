@@ -18,7 +18,7 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 import { TaskContract as Contract } from '../generated/TaskStorageContract/TaskContract'
 
 const taskContractAddress = Address.fromString(
-  '0x58d96b16CE4c4c8ABFE72f352A108da7C606C931'
+  '0x0EbBaEdFba46873A49881aAA528DBbe1df4EA047'
 )
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
@@ -112,9 +112,13 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
   const taskId = event.params.taskId.toString()
+  const contract = Contract.bind(taskContractAddress)
+  const task = contract.getTask(event.params.taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 1
+  taskEntity.rewardToken = task.rewardToken
+  taskEntity.rewardAmount = task.rewardAmount
   taskEntity.save()
 }
 

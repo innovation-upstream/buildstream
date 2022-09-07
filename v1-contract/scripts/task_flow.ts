@@ -75,10 +75,11 @@ async function main() {
 
   // Make deposit in treasury for orgainization
   await waitForInput('Treasury: make deposit for organization')
-  await treasuryContract['deposit(uint256)'](orgId, {
+  const depositTx = await treasuryContract['deposit(uint256)'](orgId, {
     from: signer.address,
     value: ethers.utils.parseEther('0.00001')
   })
+  await depositTx.wait()
 
   // Create task using org id created earlier
   await waitForInput('Task: create task')
@@ -104,25 +105,36 @@ async function main() {
 
   // Open task
   await waitForInput('Task: open task')
-  await taskContract.openTask(taskId, ethers.constants.AddressZero)
+  const openTx = await taskContract.openTask(
+    taskId,
+    ethers.constants.AddressZero
+  )
+  await openTx.wait()
 
   // Assign task created above to self
   await waitForInput('Task: assign task')
-  await taskContract.assignSelf(taskId)
+  const assignTx = await taskContract.assignSelf(taskId)
+  await assignTx.wait()
 
   // Approve assign task request
   await waitForInput('Task: approve assign task')
-  await taskContract.approveAssignRequest(taskId, signer.address)
+  const approveAssignTx = await taskContract.approveAssignRequest(
+    taskId,
+    signer.address
+  )
+  await approveAssignTx.wait()
 
   // Submit task
   await waitForInput('Task: submit task')
-  await taskContract.submitTask(taskId, 'https:github.com')
+  const submitTx = await taskContract.submitTask(taskId, 'https:github.com')
+  await submitTx.wait()
 
   const initialBalance = await ethers.provider.getBalance(signer.address)
 
   // Approvers can confirm task
   await waitForInput('Task: approve task')
-  await taskContract.approveTask(taskId)
+  const approveTx = await taskContract.approveTask(taskId)
+  await approveTx.wait()
 
   // Assignee should receive reward
   await waitForInput('Task: check reward')
