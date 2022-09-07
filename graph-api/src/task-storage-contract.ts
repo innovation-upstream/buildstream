@@ -15,11 +15,7 @@ import {
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { TaskContract as Contract } from '../generated/TaskStorageContract/TaskContract'
-
-const taskContractAddress = Address.fromString(
-  '0xBd0D4CB67f17890aC670A310113f06907961da1c'
-)
+import { TaskStorageContract as Contract } from '../generated/TaskStorageContract/TaskStorageContract'
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
@@ -53,7 +49,7 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
 export function handleTaskRequirementUpdate(
   event: TaskRequirementUpdatedEvent
 ): void {
-  const contract = Contract.bind(taskContractAddress)
+  const contract = Contract.bind(event.address)
   const task = contract.getTask(event.params.taskId)
 
   const taskEntity = Task.load(event.params.taskId.toString())
@@ -76,7 +72,7 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
 
 export function handleTaskCreation(event: TaskCreationEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(taskContractAddress)
+  const contract = Contract.bind(event.address)
   const task = contract.getTask(event.params.taskId)
   const taskEntity = new Task(taskId)
 
@@ -112,7 +108,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(taskContractAddress)
+  const contract = Contract.bind(event.address)
   const task = contract.getTask(event.params.taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
@@ -137,7 +133,7 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
 
 export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(taskContractAddress)
+  const contract = Contract.bind(event.address)
   const task = contract.getTask(event.params.taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return

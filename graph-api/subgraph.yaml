@@ -6,7 +6,7 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0x1c2CB03a48D0249F89036D2AeA7116489b961CA1"
+      address: "0xbB484B65eB08fBF2436694F6a78Aa8f726885c4d"
       abi: Organization
     mapping:
       kind: ethereum/events
@@ -39,7 +39,7 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0x9959dC93592786f5e3961Bea5742f8a1ab0C7fb1"
+      address: "0x9d40Dc3347f47239C04F2Bd23dDFbd18630FA6C2"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -65,7 +65,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0xcaBCA3E41DCE5C0145F09628dbdc778d75fE6963"
+      address: "0x69c3735FbEfF9073204C51C5D9a458D49461191C"
       abi: ActionContract
     mapping:
       kind: ethereum/events
@@ -88,7 +88,7 @@ dataSources:
     name: TaskStorageContract
     network: goerli
     source:
-      address: "0x4450CcE2568ad4a9542B63109E2CEe077348b914"
+      address: "0x032abD052A63A0Bd7C2e565C0b2Ef779F48d3D20"
       abi: TaskStorageContract
     mapping:
       kind: ethereum/events
@@ -100,8 +100,6 @@ dataSources:
       abis:
         - name: TaskStorageContract
           file: ./abis/TaskStorageContract.json
-        - name: TaskContract
-          file: ./abis/TaskContract.json
       eventHandlers:
         - event: TaskArchived(indexed uint256)
           handler: handleTaskArchived
