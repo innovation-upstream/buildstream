@@ -60,6 +60,7 @@ export function handleOrganizationCreation(
   entity.requiredConfirmations = orgConfig.requiredConfirmations
   entity.rewardMultiplier = orgConfig.rewardMultiplier
   entity.rewardToken = orgConfig.rewardToken
+  entity.isInitialized = false
   entity.save()
 }
 
@@ -75,6 +76,7 @@ export function handleOrganizationInitialized(event: OrganizationInitializedEven
   entity.requiredConfirmations = orgConfig.requiredConfirmations
   entity.rewardMultiplier = orgConfig.rewardMultiplier
   entity.rewardToken = orgConfig.rewardToken
+  entity.isInitialized = true
   entity.save()
 }
 

@@ -10,6 +10,7 @@ type Organization @entity {
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
   rewardToken: Bytes!
+  isInitialized: Boolean!
   tasks: [Task!] @derivedFrom(field: "orgId")
 }
 

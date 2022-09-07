@@ -132,6 +132,15 @@ export class Organization extends Entity {
     this.set("rewardToken", Value.fromBytes(value));
   }
 
+  get isInitialized(): boolean {
+    let value = this.get("isInitialized");
+    return value!.toBoolean();
+  }
+
+  set isInitialized(value: boolean) {
+    this.set("isInitialized", Value.fromBoolean(value));
+  }
+
   get tasks(): Array<string> | null {
     let value = this.get("tasks");
     if (!value || value.kind == ValueKind.NULL) {
