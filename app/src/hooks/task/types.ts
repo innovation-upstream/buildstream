@@ -43,4 +43,5 @@ export type Task = {
   requiredApprovals: number
   rewardAmount: number
   rewardToken: string
+  taskDuration: number
 }

@@ -36,7 +36,18 @@ export const fetchOrganizationIds = async (
 export const fetchOrganization = async (
   orgId: number,
   provider?: any
-): Promise<Organization> => {
+): Promise<
+  Pick<
+    Organization,
+    | 'id'
+    | 'name'
+    | 'description'
+    | 'reviewers'
+    | 'approvers'
+    | 'signers'
+    | 'isInitialized'
+  >
+> => {
   const contract = getContract(
     OrgContractInterface.address,
     OrgContractInterface.abi,
@@ -52,10 +63,39 @@ export const fetchOrganization = async (
     reviewers: organization.reviewers,
     approvers: organization.approvers,
     signers: organization.signers,
-    requiredTaskApprovals: organization.requiredTaskApprovals.toNumber(),
-    requiredConfirmations: organization.requiredConfirmations.toNumber(),
-    rewardMultiplier: organization.rewardMultiplier,
-    rewardToken: organization.rewardToken
+    isInitialized: organization.isInitialized
+  }
+}
+
+export const fetchOrganizationConfig = async (
+  orgId: number,
+  provider?: any
+): Promise<
+  Pick<
+    Organization,
+    | 'requiredTaskApprovals'
+    | 'requiredConfirmations'
+    | 'rewardMultiplier'
+    | 'rewardToken'
+    | 'rewardSlashDivisor'
+    | 'slashRewardEvery'
+  >
+> => {
+  const contract = getContract(
+    OrgContractInterface.address,
+    OrgContractInterface.abi,
+    provider
+  )
+
+  const orgConfig = await contract.getOrganizationConfig(orgId)
+
+  return {
+    requiredTaskApprovals: orgConfig.requiredTaskApprovals,
+    requiredConfirmations: orgConfig.requiredConfirmations,
+    rewardMultiplier: orgConfig.rewardMultiplier,
+    rewardToken: orgConfig.rewardToken,
+    rewardSlashDivisor: orgConfig.rewardSlashDivisor,
+    slashRewardEvery: orgConfig.slashRewardEvery
   }
 }
 
@@ -68,17 +108,24 @@ export const fetchOrganizations = async (
   const orgs = await Promise.all(
     orgIds.map(async (orgId): Promise<Organization> => {
       const org = await fetchOrganization(orgId, provider)
-      return org
+      const orgConfig = await fetchOrganizationConfig(orgId, provider)
+      return { ...org, ...orgConfig }
     })
   )
 
   return orgs
 }
 
-export const executeAction = async (
-  actionId: number,
+export const fetchSingleOrganization = async (
+  orgId: number,
   provider?: any
 ) => {
+  const org = await fetchOrganization(orgId, provider)
+  const orgConfig = await fetchOrganizationConfig(orgId, provider)
+  return { ...org, ...orgConfig }
+}
+
+export const executeAction = async (actionId: number, provider?: any) => {
   const contract = getContract(
     OrgContractInterface.address,
     OrgContractInterface.abi,
@@ -87,4 +134,63 @@ export const executeAction = async (
 
   const tx = await contract.executeAction(actionId)
   await tx.wait()
+}
+
+export const createOrganization = async (
+  name: string,
+  description: string,
+  reviewers: string[],
+  approvers: string[],
+  signers: string[],
+  provider: any
+): Promise<number> => {
+  const contract = getContract(
+    OrgContractInterface.address,
+    OrgContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.createOrg(
+    name,
+    description,
+    reviewers,
+    approvers,
+    signers
+  )
+  const response = await tx.wait()
+  const event = response?.events?.find(
+    (e: any) => e.event === 'OrganizationCreation'
+  )
+
+  return event?.args?.[0]?.toNumber()
+}
+
+export const addOrganizationConfig = async (
+  orgId: number,
+  requiredTaskApprovals: number,
+  requiredConfirmations: number,
+  rewardMultiplier: BigNumber,
+  rewardToken: string,
+  rewardSlashDivisor: BigNumber,
+  slashRewardEvery: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    OrgContractInterface.address,
+    OrgContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.addOrgConfig(
+    orgId,
+    rewardMultiplier,
+    rewardToken,
+    requiredConfirmations,
+    requiredTaskApprovals,
+    rewardSlashDivisor,
+    slashRewardEvery
+  )
+  await tx.wait()
+
+  return true
 }

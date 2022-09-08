@@ -7,7 +7,7 @@ import {
   assignToSelf,
   fetchTask,
   openTask,
-  taskSubmission,
+  taskSubmission
 } from 'hooks/task/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
@@ -24,16 +24,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      task: task,
-    },
+      task: task
+    }
   }
 }
 
 const TaskPage: NextPage<PageProps> = ({ task }) => {
   const { account, library } = useWeb3React()
+  const [rewardToken, setRewardToken] = useState(ethers.constants.AddressZero)
+  const [taskComment, setTaskComment] = useState<string>()
   const [processing, setProcessing] = useState(false)
   const [currentTask, setCurrentTask] = useState<Task>(task)
   const taskStatus = Object.entries(TaskStatusMap)[currentTask?.status]?.[1]
+  const [errorMsg, setErrorMsg] = useState<string>()
 
   const getTask = async () => {
     const task = await fetchTask(currentTask?.id, library.getSigner())
@@ -41,9 +44,17 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
   }
 
   const openCreatedTask = async () => {
+    if (!account) {
+      setErrorMsg('Connect your wallet')
+      return
+    }
     setProcessing(true)
     try {
-      const tx = await openTask(currentTask?.id, library.getSigner())
+      const tx = await openTask(
+        currentTask?.id,
+        rewardToken,
+        library.getSigner()
+      )
       if (tx) {
         await getTask()
       }
@@ -55,6 +66,10 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
   }
 
   const assignTaskToSelf = async () => {
+    if (!account) {
+      setErrorMsg('Connect your wallet')
+      return
+    }
     try {
       setProcessing(true)
       const tx = await assignToSelf(currentTask?.id, library.getSigner())
@@ -69,10 +84,23 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
   }
 
   const submitTask = async () => {
-    if (!account) return
+    if (!account) {
+      setErrorMsg('Connect your wallet')
+      return
+    }
+    if (!taskComment) {
+      setErrorMsg('Add Comment to Submit')
+      return
+    } else {
+      setErrorMsg('')
+    }
     setProcessing(true)
     try {
-      const tx = await taskSubmission(currentTask?.id, library.getSigner())
+      const tx = await taskSubmission(
+        currentTask?.id,
+        taskComment,
+        library.getSigner()
+      )
       if (tx) {
         await getTask()
       }
@@ -159,6 +187,12 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
               : currentTask?.rewardToken}
           </span>
         </p>
+        <p className='text-lg mt-3 break-all'>
+          Task Duration:{' '}
+          <span className='text-sm text-gray-500'>
+            {currentTask?.taskDuration.toString()}
+          </span>
+        </p>
       </div>
       <div className='w-full h-full md:basis-6/12'>
         <div className='w-full h-full mt-10 bg-gray-100 rounded-lg p-8'>
@@ -166,9 +200,7 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
             Task Status
           </h2>
           <div className='mb-3'>
-            {!account && (
-              <p className='text-base text-red-500'>Connect your wallet</p>
-            )}
+            <p className='text-base text-red-500'>{errorMsg}</p>
           </div>
 
           <ol className='relative border-l border-gray-200 dark:border-gray-200'>
@@ -190,6 +222,16 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
                   <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
                     Open task for assignment
                   </p>
+                  <input
+                    type='text'
+                    id='rewardToken'
+                    name='rewardToken'
+                    value={rewardToken}
+                    onChange={(e) => setRewardToken(e.target.value)}
+                    data-type='addressArray'
+                    placeholder='Reward Token'
+                    className='w-full rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
                   <button
                     onClick={openCreatedTask}
                     type='submit'
@@ -261,6 +303,15 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
                     <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
                       Ready for submission?
                     </p>
+                    <input
+                      type='text'
+                      id='taskComment'
+                      name='taskComment'
+                      value={taskComment}
+                      onChange={(e) => setTaskComment(e.target.value)}
+                      placeholder='Comment'
+                      className='w-full rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                    />
                     <button
                       onClick={submitTask}
                       type='submit'

@@ -11,4 +11,7 @@ export type Organization = {
   requiredConfirmations: number
   rewardMultiplier: BigNumber
   rewardToken: string
+  rewardSlashDivisor: BigNumber
+  slashRewardEvery: number
+  isInitialized: boolean
 }

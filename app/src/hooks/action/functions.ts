@@ -90,16 +90,11 @@ export const createAction = async (
   )
 
   const tx = await contract[
-    'createAction(uint256,address,uint8,bytes)'
-  ](
-    orgId,
-    targetAddress,
-    actionType,
-    ethers.utils.toUtf8Bytes('')
-  )
+    'createAction(uint256,address,uint8,bytes,uint256)'
+  ](orgId, targetAddress, actionType, ethers.utils.toUtf8Bytes(''), 0)
 
   const receipt = await tx.wait()
-  const event = receipt.events.find((e: any) => e.event === 'Creation')
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
   const actionId: BigNumber = event?.args?.[1]
 
   return actionId.toNumber()
@@ -134,16 +129,13 @@ export const createWithdrawalAction = async (
   )
 
   const receipt = await tx.wait()
-  const event = receipt.events.find((e: any) => e.event === 'Creation')
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
   const actionId: BigNumber = event?.args?.[1]
 
   return actionId.toNumber()
 }
 
-export const confirmAction = async (
-  actionId: number,
-  provider?: any
-) => {
+export const confirmAction = async (actionId: number, provider?: any) => {
   const contract = getContract(
     ActionContractInterface.address,
     ActionContractInterface.abi,

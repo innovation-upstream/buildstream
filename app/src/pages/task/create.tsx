@@ -6,12 +6,11 @@ import Head from 'next/head'
 import { updateCount, updateOrganizations } from 'state/organization/slice'
 import {
   fetchOrganizationCount,
-  fetchOrganizations,
+  fetchOrganizations
 } from 'hooks/organization/functions'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { wrapper } from 'state/store'
-import getContract from 'utils/getContract'
-import TaskContractInterface from 'contracts/Task.json'
+import { createNewTask } from 'hooks/task/functions'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -21,30 +20,38 @@ export const getServerSideProps: GetServerSideProps =
 
       const serializedOrgs = orgs.map((o) => ({
         ...o,
-        rewardMultiplier: o.rewardMultiplier.toString(),
+        rewardMultiplier: o.rewardMultiplier
+          ? o.rewardMultiplier.toNumber()
+          : null,
+        requiredTaskApprovals: o.requiredTaskApprovals && null,
+        requiredConfirmations: o.requiredConfirmations && null,
+        rewardToken: o.rewardToken ?? null,
+        rewardSlashDivisor: o.rewardSlashDivisor && null,
+        slashRewardEvery: o.slashRewardEvery && null
       }))
 
       store.dispatch(updateCount(orgCount))
       store.dispatch(
         updateOrganizations({
           data: serializedOrgs as any,
-          page: { from: 0, to: orgCount },
+          page: { from: 0, to: orgCount }
         })
       )
 
       return {
-        props: {},
+        props: {}
       }
     }
   )
 
 const initialTaskData = {
-  orgId: null,
+  orgId: 0,
   title: '',
   description: '',
   taskTags: [],
   complexityScore: 0,
   reputationLevel: 0,
+  taskDuration: 0
 }
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
@@ -72,7 +79,7 @@ const CreateTaskPage = () => {
       if (ev.key === 'Enter') {
         setTaskData((prev: any) => ({
           ...prev,
-          [targetName]: [...prev.taskTags, targetValue],
+          [targetName]: [...prev.taskTags, targetValue]
         }))
         tagRef.current.value = ''
       }
@@ -96,25 +103,19 @@ const CreateTaskPage = () => {
       setStatus({ text: 'Wallet Not Connected', error: true })
       return
     }
+    setProcessing(true)
     try {
-      setProcessing(true)
-      const tx = await getContract(
-        TaskContractInterface.address,
-        TaskContractInterface.abi,
-        library
+      const response = await createNewTask(
+        taskData.orgId,
+        taskData.title,
+        taskData.description,
+        taskData.taskTags,
+        taskData.complexityScore,
+        taskData.reputationLevel,
+        taskData.taskDuration,
+        library.getSigner()
       )
-        .connect(library.getSigner())
-        .createTask(
-          taskData.orgId,
-          taskData.title,
-          taskData.description,
-          taskData.taskTags,
-          taskData.complexityScore,
-          taskData.reputationLevel
-        )
-      const receipt = await tx.wait()
-      const event = receipt.events.find((e: any) => e.event === 'Creation')
-      router.push(`/task/${event?.args?.[0]}`)
+      router.push(`/task/${response}`)
     } catch (error) {
       setProcessing(false)
       setStatus({ text: 'Error! Not created', error: true })
@@ -219,6 +220,24 @@ const CreateTaskPage = () => {
                     id='reputationLevel'
                     name='reputationLevel'
                     value={taskData.reputationLevel}
+                    onChange={handleChange}
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
+                </div>
+              </div>
+              <div className='p-2 w-full'>
+                <div className='relative'>
+                  <label
+                    htmlFor='taskDuration'
+                    className='leading-7 text-sm text-gray-600'
+                  >
+                    Task Duration
+                  </label>
+                  <input
+                    type='number'
+                    id='taskDuration'
+                    name='taskDuration'
+                    value={taskData.taskDuration}
                     onChange={handleChange}
                     className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
                   />

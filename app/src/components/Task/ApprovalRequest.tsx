@@ -14,7 +14,7 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
   const { account, library } = useWeb3React()
 
   const approve = async () => {
-    if (!account || !taskId) return
+    if (!account) return
     setProcessing(true)
     try {
       const tx = await approveTask(taskId, library.getSigner())
@@ -27,10 +27,10 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
   }
 
   const getApprovalsRequest = async () => {
-    if (!account || !taskId) return
+    if (!account) return
     try {
-      const res = await fetchApprovals(taskId, account)
-      setApprovalRequest(res)
+      const res = await fetchApprovals(taskId)
+      if (res.includes(account)) setApprovalRequest(true)
     } catch (e) {
       console.error(e)
     }
@@ -46,7 +46,7 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
         <h2>Task Approval Request</h2>
       </div>
       <div className='w-full mt-3'>
-        {approvalRequest ? (
+        {!approvalRequest ? (
           <div className='px-4 border border-red-300 rounded-full w-max bg-white text-gray-500'>
             None
           </div>
