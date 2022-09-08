@@ -9,10 +9,15 @@ import {
   openTask,
   taskSubmission
 } from 'hooks/task/functions'
+import {
+  fetchOrganizationCount,
+  fetchOrganizations
+} from 'hooks/organization/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
+import { updateCount, updateOrganizations } from 'state/organization/slice'
 
 interface PageProps {
   task: Task
@@ -21,6 +26,25 @@ interface PageProps {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const taskId = context.params?.id?.[0] || '0'
   const task = await fetchTask(parseInt(taskId))
+  const orgCount = await fetchOrganizationCount()
+  const orgs = await fetchOrganizations(0, orgCount)
+  const serializedOrgs = orgs.map((o) => ({
+    ...o,
+    rewardMultiplier: o.rewardMultiplier.toJSON() ?? null,
+    requiredTaskApprovals: o.requiredTaskApprovals.toString(),
+    requiredConfirmations: o.requiredConfirmations.toString(),
+    rewardToken: o.rewardToken,
+    rewardSlashDivisor: o.rewardSlashDivisor.toJSON(),
+    slashRewardEvery: o.slashRewardEvery.toString()
+  }))
+
+  store.dispatch(updateCount(orgCount))
+  store.dispatch(
+    updateOrganizations({
+      data: serializedOrgs as any,
+      page: { from: 0, to: orgCount }
+    })
+  )
 
   return {
     props: {
@@ -348,6 +372,7 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
         {currentTask.status === 3 && (
           <ApprovalRequest
             taskId={currentTask?.id}
+            orgId={currentTask?.orgId}
             onApprove={() => getTask()}
           />
         )}
