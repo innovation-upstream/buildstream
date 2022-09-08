@@ -1,5 +1,5 @@
 {
-  "address": "0x36f55fa59FB156dbD5012724773AfD2e70D0D099",
+  "address": "0x9d40Dc3347f47239C04F2Bd23dDFbd18630FA6C2",
   "abi": [
     {
       "type": "constructor",
@@ -18,16 +18,21 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Confirmation",
+      "name": "TreasuryDeposit",
       "inputs": [
         {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
           "type": "address",
-          "name": "sender",
+          "name": "tokenAddress",
           "indexed": true
         },
         {
           "type": "uint256",
-          "name": "taskId",
+          "name": "amount",
           "indexed": true
         }
       ]
@@ -35,30 +40,71 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Creation",
+      "name": "TreasuryTokenLocked",
       "inputs": [
         {
           "type": "uint256",
-          "name": "taskId",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
           "indexed": true
         }
       ]
     },
     {
-      "type": "function",
-      "name": "balances",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
+      "type": "event",
+      "anonymous": false,
+      "name": "TreasuryTokenUnlocked",
       "inputs": [
         {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
         {
-          "type": "uint256"
+          "type": "address",
+          "name": "tokenAddress",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TreasuryWithdraw",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "recipient",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "amount",
+          "indexed": true
         }
       ]
     },
@@ -143,6 +189,67 @@
     },
     {
       "type": "function",
+      "name": "getLockedBalance",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getLockedBalance",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getOrgTokens",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "lockBalance",
       "constant": false,
       "payable": false,
@@ -180,63 +287,6 @@
         }
       ],
       "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "lockedBalances",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "lockedTokenBalances",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "payments",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
     },
     {
       "type": "function",
@@ -288,24 +338,57 @@
     },
     {
       "type": "function",
-      "name": "tokenBalances",
-      "constant": true,
-      "stateMutability": "view",
+      "name": "unlockBalance",
+      "constant": false,
       "payable": false,
       "gas": 1100000,
       "inputs": [
         {
-          "type": "uint256"
+          "type": "uint256",
+          "name": "orgId"
         },
         {
-          "type": "address"
+          "type": "uint256",
+          "name": "amount"
         }
       ],
-      "outputs": [
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "unlockBalance",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
         {
-          "type": "uint256"
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        },
+        {
+          "type": "uint256",
+          "name": "amount"
         }
-      ]
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskContractAddress",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",

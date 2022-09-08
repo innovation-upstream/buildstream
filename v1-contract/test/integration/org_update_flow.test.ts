@@ -67,12 +67,13 @@ describe('Integration test: Organization update flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint8,bytes,uint256)'
     ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_NAME,
-      ethers.utils.toUtf8Bytes('Builder stream')
+      ethers.utils.toUtf8Bytes('Builder stream'),
+      0
     )
 
     const receipt0 = await tx0.wait()
@@ -122,12 +123,13 @@ describe('Integration test: Organization update flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint8,bytes,uint256)'
     ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_DESCRIPTION,
-      ethers.utils.toUtf8Bytes('Decentralized task managers app')
+      ethers.utils.toUtf8Bytes('Decentralized task managers app'),
+      0
     )
 
     const receipt0 = await tx0.wait()

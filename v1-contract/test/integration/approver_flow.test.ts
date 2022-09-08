@@ -65,12 +65,13 @@ describe('Integration test: Approver flow', function () {
     await addOrgConfigTx.wait()
 
     const actionCreateTx = await actionContract[
-      'createAction(uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint8,bytes,uint256)'
     ](
       orgId,
       approver2.address,
       actionType.ADD_APPROVER,
-      ethers.utils.toUtf8Bytes('')
+      ethers.utils.toUtf8Bytes(''),
+      0
     )
 
     const actionCreateReceipt = await actionCreateTx.wait()
@@ -121,12 +122,13 @@ describe('Integration test: Approver flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint8,bytes,uint256)'
     ](
       orgId,
       approver3.address,
       actionType.ADD_APPROVER,
-      ethers.utils.toUtf8Bytes('')
+      ethers.utils.toUtf8Bytes(''),
+      0
     )
 
     const receipt0 = await tx0.wait()
@@ -141,12 +143,13 @@ describe('Integration test: Approver flow', function () {
     await orgContract.executeAction(actionId0)
 
     const tx = await actionContract[
-      'createAction(uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint8,bytes,uint256)'
     ](
       orgId,
       approver3.address,
       actionType.REMOVE_APPROVER,
-      ethers.utils.toUtf8Bytes('')
+      ethers.utils.toUtf8Bytes(''),
+      0
     )
 
     const receipt = await tx.wait()

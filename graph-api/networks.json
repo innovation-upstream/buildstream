@@ -1,0 +1,33 @@
+{
+  "mainnet": {
+    "Organization": {
+      "address": "0x388b451F5c9416fc337a4FA1f917041c4a5f7517"
+    },
+    "TaskContract": {
+      "address": "0xa481835E79db52116DDD81CF6f5130f07872b8Ac"
+    },
+    "Treasury": {
+      "address": "0x1124de744E4d3A0A8248D9888078be174C663E35"
+    },
+    "ActionContract": {
+      "address": "0x96bf3917f132c3F8F230b0ACd93bd036988E7a5d"
+    },
+    "TaskStorageContract": {
+      "address": "0x0A8F4c07C6bfE56ecBe6E125BF52F616f6cB86e1"
+    }
+  },
+  "goerli": {
+    "Organization": {
+      "address": "0xbB484B65eB08fBF2436694F6a78Aa8f726885c4d"
+    },
+    "TaskStorageContract": {
+      "address": "0x032abD052A63A0Bd7C2e565C0b2Ef779F48d3D20"
+    },
+    "Treasury": {
+      "address": "0x9d40Dc3347f47239C04F2Bd23dDFbd18630FA6C2"
+    },
+    "ActionContract": {
+      "address": "0x69c3735FbEfF9073204C51C5D9a458D49461191C"
+    }
+  }
+}

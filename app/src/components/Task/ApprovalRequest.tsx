@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import Spinner from 'components/Spinner/Spinner'
+import useOrganizations from 'hooks/organization/useOrganization'
 import { approveTask, fetchApprovals } from 'hooks/task/functions'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
   taskId: number
+  orgId: number
   onApprove: () => void
 }
 
-const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
+const ApprovalRequest: React.FC<Props> = ({ taskId, orgId, onApprove }) => {
   const [processing, setProcessing] = useState(false)
-  const [approvalRequest, setApprovalRequest] = useState(false)
+  const [haveApproved, setHaveApproved] = useState(false)
   const { account, library } = useWeb3React()
+  const { organizations } = useOrganizations()
+  const org = organizations.find((o) => o.id === orgId)
+  const isApprover = account && org?.approvers.includes(account)
 
   const approve = async () => {
-    if (!account || !taskId) return
+    if (!account) return
     setProcessing(true)
     try {
       const tx = await approveTask(taskId, library.getSigner())
@@ -27,10 +32,10 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
   }
 
   const getApprovalsRequest = async () => {
-    if (!account || !taskId) return
+    if (!account) return
     try {
-      const res = await fetchApprovals(taskId, account)
-      setApprovalRequest(res)
+      const res = await fetchApprovals(taskId)
+      if (res.includes(account)) setHaveApproved(true)
     } catch (e) {
       console.error(e)
     }
@@ -46,7 +51,7 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
         <h2>Task Approval Request</h2>
       </div>
       <div className='w-full mt-3'>
-        {approvalRequest ? (
+        {!isApprover ? (
           <div className='px-4 border border-red-300 rounded-full w-max bg-white text-gray-500'>
             None
           </div>
@@ -55,7 +60,7 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, onApprove }) => {
             <div className='p-0 rounded-xl flex justify-between items-center'>
               <button
                 onClick={approve}
-                disabled={processing}
+                disabled={processing || haveApproved}
                 className='bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-full text-sm'
               >
                 {processing ? <Spinner /> : 'Approve Task'}

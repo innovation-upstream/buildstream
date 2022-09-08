@@ -1,0 +1,126 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Organization
+    network: goerli
+    source:
+      address: "0xbB484B65eB08fBF2436694F6a78Aa8f726885c4d"
+      abi: Organization
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Organization
+      abis:
+        - name: Organization
+          file: ./abis/Organization.json
+      eventHandlers:
+        - event: OrganizationApproverAddition(indexed uint256,indexed address)
+          handler: handleOrganizationApproverAddition
+        - event: OrganizationApproverRemoval(indexed uint256,indexed address)
+          handler: handleOrganizationApproverRemoval
+        - event: OrganizationCreation(indexed uint256)
+          handler: handleOrganizationCreation
+        - event: OrganizationInitialized(indexed uint256)
+          handler: handleOrganizationInitialized
+        - event: OrganizationReviewerAddition(indexed uint256,indexed address)
+          handler: handleOrganizationReviewerAddition
+        - event: OrganizationReviewerRemoval(indexed uint256,indexed address)
+          handler: handleOrganizationReviewerRemoval
+        - event: OrganizationSignerAddition(indexed uint256,indexed address)
+          handler: handleOrganizationSignerAddition
+        - event: OrganizationSignerRemoval(indexed uint256,indexed address)
+          handler: handleOrganizationSignerRemoval
+      file: ./src/organization.ts
+  - kind: ethereum
+    name: Treasury
+    network: goerli
+    source:
+      address: "0x9d40Dc3347f47239C04F2Bd23dDFbd18630FA6C2"
+      abi: Treasury
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Treasury
+        - TreasuryToken
+      abis:
+        - name: Treasury
+          file: ./abis/Treasury.json
+      eventHandlers:
+        - event: TreasuryDeposit(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryDeposit
+        - event: TreasuryWithdraw(indexed uint256,indexed address,address,indexed uint256)
+          handler: handleTreasuryWithdraw
+        - event: TreasuryTokenLocked(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryTokenLocked
+        - event: TreasuryTokenUnlocked(indexed uint256,indexed address,indexed uint256)
+          handler: handleTreasuryTokenUnlocked
+      file: ./src/treasury.ts
+  - kind: ethereum
+    name: ActionContract
+    network: goerli
+    source:
+      address: "0x69c3735FbEfF9073204C51C5D9a458D49461191C"
+      abi: ActionContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Action
+      abis:
+        - name: ActionContract
+          file: ./abis/ActionContract.json
+      eventHandlers:
+        - event: ActionConfirmation(indexed uint256,indexed address,indexed uint256)
+          handler: handleActionConfirmation
+        - event: ActionCreation(indexed uint256,indexed uint256)
+          handler: handleActionCreation
+        - event: ActionExecution(indexed uint256,indexed uint256)
+          handler: handleActionExecution
+      file: ./src/action-contract.ts
+  - kind: ethereum
+    name: TaskStorageContract
+    network: goerli
+    source:
+      address: "0x032abD052A63A0Bd7C2e565C0b2Ef779F48d3D20"
+      abi: TaskStorageContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Task
+        - TaskCount
+      abis:
+        - name: TaskStorageContract
+          file: ./abis/TaskStorageContract.json
+      eventHandlers:
+        - event: TaskArchived(indexed uint256)
+          handler: handleTaskArchived
+        - event: TaskAssignment(indexed address,indexed uint256)
+          handler: handleTaskAssignment
+        - event: TaskAssignmentRequested(indexed address,indexed uint256)
+          handler: handleTaskAssignmentRequest
+        - event: TaskClosed(indexed uint256)
+          handler: handleTaskClosed
+        - event: TaskConfirmation(indexed address,indexed uint256)
+          handler: handleTaskConfirmation
+        - event: TaskCreation(indexed uint256)
+          handler: handleTaskCreation
+        - event: TaskOpened(indexed uint256)
+          handler: handleTaskOpened
+        - event: TaskRequirementUpdated(indexed uint256)
+          handler: handleTaskRequirementUpdated
+        - event: TaskRevocation(indexed address,indexed uint256)
+          handler: handleTaskRevocation
+        - event: TaskSubmission(indexed uint256)
+          handler: handleTaskSubmission
+        - event: TaskUnassignment(indexed address,indexed uint256)
+          handler: handleTaskUnassignment
+      file: ./src/task-storage-contract.ts

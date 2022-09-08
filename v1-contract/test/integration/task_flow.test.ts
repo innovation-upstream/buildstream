@@ -8,7 +8,7 @@ const complexityScore = 0
 const requiredConfirmations = 1
 const requiredApprovals = 2
 const reputationLevel = 1
-const dueDate = 10
+const taskDuration = 10
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -48,14 +48,25 @@ const getContractInstances = async () => {
 
   await taskContract.updateTreasuryContract(treasuryContract.address)
 
-  return { tokenContract, taskContract, orgContract, treasuryContract }
+  return {
+    tokenContract,
+    taskContract,
+    orgContract,
+    treasuryContract,
+    storageContract
+  }
 }
 
 describe('Integration test: Task flow', function () {
   it('Should successfully complete the task flow', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
-    const { orgContract, taskContract, tokenContract, treasuryContract } =
-      await getContractInstances()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract
+    } = await getContractInstances()
 
     // Create organization
     const createOrgTx = await orgContract.createOrg(
@@ -99,14 +110,18 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        (await ethers.provider.getBlockNumber()) + dueDate
+        taskDuration
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
-    const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'TaskCreation'
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
     )
-    const taskId = taskEvent?.args?.[0]?.toNumber()
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
     await taskContract
@@ -151,8 +166,13 @@ describe('Integration test: Task flow', function () {
 
   it('Should successfully slash reward', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
-    const { orgContract, taskContract, tokenContract, treasuryContract } =
-      await getContractInstances()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract
+    } = await getContractInstances()
 
     // Create organization
     const createOrgTx = await orgContract.createOrg(
@@ -175,7 +195,7 @@ describe('Integration test: Task flow', function () {
       ethers.constants.AddressZero,
       requiredConfirmations,
       requiredApprovals,
-      rewardSlashDivisor,
+      ethers.utils.parseUnits(rewardSlashDivisor.toString()),
       slashRewardEvery
     )
     await addOrgConfigTx.wait()
@@ -187,7 +207,6 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
-    const taskDueDate = (await ethers.provider.getBlockNumber()) + dueDate
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -197,14 +216,17 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDueDate
+        taskDuration
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
-    const taskEvent = taskCreateReceipt?.events?.find(
-      (e: any) => e.event === 'TaskCreation'
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
     )
-    const taskId = taskEvent?.args?.[0]?.toNumber()
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
     await taskContract
@@ -218,10 +240,9 @@ describe('Integration test: Task flow', function () {
       .connect(approver1)
       .approveAssignRequest(taskId, assignee.address)
 
-    const blocksToMine =
-      taskDueDate + 5 - (await ethers.provider.getBlockNumber())
+    const blocksToMine = taskDuration + 5
     await ethers.provider.send('hardhat_mine', [
-      `0x${(blocksToMine >= 0 ? blocksToMine : 0).toString(16)}`
+      `0x${blocksToMine.toString(16)}`
     ])
 
     // Submit task

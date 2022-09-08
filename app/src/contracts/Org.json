@@ -1,5 +1,5 @@
 {
-  "address": "0x4789F44C3B46694e12f8D5A99B6f7Bf6645A44d4",
+  "address": "0xbB484B65eB08fBF2436694F6a78Aa8f726885c4d",
   "abi": [
     {
       "type": "constructor",
@@ -9,12 +9,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "ApproverAddition",
+      "name": "OrganizationApproverAddition",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -26,12 +26,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "ApproverRemoval",
+      "name": "OrganizationApproverRemoval",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -43,16 +43,11 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Confirmation",
+      "name": "OrganizationCreation",
       "inputs": [
         {
-          "type": "address",
-          "name": "sender",
-          "indexed": true
-        },
-        {
           "type": "uint256",
-          "name": "taskId",
+          "name": "orgId",
           "indexed": true
         }
       ]
@@ -60,11 +55,11 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "Creation",
+      "name": "OrganizationInitialized",
       "inputs": [
         {
           "type": "uint256",
-          "name": "taskId",
+          "name": "orgId",
           "indexed": true
         }
       ]
@@ -72,29 +67,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "RequirementChange",
+      "name": "OrganizationReviewerAddition",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
-        },
-        {
-          "type": "uint256",
-          "name": "required",
-          "indexed": false
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "ReviewerAddition",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -106,12 +84,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "ReviewerRemoval",
+      "name": "OrganizationReviewerRemoval",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -123,12 +101,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "SignerAddition",
+      "name": "OrganizationSignerAddition",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -140,12 +118,12 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "SignerRemoval",
+      "name": "OrganizationSignerRemoval",
       "inputs": [
         {
           "type": "uint256",
           "name": "_orgId",
-          "indexed": false
+          "indexed": true
         },
         {
           "type": "address",
@@ -156,21 +134,41 @@
     },
     {
       "type": "function",
-      "name": "_orgExists",
-      "constant": true,
-      "stateMutability": "view",
+      "name": "addOrgConfig",
+      "constant": false,
       "payable": false,
       "gas": 1100000,
       "inputs": [
         {
-          "type": "uint256"
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardMultiplier"
+        },
+        {
+          "type": "address",
+          "name": "rewardToken"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredConfirmations"
+        },
+        {
+          "type": "uint256",
+          "name": "requiredTaskApprovals"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardSlashDivisor"
+        },
+        {
+          "type": "uint256",
+          "name": "slashRewardEvery"
         }
       ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
+      "outputs": []
     },
     {
       "type": "function",
@@ -188,14 +186,6 @@
           "name": "description"
         },
         {
-          "type": "uint256",
-          "name": "rewardMultiplier"
-        },
-        {
-          "type": "address",
-          "name": "rewardToken"
-        },
-        {
           "type": "address[]",
           "name": "reviewers"
         },
@@ -206,14 +196,6 @@
         {
           "type": "address[]",
           "name": "signers"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredConfirmations"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredTaskApprovals"
         }
       ],
       "outputs": [
@@ -329,7 +311,6 @@
       "outputs": [
         {
           "type": "tuple",
-          "name": "org",
           "components": [
             {
               "type": "uint256",
@@ -356,6 +337,35 @@
               "name": "signers"
             },
             {
+              "type": "bool",
+              "name": "isInitialized"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getOrganizationConfig",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "_orgId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
               "type": "uint256",
               "name": "requiredTaskApprovals"
             },
@@ -370,6 +380,14 @@
             {
               "type": "address",
               "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardSlashDivisor"
+            },
+            {
+              "type": "uint256",
+              "name": "slashRewardEvery"
             }
           ]
         }
@@ -391,6 +409,30 @@
       "outputs": [
         {
           "type": "address[]"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getRewardMultiplier",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "orgId"
+        },
+        {
+          "type": "string[]",
+          "name": "tags"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "mul"
         }
       ]
     },
@@ -434,27 +476,6 @@
     },
     {
       "type": "function",
-      "name": "isApprover",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "isApproverAddress",
       "constant": true,
       "stateMutability": "view",
@@ -468,27 +489,6 @@
         {
           "type": "address",
           "name": "_address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "isReviewer",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
         }
       ],
       "outputs": [
@@ -522,27 +522,6 @@
     },
     {
       "type": "function",
-      "name": "isSigner",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        },
-        {
-          "type": "address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "isSignerAddress",
       "constant": true,
       "stateMutability": "view",
@@ -561,63 +540,6 @@
       "outputs": [
         {
           "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "orgs",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "id"
-        },
-        {
-          "type": "string",
-          "name": "name"
-        },
-        {
-          "type": "string",
-          "name": "description"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredTaskApprovals"
-        },
-        {
-          "type": "uint256",
-          "name": "requiredConfirmations"
-        },
-        {
-          "type": "uint256",
-          "name": "rewardMultiplier"
-        },
-        {
-          "type": "address",
-          "name": "rewardToken"
         }
       ]
     },

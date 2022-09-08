@@ -13,39 +13,17 @@ contract TaskContract {
     Organization private organization;
     Treasury private treasury;
 
-    event TaskConfirmation(address indexed sender, uint256 indexed taskId);
-    event TaskRevocation(address indexed sender, uint256 indexed taskId);
-    event TaskCreation(uint256 indexed taskId);
-    event TaskAssignment(address indexed sender, uint256 indexed taskId);
-    event TaskUnassignment(address indexed sender, uint256 indexed taskId);
-    event TaskSubmission(uint256 indexed taskId);
-    event TaskClosed(uint256 indexed taskId);
-
-    mapping(uint256 => mapping(address => bool)) private approvals;
-    uint256 private taskCount;
-    mapping(uint256 => uint256) private orgTaskCount;
-    mapping(uint256 => uint256[]) private orgTaskIds;
-    mapping(uint256 => uint256) private taskOrg;
-    mapping(uint256 => TaskLib.TaskStatus) private taskStatus;
-    mapping(uint256 => mapping(address => uint256)) private orgAssignees;
-    mapping(uint256 => address) private taskAssignee;
-    mapping(uint256 => address[]) private assignmentRequest;
-
     modifier onlyOwner() {
         require(msg.sender == owner, "Permission denied");
         _;
     }
 
-    modifier onlyApprover(uint256 _orgId) {
+    modifier onlyApprover(uint256 taskId) {
+        TaskLib.Task memory task = taskStorage.getTask(taskId);
         require(
-            organization.isApproverAddress(_orgId, msg.sender),
+            organization.isApproverAddress(task.orgId, msg.sender),
             "Permission denied"
         );
-        _;
-    }
-
-    modifier taskExists(uint256 taskId) {
-        require(taskCount >= taskId, "Task not exist");
         _;
     }
 
@@ -87,10 +65,12 @@ contract TaskContract {
         string[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 dueDate
+        uint256 taskDuration
     ) external returns (uint256 taskId) {
         require(organization.doesOrgExists(orgId), "Org not exist");
         require(sbtToken.doesTokenExist(complexityScore), "Token not exist");
+        OrgLib.Org memory org = organization.getOrganization(orgId);
+        require(org.isInitialized, "Organization not initialized");
         uint256 requiredTaskApprovals = organization.getTaskApprovals(orgId);
         taskId = taskStorage.createTask(
             orgId,
@@ -100,14 +80,8 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             requiredTaskApprovals,
-            dueDate
+            taskDuration
         );
-        taskCount += 1;
-        taskStatus[taskId] = TaskLib.TaskStatus.PROPOSED;
-        taskOrg[taskId] = orgId;
-        orgTaskCount[orgId] += 1;
-        orgTaskIds[orgId].push(taskId);
-        emit TaskCreation(taskId);
     }
 
     /// @dev Allows an approver to update a task requirement.
@@ -116,17 +90,13 @@ contract TaskContract {
         uint256 taskId,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 dueDate
-    ) external taskExists(taskId) onlyApprover(taskOrg[taskId]) {
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.PROPOSED,
-            "Task is opened"
-        );
+        uint256 taskDuration
+    ) external onlyApprover(taskId) {
         taskStorage.updateTaskRequirement(
             taskId,
             complexityScore,
             reputationLevel,
-            dueDate
+            taskDuration
         );
     }
 
@@ -134,85 +104,51 @@ contract TaskContract {
     /// @param taskId Task ID.
     function openTask(uint256 taskId, address rewardToken)
         external
-        taskExists(taskId)
-        onlyApprover(taskOrg[taskId])
+        onlyApprover(taskId)
     {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
-        taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
-        OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
-            task.orgId
-        );
         uint256 multiplier = organization.getRewardMultiplier(
             task.orgId,
             task.taskTags
         );
         uint256 rewardAmount = multiplier * (task.complexityScore + 1);
-        if (rewardToken != address(0)) {
-            treasury.lockBalance(taskOrg[taskId], rewardToken, rewardAmount);
-            return taskStorage.openTask(taskId, rewardAmount, rewardToken);
-        }
-        if (orgConfig.rewardToken != address(0)) {
-            treasury.lockBalance(
-                taskOrg[taskId],
-                orgConfig.rewardToken,
-                rewardAmount
-            );
-            return
-                taskStorage.openTask(
-                    taskId,
-                    rewardAmount,
-                    orgConfig.rewardToken
-                );
-        }
-        treasury.lockBalance(task.orgId, rewardAmount);
-        taskStorage.openTask(taskId, rewardAmount);
+        if (rewardToken != address(0))
+            treasury.lockBalance(task.orgId, rewardToken, rewardAmount);
+        else treasury.lockBalance(task.orgId, rewardAmount);
+        taskStorage.openTask(taskId, rewardAmount, rewardToken);
     }
 
     /// @dev Allows a approver to approve a task.
     /// @param taskId Task ID.
-    function approveTask(uint256 taskId)
-        external
-        taskExists(taskId)
-        onlyApprover(taskOrg[taskId])
-    {
-        require(!approvals[taskId][msg.sender], "Task is approved");
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.SUBMITTED,
-            "Task not submitted"
-        );
-        approvals[taskId][msg.sender] = true;
-        emit TaskConfirmation(msg.sender, taskId);
+    function approveTask(uint256 taskId) external onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
+        taskStorage.approveTask(taskId, msg.sender);
         if (getApprovals(taskId).length == task.requiredApprovals)
             closeTask(taskId);
     }
 
     /// @dev Allows a approver to revoke approval for a task.
     /// @param taskId Task ID.
-    function revokeApproval(uint256 taskId)
-        external
-        taskExists(taskId)
-        onlyApprover(taskOrg[taskId])
-    {
-        require(
-            taskStatus[taskId] != TaskLib.TaskStatus.CLOSED,
-            "Task is executed"
-        );
-        require(approvals[taskId][msg.sender], "Task not approved");
-        approvals[taskId][msg.sender] = false;
-        emit TaskRevocation(msg.sender, taskId);
+    function revokeApproval(uint256 taskId) external onlyApprover(taskId) {
+        taskStorage.revokeApproval(taskId, msg.sender);
     }
 
     /// @dev Allows closing an approved task.
     /// @param taskId Task ID.
     function closeTask(uint256 taskId) internal {
+        taskStorage.closeTask(taskId);
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         OrgLib.OrgConfig memory orgConfig = organization.getOrganizationConfig(
             task.orgId
         );
         sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
-        if (task.assigneeAddress == task.assigner)
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        bool shouldUnstake = task.assigneeAddress == task.assigner;
+        if (shouldUnstake)
+            for (uint i = 0; i < assignmentRequests.length; i++)
+                if (assignmentRequests[i] == task.assigneeAddress)
+                    shouldUnstake = false;
+        if (shouldUnstake)
             sbtToken.unStake(
                 msg.sender,
                 task.complexityScore,
@@ -220,40 +156,34 @@ contract TaskContract {
                 task.orgId
             );
         uint256 rewardAmount = 0;
-        if (task.dueDate >= task.submitDate) rewardAmount = task.rewardAmount;
+        if (task.taskDuration >= task.submitDate - task.assignDate)
+            rewardAmount = task.rewardAmount;
         else {
-            uint256 overtime = task.submitDate - task.dueDate;
+            uint256 overtime = task.submitDate - task.assignDate - task.taskDuration;
             uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
-            uint256 slashAmount = (slashRatio * task.rewardAmount) /
+            uint256 slashAmount = (slashRatio * task.rewardAmount * 10 ** 18) /
                 orgConfig.rewardSlashDivisor;
             if (slashAmount > task.rewardAmount)
                 slashAmount = task.rewardAmount;
             rewardAmount = task.rewardAmount - slashAmount;
             if (task.rewardToken == address(0))
-                treasury.unlockBalance(taskOrg[taskId], slashAmount);
+                treasury.unlockBalance(task.orgId, slashAmount);
             else
                 treasury.unlockBalance(
-                    taskOrg[taskId],
+                    task.orgId,
                     task.rewardToken,
                     slashAmount
                 );
         }
         if (task.rewardToken == address(0))
-            treasury.reward(
-                taskOrg[taskId],
-                task.assigneeAddress,
-                rewardAmount
-            );
+            treasury.reward(task.orgId, task.assigneeAddress, rewardAmount);
         else
             treasury.reward(
-                taskOrg[taskId],
+                task.orgId,
                 task.assigneeAddress,
                 task.rewardToken,
                 rewardAmount
             );
-        taskStorage.closeTask(taskId);
-        taskStatus[taskId] = TaskLib.TaskStatus.CLOSED;
-        emit TaskClosed(taskId);
     }
 
     /// @dev Allows to retrieve a task.
@@ -262,7 +192,6 @@ contract TaskContract {
     function getTask(uint256 taskId)
         external
         view
-        taskExists(taskId)
         returns (TaskLib.Task memory)
     {
         return taskStorage.getTask(taskId);
@@ -271,143 +200,80 @@ contract TaskContract {
     function getState(uint256 taskId)
         external
         view
-        taskExists(taskId)
         returns (TaskLib.TaskStatus)
     {
-        return taskStatus[taskId];
+        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        return task.status;
     }
 
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
-    function submitTask(uint256 taskId, string memory comment)
-        external
-        taskExists(taskId)
-    {
-        require(taskAssignee[taskId] == msg.sender, "Task not yours");
-        taskStorage.submitTask(taskId, comment);
-        taskStatus[taskId] = TaskLib.TaskStatus.SUBMITTED;
-        emit TaskSubmission(taskId);
-    }
-
-    /// @dev Returns total number of tasks after filers are applied.
-    /// @param orgId Id of organization.
-    /// @param pending Include pending tasks.
-    /// @param closed Include executed tasks.
-    /// @return count Total number of tasks after filters are applied.
-    function getTaskCount(
-        uint256 orgId,
-        bool pending,
-        bool closed
-    ) external view returns (uint256 count) {
-        for (uint256 i = 0; i < orgTaskCount[orgId]; i++) {
-            uint256 taskId = orgTaskIds[orgId][i];
-            if (
-                (pending && taskStatus[taskId] != TaskLib.TaskStatus.CLOSED) ||
-                (closed && taskStatus[taskId] == TaskLib.TaskStatus.CLOSED)
-            ) count += 1;
-        }
+    function submitTask(uint256 taskId, string memory comment) external {
+        taskStorage.submitTask(taskId, msg.sender, comment);
     }
 
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
-    /// @return status Task updated status.
-    function assignSelf(uint256 taskId)
-        external
-        returns (TaskLib.TaskStatus status)
-    {
+    function assignSelf(uint256 taskId) external {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.OPEN,
-            "Task not opened"
-        );
-
         if (
             sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) <
             task.reputationLevel
         ) {
-            uint256 i;
-            bool requestExist;
-            for (i = 0; i < assignmentRequest[taskId].length; i++)
-                if (assignmentRequest[taskId][i] == msg.sender)
-                    requestExist = true;
-            if (!requestExist) assignmentRequest[taskId].push(msg.sender);
-            return taskStatus[taskId];
+            taskStorage.makeAssignmentRequest(taskId, msg.sender);
+            return;
         }
 
-        taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
-        taskAssignee[taskId] = msg.sender;
+        taskStorage.assign(taskId, msg.sender, msg.sender);
         sbtToken.stake(
             msg.sender,
             task.complexityScore,
             task.reputationLevel,
             task.orgId
         );
-        taskStorage.assign(taskId, msg.sender, msg.sender);
-        orgAssignees[taskOrg[taskId]][msg.sender] += 1;
-        status = taskStatus[taskId];
-        emit TaskAssignment(msg.sender, taskId);
     }
 
     function approveAssignRequest(uint256 taskId, address assignee)
         external
-        onlyApprover(taskOrg[taskId])
+        onlyApprover(taskId)
     {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.OPEN,
-            "Task not opened"
-        );
-
-        taskStatus[taskId] = TaskLib.TaskStatus.ASSIGNED;
-        taskAssignee[taskId] = assignee;
-        sbtToken.stake(assignee, task.complexityScore, 0, task.orgId);
         taskStorage.assign(taskId, assignee, msg.sender);
-        orgAssignees[task.orgId][assignee] += 1;
-        emit TaskAssignment(assignee, taskId);
+        sbtToken.stake(assignee, task.complexityScore, 0, task.orgId);
     }
 
     function getAssignmentRequests(uint256 taskId)
         external
         view
-        taskExists(taskId)
         returns (address[] memory)
     {
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.OPEN,
-            "Task not opened"
-        );
-        return assignmentRequest[taskId];
+        return taskStorage.getAssignmentRequests(taskId);
     }
 
     /// @dev Allows assignees to drop tasks.
     /// @param taskId Task ID.
-    /// @return status Task updated status.
-    function unassignSelf(uint256 taskId)
-        external
-        returns (TaskLib.TaskStatus status)
-    {
+    function unassignSelf(uint256 taskId) external {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        require(task.assigneeAddress == msg.sender, "Task not yours");
-        require(
-            taskStatus[taskId] == TaskLib.TaskStatus.ASSIGNED,
-            "Task not opened"
-        );
-        taskStatus[taskId] = TaskLib.TaskStatus.OPEN;
-        taskAssignee[taskId] = address(0);
-        taskStorage.unassign(taskId);
-        orgAssignees[taskOrg[taskId]][msg.sender] -= 1;
-        if (
-            sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) >=
-            task.reputationLevel
-        )
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        bool shouldUnstake = task.assigneeAddress == task.assigner;
+        if (shouldUnstake)
+            for (uint i = 0; i < assignmentRequests.length; i++)
+                if (assignmentRequests[i] == task.assigneeAddress)
+                    shouldUnstake = false;
+        taskStorage.unassign(taskId, msg.sender);
+        if (shouldUnstake)
             sbtToken.unStake(
                 msg.sender,
                 task.complexityScore,
                 task.reputationLevel,
                 task.orgId
             );
-        status = taskStatus[taskId];
-        emit TaskUnassignment(msg.sender, taskId);
+    }
+
+    /// @dev Allows approvers to archive open tasks.
+    /// @param taskId Task ID.
+    function archive(uint256 taskId) external onlyApprover(taskId) {
+        taskStorage.archive(taskId);
     }
 
     /// @dev Returns array with approver addresses, which approved task.
@@ -418,35 +284,17 @@ contract TaskContract {
         view
         returns (address[] memory _approvals)
     {
-        address[] memory approvers = organization.getApprovers(taskOrg[taskId]);
+        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        address[] memory approvers = organization.getApprovers(task.orgId);
         address[] memory approvalsTemp = new address[](approvers.length);
         uint256 count = 0;
         uint256 i;
         for (i = 0; i < approvers.length; i++)
-            if (approvals[taskId][approvers[i]]) {
+            if (taskStorage.didApprove(taskId, approvers[i])) {
                 approvalsTemp[count] = approvers[i];
                 count += 1;
             }
         _approvals = new address[](count);
         for (i = 0; i < count; i++) _approvals[i] = approvalsTemp[i];
-    }
-
-    /// @dev Returns list of task IDs in defined range.
-    /// @param orgId Id of organization.
-    /// @param from Index start position of task array.
-    /// @param to Index end position of task array.
-    /// @return _taskIds array of task IDs.
-    function getTaskIds(
-        uint256 orgId,
-        uint256 from,
-        uint256 to
-    ) external view returns (uint256[] memory _taskIds) {
-        _taskIds = new uint256[](to - from);
-        uint256 i;
-        uint256 totalTaskCount = orgTaskCount[orgId];
-        uint256 max = totalTaskCount > to ? to : totalTaskCount;
-        for (i = from; i < max; i++) {
-            _taskIds[i - from] = orgTaskIds[orgId][i];
-        }
     }
 }

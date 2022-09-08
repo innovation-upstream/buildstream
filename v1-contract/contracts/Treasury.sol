@@ -13,13 +13,23 @@ contract Treasury {
     event TreasuryDeposit(
         uint256 indexed orgId,
         address indexed tokenAddress,
-        uint256 amount
+        uint256 indexed amount
     );
     event TreasuryWithdraw(
         uint256 indexed orgId,
         address indexed tokenAddress,
-        address indexed recipient,
-        uint256 amount
+        address recipient,
+        uint256 indexed amount
+    );
+    event TreasuryTokenLocked(
+        uint256 indexed orgId,
+        address indexed tokenAddress,
+        uint256 indexed amount
+    );
+    event TreasuryTokenUnlocked(
+        uint256 indexed orgId,
+        address indexed tokenAddress,
+        uint256 indexed amount
     );
 
     mapping(uint256 => mapping(address => uint256)) private tokenBalances;
@@ -56,6 +66,10 @@ contract Treasury {
         organizationAddress = _organizationAddress;
         taskContractAddress = _taskContractAddress;
         organization = Organization(_organizationAddress);
+    }
+
+    function updateTaskContractAddress(address _address) external onlyOwner {
+        taskContractAddress = _address;
     }
 
     function getBalance(uint256 orgId)
@@ -131,6 +145,7 @@ contract Treasury {
     ) internal orgExists(orgId) {
         require(lockedBalances[orgId] >= amount, "Insufficient funds");
         lockedBalances[orgId] -= amount;
+        emit TreasuryTokenUnlocked(orgId, address(0), amount);
         address payable recipient = payable(to);
         recipient.transfer(amount);
         emit TreasuryWithdraw(orgId, address(0), to, amount);
@@ -148,6 +163,7 @@ contract Treasury {
         );
         IERC20 _token = IERC20(tokenAddress);
         lockedTokenBalances[orgId][tokenAddress] -= amount;
+        emit TreasuryTokenUnlocked(orgId, tokenAddress, amount);
         bool sent = _token.transfer(to, amount);
         require(sent, "Failed to transfer token to user");
         emit TreasuryWithdraw(orgId, tokenAddress, to, amount);
@@ -195,6 +211,7 @@ contract Treasury {
         require(balances[orgId] >= amount, "Insufficient funds");
         balances[orgId] -= amount;
         lockedBalances[orgId] += amount;
+        emit TreasuryTokenLocked(orgId, address(0), amount);
     }
 
     function lockBalance(
@@ -208,11 +225,13 @@ contract Treasury {
         );
         tokenBalances[orgId][tokenAddress] -= amount;
         lockedTokenBalances[orgId][tokenAddress] += amount;
+        emit TreasuryTokenLocked(orgId, tokenAddress, amount);
     }
 
     function unlockBalance(uint256 orgId, uint256 amount) external {
         lockedBalances[orgId] -= amount;
         balances[orgId] += amount;
+        emit TreasuryTokenUnlocked(orgId, address(0), amount);
     }
 
     function unlockBalance(
@@ -222,6 +241,7 @@ contract Treasury {
     ) external {
         lockedTokenBalances[orgId][tokenAddress] -= amount;
         tokenBalances[orgId][tokenAddress] += amount;
+        emit TreasuryTokenUnlocked(orgId, tokenAddress, amount);
     }
 
     function reward(

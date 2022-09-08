@@ -32,12 +32,31 @@ contract Organization {
     Treasury private treasury;
 
     event OrganizationCreation(uint256 indexed orgId);
-    event OrganizationReviewerAddition(uint256 _orgId, address indexed _reviewer);
-    event OrganizationReviewerRemoval(uint256 _orgId, address indexed _reviewer);
-    event OrganizationApproverAddition(uint256 _orgId, address indexed _approver);
-    event OrganizationApproverRemoval(uint256 _orgId, address indexed _approver);
-    event OrganizationSignerAddition(uint256 _orgId, address indexed _signer);
-    event OrganizationSignerRemoval(uint256 _orgId, address indexed _signer);
+    event OrganizationInitialized(uint256 indexed orgId);
+    event OrganizationReviewerAddition(
+        uint256 indexed _orgId,
+        address indexed _reviewer
+    );
+    event OrganizationReviewerRemoval(
+        uint256 indexed _orgId,
+        address indexed _reviewer
+    );
+    event OrganizationApproverAddition(
+        uint256 indexed _orgId,
+        address indexed _approver
+    );
+    event OrganizationApproverRemoval(
+        uint256 indexed _orgId,
+        address indexed _approver
+    );
+    event OrganizationSignerAddition(
+        uint256 indexed _orgId,
+        address indexed _signer
+    );
+    event OrganizationSignerRemoval(
+        uint256 indexed _orgId,
+        address indexed _signer
+    );
 
     mapping(uint256 => mapping(address => bool)) private isReviewer;
     mapping(uint256 => mapping(address => bool)) private isApprover;
@@ -170,6 +189,7 @@ contract Organization {
             rewardSlashDivisor: rewardSlashDivisor,
             slashRewardEvery: slashRewardEvery
         });
+        emit OrganizationInitialized(orgId);
     }
 
     /// @dev Get organization.
@@ -304,6 +324,11 @@ contract Organization {
 
         if (action.actionType == ActionLib.ActionType.UPDATE_SLASH_REWARD_EVERY)
             orgConfigs[action.orgId].slashRewardEvery = action.value;
+        
+        if (action.actionType == ActionLib.ActionType.UPDATE_TAG_REWARD_MULTIPLIER) {
+            bytes32 key = keccak256(action.data);
+            multipliers[action.orgId][key] = action.value;
+        }
 
         string memory val = string(abi.encodePacked(action.data));
         if (action.actionType == ActionLib.ActionType.UPDATE_NAME)

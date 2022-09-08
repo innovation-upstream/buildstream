@@ -1,25 +1,17 @@
 import TaskContractInterface from 'contracts/Task.json'
+import TaskStorageContractInterface from 'contracts/TaskStorage.json'
 import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
 import { Task } from './types'
 
-export const fetchTaskCountByOrg = async (
-  orgId: number,
-  pending: boolean,
-  closed: boolean,
-  provider?: any
-) => {
+export const fetchTaskCountByOrg = async (provider?: any) => {
   const contract = getContract(
-    TaskContractInterface.address,
-    TaskContractInterface.abi,
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
     provider
   )
 
-  const taskCount: BigNumber = await contract.getTaskCount(
-    orgId,
-    pending,
-    closed
-  )
+  const taskCount: BigNumber = await contract.getTaskCount()
 
   return taskCount.toNumber()
 }
@@ -65,16 +57,17 @@ export const fetchTask = async (
     requiredApprovals: task.requiredApprovals.toNumber(),
     rewardAmount: task.rewardAmount.toNumber(),
     rewardToken: task.rewardToken,
+    taskDuration: task.taskDuration ? task.taskDuration.toNumber() : null
   }
 }
 
-export const fetchTasksByOrg = async (
-  orgId: number,
-  from: number,
-  to: number,
-  provider?: any
-): Promise<Task[]> => {
-  const taskIds = await fetchTaskIdsByOrg(orgId, from, to, provider)
+export const fetchTasksByOrg = async (provider?: any): Promise<Task[]> => {
+  let taskIds = []
+  const taskCounts = await fetchTaskCountByOrg()
+
+  for (let i = 0; i < taskCounts; i++) {
+    taskIds.push(i)
+  }
 
   const tasks = await Promise.all(
     taskIds.map(async (taskId): Promise<Task> => {
@@ -87,6 +80,7 @@ export const fetchTasksByOrg = async (
 
 export const openTask = async (
   taskId: number,
+  rewardToken: string,
   provider?: any
 ): Promise<boolean> => {
   const contract = getContract(
@@ -94,8 +88,7 @@ export const openTask = async (
     TaskContractInterface.abi,
     provider
   )
-
-  const tx = await contract['openTask(uint256)'](taskId)
+  const tx = await contract.openTask(taskId, rewardToken)
   await tx.wait()
 
   return true
@@ -136,6 +129,7 @@ export const approveAssignedRequest = async (
 
 export const taskSubmission = async (
   taskId: number,
+  comment: string,
   provider?: any
 ): Promise<boolean> => {
   const contract = getContract(
@@ -144,7 +138,7 @@ export const taskSubmission = async (
     provider
   )
 
-  const tx = await contract.submitTask(taskId)
+  const tx = await contract.submitTask(taskId, comment)
   await tx.wait()
 
   return true
@@ -182,15 +176,57 @@ export const fetchAssignedRequests = async (
 
 export const fetchApprovals = async (
   taskId: number,
-  address: string,
   provider?: any
-): Promise<boolean> => {
+): Promise<string[]> => {
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
     provider
   )
-  const approvals = await contract.approvals(taskId, address)
+  const approvals = await contract.getApprovals(taskId)
 
   return approvals
+}
+
+export const createNewTask = async (
+  orgId: number,
+  title: string,
+  description: string,
+  taskTags: string[],
+  complexityScore: number,
+  reputationLevel: number,
+  taskDuration: number,
+  provider?: any
+): Promise<number> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+  const taskStorageContract = getContract(
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.createTask(
+    orgId,
+    title,
+    description,
+    taskTags,
+    complexityScore,
+    reputationLevel,
+    taskDuration
+  )
+
+  const taskCreateReceipt = await tx.wait()
+  const eventFilter = taskStorageContract.filters.TaskCreation()
+  const events = await taskStorageContract.queryFilter(eventFilter)
+
+  const taskEvent = events?.find(
+    (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
+  )
+
+  const taskId = taskEvent?.args?.[0]?.toNumber() as number
+  return taskId
 }

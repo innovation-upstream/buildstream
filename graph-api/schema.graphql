@@ -1,0 +1,72 @@
+type Organization @entity {
+  id: ID!
+  orgId: BigInt!
+  name: String!
+  description: String!
+  reviewers: [String!]!
+  approvers: [String!]!
+  signers: [String!]!
+  requiredTaskApprovals: BigInt!
+  requiredConfirmations: BigInt!
+  rewardMultiplier: BigInt!
+  rewardToken: Bytes!
+  isInitialized: Boolean!
+  tasks: [Task!] @derivedFrom(field: "orgId")
+}
+
+type Task @entity {
+  id: ID!
+  taskId: BigInt!
+  orgId: Organization!
+  title: String
+  description: String
+  assigner: String!
+  assignee: String
+  taskTags: [String!]!
+  status: Int!
+  complexityScore: BigInt!
+  reputationLevel: BigInt!
+  requiredApprovals: BigInt!
+  rewardAmount: BigInt
+  rewardToken: Bytes
+  assignDate: BigInt
+  submitDate: BigInt
+  taskDuration: BigInt!
+  comment: String
+  approvedBy: [String!]
+  assignmentRequest: [String!]
+}
+
+type TaskCount @entity {
+  id: ID!
+  orgId: BigInt!
+  count: BigInt!
+}
+
+type TreasuryToken @entity {
+  id: ID!
+  orgId: Treasury!
+  token: String!
+  balance: BigInt!
+  lockedBalance: BigInt!
+}
+
+type Treasury @entity {
+  id: ID!
+  orgId: BigInt!
+  tokens: [TreasuryToken!] @derivedFrom(field: "orgId")
+}
+
+type Action @entity {
+  id: ID!
+  actionId: BigInt!
+  orgId: BigInt!
+  initiator: String!
+  targetAddress: String
+  value: BigInt
+  data: Bytes
+  executed: Boolean!
+  tokenAddress: String
+  actionType: Int!
+  approvedBy: [String!]
+}
