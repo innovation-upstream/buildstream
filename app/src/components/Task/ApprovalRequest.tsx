@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import Spinner from 'components/Spinner/Spinner'
-import { approveTask, fetchApprovals } from 'hooks/task/functions'
 import useOrganizations from 'hooks/organization/useOrganization'
+import { approveTask, fetchApprovals } from 'hooks/task/functions'
+import React, { useEffect, useState } from 'react'
 
 interface Props {
   taskId: number
@@ -16,7 +16,7 @@ const ApprovalRequest: React.FC<Props> = ({ taskId, orgId, onApprove }) => {
   const { account, library } = useWeb3React()
   const { organizations } = useOrganizations()
   const org = organizations.find((o) => o.id === orgId)
-  const isApprover = org.approvers.includes(account)
+  const isApprover = account && org?.approvers.includes(account)
 
   const approve = async () => {
     if (!account) return

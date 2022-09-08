@@ -1,29 +1,31 @@
 import { useWeb3React } from '@web3-react/core'
 import Spinner from 'components/Spinner/Spinner'
-import AssignmentRequest from 'components/Task/AssignmentRequest'
 import ApprovalRequest from 'components/Task/ApprovalRequest'
+import AssignmentRequest from 'components/Task/AssignmentRequest'
 import { ethers } from 'ethers'
+import {
+  fetchOrganizationCount,
+  fetchOrganizations
+} from 'hooks/organization/functions'
 import {
   assignToSelf,
   fetchTask,
   openTask,
   taskSubmission
 } from 'hooks/task/functions'
-import {
-  fetchOrganizationCount,
-  fetchOrganizations
-} from 'hooks/organization/functions'
 import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useState } from 'react'
 import { updateCount, updateOrganizations } from 'state/organization/slice'
+import { wrapper } from 'state/store'
 
 interface PageProps {
   task: Task
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
   const taskId = context.params?.id?.[0] || '0'
   const task = await fetchTask(parseInt(taskId))
   const orgCount = await fetchOrganizationCount()
@@ -51,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       task: task
     }
   }
-}
+})
 
 const TaskPage: NextPage<PageProps> = ({ task }) => {
   const { account, library } = useWeb3React()
