@@ -1,9 +1,5 @@
 import { ethers } from 'ethers'
-import {
-  fetchOrganizationCount,
-  fetchOrganizationIds
-} from 'hooks/organization/functions'
-import { fetchTaskCountByOrg, fetchTasksByOrg } from 'hooks/task/functions'
+import { fetchTasksByOrg } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import useTasks from 'hooks/task/useTask'
 import type {
@@ -20,19 +16,8 @@ import { updateCount, updateTasks } from 'state/task/slice'
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
-      const orgCount = await fetchOrganizationCount()
-      const orgIds = await fetchOrganizationIds(0, orgCount)
+      const tasks = await fetchTasksByOrg()
 
-      const allTasks = await Promise.all(
-        orgIds.map(async (orgId) => {
-          const taskCount = await fetchTaskCountByOrg(orgId, true, true)
-          const tasks = await fetchTasksByOrg(orgId, 0, taskCount)
-
-          return tasks
-        })
-      )
-
-      const tasks = allTasks.flat()
       store.dispatch(updateCount(tasks.length))
       store.dispatch(
         updateTasks({

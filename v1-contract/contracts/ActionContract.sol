@@ -19,7 +19,8 @@ library ActionLib {
         UPDATE_REWARD_MULTIPLIER,
         UPDATE_REWARD_TOKEN,
         UPDATE_REWARD_SLASH_DIVISOR,
-        UPDATE_SLASH_REWARD_EVERY
+        UPDATE_SLASH_REWARD_EVERY,
+        UPDATE_TAG_REWARD_MULTIPLIER
     }
 
     struct Action {
@@ -46,6 +47,7 @@ contract ActionContract {
         address indexed sender,
         uint256 indexed actionId
     );
+    event ActionExecution(uint256 indexed orgId, uint256 indexed actionId);
 
     mapping(uint256 => ActionLib.Action) private actions;
     mapping(uint256 => bool) private _actionExists;
@@ -135,7 +137,8 @@ contract ActionContract {
         uint256 _orgId,
         address targetAddress,
         ActionLib.ActionType actionType,
-        bytes memory data
+        bytes memory data,
+        uint256 value
     ) external orgExists(_orgId) onlySigner(_orgId) returns (uint256 actionId) {
         require(
             actionType != ActionLib.ActionType.WITHDRAWAL,
@@ -147,7 +150,7 @@ contract ActionContract {
             orgId: _orgId,
             initiator: msg.sender,
             targetAddress: targetAddress,
-            value: 0,
+            value: value,
             data: data,
             executed: false,
             tokenAddress: address(0),
@@ -172,7 +175,11 @@ contract ActionContract {
         require(!confirmations[_actionId][msg.sender], "Already confirmed");
         confirmations[_actionId][msg.sender] = true;
         confirmationCount[_actionId] += 1;
-        emit ActionConfirmation(actions[_actionId].orgId, msg.sender, _actionId);
+        emit ActionConfirmation(
+            actions[_actionId].orgId,
+            msg.sender,
+            _actionId
+        );
     }
 
     /// @dev Returns list of action confirmers.
@@ -273,5 +280,6 @@ contract ActionContract {
         actionExists(_actionId)
     {
         actions[_actionId].executed = true;
+        emit ActionExecution(actions[_actionId].orgId, _actionId);
     }
 }
