@@ -268,7 +268,7 @@ contract ActionContract {
         returns (bool)
     {
         return
-            confirmationCount[_actionId] ==
+            confirmationCount[_actionId] >=
             organization
                 .getOrganizationConfig(actions[_actionId].orgId)
                 .requiredConfirmations;

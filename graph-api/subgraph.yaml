@@ -65,7 +65,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0x69c3735FbEfF9073204C51C5D9a458D49461191C"
+      address: "0xfDE570D077235dD8Ab2e91086d4aa3032eB87F32"
       abi: ActionContract
     mapping:
       kind: ethereum/events
