@@ -1,0 +1,55 @@
+query GetAction(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  action(
+    id: $id,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    actionId
+    orgId
+    initiator
+    targetAddress
+    value
+    data
+    executed
+    tokenAddress
+    actionType
+    approvedBy
+  }
+}
+
+query GetActions(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: Action_orderBy
+  $orderDirection: OrderDirection
+  $where: Action_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  actions(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    where: $where,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    actionId
+    orgId
+    initiator
+    targetAddress
+    value
+    data
+    executed
+    tokenAddress
+    actionType
+    approvedBy
+  }
+}

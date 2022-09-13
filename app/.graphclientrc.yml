@@ -1,0 +1,10 @@
+sources:
+  - name: buildstream_v1_test
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v1-test
+documents:
+  - ./src/hooks/organization/queries.graphql
+  - ./src/hooks/task/queries.graphql
+  - ./src/hooks/action/queries.graphql
+  - ./src/hooks/treasury/queries.graphql

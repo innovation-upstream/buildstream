@@ -1,0 +1,55 @@
+query GetTreasury(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  treasury(
+    id: $id,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    orgId
+    tokens {
+      id
+      orgId {
+        orgId
+      }
+      token
+      balance
+      lockedBalance
+    }
+  }
+}
+
+query GetTreasurys(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: Treasury_orderBy
+  $orderDirection: OrderDirection
+  $where: Treasury_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  treasuries(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    where: $where,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    orgId
+    tokens {
+      id
+      orgId {
+        orgId
+      }
+      token
+      balance
+      lockedBalance
+    }
+  }
+}
