@@ -1,0 +1,137 @@
+query GetTask(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  task(
+    id: $id,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    taskId
+    orgId {
+      id
+      orgId
+      name
+      description
+      reviewers
+      approvers
+      signers
+      requiredTaskApprovals
+      requiredConfirmations
+      rewardMultiplier
+      rewardToken
+      isInitialized
+    }
+    title
+    description
+    assigner
+    assignee
+    taskTags
+    status
+    complexityScore
+    reputationLevel
+    requiredApprovals
+    rewardAmount
+    rewardToken
+    assignDate
+    submitDate
+    taskDuration
+    comment
+    approvedBy
+    assignmentRequest
+  }
+}
+
+query GetTasks(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: Task_orderBy
+  $orderDirection: OrderDirection
+  $where: Task_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  tasks(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    where: $where,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    taskId
+    orgId {
+      id
+      orgId
+      name
+      description
+      reviewers
+      approvers
+      signers
+      requiredTaskApprovals
+      requiredConfirmations
+      rewardMultiplier
+      rewardToken
+      isInitialized
+    }
+    title
+    description
+    assigner
+    assignee
+    taskTags
+    status
+    complexityScore
+    reputationLevel
+    requiredApprovals
+    rewardAmount
+    rewardToken
+    assignDate
+    submitDate
+    taskDuration
+    comment
+    approvedBy
+    assignmentRequest
+  }
+}
+
+query GetTaskCount(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  taskCount(
+    id: $id,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    orgId
+    count
+  }
+}
+
+query GetTaskCounts(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: TaskCount_orderBy
+  $orderDirection: OrderDirection
+  $where: TaskCount_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  taskCounts(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    where: $where,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    orgId
+    count
+  }
+}

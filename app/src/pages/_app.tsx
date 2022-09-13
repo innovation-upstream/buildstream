@@ -1,8 +1,10 @@
+import { ApolloProvider } from "@apollo/client"
 import { Web3Provider } from '@ethersproject/providers'
 import { Web3ReactProvider } from '@web3-react/core'
 import Footer from 'components/Footer/Footer'
 import Header from 'components/Header/Header'
 import Spinner from 'components/Spinner/Spinner'
+import client from "graphql/client"
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -35,21 +37,23 @@ function WrappedApp({ Component, pageProps }: AppProps) {
   }, [router])
 
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Provider store={store}>
-        <div className='relative sm:py-20 py-40' style={{ minHeight: '100vh' }}>
-          <Header />
-          {loading ? (
-            <div className='absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2'>
-              <Spinner className='text-indigo-500' width={50} height={50} />
-            </div>
-          ) : (
-            <Component {...pageProps} />
-          )}
-          <Footer />
-        </div>
-      </Provider>
-    </Web3ReactProvider>
+    <ApolloProvider client={client}>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <Provider store={store}>
+          <div className='relative sm:py-20 py-40' style={{ minHeight: '100vh' }}>
+            <Header />
+            {loading ? (
+              <div className='absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2'>
+                <Spinner className='text-indigo-500' width={50} height={50} />
+              </div>
+            ) : (
+              <Component {...pageProps} />
+            )}
+            <Footer />
+          </div>
+        </Provider>
+      </Web3ReactProvider>
+    </ApolloProvider>
   )
 }
 

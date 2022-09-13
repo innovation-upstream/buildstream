@@ -1,0 +1,99 @@
+query GetOrganization(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  organization(
+    id: $id,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    orgId
+    name
+    description
+    reviewers
+    approvers
+    signers
+    requiredTaskApprovals
+    requiredConfirmations
+    rewardMultiplier
+    rewardToken
+    isInitialized
+    tasks {
+      id
+      taskId
+      title
+      description
+      assigner
+      assignee
+      taskTags
+      status
+      complexityScore
+      reputationLevel
+      requiredApprovals
+      rewardAmount
+      rewardToken
+      assignDate
+      submitDate
+      taskDuration
+      comment
+      approvedBy
+      assignmentRequest
+    }
+  }
+}
+
+query GetOrganizations(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: Organization_orderBy
+  $orderDirection: OrderDirection
+  $where: Organization_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  organizations(
+    skip: $skip,
+    first: $first,
+    orderBy: $orderBy,
+    orderDirection: $orderDirection,
+    where: $where,
+    block: $block,
+    subgraphError: $subgraphError
+  ) {
+    id
+    orgId
+    name
+    description
+    reviewers
+    approvers
+    signers
+    requiredTaskApprovals
+    requiredConfirmations
+    rewardMultiplier
+    rewardToken
+    isInitialized
+    tasks {
+      id
+      taskId
+      title
+      description
+      assigner
+      assignee
+      taskTags
+      status
+      complexityScore
+      reputationLevel
+      requiredApprovals
+      rewardAmount
+      rewardToken
+      assignDate
+      submitDate
+      taskDuration
+      comment
+      approvedBy
+      assignmentRequest
+    }
+  }
+}
