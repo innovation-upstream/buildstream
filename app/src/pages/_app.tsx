@@ -4,7 +4,7 @@ import { Web3ReactProvider } from '@web3-react/core'
 import Footer from 'components/Footer/Footer'
 import Header from 'components/Header/Header'
 import Spinner from 'components/Spinner/Spinner'
-import client from "graphql/client"
+import client from "graphclient/client"
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'

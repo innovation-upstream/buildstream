@@ -10,7 +10,7 @@ import {
   GetTasksQueryVariables,
   Task,
   TaskCount
-} from 'graphql'
+} from 'graphclient'
 
 export const useGetTasksQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<Task, GetTasksQueryVariables>

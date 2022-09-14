@@ -30,4 +30,5 @@ export type Action = {
   executed: boolean
   tokenAddress: string
   actionType: ActionType
+  approvedBy: string[]
 }

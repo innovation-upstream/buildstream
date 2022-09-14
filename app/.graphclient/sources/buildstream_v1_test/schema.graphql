@@ -194,9 +194,11 @@ type Organization {
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
+  rewardSlashDivisor: BigInt!
+  slashRewardEvery: BigInt!
   rewardToken: Bytes!
   isInitialized: Boolean!
-  tasks(skip: Int = 0, first: Int = 100, orderBy: Task_orderBy, orderDirection: OrderDirection, where: Task_filter): [Task!]
+  treasury: Treasury!
 }
 
 input Organization_filter {
@@ -298,6 +300,22 @@ input Organization_filter {
   rewardMultiplier_lte: BigInt
   rewardMultiplier_in: [BigInt!]
   rewardMultiplier_not_in: [BigInt!]
+  rewardSlashDivisor: BigInt
+  rewardSlashDivisor_not: BigInt
+  rewardSlashDivisor_gt: BigInt
+  rewardSlashDivisor_lt: BigInt
+  rewardSlashDivisor_gte: BigInt
+  rewardSlashDivisor_lte: BigInt
+  rewardSlashDivisor_in: [BigInt!]
+  rewardSlashDivisor_not_in: [BigInt!]
+  slashRewardEvery: BigInt
+  slashRewardEvery_not: BigInt
+  slashRewardEvery_gt: BigInt
+  slashRewardEvery_lt: BigInt
+  slashRewardEvery_gte: BigInt
+  slashRewardEvery_lte: BigInt
+  slashRewardEvery_in: [BigInt!]
+  slashRewardEvery_not_in: [BigInt!]
   rewardToken: Bytes
   rewardToken_not: Bytes
   rewardToken_in: [Bytes!]
@@ -308,7 +326,27 @@ input Organization_filter {
   isInitialized_not: Boolean
   isInitialized_in: [Boolean!]
   isInitialized_not_in: [Boolean!]
-  tasks_: Task_filter
+  treasury: String
+  treasury_not: String
+  treasury_gt: String
+  treasury_lt: String
+  treasury_gte: String
+  treasury_lte: String
+  treasury_in: [String!]
+  treasury_not_in: [String!]
+  treasury_contains: String
+  treasury_contains_nocase: String
+  treasury_not_contains: String
+  treasury_not_contains_nocase: String
+  treasury_starts_with: String
+  treasury_starts_with_nocase: String
+  treasury_not_starts_with: String
+  treasury_not_starts_with_nocase: String
+  treasury_ends_with: String
+  treasury_ends_with_nocase: String
+  treasury_not_ends_with: String
+  treasury_not_ends_with_nocase: String
+  treasury_: Treasury_filter
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
 }
@@ -324,9 +362,11 @@ enum Organization_orderBy {
   requiredTaskApprovals
   requiredConfirmations
   rewardMultiplier
+  rewardSlashDivisor
+  slashRewardEvery
   rewardToken
   isInitialized
-  tasks
+  treasury
 }
 
 type Query {

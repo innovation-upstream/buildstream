@@ -5,18 +5,18 @@ import {
   GetOrganizationsDocument,
   GetOrganizationsQueryVariables,
   Organization
-} from 'graphql'
+} from 'graphclient'
 
 export const useGetOrganizationsQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    Organization,
+    { organizations: Organization[] },
     GetOrganizationsQueryVariables
   >
 ) =>
-  ApolloReactHooks.useQuery<Organization, GetOrganizationsQueryVariables>(
-    GetOrganizationsDocument,
-    baseOptions
-  )
+  ApolloReactHooks.useQuery<
+    { organizations: Organization[] },
+    GetOrganizationsQueryVariables
+  >(GetOrganizationsDocument, baseOptions)
 
 export const useGetOrganizationQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<

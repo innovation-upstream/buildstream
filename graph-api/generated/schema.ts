@@ -123,6 +123,24 @@ export class Organization extends Entity {
     this.set("rewardMultiplier", Value.fromBigInt(value));
   }
 
+  get rewardSlashDivisor(): BigInt {
+    let value = this.get("rewardSlashDivisor");
+    return value!.toBigInt();
+  }
+
+  set rewardSlashDivisor(value: BigInt) {
+    this.set("rewardSlashDivisor", Value.fromBigInt(value));
+  }
+
+  get slashRewardEvery(): BigInt {
+    let value = this.get("slashRewardEvery");
+    return value!.toBigInt();
+  }
+
+  set slashRewardEvery(value: BigInt) {
+    this.set("slashRewardEvery", Value.fromBigInt(value));
+  }
+
   get rewardToken(): Bytes {
     let value = this.get("rewardToken");
     return value!.toBytes();
@@ -141,21 +159,13 @@ export class Organization extends Entity {
     this.set("isInitialized", Value.fromBoolean(value));
   }
 
-  get tasks(): Array<string> | null {
-    let value = this.get("tasks");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+  get treasury(): string {
+    let value = this.get("treasury");
+    return value!.toString();
   }
 
-  set tasks(value: Array<string> | null) {
-    if (!value) {
-      this.unset("tasks");
-    } else {
-      this.set("tasks", Value.fromStringArray(<Array<string>>value));
-    }
+  set treasury(value: string) {
+    this.set("treasury", Value.fromString(value));
   }
 }
 

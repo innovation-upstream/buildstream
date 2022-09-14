@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Balances from 'components/Balances/Balances'
 import injected from 'config/Walletconnectors'
 import Image from 'next/image'
@@ -7,7 +7,7 @@ import Logo from '../../../public/vercel.svg'
 import styles from './Header.module.css'
 
 const Header = () => {
-  const { account: address, activate, deactivate } = useWeb3React()
+  const { account: address, activate, deactivate } = useWeb3()
 
   async function connect() {
     try {

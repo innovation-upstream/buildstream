@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import ERC20 from 'contracts/ERC20.json'
 import Treasury from 'contracts/Treasury.json'
@@ -20,7 +20,7 @@ const Deposit = ({ org }: DepositProps) => {
     orgHasRewardToken ? org?.rewardToken : ''
   )
   const { tokenInfo } = useTokenInfo(tokenAddress)
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
   const [showError, setShowError] = useState(false)
 

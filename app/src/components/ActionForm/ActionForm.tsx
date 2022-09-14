@@ -1,9 +1,8 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { createAction, createWithdrawalAction } from 'hooks/action/functions'
 import { ActionType, ActionTypeMap } from 'hooks/action/types'
-import useActions from 'hooks/action/useAction'
 import { Organization } from 'hooks/organization/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useState } from 'react'
@@ -13,7 +12,6 @@ interface ActionProps {
 }
 
 const ActionForm = ({ org }: ActionProps) => {
-  const { refetchActions } = useActions()
   const orgHasRewardToken = org?.rewardToken !== ethers.constants.AddressZero
   const [customToken, setCustomToken] = useState(orgHasRewardToken)
   const [formData, setFormData] = useState({
@@ -25,7 +23,7 @@ const ActionForm = ({ org }: ActionProps) => {
     ActionType.WITHDRAWAL
   )
   const { tokenInfo } = useTokenInfo(formData.tokenAddress)
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
   const [showError, setShowError] = useState(false)
 
@@ -79,7 +77,6 @@ const ActionForm = ({ org }: ActionProps) => {
         amount: 0,
         tokenAddress: orgHasRewardToken ? org?.rewardToken : ''
       })
-      refetchActions(org.id)
       setIsTransacting(false)
       setShowError(false)
     } catch (e) {

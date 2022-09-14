@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import Spinner from 'components/Spinner/Spinner'
-import {
-  approveAssignedRequest,
-  fetchAssignedRequests
-} from 'hooks/task/functions'
-import { useWeb3React } from '@web3-react/core'
+import { approveAssignedRequest } from 'hooks/task/functions'
+import { useWeb3 } from 'hooks'
 
 interface Props {
   taskId: number
-  onAssign: () => void
+  assignmentRequests: string[]
+  approvers: string[]
+  onAssign?: () => void
 }
 
-const AssignmentRequest: React.FC<Props> = ({ taskId, onAssign }) => {
+const AssignmentRequest: React.FC<Props> = ({
+  taskId,
+  onAssign,
+  assignmentRequests,
+  approvers
+}) => {
   const [processing, setProcessing] = useState(false)
-  const [assignedRequests, setAssignedRequests] = useState<string[]>([])
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
 
   const approveTask = async (address: string) => {
     if (!account || !taskId) return
@@ -26,7 +29,7 @@ const AssignmentRequest: React.FC<Props> = ({ taskId, onAssign }) => {
         library.getSigner()
       )
       if (tx) {
-        onAssign()
+        onAssign?.()
       }
       setProcessing(false)
     } catch (e) {
@@ -35,35 +38,22 @@ const AssignmentRequest: React.FC<Props> = ({ taskId, onAssign }) => {
     }
   }
 
-  const getAssignmentRequest = async () => {
-    try {
-      const res = await fetchAssignedRequests(taskId)
-      setAssignedRequests(Array.from(new Set(res)))
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  useEffect(() => {
-    getAssignmentRequest()
-  }, [])
-
   return (
-    <div className="w-full h-full mt-10 bg-gray-100 rounded-lg p-8">
-      <div className="flex justify-between items-center">
+    <div className='w-full h-full mt-10 bg-gray-100 rounded-lg p-8'>
+      <div className='flex justify-between items-center'>
         <h2>Assignment Requests</h2>
       </div>
-      <div className="w-full mt-3">
-        {assignedRequests.length === 0 ? (
-          <div className="px-4 border border-red-300 rounded-full w-max bg-white text-gray-500">
+      <div className='w-full mt-3'>
+        {assignmentRequests.length === 0 ? (
+          <div className='px-4 border border-red-300 rounded-full w-max bg-white text-gray-500'>
             None
           </div>
         ) : (
-          <div className="mt-7 flex flex-col gap-y-5">
-            {assignedRequests.map((account) => {
+          <div className='mt-7 flex flex-col gap-y-5'>
+            {assignmentRequests.map((account) => {
               return (
                 <div
-                  className="p-2 bg-gray-200 rounded-xl flex justify-between items-center"
+                  className='p-2 bg-gray-200 rounded-xl flex justify-between items-center'
                   key={account}
                 >
                   <span>
@@ -73,8 +63,10 @@ const AssignmentRequest: React.FC<Props> = ({ taskId, onAssign }) => {
                   <button
                     onClick={() => approveTask(account)}
                     id={account}
-                    disabled={processing}
-                    className="bg-indigo-500 hover:bg-indigo-600 text-white px-2 rounded-full text-sm"
+                    disabled={
+                      !account || processing || !approvers.includes(account)
+                    }
+                    className='bg-indigo-500 hover:bg-indigo-600 text-white px-2 rounded-full text-sm disabled:cursor-not-allowed disabled:opacity-30'
                   >
                     {processing ? <Spinner /> : 'Assign'}
                   </button>

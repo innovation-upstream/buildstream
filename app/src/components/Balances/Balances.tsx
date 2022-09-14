@@ -1,8 +1,8 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import useBalance from 'hooks/balance/useBalance'
 
 const Balances = ({ className }: { className?: string }) => {
-  const { account: address } = useWeb3React()
+  const { account: address } = useWeb3()
   const { balance } = useBalance()
 
   if (!address) return null

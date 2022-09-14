@@ -1,30 +1,31 @@
 import * as ApolloReactHooks from '@apollo/react-hooks'
 import {
-  Action,
+  GetActionQuery,
+  GetActionsQuery,
   GetActionDocument,
   GetActionQueryVariables,
   GetActionsDocument,
   GetActionsQueryVariables
-} from 'graphql'
+} from 'graphclient'
 
 export const useGetActionsQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    Action,
+    GetActionsQuery,
     GetActionsQueryVariables
   >
 ) =>
-  ApolloReactHooks.useQuery<Action, GetActionsQueryVariables>(
+  ApolloReactHooks.useQuery<GetActionsQuery, GetActionsQueryVariables>(
     GetActionsDocument,
     baseOptions
   )
 
 export const useGetActionQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    Action,
+    GetActionQuery,
     GetActionQueryVariables
   >
 ) =>
-  ApolloReactHooks.useQuery<Action, GetActionQueryVariables>(
+  ApolloReactHooks.useQuery<GetActionQuery, GetActionQueryVariables>(
     GetActionDocument,
     baseOptions
   )

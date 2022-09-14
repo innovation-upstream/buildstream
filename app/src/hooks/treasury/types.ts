@@ -10,5 +10,9 @@ export type Balance = {
 
 export type Treasury = {
   orgId: number
-  balances: Balance[]
+  tokens?: {
+    token: string
+    balance: BigNumber
+    lockedBalance: BigNumber
+  }[]
 }

@@ -21,13 +21,6 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   }
   tTokenEntity.balance = tTokenEntity.balance.plus(event.params.amount)
   tTokenEntity.save()
-
-  let tEntity = Treasury.load(orgId)
-  if (!tEntity) {
-    tEntity = new Treasury(orgId)
-    tEntity.orgId = event.params.orgId
-    tEntity.save()
-  }
 }
 
 export function handleTreasuryWithdraw(event: TreasuryWithdrawEvent): void {

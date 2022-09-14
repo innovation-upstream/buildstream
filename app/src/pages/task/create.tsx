@@ -1,45 +1,24 @@
-import { useState, useRef } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import { useState, useRef, useEffect } from 'react'
+import { useGetOrganizationsQuery, usePolling, useWeb3 } from 'hooks'
 import { useRouter } from 'next/router'
-import useOrganizations from 'hooks/organization/useOrganization'
 import Head from 'next/head'
-import { updateCount, updateOrganizations } from 'state/organization/slice'
-import {
-  fetchOrganizationCount,
-  fetchOrganizations
-} from 'hooks/organization/functions'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { wrapper } from 'state/store'
 import { createNewTask } from 'hooks/task/functions'
+import client from 'graphclient/client'
+import { GetOrganizationsDocument, Organization } from '../../../.graphclient'
+import { Converter } from 'utils/converter'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
-      const orgCount = await fetchOrganizationCount()
-      const orgs = await fetchOrganizations(0, orgCount)
-
-      const serializedOrgs = orgs.map((o) => ({
-        ...o,
-        rewardMultiplier: o.rewardMultiplier
-          ? o.rewardMultiplier.toNumber()
-          : null,
-        requiredTaskApprovals: o.requiredTaskApprovals && null,
-        requiredConfirmations: o.requiredConfirmations && null,
-        rewardToken: o.rewardToken ?? null,
-        rewardSlashDivisor: o.rewardSlashDivisor && null,
-        slashRewardEvery: o.slashRewardEvery && null
-      }))
-
-      store.dispatch(updateCount(orgCount))
-      store.dispatch(
-        updateOrganizations({
-          data: serializedOrgs as any,
-          page: { from: 0, to: orgCount }
-        })
-      )
-
+      const { data } = await client.query({
+        query: GetOrganizationsDocument
+      })
       return {
-        props: {}
+        props: {
+          orgs: data?.organizations
+        }
       }
     }
   )
@@ -56,14 +35,28 @@ const initialTaskData = {
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
-const CreateTaskPage = () => {
+const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [processing, setProcessing] = useState(false)
   const tagRef = useRef<any>('')
-  const { account, library } = useWeb3React()
-  const { organizations } = useOrganizations()
+  const { account, library } = useWeb3()
+  const [ organizations, setOrganizations ] = useState(
+    orgs.map((o) => Converter.OrganizationFromQuery(o))
+  )
   const [status, setStatus] = useState({ text: '', error: false })
   const router = useRouter()
+
+  const { data, startPolling, stopPolling } = useGetOrganizationsQuery()
+  usePolling(startPolling, stopPolling)
+
+  useEffect(() => {
+    if (data?.organizations) {
+      setOrganizations(
+        data?.organizations?.map((o) => Converter.OrganizationFromQuery(o)) ||
+          []
+      )
+    }
+  }, [data])
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
@@ -115,7 +108,7 @@ const CreateTaskPage = () => {
         taskData.taskDuration,
         library.getSigner()
       )
-      router.push(`/task/${response}`)
+      router.push(`/task`)
     } catch (error) {
       setProcessing(false)
       setStatus({ text: 'Error! Not created', error: true })
