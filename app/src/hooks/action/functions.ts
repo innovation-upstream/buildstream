@@ -3,80 +3,6 @@ import { BigNumber, ethers } from 'ethers'
 import getContract from 'utils/getContract'
 import { Action, ActionType } from './types'
 
-export const fetchActionCount = async (
-  orgId: number,
-  provider?: any
-): Promise<number> => {
-  const contract = getContract(
-    ActionContractInterface.address,
-    ActionContractInterface.abi,
-    provider
-  )
-
-  const actionCount: BigNumber = await contract.getActionCount(orgId)
-
-  return actionCount.toNumber()
-}
-
-export const fetchActionIds = async (
-  orgId: number,
-  from: number,
-  to: number,
-  provider?: any
-): Promise<number[]> => {
-  const contract = getContract(
-    ActionContractInterface.address,
-    ActionContractInterface.abi,
-    provider
-  )
-
-  const actionIds: BigNumber[] = await contract.getActionIds(orgId, from, to)
-
-  return actionIds.map((id) => id.toNumber())
-}
-
-export const fetchAction = async (
-  actionId: number,
-  provider?: any
-): Promise<Action> => {
-  const contract = getContract(
-    ActionContractInterface.address,
-    ActionContractInterface.abi,
-    provider
-  )
-
-  const action = await contract.getAction(actionId)
-
-  return {
-    id: action.id.toNumber(),
-    orgId: action.orgId.toNumber(),
-    initiator: action.initiator,
-    targetAddress: action.targetAddress,
-    value: action.value,
-    data: action.data,
-    executed: action.executed,
-    tokenAddress: action.tokenAddress,
-    actionType: action.actionType
-  }
-}
-
-export const fetchActions = async (
-  orgId: number,
-  from: number,
-  to: number,
-  provider?: any
-) => {
-  const actionIds = await fetchActionIds(orgId, from, to, provider)
-  const actions = await Promise.all(
-    actionIds.map(async (actionId): Promise<Action> => {
-      const action = await fetchAction(actionId, provider)
-      return action
-    })
-  )
-
-  return actions
-}
-
 export const createAction = async (
   orgId: number,
   targetAddress: string,
@@ -144,18 +70,4 @@ export const confirmAction = async (actionId: number, provider?: any) => {
 
   const tx = await contract.confirmAction(actionId)
   await tx.wait()
-}
-
-export const fetchConfirmers = async (
-  actionId: number,
-  provider?: any
-): Promise<string[]> => {
-  const contract = getContract(
-    ActionContractInterface.address,
-    ActionContractInterface.abi,
-    provider
-  )
-
-  const confirmers: string[] = await contract.getConfirmers(actionId)
-  return confirmers
 }

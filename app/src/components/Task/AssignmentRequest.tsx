@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Spinner from 'components/Spinner/Spinner'
-import {
-  approveAssignedRequest,
-  fetchAssignedRequests
-} from 'hooks/task/functions'
+import { approveAssignedRequest } from 'hooks/task/functions'
 import { useWeb3 } from 'hooks'
 
 interface Props {

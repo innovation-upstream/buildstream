@@ -6,7 +6,6 @@ import Deposit from 'components/Deposit/Deposit'
 import OrgConfigForm from 'components/Organization/OrgConfigForm'
 import { BigNumber, ethers } from 'ethers'
 import { useGetOrganizationQuery, usePolling } from 'hooks'
-import useTreasury from 'hooks/treasury/useTreasury'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -43,7 +42,6 @@ const OrganizationPage: NextPage<PageProps> = ({ org }) => {
   const [organization, setOrganization] = useState(
     Converter.OrganizationFromQuery(org)
   )
-  const { treasury } = useTreasury()
 
   const { data, startPolling, stopPolling } = useGetOrganizationQuery({
     variables: {

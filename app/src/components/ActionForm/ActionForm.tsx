@@ -3,7 +3,6 @@ import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { createAction, createWithdrawalAction } from 'hooks/action/functions'
 import { ActionType, ActionTypeMap } from 'hooks/action/types'
-import useActions from 'hooks/action/useAction'
 import { Organization } from 'hooks/organization/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useState } from 'react'
@@ -13,7 +12,6 @@ interface ActionProps {
 }
 
 const ActionForm = ({ org }: ActionProps) => {
-  const { refetchActions } = useActions()
   const orgHasRewardToken = org?.rewardToken !== ethers.constants.AddressZero
   const [customToken, setCustomToken] = useState(orgHasRewardToken)
   const [formData, setFormData] = useState({
@@ -79,7 +77,6 @@ const ActionForm = ({ org }: ActionProps) => {
         amount: 0,
         tokenAddress: orgHasRewardToken ? org?.rewardToken : ''
       })
-      refetchActions(org.id)
       setIsTransacting(false)
       setShowError(false)
     } catch (e) {

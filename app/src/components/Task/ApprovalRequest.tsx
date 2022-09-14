@@ -1,8 +1,7 @@
 import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
-import useOrganizations from 'hooks/organization/useOrganization'
-import { approveTask, fetchApprovals } from 'hooks/task/functions'
-import React, { useEffect, useState } from 'react'
+import { approveTask } from 'hooks/task/functions'
+import React, { useState } from 'react'
 
 interface Props {
   taskId: number
