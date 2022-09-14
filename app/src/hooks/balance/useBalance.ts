@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import { BigNumber } from 'ethers'
 import { useEffect, useState } from 'react'
 import { fetchBalances, fetchOrgBalances } from './functions'
@@ -13,7 +13,7 @@ const defaultValue: TokenBalance[] = tokenList.map((t) => ({
 const useBalance = (orgId = 0) => {
   const [balance, setBalance] = useState<TokenBalance[]>(defaultValue)
   const [orgBalance, setOrgBalance] = useState<TokenBalance[]>(defaultValue)
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
 
   const refetchBalance = async () => {
     const bal = await fetchBalances(account as string, library)

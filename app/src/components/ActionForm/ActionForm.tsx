@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { createAction, createWithdrawalAction } from 'hooks/action/functions'
@@ -25,7 +25,7 @@ const ActionForm = ({ org }: ActionProps) => {
     ActionType.WITHDRAWAL
   )
   const { tokenInfo } = useTokenInfo(formData.tokenAddress)
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
   const [showError, setShowError] = useState(false)
 

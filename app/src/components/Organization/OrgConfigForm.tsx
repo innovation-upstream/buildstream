@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { addOrganizationConfig } from 'hooks/organization/functions'
@@ -20,7 +20,7 @@ const OrgConfigForm: React.FC<{ orgId: number }> = ({ orgId }) => {
   const [status, setStatus] = useState({ text: '', error: false })
   const [orgData, setOrgData] = useState<OrgData>(initialData)
   const [processing, setProcessing] = useState(false)
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name

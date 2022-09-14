@@ -18,7 +18,7 @@ const CreateOrganization: React.FC = () => {
             <h1 className='sm:text-3xl text-center text-2xl font-medium title-font mb-6 text-gray-900'>
               Create Organization
             </h1>
-            <CreateOrgForm onCreate={(orgId) => router.push(`/organization/${orgId}`)} />
+            <CreateOrgForm onCreate={(orgId) => router.push(`/organization`)} />
           </div>
         </div>
       </section>

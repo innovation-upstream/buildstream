@@ -3,11 +3,7 @@ query GetTask(
   $block: Block_height
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  task(
-    id: $id,
-    block: $block,
-    subgraphError: $subgraphError
-  ) {
+  task(id: $id, block: $block, subgraphError: $subgraphError) {
     id
     taskId
     orgId {
@@ -22,7 +18,16 @@ query GetTask(
       requiredConfirmations
       rewardMultiplier
       rewardToken
+      rewardSlashDivisor
+      slashRewardEvery
       isInitialized
+      treasury {
+        tokens {
+          token
+          balance
+          lockedBalance
+        }
+      }
     }
     title
     description
@@ -54,12 +59,12 @@ query GetTasks(
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
   tasks(
-    skip: $skip,
-    first: $first,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    where: $where,
-    block: $block,
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
     subgraphError: $subgraphError
   ) {
     id
@@ -76,7 +81,16 @@ query GetTasks(
       requiredConfirmations
       rewardMultiplier
       rewardToken
+      rewardSlashDivisor
+      slashRewardEvery
       isInitialized
+      treasury {
+        tokens {
+          token
+          balance
+          lockedBalance
+        }
+      }
     }
     title
     description
@@ -103,11 +117,7 @@ query GetTaskCount(
   $block: Block_height
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  taskCount(
-    id: $id,
-    block: $block,
-    subgraphError: $subgraphError
-  ) {
+  taskCount(id: $id, block: $block, subgraphError: $subgraphError) {
     orgId
     count
   }
@@ -123,12 +133,12 @@ query GetTaskCounts(
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
   taskCounts(
-    skip: $skip,
-    first: $first,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    where: $where,
-    block: $block,
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
     subgraphError: $subgraphError
   ) {
     orgId

@@ -9,9 +9,11 @@ type Organization @entity {
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
+  rewardSlashDivisor: BigInt!
+  slashRewardEvery: BigInt!
   rewardToken: Bytes!
   isInitialized: Boolean!
-  tasks: [Task!] @derivedFrom(field: "orgId")
+  treasury: Treasury!
 }
 
 type Task @entity {

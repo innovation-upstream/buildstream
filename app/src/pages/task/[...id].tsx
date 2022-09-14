@@ -1,73 +1,64 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import ApprovalRequest from 'components/Task/ApprovalRequest'
 import AssignmentRequest from 'components/Task/AssignmentRequest'
 import { ethers } from 'ethers'
-import {
-  fetchOrganizationCount,
-  fetchOrganizations
-} from 'hooks/organization/functions'
-import {
-  assignToSelf,
-  fetchTask,
-  openTask,
-  taskSubmission
-} from 'hooks/task/functions'
-import { ComplexityScoreMap, Task, TaskStatusMap } from 'hooks/task/types'
+import client from 'graphclient/client'
+import { useGetTaskQuery, usePolling } from 'hooks'
+import useBalance from 'hooks/balance/useBalance'
+import { assignToSelf, openTask, taskSubmission } from 'hooks/task/functions'
+import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import { useState } from 'react'
-import { updateCount, updateOrganizations } from 'state/organization/slice'
+import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
+import { Converter } from 'utils/converter'
+import { GetTaskDocument, Task } from '../../../.graphclient'
 
 interface PageProps {
   task: Task
 }
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-  const taskId = context.params?.id?.[0] || '0'
-  const task = await fetchTask(parseInt(taskId))
-  const orgCount = await fetchOrganizationCount()
-  const orgs = await fetchOrganizations(0, orgCount)
-  const serializedOrgs = orgs.map((o) => ({
-    ...o,
-    rewardMultiplier: o.rewardMultiplier.toJSON() ?? null,
-    requiredTaskApprovals: o.requiredTaskApprovals.toString(),
-    requiredConfirmations: o.requiredConfirmations.toString(),
-    rewardToken: o.rewardToken,
-    rewardSlashDivisor: o.rewardSlashDivisor.toJSON(),
-    slashRewardEvery: o.slashRewardEvery.toString()
-  }))
-
-  store.dispatch(updateCount(orgCount))
-  store.dispatch(
-    updateOrganizations({
-      data: serializedOrgs as any,
-      page: { from: 0, to: orgCount }
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store) => async (context) => {
+    const taskId = context.params?.id?.[0] || '0'
+    const { data } = await client.query({
+      query: GetTaskDocument,
+      variables: {
+        id: taskId
+      }
     })
-  )
 
-  return {
-    props: {
-      task: task
+    return {
+      props: {
+        task: data.task
+      }
     }
-  }
-})
+  })
 
 const TaskPage: NextPage<PageProps> = ({ task }) => {
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
   const [rewardToken, setRewardToken] = useState(ethers.constants.AddressZero)
   const [taskComment, setTaskComment] = useState<string>()
   const [processing, setProcessing] = useState(false)
-  const [currentTask, setCurrentTask] = useState<Task>(task)
+  const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
   const taskStatus = Object.entries(TaskStatusMap)[currentTask?.status]?.[1]
   const [errorMsg, setErrorMsg] = useState<string>()
+  const { balance } = useBalance()
 
-  const getTask = async () => {
-    const task = await fetchTask(currentTask?.id, library.getSigner())
-    setCurrentTask(task)
-  }
+  const { data, startPolling, stopPolling } = useGetTaskQuery({
+    variables: {
+      id: task.id
+    }
+  })
+
+  usePolling(startPolling, stopPolling)
+
+  useEffect(() => {
+    if (data?.task) {
+      setCurrentTask(Converter.TaskFromQuery(data.task as any))
+    }
+  }, [data])
 
   const openCreatedTask = async () => {
     if (!account) {
@@ -76,14 +67,7 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
     }
     setProcessing(true)
     try {
-      const tx = await openTask(
-        currentTask?.id,
-        rewardToken,
-        library.getSigner()
-      )
-      if (tx) {
-        await getTask()
-      }
+      await openTask(currentTask?.id, rewardToken, library.getSigner())
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -98,10 +82,7 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
     }
     try {
       setProcessing(true)
-      const tx = await assignToSelf(currentTask?.id, library.getSigner())
-      if (tx) {
-        await getTask()
-      }
+      await assignToSelf(currentTask?.id, library.getSigner())
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -122,19 +103,16 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
     }
     setProcessing(true)
     try {
-      const tx = await taskSubmission(
-        currentTask?.id,
-        taskComment,
-        library.getSigner()
-      )
-      if (tx) {
-        await getTask()
-      }
+      await taskSubmission(currentTask?.id, taskComment, library.getSigner())
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
       console.error('ERROR===', e)
     }
+  }
+
+  if (!currentTask) {
+    return null
   }
 
   return (
@@ -284,27 +262,35 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
               </h3>
               {taskStatus === 'open' && (
                 <div>
-                  <p className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
+                  <div className='mb-4 text-base font-normal text-gray-500 dark:text-gray-400'>
                     Assign Task
                     <div className='mb-4 text-sm font-normal text-gray-500 dark:text-gray-400'>
-                      {currentTask?.reputationLevel <
-                        currentTask?.complexityScore &&
+                      {currentTask?.reputationLevel >
+                        balance[
+                          currentTask.complexityScore
+                        ].balance.toNumber() &&
                         'You have low reputation level for this task'}
                     </div>
-                  </p>
+                  </div>
                   <button
                     onClick={assignTaskToSelf}
                     type='submit'
-                    disabled={processing}
-                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                    disabled={
+                      !account ||
+                      processing ||
+                      currentTask.assignmentRequests.includes(account)
+                    }
+                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg disabled:cursor-not-allowed disabled:opacity-30'
                   >
                     {processing ? (
                       <Spinner />
-                    ) : currentTask?.reputationLevel >=
-                      currentTask?.complexityScore ? (
-                      'Assign to self'
-                    ) : (
+                    ) : currentTask?.reputationLevel >
+                      balance[
+                        currentTask.complexityScore
+                      ].balance.toNumber() ? (
                       'Request Assignment'
+                    ) : (
+                      'Assign to self'
                     )}
                   </button>
                 </div>
@@ -368,14 +354,16 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
         {currentTask.status === 1 && (
           <AssignmentRequest
             taskId={currentTask?.id}
-            onAssign={() => getTask()}
+            assignmentRequests={currentTask.assignmentRequests}
+            approvers={currentTask.organization.approvers}
           />
         )}
         {currentTask.status === 3 && (
           <ApprovalRequest
             taskId={currentTask?.id}
             orgId={currentTask?.orgId}
-            onApprove={() => getTask()}
+            approvals={currentTask.approvedBy}
+            approvers={currentTask.organization.approvers}
           />
         )}
       </div>

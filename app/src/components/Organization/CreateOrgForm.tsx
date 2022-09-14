@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import { useRouter } from 'next/router'
 import Spinner from 'components/Spinner/Spinner'
 import { createOrganization } from 'hooks/organization/functions'
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const CreateOrgForm: React.FC<Props> = ({onCreate}) => {
-  const { account, library } = useWeb3React()
+  const { account, library } = useWeb3()
   const [status, setStatus] = useState({ text: '', error: false })
   const [orgData, setOrgData] = useState<OrgData>(initialData)
   const [processing, setProcessing] = useState(false)

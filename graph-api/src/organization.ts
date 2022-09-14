@@ -1,3 +1,4 @@
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 import {
   Organization as Contract,
   OrganizationApproverAddition as OrganizationApproverAdditionEvent,
@@ -9,7 +10,7 @@ import {
   OrganizationSignerAddition as OrganizationSignerAdditionEvent,
   OrganizationSignerRemoval as OrganizationSignerRemovalEvent
 } from '../generated/Organization/Organization'
-import { Organization } from '../generated/schema'
+import { Organization, Treasury } from '../generated/schema'
 
 export function handleOrganizationApproverAddition(
   event: OrganizationApproverAdditionEvent
@@ -47,8 +48,11 @@ export function handleOrganizationCreation(
   const orgId = event.params.orgId
   let contract = Contract.bind(event.address)
   const org = contract.getOrganization(orgId)
-  const orgConfig = contract.getOrganizationConfig(orgId)
   const entity = new Organization(orgId.toString())
+
+  const tEntity = new Treasury(orgId.toString())
+  tEntity.orgId = event.params.orgId
+  tEntity.save()
 
   entity.orgId = org.id
   entity.name = org.name
@@ -56,11 +60,14 @@ export function handleOrganizationCreation(
   entity.reviewers = org.reviewers.map<string>((a) => a.toHexString())
   entity.approvers = org.approvers.map<string>((a) => a.toHexString())
   entity.signers = org.signers.map<string>((a) => a.toHexString())
-  entity.requiredTaskApprovals = orgConfig.requiredTaskApprovals
-  entity.requiredConfirmations = orgConfig.requiredConfirmations
-  entity.rewardMultiplier = orgConfig.rewardMultiplier
-  entity.rewardToken = orgConfig.rewardToken
+  entity.requiredTaskApprovals = new BigInt(0)
+  entity.requiredConfirmations = new BigInt(0)
+  entity.rewardMultiplier = new BigInt(0)
+  entity.rewardToken = Address.zero()
+  entity.rewardSlashDivisor = new BigInt(0)
+  entity.slashRewardEvery = new BigInt(0)
   entity.isInitialized = false
+  entity.treasury = orgId.toString()
   entity.save()
 }
 
@@ -76,6 +83,8 @@ export function handleOrganizationInitialized(event: OrganizationInitializedEven
   entity.requiredConfirmations = orgConfig.requiredConfirmations
   entity.rewardMultiplier = orgConfig.rewardMultiplier
   entity.rewardToken = orgConfig.rewardToken
+  entity.rewardSlashDivisor = orgConfig.rewardSlashDivisor
+  entity.slashRewardEvery = orgConfig.slashRewardEvery
   entity.isInitialized = true
   entity.save()
 }

@@ -1,10 +1,6 @@
 import { BigNumber, ethers } from 'ethers'
-import {
-  fetchOrganizationCount,
-  fetchOrganizations
-} from 'hooks/organization/functions'
-import { fetchTreasuryBalances } from 'hooks/treasury/functions'
-import useOrganizations from 'hooks/organization/useOrganization'
+import { GetOrganizationsDocument, Organization } from 'graphclient'
+import client from 'graphclient/client'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -12,77 +8,47 @@ import type {
 } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { updateCount, updateOrganizations } from 'state/organization/slice'
+import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import { updateTreasury } from 'state/treasury/slice'
-import useTreasury from 'hooks/treasury/useTreasury'
+import { useGetOrganizationsQuery, usePolling } from 'hooks'
+import { Converter } from 'utils/converter'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
-      const orgCount = await fetchOrganizationCount()
-      const orgs = await fetchOrganizations(0, orgCount)
-
-      const treasuryBalances = await Promise.all(
-        orgs.map(async (o) => {
-          const balances = (await fetchTreasuryBalances(o.id)) || []
-          return {
-            orgId: o.id,
-            balances
-          }
-        })
-      )
-
-      const serializedTreasuryBalances = treasuryBalances.map((t) => ({
-        ...t,
-        balances: t.balances.map((b) => ({
-          ...b,
-          total: b.total.toJSON(),
-          locked: b.locked.toJSON()
-        }))
-      }))
-      const serializedOrgs = orgs.map((o) => ({
-        ...o,
-        rewardMultiplier: o.rewardMultiplier.toJSON() ?? null,
-        requiredTaskApprovals: o.requiredTaskApprovals.toString(),
-        requiredConfirmations: o.requiredConfirmations.toString(),
-        rewardToken: o.rewardToken,
-        rewardSlashDivisor: o.rewardSlashDivisor.toJSON(),
-        slashRewardEvery: o.slashRewardEvery.toString()
-      }))
-
-      store.dispatch(updateCount(orgCount))
-      store.dispatch(
-        updateOrganizations({
-          data: serializedOrgs as any,
-          page: { from: 0, to: orgCount }
-        })
-      )
-      store.dispatch(
-        updateTreasury({
-          data: serializedTreasuryBalances,
-          page: { from: 0, to: orgCount }
-        })
-      )
-
+      const { data } = await client.query({
+        query: GetOrganizationsDocument
+      })
       return {
-        props: {}
+        props: {
+          orgs: data?.organizations
+        }
       }
     }
   )
 
-const OrganizationPage: NextPage = () => {
-  const { organizations } = useOrganizations()
-  const { treasury } = useTreasury()
+const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
+  const [organizations, setOrganizations] = useState(
+    orgs.map((o) => Converter.OrganizationFromQuery(o))
+  )
   const [selectedOrg, setSelectedOrg] = useState(0)
-
-  const selected = organizations.find((o) => o.id === selectedOrg)
+  const selected = organizations?.find((o) => o.id == selectedOrg)
 
   const onSelect = (id: number) => {
     setSelectedOrg(id)
   }
+
+  const { data, startPolling, stopPolling } = useGetOrganizationsQuery()
+  usePolling(startPolling, stopPolling)
+
+  useEffect(() => {
+    if (data?.organizations) {
+      setOrganizations(
+        data?.organizations?.map((o) => Converter.OrganizationFromQuery(o)) ||
+          []
+      )
+    }
+  }, [data])
 
   return (
     <div>
@@ -102,7 +68,7 @@ const OrganizationPage: NextPage = () => {
       </div>
       <div className='container justify-between mx-auto flex flex-wrap p-5 flex-col md:flex-row'>
         <ul className='w-full md:basis-6/12 divide-y divide-gray-100'>
-          {organizations.map((org, index) => (
+          {organizations?.map((org, index) => (
             <li
               key={`${org.id}-${index}`}
               className='p-3 hover:bg-blue-600 hover:text-blue-200'
@@ -141,27 +107,25 @@ const OrganizationPage: NextPage = () => {
           <p className='text-lg mt-3 break-all'>
             Required task approvals:{' '}
             <span className='text-sm text-gray-500'>
-              {selected?.requiredTaskApprovals}
+              {selected?.requiredTaskApprovals.toString()}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>
             Required confirmations:{' '}
             <span className='text-sm text-gray-500'>
-              {selected?.requiredConfirmations}
+              {selected?.requiredConfirmations.toString()}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>
             Balance:{' '}
-            {treasury
-              ?.find((t) => t.orgId === selectedOrg)
-              ?.balances?.map((b, index) => (
-                <span key={index} className='text-sm text-gray-500'>
-                  {ethers.utils.formatUnits(
-                    BigNumber.from(b.total)?.toString(),
-                    b.tokenInfo?.decimal
-                  )}
-                </span>
-              ))}
+            {selected?.treasury?.tokens?.map((b, index) => (
+              <span key={index} className='text-sm text-gray-500'>
+                {ethers.utils.formatUnits(
+                  BigNumber.from(b.balance)?.toString(),
+                  18
+                )}
+              </span>
+            ))}
           </p>
           <p className='text-lg mt-3 break-all'>
             Reward multiplier:{' '}

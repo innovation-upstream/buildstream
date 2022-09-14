@@ -1,4 +1,4 @@
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3 } from 'hooks'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { getTokenInfo } from './functions'
@@ -6,7 +6,7 @@ import { TokenInfo } from './types'
 
 const useTokenInfo = (tokenAddress: string) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
-  const { library } = useWeb3React()
+  const { library } = useWeb3()
 
   const refetchTokenInfo = async () => {
     if (

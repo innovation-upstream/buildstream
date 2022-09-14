@@ -5,26 +5,26 @@ import {
   GetTreasurysDocument,
   GetTreasurysQueryVariables,
   Treasury
-} from 'graphql'
+} from 'graphclient'
 
 export const useGetTreasurysQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    Treasury,
+    { treasuries: Treasury[] },
     GetTreasurysQueryVariables
   >
 ) =>
-  ApolloReactHooks.useQuery<Treasury, GetTreasurysQueryVariables>(
-    GetTreasurysDocument,
-    baseOptions
-  )
+  ApolloReactHooks.useQuery<
+    { treasuries: Treasury[] },
+    GetTreasurysQueryVariables
+  >(GetTreasurysDocument, baseOptions)
 
 export const useGetTreasuryQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    Treasury,
+    { treasury: Treasury },
     GetTreasuryQueryVariables
   >
 ) =>
-  ApolloReactHooks.useQuery<Treasury, GetTreasuryQueryVariables>(
+  ApolloReactHooks.useQuery<{ treasury: Treasury }, GetTreasuryQueryVariables>(
     GetTreasuryDocument,
     baseOptions
   )

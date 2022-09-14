@@ -1,3 +1,6 @@
+import { BigNumber } from "ethers"
+import { Organization } from "hooks/organization/types"
+
 export enum TaskStatus {
   PROPOSED,
   OPEN,
@@ -33,6 +36,7 @@ export const ComplexityScoreMap: Record<ComplexityScore, string> = {
 export type Task = {
   id: number
   orgId: number
+  organization: Organization
   title: string
   description: string
   assigneeAddress: string
@@ -41,7 +45,10 @@ export type Task = {
   complexityScore: ComplexityScore
   reputationLevel: number
   requiredApprovals: number
-  rewardAmount: number
+  rewardAmount: BigNumber
   rewardToken: string
   taskDuration: number
+  approvedBy: string[]
+  assigner: string
+  assignmentRequests: string[]
 }

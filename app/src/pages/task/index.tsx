@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { fetchTasksByOrg } from 'hooks/task/functions'
+import client from 'graphclient/client'
+import { useGetTasksQuery, usePolling } from 'hooks'
 import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
-import useTasks from 'hooks/task/useTask'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -9,34 +9,40 @@ import type {
 } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import { updateCount, updateTasks } from 'state/task/slice'
+import { Converter } from 'utils/converter'
+import { GetTasksDocument, Task } from '../../../.graphclient'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
-      const tasks = await fetchTasksByOrg()
-
-      store.dispatch(updateCount(tasks.length))
-      store.dispatch(
-        updateTasks({
-          data: tasks,
-          page: { from: 0, to: tasks.length }
-        })
-      )
+      const { data } = await client.query({
+        query: GetTasksDocument
+      })
 
       return {
-        props: {}
+        props: {
+          taskList: data.tasks
+        }
       }
     }
   )
 
-const TasksPage: NextPage = () => {
-  const { tasks } = useTasks()
+const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
+  const [tasks, setTasks] = useState(
+    taskList.map((t) => Converter.TaskFromQuery(t))
+  )
   const [selectedTask, setSelectedTask] = useState(0)
-
+  const { data, startPolling, stopPolling } = useGetTasksQuery()
+  usePolling(startPolling, stopPolling)
   const selected = tasks.find((o) => o.id === selectedTask)
+
+  useEffect(() => {
+    if (data?.tasks) {
+      setTasks(data.tasks.map((t) => Converter.TaskFromQuery(t)))
+    }
+  }, [data])
 
   const onSelect = (id: number) => {
     setSelectedTask(id)

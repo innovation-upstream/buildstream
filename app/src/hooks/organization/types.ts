@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 
-export type Organization = {
+export interface Organization {
   id: number
   name: string
   description: string
@@ -14,4 +14,11 @@ export type Organization = {
   rewardSlashDivisor: BigNumber
   slashRewardEvery: number
   isInitialized: boolean
+  treasury?: {
+    tokens?: {
+      token: string
+      balance: BigNumber
+      lockedBalance: BigNumber
+    }[]
+  }
 }

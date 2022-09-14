@@ -18,28 +18,16 @@ query GetOrganization(
     requiredTaskApprovals
     requiredConfirmations
     rewardMultiplier
+    rewardSlashDivisor
+    slashRewardEvery
     rewardToken
     isInitialized
-    tasks {
-      id
-      taskId
-      title
-      description
-      assigner
-      assignee
-      taskTags
-      status
-      complexityScore
-      reputationLevel
-      requiredApprovals
-      rewardAmount
-      rewardToken
-      assignDate
-      submitDate
-      taskDuration
-      comment
-      approvedBy
-      assignmentRequest
+    treasury {
+      tokens {
+        token
+        balance
+        lockedBalance
+      }
     }
   }
 }
@@ -73,27 +61,15 @@ query GetOrganizations(
     requiredConfirmations
     rewardMultiplier
     rewardToken
+    rewardSlashDivisor
+    slashRewardEvery
     isInitialized
-    tasks {
-      id
-      taskId
-      title
-      description
-      assigner
-      assignee
-      taskTags
-      status
-      complexityScore
-      reputationLevel
-      requiredApprovals
-      rewardAmount
-      rewardToken
-      assignDate
-      submitDate
-      taskDuration
-      comment
-      approvedBy
-      assignmentRequest
+    treasury {
+      tokens {
+        token
+        balance
+        lockedBalance
+      }
     }
   }
 }
