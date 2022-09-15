@@ -6,14 +6,21 @@ import { ethers } from 'ethers'
 import client from 'graphclient/client'
 import { useGetTaskQuery, usePolling } from 'hooks'
 import useBalance from 'hooks/balance/useBalance'
-import { assignToSelf, openTask, taskSubmission } from 'hooks/task/functions'
+import {
+  assignToSelf,
+  openTask,
+  taskSubmission,
+  archiveTask
+} from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { GetTaskDocument, Task } from '../../../.graphclient'
+import { useRouter } from 'next/router'
 
 interface PageProps {
   task: Task
@@ -45,6 +52,8 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
   const taskStatus = Object.entries(TaskStatusMap)[currentTask?.status]?.[1]
   const [errorMsg, setErrorMsg] = useState<string>()
   const { balance } = useBalance()
+  const [processAchive, setProcessArchive] = useState(false)
+  const router = useRouter()
 
   const { data, startPolling, stopPolling } = useGetTaskQuery({
     variables: {
@@ -80,6 +89,7 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
       setErrorMsg('Connect your wallet')
       return
     }
+    setProcessing(true)
     try {
       setProcessing(true)
       await assignToSelf(currentTask?.id, library.getSigner())
@@ -87,6 +97,22 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
     } catch (e) {
       setProcessing(false)
       console.error('ERROR===', e)
+    }
+  }
+
+  const archiveCurrentTask = async () => {
+    if (!account) {
+      setErrorMsg('Connect your wallet')
+      return
+    }
+    setProcessArchive(true)
+    try {
+      const tx = await archiveTask(currentTask?.id, library.getSigner())
+      setProcessArchive(false)
+      if (tx) router.push('/task')
+    } catch (e) {
+      setProcessArchive(false)
+      console.error(e)
     }
   }
 
@@ -197,6 +223,19 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
             {currentTask?.taskDuration.toString()}
           </span>
         </p>
+        <div className='w-full flex justify-between align-center mt-4'>
+          <Link href={`/task/edit/${currentTask?.id}`}>
+            <a className='text-blue-500 underline'>Edit Task</a>
+          </Link>
+          {taskStatus == 'open' && (
+            <button
+              onClick={archiveCurrentTask}
+              className='bg-blue-500 text-white px-4 rounded-lg'
+            >
+              {processAchive ? <Spinner /> : 'Archive Task'}
+            </button>
+          )}
+        </div>
       </div>
       <div className='w-full h-full md:basis-6/12'>
         <div className='w-full h-full mt-10 bg-gray-100 rounded-lg p-8'>

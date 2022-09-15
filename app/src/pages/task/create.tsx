@@ -8,6 +8,7 @@ import { createNewTask } from 'hooks/task/functions'
 import client from 'graphclient/client'
 import { GetOrganizationsDocument, Organization } from '../../../.graphclient'
 import { Converter } from 'utils/converter'
+import { ComplexityScoreMap } from 'hooks/task/types'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -40,10 +41,11 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
   const [processing, setProcessing] = useState(false)
   const tagRef = useRef<any>('')
   const { account, library } = useWeb3()
-  const [ organizations, setOrganizations ] = useState(
+  const [organizations, setOrganizations] = useState(
     orgs.map((o) => Converter.OrganizationFromQuery(o))
   )
   const [status, setStatus] = useState({ text: '', error: false })
+  const taskComplexities = Object.entries(ComplexityScoreMap)
   const router = useRouter()
 
   const { data, startPolling, stopPolling } = useGetOrganizationsQuery()
@@ -150,7 +152,7 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
                     id='orgId'
                     name='orgId'
                     onChange={handleChange}
-                    className='w-full py-2 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                    className='w-full py-3 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
                   >
                     <option>Select Organization</option>
                     {organizations.length > 0 &&
@@ -190,14 +192,21 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
                   >
                     Complexity Score
                   </label>
-                  <input
-                    type='number'
+                  <select
                     id='complexityScore'
                     value={taskData.complexityScore}
                     onChange={handleChange}
                     name='complexityScore'
-                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                  />
+                    className='w-full bg-gray-100 py-3 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  >
+                    {taskComplexities.map(([key, value]) => {
+                      return (
+                        <option key={key} value={key}>
+                          {value.toLocaleUpperCase()}
+                        </option>
+                      )
+                    })}
+                  </select>
                 </div>
               </div>
               <div className='p-2 w-1/2'>
