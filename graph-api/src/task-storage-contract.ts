@@ -46,7 +46,7 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
   taskEntity.save()
 }
 
-export function handleTaskRequirementUpdate(
+export function handleTaskRequirementUpdated(
   event: TaskRequirementUpdatedEvent
 ): void {
   const contract = Contract.bind(event.address)

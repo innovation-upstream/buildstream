@@ -47,7 +47,7 @@ type TaskCount @entity {
 
 type TreasuryToken @entity {
   id: ID!
-  orgId: Treasury!
+  orgId: Treasury
   token: String!
   balance: BigInt!
   lockedBalance: BigInt!
