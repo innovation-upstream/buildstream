@@ -536,13 +536,21 @@ export class TreasuryToken extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get orgId(): string {
+  get orgId(): string | null {
     let value = this.get("orgId");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set orgId(value: string) {
-    this.set("orgId", Value.fromString(value));
+  set orgId(value: string | null) {
+    if (!value) {
+      this.unset("orgId");
+    } else {
+      this.set("orgId", Value.fromString(<string>value));
+    }
   }
 
   get token(): string {
