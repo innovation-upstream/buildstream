@@ -47,12 +47,15 @@ contract TaskStorageContract {
     event TaskCreation(uint256 indexed taskId);
     event TaskOpened(uint256 indexed taskId);
     event TaskAssignment(address indexed sender, uint256 indexed taskId);
-    event TaskAssignmentRequested(address indexed sender, uint256 indexed taskId);
+    event TaskAssignmentRequested(
+        address indexed sender,
+        uint256 indexed taskId
+    );
     event TaskUnassignment(address indexed sender, uint256 indexed taskId);
     event TaskSubmission(uint256 indexed taskId);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
-    event TaskRequirementUpdated(uint256 indexed taskId);
+    event TaskUpdated(uint256 indexed taskId);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Permission denied");
@@ -127,21 +130,29 @@ contract TaskStorageContract {
         emit TaskCreation(taskId);
     }
 
-    /// @dev Allows an approver to update a task requirement.
+    /// @dev Allows an approver to update a task.
     /// @param taskId Task ID.
-    function updateTaskRequirement(
+    function updateTask(
         uint256 taskId,
+        string memory title,
+        string memory description,
+        string[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration
     ) external taskExists(taskId) onlyTaskContract {
         TaskLib.Task memory task = tasks[taskId];
-        require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
-        task.complexityScore = complexityScore;
-        task.reputationLevel = reputationLevel;
+        require(task.status <= TaskLib.TaskStatus.OPEN, "Task is assigned");
+        task.title = title;
+        task.description = description;
         task.taskDuration = taskDuration;
+        task.reputationLevel = reputationLevel;
+        if (task.status == TaskLib.TaskStatus.PROPOSED) {
+            task.taskTags = taskTags;
+            task.complexityScore = complexityScore;
+        }
         tasks[taskId] = task;
-        emit TaskRequirementUpdated(taskId);
+        emit TaskUpdated(taskId);
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -152,7 +163,11 @@ contract TaskStorageContract {
         address rewardToken
     ) external taskExists(taskId) onlyTaskContract {
         TaskLib.Task memory task = tasks[taskId];
-        require(task.status == TaskLib.TaskStatus.PROPOSED, "Task is opened");
+        require(
+            task.status == TaskLib.TaskStatus.PROPOSED ||
+                task.status == TaskLib.TaskStatus.ARCHIVED,
+            "Task is opened"
+        );
         task.status = TaskLib.TaskStatus.OPEN;
         task.rewardAmount = rewardAmount;
         task.rewardToken = rewardToken;

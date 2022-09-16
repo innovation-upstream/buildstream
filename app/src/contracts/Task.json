@@ -1,5 +1,5 @@
 {
-  "address": "0x2Fa963C6D9fa4F50521E5C44Ea6DD5c6b8AFE533",
+  "address": "0x0C035D2A5b0e472D04BFa3A7160d1799c4725035",
   "abi": [
     {
       "type": "constructor",
@@ -335,7 +335,7 @@
     },
     {
       "type": "function",
-      "name": "updateTaskRequirement",
+      "name": "updateTask",
       "constant": false,
       "payable": false,
       "gas": 1100000,
@@ -343,6 +343,18 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "string",
+          "name": "title"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "string[]",
+          "name": "taskTags"
         },
         {
           "type": "uint256",

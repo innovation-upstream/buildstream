@@ -148,24 +148,6 @@ export class TaskOpened__Params {
   }
 }
 
-export class TaskRequirementUpdated extends ethereum.Event {
-  get params(): TaskRequirementUpdated__Params {
-    return new TaskRequirementUpdated__Params(this);
-  }
-}
-
-export class TaskRequirementUpdated__Params {
-  _event: TaskRequirementUpdated;
-
-  constructor(event: TaskRequirementUpdated) {
-    this._event = event;
-  }
-
-  get taskId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-}
-
 export class TaskRevocation extends ethereum.Event {
   get params(): TaskRevocation__Params {
     return new TaskRevocation__Params(this);
@@ -225,6 +207,24 @@ export class TaskUnassignment__Params {
 
   get taskId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class TaskUpdated extends ethereum.Event {
+  get params(): TaskUpdated__Params {
+    return new TaskUpdated__Params(this);
+  }
+}
+
+export class TaskUpdated__Params {
+  _event: TaskUpdated;
+
+  constructor(event: TaskUpdated) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -864,6 +864,60 @@ export class UnassignCall__Outputs {
   }
 }
 
+export class UpdateTaskCall extends ethereum.Call {
+  get inputs(): UpdateTaskCall__Inputs {
+    return new UpdateTaskCall__Inputs(this);
+  }
+
+  get outputs(): UpdateTaskCall__Outputs {
+    return new UpdateTaskCall__Outputs(this);
+  }
+}
+
+export class UpdateTaskCall__Inputs {
+  _call: UpdateTaskCall;
+
+  constructor(call: UpdateTaskCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get title(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get description(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+
+  get taskTags(): Array<string> {
+    return this._call.inputValues[3].value.toStringArray();
+  }
+
+  get complexityScore(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get reputationLevel(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get taskDuration(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+}
+
+export class UpdateTaskCall__Outputs {
+  _call: UpdateTaskCall;
+
+  constructor(call: UpdateTaskCall) {
+    this._call = call;
+  }
+}
+
 export class UpdateTaskContractAddressCall extends ethereum.Call {
   get inputs(): UpdateTaskContractAddressCall__Inputs {
     return new UpdateTaskContractAddressCall__Inputs(this);
@@ -890,48 +944,6 @@ export class UpdateTaskContractAddressCall__Outputs {
   _call: UpdateTaskContractAddressCall;
 
   constructor(call: UpdateTaskContractAddressCall) {
-    this._call = call;
-  }
-}
-
-export class UpdateTaskRequirementCall extends ethereum.Call {
-  get inputs(): UpdateTaskRequirementCall__Inputs {
-    return new UpdateTaskRequirementCall__Inputs(this);
-  }
-
-  get outputs(): UpdateTaskRequirementCall__Outputs {
-    return new UpdateTaskRequirementCall__Outputs(this);
-  }
-}
-
-export class UpdateTaskRequirementCall__Inputs {
-  _call: UpdateTaskRequirementCall;
-
-  constructor(call: UpdateTaskRequirementCall) {
-    this._call = call;
-  }
-
-  get taskId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get complexityScore(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get taskDuration(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-}
-
-export class UpdateTaskRequirementCall__Outputs {
-  _call: UpdateTaskRequirementCall;
-
-  constructor(call: UpdateTaskRequirementCall) {
     this._call = call;
   }
 }
