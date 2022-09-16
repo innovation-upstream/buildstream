@@ -1,5 +1,5 @@
 {
-  "address": "0x032abD052A63A0Bd7C2e565C0b2Ef779F48d3D20",
+  "address": "0xd8eD99d76BfD2bA23623c85Da105cc595c9A06a3",
   "abi": [
     {
       "type": "constructor",
@@ -108,18 +108,6 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "TaskRequirementUpdated",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
       "name": "TaskRevocation",
       "inputs": [
         {
@@ -156,6 +144,18 @@
           "name": "sender",
           "indexed": true
         },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskUpdated",
+      "inputs": [
         {
           "type": "uint256",
           "name": "taskId",
@@ -524,21 +524,7 @@
     },
     {
       "type": "function",
-      "name": "updateTaskContractAddress",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "address",
-          "name": "_address"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "updateTaskRequirement",
+      "name": "updateTask",
       "constant": false,
       "payable": false,
       "gas": 1100000,
@@ -546,6 +532,18 @@
         {
           "type": "uint256",
           "name": "taskId"
+        },
+        {
+          "type": "string",
+          "name": "title"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "string[]",
+          "name": "taskTags"
         },
         {
           "type": "uint256",
@@ -558,6 +556,20 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskContractAddress",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
         }
       ],
       "outputs": []

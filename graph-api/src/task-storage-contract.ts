@@ -8,10 +8,10 @@ import {
   TaskConfirmation as TaskConfirmationEvent,
   TaskCreation as TaskCreationEvent,
   TaskOpened as TaskOpenedEvent,
-  TaskRequirementUpdated as TaskRequirementUpdatedEvent,
   TaskRevocation as TaskRevocationEvent,
   TaskSubmission as TaskSubmissionEvent,
-  TaskUnassignment as TaskUnassignmentEvent
+  TaskUnassignment as TaskUnassignmentEvent,
+  TaskUpdated as TaskUpdatedEvent
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt } from '@graphprotocol/graph-ts'
@@ -46,14 +46,15 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
   taskEntity.save()
 }
 
-export function handleTaskRequirementUpdated(
-  event: TaskRequirementUpdatedEvent
-): void {
+export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   const contract = Contract.bind(event.address)
   const task = contract.getTask(event.params.taskId)
 
   const taskEntity = Task.load(event.params.taskId.toString())
   if (!taskEntity) return
+  taskEntity.title = task.title
+  taskEntity.description = task.description
+  taskEntity.taskTags = task.taskTags
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration

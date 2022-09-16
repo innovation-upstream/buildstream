@@ -84,16 +84,22 @@ contract TaskContract {
         );
     }
 
-    /// @dev Allows an approver to update a task requirement.
+    /// @dev Allows an approver to update a task.
     /// @param taskId Task ID.
-    function updateTaskRequirement(
+    function updateTask(
         uint256 taskId,
+        string memory title,
+        string memory description,
+        string[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration
     ) external onlyApprover(taskId) {
-        taskStorage.updateTaskRequirement(
+        taskStorage.updateTask(
             taskId,
+            title,
+            description,
+            taskTags,
             complexityScore,
             reputationLevel,
             taskDuration
@@ -142,15 +148,17 @@ contract TaskContract {
             task.orgId
         );
         sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
-        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(
+            taskId
+        );
         bool shouldUnstake = task.assigneeAddress == task.assigner;
         if (shouldUnstake)
-            for (uint i = 0; i < assignmentRequests.length; i++)
+            for (uint256 i = 0; i < assignmentRequests.length; i++)
                 if (assignmentRequests[i] == task.assigneeAddress)
                     shouldUnstake = false;
         if (shouldUnstake)
             sbtToken.unStake(
-                msg.sender,
+                task.assigneeAddress,
                 task.complexityScore,
                 task.reputationLevel,
                 task.orgId
@@ -159,9 +167,11 @@ contract TaskContract {
         if (task.taskDuration >= task.submitDate - task.assignDate)
             rewardAmount = task.rewardAmount;
         else {
-            uint256 overtime = task.submitDate - task.assignDate - task.taskDuration;
+            uint256 overtime = task.submitDate -
+                task.assignDate -
+                task.taskDuration;
             uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
-            uint256 slashAmount = (slashRatio * task.rewardAmount * 10 ** 18) /
+            uint256 slashAmount = (slashRatio * task.rewardAmount * 10**18) /
                 orgConfig.rewardSlashDivisor;
             if (slashAmount > task.rewardAmount)
                 slashAmount = task.rewardAmount;
@@ -254,10 +264,12 @@ contract TaskContract {
     /// @param taskId Task ID.
     function unassignSelf(uint256 taskId) external {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
-        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(taskId);
+        address[] memory assignmentRequests = taskStorage.getAssignmentRequests(
+            taskId
+        );
         bool shouldUnstake = task.assigneeAddress == task.assigner;
         if (shouldUnstake)
-            for (uint i = 0; i < assignmentRequests.length; i++)
+            for (uint256 i = 0; i < assignmentRequests.length; i++)
                 if (assignmentRequests[i] == task.assigneeAddress)
                     shouldUnstake = false;
         taskStorage.unassign(taskId, msg.sender);
@@ -273,6 +285,10 @@ contract TaskContract {
     /// @dev Allows approvers to archive open tasks.
     /// @param taskId Task ID.
     function archive(uint256 taskId) external onlyApprover(taskId) {
+        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        if (task.rewardToken == address(0))
+            treasury.unlockBalance(task.orgId, task.rewardAmount);
+        else treasury.unlockBalance(task.orgId, task.rewardToken, task.rewardAmount);
         taskStorage.archive(taskId);
     }
 

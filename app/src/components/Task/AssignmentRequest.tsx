@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
 import Spinner from 'components/Spinner/Spinner'
-import { approveAssignedRequest } from 'hooks/task/functions'
 import { useWeb3 } from 'hooks'
+import { approveAssignedRequest } from 'hooks/task/functions'
+import React, { useState } from 'react'
 
 interface Props {
   taskId: number
@@ -20,7 +20,7 @@ const AssignmentRequest: React.FC<Props> = ({
   const { account, library } = useWeb3()
 
   const approveTask = async (address: string) => {
-    if (!account || !taskId) return
+    if (!account) return
     setProcessing(true)
     try {
       const tx = await approveAssignedRequest(

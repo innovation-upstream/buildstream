@@ -6,7 +6,7 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0xbB484B65eB08fBF2436694F6a78Aa8f726885c4d"
+      address: "0xb38Fda7eb862fdACc66FC18AF8E90691bCeB43cB"
       abi: Organization
     mapping:
       kind: ethereum/events
@@ -39,7 +39,7 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0x9d40Dc3347f47239C04F2Bd23dDFbd18630FA6C2"
+      address: "0x1708c9cFC054685f791Eeb70A2DEb330101Ca014"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -65,7 +65,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0xfDE570D077235dD8Ab2e91086d4aa3032eB87F32"
+      address: "0x21162C5cB94677C32193d3A1896bCE424Ac2ed12"
       abi: ActionContract
     mapping:
       kind: ethereum/events
@@ -88,7 +88,7 @@ dataSources:
     name: TaskStorageContract
     network: goerli
     source:
-      address: "0x032abD052A63A0Bd7C2e565C0b2Ef779F48d3D20"
+      address: "0xd8eD99d76BfD2bA23623c85Da105cc595c9A06a3"
       abi: TaskStorageContract
     mapping:
       kind: ethereum/events
@@ -115,8 +115,8 @@ dataSources:
           handler: handleTaskCreation
         - event: TaskOpened(indexed uint256)
           handler: handleTaskOpened
-        - event: TaskRequirementUpdated(indexed uint256)
-          handler: handleTaskRequirementUpdated
+        - event: TaskUpdated(indexed uint256)
+          handler: handleTaskUpdated
         - event: TaskRevocation(indexed address,indexed uint256)
           handler: handleTaskRevocation
         - event: TaskSubmission(indexed uint256)
