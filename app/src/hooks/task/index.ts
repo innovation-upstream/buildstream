@@ -1,18 +1,18 @@
 import * as ApolloReactHooks from '@apollo/react-hooks'
 import {
   GetTaskCountDocument,
+  GetTaskCountQuery,
   GetTaskCountQueryVariables,
   GetTaskCountsDocument,
+  GetTaskCountsQuery,
   GetTaskCountsQueryVariables,
   GetTaskDocument,
   GetTaskQueryVariables,
   GetTasksDocument,
+  GetTaskSnapshotsQueryVariables,
   GetTasksQueryVariables,
-  GetTaskQuery,
-  GetTasksQuery,
-  GetTaskCountQuery,
-  GetTaskCountsQuery,
-  Task
+  Task,
+  TaskSnapshot
 } from 'graphclient'
 
 export const useGetTasksQuery = (
@@ -28,7 +28,7 @@ export const useGetTasksQuery = (
 
 export const useGetTaskQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-  { task: Task },
+    { task: Task },
     GetTaskQueryVariables
   >
 ) =>
@@ -58,3 +58,14 @@ export const useGetTasksCountQuery = (
     GetTaskCountsDocument,
     baseOptions
   )
+
+export const useGetTaskSnapshotsQuery = (
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    { taskSnapshots: TaskSnapshot[] },
+    GetTaskSnapshotsQueryVariables
+  >
+) =>
+  ApolloReactHooks.useQuery<
+    { taskSnapshots: TaskSnapshot[] },
+    GetTaskSnapshotsQueryVariables
+  >(GetTasksDocument, baseOptions)

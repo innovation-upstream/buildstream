@@ -145,3 +145,68 @@ query GetTaskCounts(
     count
   }
 }
+
+query GetTaskSnapshots(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: TaskSnapshot_orderBy
+  $orderDirection: OrderDirection
+  $where: TaskSnapshot_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  taskSnapshots(
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    actor
+    timestamp
+    taskId
+    orgId {
+      id
+      orgId
+      name
+      description
+      reviewers
+      approvers
+      signers
+      requiredTaskApprovals
+      requiredConfirmations
+      rewardMultiplier
+      rewardToken
+      rewardSlashDivisor
+      slashRewardEvery
+      isInitialized
+      treasury {
+        tokens {
+          token
+          balance
+          lockedBalance
+        }
+      }
+    }
+    title
+    description
+    assigner
+    assignee
+    taskTags
+    status
+    complexityScore
+    reputationLevel
+    requiredApprovals
+    rewardAmount
+    rewardToken
+    assignDate
+    submitDate
+    taskDuration
+    comment
+    approvedBy
+    assignmentRequest
+  }
+}

@@ -1,29 +1,40 @@
-import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import ApprovalRequest from 'components/Task/ApprovalRequest'
 import AssignmentRequest from 'components/Task/AssignmentRequest'
 import { ethers } from 'ethers'
 import client from 'graphclient/client'
-import { useGetTaskQuery, usePolling } from 'hooks'
+import {
+  useGetTaskQuery,
+  useGetTaskSnapshotsQuery,
+  usePolling,
+  useWeb3
+} from 'hooks'
 import useBalance from 'hooks/balance/useBalance'
 import {
+  archiveTask,
   assignToSelf,
   openTask,
-  taskSubmission,
-  archiveTask
+  taskSubmission
 } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
-import { GetTaskDocument, Task } from '../../../.graphclient'
-import { useRouter } from 'next/router'
+import { getTaskDiff } from 'utils/taskDiff'
+import {
+  GetTaskDocument,
+  GetTaskSnapshotsDocument,
+  Task,
+  TaskSnapshot
+} from '../../../.graphclient'
 
 interface PageProps {
   task: Task
+  snapshots: TaskSnapshot[]
 }
 
 export const getServerSideProps: GetServerSideProps =
@@ -36,24 +47,39 @@ export const getServerSideProps: GetServerSideProps =
       }
     })
 
+    const { data: snapshots } = await client.query({
+      query: GetTaskSnapshotsDocument,
+      variables: {
+        where: {
+          taskId: taskId as any
+        }
+      }
+    })
+
     return {
       props: {
-        task: data.task
+        task: data.task,
+        snapshots: snapshots.taskSnapshots
       }
     }
   })
 
-const TaskPage: NextPage<PageProps> = ({ task }) => {
+const TaskPage: NextPage<PageProps> = ({ task, snapshots }) => {
   const { account, library } = useWeb3()
   const [rewardToken, setRewardToken] = useState(ethers.constants.AddressZero)
   const [taskComment, setTaskComment] = useState<string>()
   const [processing, setProcessing] = useState(false)
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
+  const [taskSnapshots, setTaskSnapshots] = useState(
+    snapshots?.map((t) => Converter.TaskSnapshotFromQuery(t as any))
+  )
   const taskStatus = Object.entries(TaskStatusMap)[currentTask?.status]?.[1]
   const [errorMsg, setErrorMsg] = useState<string>()
   const { balance } = useBalance()
   const [processAchive, setProcessArchive] = useState(false)
   const router = useRouter()
+
+  const taskDiff = getTaskDiff(taskSnapshots)
 
   const { data, startPolling, stopPolling } = useGetTaskQuery({
     variables: {
@@ -61,13 +87,36 @@ const TaskPage: NextPage<PageProps> = ({ task }) => {
     }
   })
 
+  const {
+    data: snapShotData,
+    startPolling: startSnapshotPolling,
+    stopPolling: stopSnapshotPolling
+  } = useGetTaskSnapshotsQuery({
+    variables: {
+      where: {
+        taskId: currentTask.id as any
+      }
+    }
+  })
+
   usePolling(startPolling, stopPolling)
+  usePolling(startSnapshotPolling, stopSnapshotPolling)
 
   useEffect(() => {
     if (data?.task) {
       setCurrentTask(Converter.TaskFromQuery(data.task as any))
     }
   }, [data])
+
+  useEffect(() => {
+    if (snapShotData?.taskSnapshots) {
+      setTaskSnapshots(
+        snapShotData.taskSnapshots?.map((t) =>
+          Converter.TaskSnapshotFromQuery(t as any)
+        )
+      )
+    }
+  }, [snapShotData])
 
   const openCreatedTask = async () => {
     if (!account) {

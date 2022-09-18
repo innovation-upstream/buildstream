@@ -52,3 +52,9 @@ export type Task = {
   assigner: string
   assignmentRequests: string[]
 }
+
+export type TaskSnapshot = {
+  actor: string
+  taskId: number
+  timestamp: BigNumber
+} & Task

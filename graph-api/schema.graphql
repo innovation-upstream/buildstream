@@ -39,6 +39,31 @@ type Task @entity {
   assignmentRequest: [String!]
 }
 
+type TaskSnapshot @entity {
+  id: ID!
+  actor: String
+  timestamp: BigInt!
+  taskId: BigInt!
+  orgId: Organization!
+  title: String
+  description: String
+  assigner: String!
+  assignee: String
+  taskTags: [String!]!
+  status: Int!
+  complexityScore: BigInt
+  reputationLevel: BigInt
+  requiredApprovals: BigInt
+  rewardAmount: BigInt
+  rewardToken: Bytes
+  assignDate: BigInt
+  submitDate: BigInt
+  taskDuration: BigInt
+  comment: String
+  approvedBy: [String!]
+  assignmentRequest: [String!]
+}
+
 type TaskCount @entity {
   id: ID!
   orgId: BigInt!

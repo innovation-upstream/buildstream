@@ -455,6 +455,350 @@ export class Task extends Entity {
   }
 }
 
+export class TaskSnapshot extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TaskSnapshot entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type TaskSnapshot must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TaskSnapshot", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TaskSnapshot | null {
+    return changetype<TaskSnapshot | null>(store.get("TaskSnapshot", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get actor(): string | null {
+    let value = this.get("actor");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set actor(value: string | null) {
+    if (!value) {
+      this.unset("actor");
+    } else {
+      this.set("actor", Value.fromString(<string>value));
+    }
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get taskId(): BigInt {
+    let value = this.get("taskId");
+    return value!.toBigInt();
+  }
+
+  set taskId(value: BigInt) {
+    this.set("taskId", Value.fromBigInt(value));
+  }
+
+  get orgId(): string {
+    let value = this.get("orgId");
+    return value!.toString();
+  }
+
+  set orgId(value: string) {
+    this.set("orgId", Value.fromString(value));
+  }
+
+  get title(): string | null {
+    let value = this.get("title");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set title(value: string | null) {
+    if (!value) {
+      this.unset("title");
+    } else {
+      this.set("title", Value.fromString(<string>value));
+    }
+  }
+
+  get description(): string | null {
+    let value = this.get("description");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set description(value: string | null) {
+    if (!value) {
+      this.unset("description");
+    } else {
+      this.set("description", Value.fromString(<string>value));
+    }
+  }
+
+  get assigner(): string {
+    let value = this.get("assigner");
+    return value!.toString();
+  }
+
+  set assigner(value: string) {
+    this.set("assigner", Value.fromString(value));
+  }
+
+  get assignee(): string | null {
+    let value = this.get("assignee");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set assignee(value: string | null) {
+    if (!value) {
+      this.unset("assignee");
+    } else {
+      this.set("assignee", Value.fromString(<string>value));
+    }
+  }
+
+  get taskTags(): Array<string> {
+    let value = this.get("taskTags");
+    return value!.toStringArray();
+  }
+
+  set taskTags(value: Array<string>) {
+    this.set("taskTags", Value.fromStringArray(value));
+  }
+
+  get status(): i32 {
+    let value = this.get("status");
+    return value!.toI32();
+  }
+
+  set status(value: i32) {
+    this.set("status", Value.fromI32(value));
+  }
+
+  get complexityScore(): BigInt | null {
+    let value = this.get("complexityScore");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set complexityScore(value: BigInt | null) {
+    if (!value) {
+      this.unset("complexityScore");
+    } else {
+      this.set("complexityScore", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get reputationLevel(): BigInt | null {
+    let value = this.get("reputationLevel");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set reputationLevel(value: BigInt | null) {
+    if (!value) {
+      this.unset("reputationLevel");
+    } else {
+      this.set("reputationLevel", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get requiredApprovals(): BigInt | null {
+    let value = this.get("requiredApprovals");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set requiredApprovals(value: BigInt | null) {
+    if (!value) {
+      this.unset("requiredApprovals");
+    } else {
+      this.set("requiredApprovals", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get rewardAmount(): BigInt | null {
+    let value = this.get("rewardAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set rewardAmount(value: BigInt | null) {
+    if (!value) {
+      this.unset("rewardAmount");
+    } else {
+      this.set("rewardAmount", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get rewardToken(): Bytes | null {
+    let value = this.get("rewardToken");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set rewardToken(value: Bytes | null) {
+    if (!value) {
+      this.unset("rewardToken");
+    } else {
+      this.set("rewardToken", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get assignDate(): BigInt | null {
+    let value = this.get("assignDate");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set assignDate(value: BigInt | null) {
+    if (!value) {
+      this.unset("assignDate");
+    } else {
+      this.set("assignDate", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get submitDate(): BigInt | null {
+    let value = this.get("submitDate");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set submitDate(value: BigInt | null) {
+    if (!value) {
+      this.unset("submitDate");
+    } else {
+      this.set("submitDate", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get taskDuration(): BigInt | null {
+    let value = this.get("taskDuration");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set taskDuration(value: BigInt | null) {
+    if (!value) {
+      this.unset("taskDuration");
+    } else {
+      this.set("taskDuration", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get comment(): string | null {
+    let value = this.get("comment");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set comment(value: string | null) {
+    if (!value) {
+      this.unset("comment");
+    } else {
+      this.set("comment", Value.fromString(<string>value));
+    }
+  }
+
+  get approvedBy(): Array<string> | null {
+    let value = this.get("approvedBy");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set approvedBy(value: Array<string> | null) {
+    if (!value) {
+      this.unset("approvedBy");
+    } else {
+      this.set("approvedBy", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get assignmentRequest(): Array<string> | null {
+    let value = this.get("assignmentRequest");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set assignmentRequest(value: Array<string> | null) {
+    if (!value) {
+      this.unset("assignmentRequest");
+    } else {
+      this.set(
+        "assignmentRequest",
+        Value.fromStringArray(<Array<string>>value)
+      );
+    }
+  }
+}
+
 export class TaskCount extends Entity {
   constructor(id: string) {
     super();

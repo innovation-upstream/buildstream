@@ -1,4 +1,4 @@
-import { Task, TaskCount } from '../generated/schema'
+import { Task, TaskCount, TaskSnapshot } from '../generated/schema'
 
 import {
   TaskArchived as TaskArchivedEvent,
@@ -14,8 +14,26 @@ import {
   TaskUpdated as TaskUpdatedEvent
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import { TaskStorageContract as Contract } from '../generated/TaskStorageContract/TaskStorageContract'
+
+function createTaskSnapshot(
+  event: ethereum.Event,
+  taskEntity: Task
+): TaskSnapshot {
+  const taskSnapshotEntity = new TaskSnapshot(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  )
+  const entries = taskEntity.entries
+  for (let i = 0; i < entries.length; i++) {
+    if (entries[i].key === 'id') continue
+    taskSnapshotEntity.set(entries[i].key, entries[i].value)
+  }
+  taskSnapshotEntity.timestamp = event.block.timestamp
+  taskSnapshotEntity.actor = event.transaction.from.toHexString()
+
+  return taskSnapshotEntity
+}
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
@@ -24,6 +42,8 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.status = 2
   taskEntity.assignee = event.params.sender.toHexString()
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskAssignmentRequest(
@@ -36,6 +56,8 @@ export function handleTaskAssignmentRequest(
   assignmentRequests.push(event.params.sender.toHexString())
   taskEntity.assignmentRequest = assignmentRequests
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskClosed(event: TaskClosedEvent): void {
@@ -44,6 +66,8 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
   if (!taskEntity) return
   taskEntity.status = 4
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
@@ -59,6 +83,8 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
@@ -69,6 +95,8 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
   approvers.push(event.params.sender.toHexString())
   taskEntity.approvedBy = approvers
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskCreation(event: TaskCreationEvent): void {
@@ -105,6 +133,9 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   }
   tCountEntity.count = tCountEntity.count.plus(BigInt.fromI32(1))
   tCountEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
@@ -117,6 +148,9 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
   taskEntity.rewardToken = task.rewardToken
   taskEntity.rewardAmount = task.rewardAmount
   taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskRevocation(event: TaskRevocationEvent): void {
@@ -130,6 +164,9 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
     taskEntity.approvedBy = approvers
     taskEntity.save()
   }
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskSubmission(event: TaskSubmissionEvent): void {
@@ -141,6 +178,9 @@ export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   taskEntity.status = 3
   taskEntity.comment = task.comment
   taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
@@ -150,6 +190,9 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   taskEntity.status = 1
   taskEntity.assignee = Address.zero().toHexString()
   taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
 
 export function handleTaskArchived(event: TaskArchivedEvent): void {
@@ -158,4 +201,7 @@ export function handleTaskArchived(event: TaskArchivedEvent): void {
   if (!taskEntity) return
   taskEntity.status = 5
   taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
 }
