@@ -147,6 +147,9 @@ export const archiveTask = async (
 
 export const editTask = async (
   taskId: number,
+  title: string,
+  description: string,
+  taskTags: string[],
   complexityScore: ComplexityScore,
   reputationLevel: number,
   taskDuration: number,
@@ -158,8 +161,11 @@ export const editTask = async (
     provider
   )
 
-  const response = await contract.updateTaskRequirement(
+  const response = await contract.updateTask(
     taskId,
+    title,
+    description,
+    taskTags,
     complexityScore,
     reputationLevel,
     taskDuration
