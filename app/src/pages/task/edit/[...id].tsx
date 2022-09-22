@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import type { GetServerSideProps, NextPage } from 'next'
 import { wrapper } from 'state/store'
 import { editTask } from 'hooks/task/functions'
@@ -39,17 +39,38 @@ const EditTask: React.FC<PageProps> = ({ task }) => {
   const [processing, setProcessing] = useState(false)
   const { account, library } = useWeb3React()
   const router = useRouter()
+  const tagRef = useRef<any>('')
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
     let targetValue: string | number = ev.target.value
 
-    if (ev.target.type === 'number') {
+    if (ev.target.type === 'number' || targetName === 'orgId') {
       if (targetValue) {
         targetValue = Number(targetValue)
       }
     }
+
+    if (ev.target.name === 'taskTags') {
+      if (ev.key === 'Enter') {
+        setTaskData((prev: any) => ({
+          ...prev,
+          [targetName]: [...prev.taskTags, targetValue]
+        }))
+        tagRef.current.value = ''
+      }
+      return
+    }
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
+  }
+
+  const deleteTag = (ev: any) => {
+    const index = parseInt(ev.target.id)
+
+    let tagUpdate = [...taskData.taskTags]
+    tagUpdate.splice(index, 1)
+
+    setTaskData((prev) => ({ ...prev, taskTags: [...tagUpdate] }))
   }
 
   const editCurrentTask = async () => {
@@ -61,6 +82,9 @@ const EditTask: React.FC<PageProps> = ({ task }) => {
     try {
       const response = await editTask(
         taskData.id,
+        taskData.title,
+        taskData.description,
+        taskData.taskTags,
         taskData.complexityScore,
         taskData.reputationLevel,
         taskData.taskDuration,
@@ -97,6 +121,24 @@ const EditTask: React.FC<PageProps> = ({ task }) => {
           </div>
           <div className='lg:w-1/2 md:w-2/3 mx-auto'>
             <div className='flex flex-wrap -m-2'>
+              <div className='p-2 w-full'>
+                <div className='relative'>
+                  <label
+                    htmlFor='title'
+                    className='leading-7 text-sm text-gray-600'
+                  >
+                    Task Title
+                  </label>
+                  <input
+                    type='text'
+                    id='title'
+                    name='title'
+                    value={taskData.title}
+                    onChange={handleChange}
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
+                </div>
+              </div>
               <div className='p-2 w-full'>
                 <div className='relative'>
                   <label
@@ -156,6 +198,62 @@ const EditTask: React.FC<PageProps> = ({ task }) => {
                     onChange={handleChange}
                     className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
                   />
+                </div>
+              </div>
+              <div className='p-2 w-full'>
+                <div className='relative'>
+                  <label
+                    htmlFor='reputationLevel'
+                    className='leading-7 text-sm text-gray-600'
+                  >
+                    Task Tags
+                  </label>
+                  <input
+                    type='text'
+                    id='taskTags'
+                    name='taskTags'
+                    ref={tagRef}
+                    onKeyDown={handleChange}
+                    placeholder='Type and Press Enter Key'
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                  />
+                </div>
+                <div className='mt-3 h-auto flex flex-wrap item-center gap-x-2 gap-y-2'>
+                  {taskData.taskTags.length > 0 &&
+                    taskData.taskTags.map((task, index) => {
+                      return (
+                        <div
+                          key={task}
+                          className='flex items-center border-2 rounded-full px-2 py-1 w-max'
+                        >
+                          {task}
+                          <div
+                            onClick={deleteTag}
+                            id={`${index}`}
+                            className='py-1 px-3 ml-3 rounded-full bg-indigo-400 text-red-50 hover:bg-indigo-500 cursor-pointer'
+                          >
+                            x
+                          </div>
+                        </div>
+                      )
+                    })}
+                </div>
+              </div>
+              <div className='p-2 w-full'>
+                <div className='relative'>
+                  <label
+                    htmlFor='description'
+                    className='leading-7 text-sm text-gray-600'
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id='description'
+                    name='description'
+                    value={taskData.description}
+                    onChange={handleChange}
+                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out'
+                  ></textarea>
                 </div>
               </div>
               <div className='p-2 w-full'>
