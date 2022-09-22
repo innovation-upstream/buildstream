@@ -6,6 +6,7 @@ import '@typechain/hardhat'
 import 'hardhat-gas-reporter'
 import { HardhatUserConfig, task } from 'hardhat/config'
 import 'solidity-coverage'
+require('hardhat-contract-sizer')
 
 dotenv.config({ path: '.env.example' })
 dotenv.config({ override: true })

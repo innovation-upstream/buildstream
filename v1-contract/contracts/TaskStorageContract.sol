@@ -44,18 +44,22 @@ contract TaskStorageContract {
 
     event TaskConfirmation(address indexed sender, uint256 indexed taskId);
     event TaskRevocation(address indexed sender, uint256 indexed taskId);
-    event TaskCreation(uint256 indexed taskId);
-    event TaskOpened(uint256 indexed taskId);
+    event TaskCreation(uint256 indexed taskId, TaskLib.Task task);
+    event TaskOpened(
+        uint256 indexed taskId,
+        uint256 rewardAmount,
+        address rewardToken
+    );
     event TaskAssignment(address indexed sender, uint256 indexed taskId);
     event TaskAssignmentRequested(
         address indexed sender,
         uint256 indexed taskId
     );
     event TaskUnassignment(address indexed sender, uint256 indexed taskId);
-    event TaskSubmission(uint256 indexed taskId);
+    event TaskSubmission(uint256 indexed taskId, string comment);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
-    event TaskUpdated(uint256 indexed taskId);
+    event TaskUpdated(uint256 indexed taskId, TaskLib.Task task);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Permission denied");
@@ -127,7 +131,7 @@ contract TaskStorageContract {
         });
         taskCount += 1;
         _taskExists[taskId] = true;
-        emit TaskCreation(taskId);
+        emit TaskCreation(taskId, tasks[taskId]);
     }
 
     /// @dev Allows an approver to update a task.
@@ -152,7 +156,7 @@ contract TaskStorageContract {
             task.complexityScore = complexityScore;
         }
         tasks[taskId] = task;
-        emit TaskUpdated(taskId);
+        emit TaskUpdated(taskId, tasks[taskId]);
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -172,7 +176,7 @@ contract TaskStorageContract {
         task.rewardAmount = rewardAmount;
         task.rewardToken = rewardToken;
         tasks[taskId] = task;
-        emit TaskOpened(taskId);
+        emit TaskOpened(taskId, rewardAmount, rewardToken);
     }
 
     /// @dev Allows closing an approved task.
@@ -217,7 +221,7 @@ contract TaskStorageContract {
         tasks[taskId].status = TaskLib.TaskStatus.SUBMITTED;
         tasks[taskId].submitDate = block.number;
         tasks[taskId].comment = comment;
-        emit TaskSubmission(taskId);
+        emit TaskSubmission(taskId, comment);
     }
 
     /// @dev Allows assignees assign task to themselves.

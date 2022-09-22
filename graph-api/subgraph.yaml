@@ -6,7 +6,7 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0xb38Fda7eb862fdACc66FC18AF8E90691bCeB43cB"
+      address: "0x79433e241aee5a3544bBadE1c68b2D4f3D702628"
       abi: Organization
     mapping:
       kind: ethereum/events
@@ -39,7 +39,7 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0x1708c9cFC054685f791Eeb70A2DEb330101Ca014"
+      address: "0xb7F83C45236E65876DA8b551C1dD2bcD696c1a9e"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -65,7 +65,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0x21162C5cB94677C32193d3A1896bCE424Ac2ed12"
+      address: "0x9559313ef7aA522Ecd553390cb9013D36F79Bc5b"
       abi: ActionContract
     mapping:
       kind: ethereum/events
@@ -88,7 +88,7 @@ dataSources:
     name: TaskStorageContract
     network: goerli
     source:
-      address: "0xd8eD99d76BfD2bA23623c85Da105cc595c9A06a3"
+      address: "0xb74405a7ce3be6a3ce65A286B8B7e854596f2eb9"
       abi: TaskStorageContract
     mapping:
       kind: ethereum/events
@@ -111,15 +111,15 @@ dataSources:
           handler: handleTaskClosed
         - event: TaskConfirmation(indexed address,indexed uint256)
           handler: handleTaskConfirmation
-        - event: TaskCreation(indexed uint256)
+        - event: TaskCreation(indexed uint256,(uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))
           handler: handleTaskCreation
-        - event: TaskOpened(indexed uint256)
+        - event: TaskOpened(indexed uint256,uint256,address)
           handler: handleTaskOpened
-        - event: TaskUpdated(indexed uint256)
+        - event: TaskUpdated(indexed uint256,(uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))
           handler: handleTaskUpdated
         - event: TaskRevocation(indexed address,indexed uint256)
           handler: handleTaskRevocation
-        - event: TaskSubmission(indexed uint256)
+        - event: TaskSubmission(indexed uint256,string)
           handler: handleTaskSubmission
         - event: TaskUnassignment(indexed address,indexed uint256)
           handler: handleTaskUnassignment

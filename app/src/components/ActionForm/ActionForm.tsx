@@ -1,6 +1,6 @@
-import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
 import { createAction, createWithdrawalAction } from 'hooks/action/functions'
 import { ActionType, ActionTypeMap } from 'hooks/action/types'
 import { Organization } from 'hooks/organization/types'
@@ -196,7 +196,7 @@ const ActionForm = ({ org }: ActionProps) => {
       <button
         type='submit'
         disabled={!org.signers.includes(account as string)}
-        className='text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+        className='text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg disabled:cursor-not-allowed disabled:opacity-30'
       >
         {isTransacting ? <Spinner /> : 'Create'}
       </button>

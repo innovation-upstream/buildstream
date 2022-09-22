@@ -95,6 +95,99 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "orgId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "assigner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "assigneeAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "string[]",
+            "name": "taskTags",
+            "type": "string[]"
+          },
+          {
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "complexityScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reputationLevel",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredApprovals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "assignDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "comment",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskLib.Task",
+        "name": "task",
+        "type": "tuple"
       }
     ],
     "name": "TaskCreation",
@@ -108,6 +201,18 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "rewardAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "rewardToken",
+        "type": "address"
       }
     ],
     "name": "TaskOpened",
@@ -140,6 +245,12 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "comment",
+        "type": "string"
       }
     ],
     "name": "TaskSubmission",
@@ -172,6 +283,99 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "orgId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "assigner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "assigneeAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "string[]",
+            "name": "taskTags",
+            "type": "string[]"
+          },
+          {
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "complexityScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reputationLevel",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredApprovals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "assignDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "comment",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskLib.Task",
+        "name": "task",
+        "type": "tuple"
       }
     ],
     "name": "TaskUpdated",

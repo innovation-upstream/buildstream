@@ -1,9 +1,15 @@
 import { BigNumber, ethers } from 'ethers'
-import { Action as ActionType, Organization as Org, Treasury as TreasuryType, Task as TaskType } from 'graphclient'
+import {
+  Action as ActionType,
+  Organization as Org,
+  Task as TaskType,
+  TaskSnapshot as TaskSnapshotType,
+  Treasury as TreasuryType
+} from 'graphclient'
 import { Action } from 'hooks/action/types'
 import { Organization } from 'hooks/organization/types'
+import { Task, TaskSnapshot } from 'hooks/task/types'
 import { Treasury } from 'hooks/treasury/types'
-import { Task } from 'hooks/task/types'
 
 export class Converter {
   public static OrganizationFromQuery = (org: Org): Organization => {
@@ -43,7 +49,7 @@ export class Converter {
   public static TreasuryFromQuery = (treasury: TreasuryType): Treasury => {
     return {
       orgId: Number(treasury.orgId),
-      tokens: treasury?.tokens?.map(t => ({
+      tokens: treasury?.tokens?.map((t) => ({
         token: t.token,
         balance: BigNumber.from(t.balance),
         lockedBalance: BigNumber.from(t.lockedBalance)
@@ -70,6 +76,19 @@ export class Converter {
       approvedBy: task.approvedBy || [],
       assigner: task.assigner,
       assignmentRequests: task.assignmentRequest || []
+    }
+  }
+
+  public static TaskSnapshotFromQuery = (
+    taskSnapshot: TaskSnapshotType
+  ): TaskSnapshot => {
+    const snapShot = Converter.TaskFromQuery(taskSnapshot as any)
+    return {
+      ...snapShot,
+      actor: taskSnapshot.actor || '',
+      taskId: Number(taskSnapshot.taskId),
+      block: BigNumber.from(taskSnapshot.block),
+      timestamp: BigNumber.from(taskSnapshot.timestamp)
     }
   }
 }

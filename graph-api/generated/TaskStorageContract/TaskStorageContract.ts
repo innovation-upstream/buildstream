@@ -128,6 +128,82 @@ export class TaskCreation__Params {
   get taskId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
+
+  get task(): TaskCreationTaskStruct {
+    return changetype<TaskCreationTaskStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+}
+
+export class TaskCreationTaskStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get orgId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get title(): string {
+    return this[2].toString();
+  }
+
+  get description(): string {
+    return this[3].toString();
+  }
+
+  get assigner(): Address {
+    return this[4].toAddress();
+  }
+
+  get assigneeAddress(): Address {
+    return this[5].toAddress();
+  }
+
+  get taskTags(): Array<string> {
+    return this[6].toStringArray();
+  }
+
+  get status(): i32 {
+    return this[7].toI32();
+  }
+
+  get complexityScore(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get reputationLevel(): BigInt {
+    return this[9].toBigInt();
+  }
+
+  get requiredApprovals(): BigInt {
+    return this[10].toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[12].toAddress();
+  }
+
+  get assignDate(): BigInt {
+    return this[13].toBigInt();
+  }
+
+  get submitDate(): BigInt {
+    return this[14].toBigInt();
+  }
+
+  get taskDuration(): BigInt {
+    return this[15].toBigInt();
+  }
+
+  get comment(): string {
+    return this[16].toString();
+  }
 }
 
 export class TaskOpened extends ethereum.Event {
@@ -145,6 +221,14 @@ export class TaskOpened__Params {
 
   get taskId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 }
 
@@ -186,6 +270,10 @@ export class TaskSubmission__Params {
   get taskId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
+
+  get comment(): string {
+    return this._event.parameters[1].value.toString();
+  }
 }
 
 export class TaskUnassignment extends ethereum.Event {
@@ -225,6 +313,82 @@ export class TaskUpdated__Params {
 
   get taskId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
+  }
+
+  get task(): TaskUpdatedTaskStruct {
+    return changetype<TaskUpdatedTaskStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+}
+
+export class TaskUpdatedTaskStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get orgId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get title(): string {
+    return this[2].toString();
+  }
+
+  get description(): string {
+    return this[3].toString();
+  }
+
+  get assigner(): Address {
+    return this[4].toAddress();
+  }
+
+  get assigneeAddress(): Address {
+    return this[5].toAddress();
+  }
+
+  get taskTags(): Array<string> {
+    return this[6].toStringArray();
+  }
+
+  get status(): i32 {
+    return this[7].toI32();
+  }
+
+  get complexityScore(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get reputationLevel(): BigInt {
+    return this[9].toBigInt();
+  }
+
+  get requiredApprovals(): BigInt {
+    return this[10].toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[12].toAddress();
+  }
+
+  get assignDate(): BigInt {
+    return this[13].toBigInt();
+  }
+
+  get submitDate(): BigInt {
+    return this[14].toBigInt();
+  }
+
+  get taskDuration(): BigInt {
+    return this[15].toBigInt();
+  }
+
+  get comment(): string {
+    return this[16].toString();
   }
 }
 

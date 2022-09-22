@@ -1,5 +1,5 @@
 {
-  "address": "0xd8eD99d76BfD2bA23623c85Da105cc595c9A06a3",
+  "address": "0xb74405a7ce3be6a3ce65A286B8B7e854596f2eb9",
   "abi": [
     {
       "type": "constructor",
@@ -90,6 +90,81 @@
           "type": "uint256",
           "name": "taskId",
           "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "task",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "string",
+              "name": "title"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "assigner"
+            },
+            {
+              "type": "address",
+              "name": "assigneeAddress"
+            },
+            {
+              "type": "string[]",
+              "name": "taskTags"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            },
+            {
+              "type": "uint256",
+              "name": "complexityScore"
+            },
+            {
+              "type": "uint256",
+              "name": "reputationLevel"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "uint256",
+              "name": "taskDuration"
+            },
+            {
+              "type": "string",
+              "name": "comment"
+            }
+          ]
         }
       ]
     },
@@ -102,6 +177,16 @@
           "type": "uint256",
           "name": "taskId",
           "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount",
+          "indexed": false
+        },
+        {
+          "type": "address",
+          "name": "rewardToken",
+          "indexed": false
         }
       ]
     },
@@ -131,6 +216,11 @@
           "type": "uint256",
           "name": "taskId",
           "indexed": true
+        },
+        {
+          "type": "string",
+          "name": "comment",
+          "indexed": false
         }
       ]
     },
@@ -160,6 +250,81 @@
           "type": "uint256",
           "name": "taskId",
           "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "task",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "string",
+              "name": "title"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "assigner"
+            },
+            {
+              "type": "address",
+              "name": "assigneeAddress"
+            },
+            {
+              "type": "string[]",
+              "name": "taskTags"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            },
+            {
+              "type": "uint256",
+              "name": "complexityScore"
+            },
+            {
+              "type": "uint256",
+              "name": "reputationLevel"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "uint256",
+              "name": "taskDuration"
+            },
+            {
+              "type": "string",
+              "name": "comment"
+            }
+          ]
         }
       ]
     },
