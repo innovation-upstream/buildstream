@@ -50,6 +50,8 @@ export const getServerSideProps: GetServerSideProps =
     const { data: snapshots } = await client.query({
       query: GetTaskSnapshotsDocument,
       variables: {
+        orderBy: 'timestamp',
+        orderDirection: 'desc',
         where: {
           taskId: taskId as any
         }
@@ -93,6 +95,8 @@ const TaskPage: NextPage<PageProps> = ({ task, snapshots }) => {
     stopPolling: stopSnapshotPolling
   } = useGetTaskSnapshotsQuery({
     variables: {
+      orderBy: 'timestamp',
+      orderDirection: 'desc',
       where: {
         taskId: currentTask.id as any
       }
@@ -327,8 +331,12 @@ const TaskPage: NextPage<PageProps> = ({ task, snapshots }) => {
                   <button
                     onClick={openCreatedTask}
                     type='submit'
-                    disabled={processing}
-                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                    disabled={
+                      !account ||
+                      processing ||
+                      !currentTask.organization.approvers.includes(account)
+                    }
+                    className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg disabled:cursor-not-allowed disabled:opacity-30'
                   >
                     {processing ? <Spinner /> : 'Open Task'}
                   </button>
@@ -415,8 +423,12 @@ const TaskPage: NextPage<PageProps> = ({ task, snapshots }) => {
                     <button
                       onClick={submitTask}
                       type='submit'
-                      disabled={processing}
-                      className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg'
+                      disabled={
+                        !account ||
+                        processing ||
+                        currentTask.assigneeAddress !== account
+                      }
+                      className='flex text-white bg-indigo-500 border-0 my-2 py-1 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg disabled:cursor-not-allowed disabled:opacity-30'
                     >
                       {processing ? <Spinner /> : 'Submit'}
                     </button>

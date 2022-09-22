@@ -87,6 +87,7 @@ export class Converter {
       ...snapShot,
       actor: taskSnapshot.actor || '',
       taskId: Number(taskSnapshot.taskId),
+      block: BigNumber.from(taskSnapshot.block),
       timestamp: BigNumber.from(taskSnapshot.timestamp)
     }
   }

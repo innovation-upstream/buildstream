@@ -752,13 +752,14 @@ export type TaskCount_orderBy =
 
 export type TaskSnapshot = {
   id: Scalars['ID'];
-  actor?: Maybe<Scalars['String']>;
+  actor: Scalars['String'];
+  block: Scalars['BigInt'];
   timestamp: Scalars['BigInt'];
   taskId: Scalars['BigInt'];
   orgId: Organization;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  assigner: Scalars['String'];
+  assigner?: Maybe<Scalars['String']>;
   assignee?: Maybe<Scalars['String']>;
   taskTags: Array<Scalars['String']>;
   status: Scalars['Int'];
@@ -804,6 +805,14 @@ export type TaskSnapshot_filter = {
   actor_ends_with_nocase?: InputMaybe<Scalars['String']>;
   actor_not_ends_with?: InputMaybe<Scalars['String']>;
   actor_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  block?: InputMaybe<Scalars['BigInt']>;
+  block_not?: InputMaybe<Scalars['BigInt']>;
+  block_gt?: InputMaybe<Scalars['BigInt']>;
+  block_lt?: InputMaybe<Scalars['BigInt']>;
+  block_gte?: InputMaybe<Scalars['BigInt']>;
+  block_lte?: InputMaybe<Scalars['BigInt']>;
+  block_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  block_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
   timestamp_not?: InputMaybe<Scalars['BigInt']>;
   timestamp_gt?: InputMaybe<Scalars['BigInt']>;
@@ -1036,6 +1045,7 @@ export type TaskSnapshot_filter = {
 export type TaskSnapshot_orderBy =
   | 'id'
   | 'actor'
+  | 'block'
   | 'timestamp'
   | 'taskId'
   | 'orgId'
@@ -1737,13 +1747,14 @@ export type TaskCountResolvers<ContextType = MeshContext, ParentType extends Res
 
 export type TaskSnapshotResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['TaskSnapshot'] = ResolversParentTypes['TaskSnapshot']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  actor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  actor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  block?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   orgId?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  assigner?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  assigner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   assignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   taskTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2114,7 +2125,7 @@ export type GetTaskSnapshotsQueryVariables = Exact<{
 
 
 export type GetTaskSnapshotsQuery = { taskSnapshots: Array<(
-    Pick<TaskSnapshot, 'id' | 'actor' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
@@ -2401,6 +2412,7 @@ export const GetTaskSnapshotsDocument = gql`
   ) {
     id
     actor
+    block
     timestamp
     taskId
     orgId {

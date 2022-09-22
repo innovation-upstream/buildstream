@@ -166,6 +166,7 @@ query GetTaskSnapshots(
   ) {
     id
     actor
+    block
     timestamp
     taskId
     orgId {

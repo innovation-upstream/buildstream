@@ -40,7 +40,7 @@ const diffHandler: { [keyof: string]: (prev: any, curr: any) => boolean } = {
 export const getTaskDiff = (
   taskSnapshots: TaskSnapshot[]
 ): Partial<TaskSnapshot>[] => {
-  const diffs: Partial<TaskSnapshot>[] = [taskSnapshots[0]]
+  const diffs: Partial<TaskSnapshot>[] = []
   for (let i = 1; i < taskSnapshots.length; i++) {
     const previous: any = taskSnapshots[i]
     const current: any = taskSnapshots[i - 1]
@@ -57,9 +57,11 @@ export const getTaskDiff = (
     }
 
     diffObject.actor = current.actor
+    diffObject.block = current.block
     diffObject.timestamp = current.timestamp
     diffs.push(diffObject)
   }
 
+  diffs.push(taskSnapshots[0])
   return diffs
 }

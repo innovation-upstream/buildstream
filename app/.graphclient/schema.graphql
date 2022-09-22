@@ -809,13 +809,14 @@ enum TaskCount_orderBy {
 
 type TaskSnapshot {
   id: ID!
-  actor: String
+  actor: String!
+  block: BigInt!
   timestamp: BigInt!
   taskId: BigInt!
   orgId: Organization!
   title: String
   description: String
-  assigner: String!
+  assigner: String
   assignee: String
   taskTags: [String!]!
   status: Int!
@@ -861,6 +862,14 @@ input TaskSnapshot_filter {
   actor_ends_with_nocase: String
   actor_not_ends_with: String
   actor_not_ends_with_nocase: String
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
   timestamp: BigInt
   timestamp_not: BigInt
   timestamp_gt: BigInt
@@ -1093,6 +1102,7 @@ input TaskSnapshot_filter {
 enum TaskSnapshot_orderBy {
   id
   actor
+  block
   timestamp
   taskId
   orgId

@@ -733,13 +733,14 @@ export type TaskCount_orderBy =
 
 export type TaskSnapshot = {
   id: Scalars['ID'];
-  actor?: Maybe<Scalars['String']>;
+  actor: Scalars['String'];
+  block: Scalars['BigInt'];
   timestamp: Scalars['BigInt'];
   taskId: Scalars['BigInt'];
   orgId: Organization;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  assigner: Scalars['String'];
+  assigner?: Maybe<Scalars['String']>;
   assignee?: Maybe<Scalars['String']>;
   taskTags: Array<Scalars['String']>;
   status: Scalars['Int'];
@@ -785,6 +786,14 @@ export type TaskSnapshot_filter = {
   actor_ends_with_nocase?: InputMaybe<Scalars['String']>;
   actor_not_ends_with?: InputMaybe<Scalars['String']>;
   actor_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  block?: InputMaybe<Scalars['BigInt']>;
+  block_not?: InputMaybe<Scalars['BigInt']>;
+  block_gt?: InputMaybe<Scalars['BigInt']>;
+  block_lt?: InputMaybe<Scalars['BigInt']>;
+  block_gte?: InputMaybe<Scalars['BigInt']>;
+  block_lte?: InputMaybe<Scalars['BigInt']>;
+  block_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  block_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   timestamp?: InputMaybe<Scalars['BigInt']>;
   timestamp_not?: InputMaybe<Scalars['BigInt']>;
   timestamp_gt?: InputMaybe<Scalars['BigInt']>;
@@ -1017,6 +1026,7 @@ export type TaskSnapshot_filter = {
 export type TaskSnapshot_orderBy =
   | 'id'
   | 'actor'
+  | 'block'
   | 'timestamp'
   | 'taskId'
   | 'orgId'

@@ -56,5 +56,6 @@ export type Task = {
 export type TaskSnapshot = {
   actor: string
   taskId: number
+  block: BigNumber
   timestamp: BigNumber
 } & Task

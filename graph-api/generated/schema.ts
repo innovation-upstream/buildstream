@@ -486,21 +486,22 @@ export class TaskSnapshot extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get actor(): string | null {
+  get actor(): string {
     let value = this.get("actor");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
-  set actor(value: string | null) {
-    if (!value) {
-      this.unset("actor");
-    } else {
-      this.set("actor", Value.fromString(<string>value));
-    }
+  set actor(value: string) {
+    this.set("actor", Value.fromString(value));
+  }
+
+  get block(): BigInt {
+    let value = this.get("block");
+    return value!.toBigInt();
+  }
+
+  set block(value: BigInt) {
+    this.set("block", Value.fromBigInt(value));
   }
 
   get timestamp(): BigInt {
@@ -564,13 +565,21 @@ export class TaskSnapshot extends Entity {
     }
   }
 
-  get assigner(): string {
+  get assigner(): string | null {
     let value = this.get("assigner");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set assigner(value: string) {
-    this.set("assigner", Value.fromString(value));
+  set assigner(value: string | null) {
+    if (!value) {
+      this.unset("assigner");
+    } else {
+      this.set("assigner", Value.fromString(<string>value));
+    }
   }
 
   get assignee(): string | null {

@@ -15,20 +15,20 @@ import {
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
-import { TaskStorageContract as Contract } from '../generated/TaskStorageContract/TaskStorageContract'
 
 function createTaskSnapshot(
   event: ethereum.Event,
   taskEntity: Task
 ): TaskSnapshot {
-  const taskSnapshotEntity = new TaskSnapshot(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
-  )
+  const id = event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  const taskSnapshotEntity = new TaskSnapshot(id)
   const entries = taskEntity.entries
   for (let i = 0; i < entries.length; i++) {
     if (entries[i].key === 'id') continue
     taskSnapshotEntity.set(entries[i].key, entries[i].value)
   }
+  taskSnapshotEntity.id = id
+  taskSnapshotEntity.block = event.block.number
   taskSnapshotEntity.timestamp = event.block.timestamp
   taskSnapshotEntity.actor = event.transaction.from.toHexString()
 
@@ -41,6 +41,8 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   if (!taskEntity) return
   taskEntity.status = 2
   taskEntity.assignee = event.params.sender.toHexString()
+  taskEntity.assigner = event.transaction.from.toHexString()
+  taskEntity.assignDate = event.block.number
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -71,8 +73,7 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
-  const contract = Contract.bind(event.address)
-  const task = contract.getTask(event.params.taskId)
+  const task = event.params.task
 
   const taskEntity = Task.load(event.params.taskId.toString())
   if (!taskEntity) return
@@ -101,8 +102,7 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
 
 export function handleTaskCreation(event: TaskCreationEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(event.address)
-  const task = contract.getTask(event.params.taskId)
+  const task = event.params.task
   const taskEntity = new Task(taskId)
 
   taskEntity.taskId = event.params.taskId
@@ -140,13 +140,11 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(event.address)
-  const task = contract.getTask(event.params.taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 1
-  taskEntity.rewardToken = task.rewardToken
-  taskEntity.rewardAmount = task.rewardAmount
+  taskEntity.rewardToken = event.params.rewardToken
+  taskEntity.rewardAmount = event.params.rewardAmount
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -171,12 +169,11 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
 
 export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   const taskId = event.params.taskId.toString()
-  const contract = Contract.bind(event.address)
-  const task = contract.getTask(event.params.taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 3
-  taskEntity.comment = task.comment
+  taskEntity.comment = event.params.comment
+  taskEntity.submitDate = event.block.number
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)

@@ -41,13 +41,14 @@ type Task @entity {
 
 type TaskSnapshot @entity {
   id: ID!
-  actor: String
+  actor: String!
+  block: BigInt!
   timestamp: BigInt!
   taskId: BigInt!
   orgId: Organization!
   title: String
   description: String
-  assigner: String!
+  assigner: String
   assignee: String
   taskTags: [String!]!
   status: Int!
