@@ -1,10 +1,10 @@
-import { GetOrganizationDocument, Organization } from 'graphclient'
-import client from 'graphclient/client'
 import ActionForm from 'components/ActionForm/ActionForm'
 import ActionList from 'components/ActionList/ActionList'
 import Deposit from 'components/Deposit/Deposit'
 import OrgConfigForm from 'components/Organization/OrgConfigForm'
 import { BigNumber, ethers } from 'ethers'
+import { GetOrganizationDocument, Organization } from 'graphclient'
+import client from 'graphclient/client'
 import { useGetOrganizationQuery, usePolling } from 'hooks'
 import type {
   GetServerSideProps,
@@ -77,12 +77,6 @@ const OrganizationPage: NextPage<PageProps> = ({ org }) => {
                 Approvers:{' '}
                 <span className='text-sm text-gray-500'>
                   {organization?.approvers.toString()}
-                </span>
-              </p>
-              <p className='text-lg mt-3 break-all'>
-                Reviewers:{' '}
-                <span className='text-sm text-gray-500'>
-                  {organization?.reviewers.toString()}
                 </span>
               </p>
               <p className='text-lg mt-3 break-all'>

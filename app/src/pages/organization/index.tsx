@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import { GetOrganizationsDocument, Organization } from 'graphclient'
 import client from 'graphclient/client'
+import { useGetOrganizationsQuery, usePolling } from 'hooks'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -10,7 +11,6 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import { useGetOrganizationsQuery, usePolling } from 'hooks'
 import { Converter } from 'utils/converter'
 
 export const getServerSideProps: GetServerSideProps =
@@ -90,12 +90,6 @@ const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
             Approvers:{' '}
             <span className='text-sm text-gray-500'>
               {selected?.approvers.toString()}
-            </span>
-          </p>
-          <p className='text-lg mt-3 break-all'>
-            Reviewers:{' '}
-            <span className='text-sm text-gray-500'>
-              {selected?.reviewers.toString()}
             </span>
           </p>
           <p className='text-lg mt-3 break-all'>

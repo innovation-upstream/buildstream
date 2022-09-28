@@ -29,6 +29,8 @@ module.exports = {
         semi: false,
         tabWidth: 2
       }
-    ]
+    ],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error']
   }
 }

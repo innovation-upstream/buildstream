@@ -2,7 +2,7 @@ import { ethers } from 'hardhat'
 const { waitForInput, readJson } = require('../utils/helpers.ts')
 const path = require('path')
 
-const rewardSlashDivisor = 20
+const rewardSlashMultiplier = 0.01
 const slashRewardEvery = 1
 const multiplier = 0.000001
 const complexityScore = 0
@@ -53,7 +53,7 @@ async function main() {
     'Decentralized task managers',
     [signer.address],
     [signer.address],
-    [signer.address]
+    false
   )
 
   const orgCreateReceipt = await createOrgTx.wait()
@@ -68,7 +68,7 @@ async function main() {
     ethers.constants.AddressZero,
     requiredConfirmations,
     requiredApprovals,
-    rewardSlashDivisor,
+    ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
     slashRewardEvery
   )
   await addOrgConfigTx.wait()

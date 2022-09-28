@@ -69,15 +69,6 @@ export class Organization extends Entity {
     this.set("description", Value.fromString(value));
   }
 
-  get reviewers(): Array<string> {
-    let value = this.get("reviewers");
-    return value!.toStringArray();
-  }
-
-  set reviewers(value: Array<string>) {
-    this.set("reviewers", Value.fromStringArray(value));
-  }
-
   get approvers(): Array<string> {
     let value = this.get("approvers");
     return value!.toStringArray();
@@ -123,13 +114,13 @@ export class Organization extends Entity {
     this.set("rewardMultiplier", Value.fromBigInt(value));
   }
 
-  get rewardSlashDivisor(): BigInt {
-    let value = this.get("rewardSlashDivisor");
+  get rewardSlashMultiplier(): BigInt {
+    let value = this.get("rewardSlashMultiplier");
     return value!.toBigInt();
   }
 
-  set rewardSlashDivisor(value: BigInt) {
-    this.set("rewardSlashDivisor", Value.fromBigInt(value));
+  set rewardSlashMultiplier(value: BigInt) {
+    this.set("rewardSlashMultiplier", Value.fromBigInt(value));
   }
 
   get slashRewardEvery(): BigInt {

@@ -1,7 +1,6 @@
 import OrgContractInterface from 'contracts/Org.json'
 import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
-import { Organization } from './types'
 
 export const executeAction = async (actionId: number, provider?: any) => {
   const contract = getContract(
@@ -17,7 +16,6 @@ export const executeAction = async (actionId: number, provider?: any) => {
 export const createOrganization = async (
   name: string,
   description: string,
-  reviewers: string[],
   approvers: string[],
   signers: string[],
   provider: any
@@ -31,9 +29,9 @@ export const createOrganization = async (
   const tx = await contract.createOrg(
     name,
     description,
-    reviewers,
     approvers,
-    signers
+    signers,
+    false
   )
   const response = await tx.wait()
   const event = response?.events?.find(
@@ -49,7 +47,7 @@ export const addOrganizationConfig = async (
   requiredConfirmations: number,
   rewardMultiplier: BigNumber,
   rewardToken: string,
-  rewardSlashDivisor: BigNumber,
+  rewardSlashMultiplier: BigNumber,
   slashRewardEvery: number,
   provider?: any
 ): Promise<boolean> => {
@@ -65,7 +63,7 @@ export const addOrganizationConfig = async (
     rewardToken,
     requiredConfirmations,
     requiredTaskApprovals,
-    rewardSlashDivisor,
+    rewardSlashMultiplier,
     slashRewardEvery
   )
   await tx.wait()

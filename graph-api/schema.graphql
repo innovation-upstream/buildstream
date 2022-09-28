@@ -3,13 +3,12 @@ type Organization @entity {
   orgId: BigInt!
   name: String!
   description: String!
-  reviewers: [String!]!
   approvers: [String!]!
   signers: [String!]!
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
-  rewardSlashDivisor: BigInt!
+  rewardSlashMultiplier: BigInt!
   slashRewardEvery: BigInt!
   rewardToken: Bytes!
   isInitialized: Boolean!

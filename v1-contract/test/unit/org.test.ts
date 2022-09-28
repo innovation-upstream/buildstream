@@ -38,9 +38,9 @@ describe('Unit test: Org contract', function () {
     await contractInstance.createOrg(
       'Buildstream',
       'Decentralized task management',
-      [ethers.constants.AddressZero],
       [approver1.address, approver2.address],
-      [ethers.constants.AddressZero]
+      [ethers.constants.AddressZero],
+      false
     )
 
     const event = await creationEvent

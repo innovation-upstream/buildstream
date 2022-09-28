@@ -98,6 +98,7 @@ contract TaskStorageContract {
     /// @param complexityScore Task complexity score.
     /// @param reputationLevel Number of tokens.
     /// @param requiredApprovals Number of approvers required.
+    /// @param taskDuration Number of seconds to take to complete the task
     /// @return taskId task ID.
     function createTask(
         uint256 orgId,
@@ -219,7 +220,7 @@ contract TaskStorageContract {
         );
         require(tasks[taskId].assigneeAddress == assignee, "Task not yours");
         tasks[taskId].status = TaskLib.TaskStatus.SUBMITTED;
-        tasks[taskId].submitDate = block.number;
+        tasks[taskId].submitDate = block.timestamp;
         tasks[taskId].comment = comment;
         emit TaskSubmission(taskId, comment);
     }
@@ -235,7 +236,7 @@ contract TaskStorageContract {
         require(task.status == TaskLib.TaskStatus.OPEN, "Task is not opened");
         task.status = TaskLib.TaskStatus.ASSIGNED;
         task.assigneeAddress = assignee;
-        task.assignDate = block.number;
+        task.assignDate = block.timestamp;
         task.assigner = assigner;
         tasks[taskId] = task;
         emit TaskAssignment(assignee, taskId);

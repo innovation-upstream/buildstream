@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
-import { useWeb3 } from 'hooks'
-import { useRouter } from 'next/router'
 import Spinner from 'components/Spinner/Spinner'
+import { useWeb3 } from 'hooks'
 import { createOrganization } from 'hooks/organization/functions'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 
 const initialData = {
   name: '',
   description: '',
-  reviewers: [],
   approvers: [],
   signers: [],
 }
@@ -65,7 +64,6 @@ const CreateOrgForm: React.FC<Props> = ({onCreate}) => {
     if (
       !orgData.name ||
       !orgData.description ||
-      orgData.reviewers.length === 0 ||
       orgData.approvers.length === 0 ||
       orgData.signers.length === 0
     ) {
@@ -77,7 +75,6 @@ const CreateOrgForm: React.FC<Props> = ({onCreate}) => {
       const response = await createOrganization(
         orgData.name,
         orgData.description,
-        orgData.reviewers,
         orgData.approvers,
         orgData.signers,
         library.getSigner()
@@ -112,46 +109,6 @@ const CreateOrgForm: React.FC<Props> = ({onCreate}) => {
               required
               value={orgData.name}
               onChange={handleChange}
-              className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-            />
-          </div>
-        </div>
-        <div className='p-2 w-full'>
-          <div className='relative'>
-            <label
-              htmlFor='reputationLevel'
-              className='leading-7 text-sm text-gray-600'
-            >
-              Reviewers
-            </label>
-            <div className='h-auto flex flex-wrap item-center gap-x-1 gap-y-1'>
-              {orgData.reviewers.length > 0 &&
-                orgData.reviewers.map((reviewer, index) => {
-                  return (
-                    <div
-                      key={reviewer}
-                      className='flex items-center border-2 rounded-full px-2 py-1 w-max mb-3'
-                    >
-                      {reviewer}
-                      <div
-                        onClick={deleteTag}
-                        data-name='reviewers'
-                        id={`${index}`}
-                        className='py-1 px-3 ml-3 rounded-full bg-indigo-400 text-red-50 hover:bg-indigo-500 cursor-pointer'
-                      >
-                        x
-                      </div>
-                    </div>
-                  )
-                })}
-            </div>
-            <input
-              type='text'
-              id='reviewers'
-              name='reviewers'
-              onKeyPress={handleChange}
-              data-type='addressArray'
-              placeholder='Type and Press Enter Key'
               className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
             />
           </div>

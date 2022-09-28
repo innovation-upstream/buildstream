@@ -188,13 +188,12 @@ export type Organization = {
   orgId: Scalars['BigInt'];
   name: Scalars['String'];
   description: Scalars['String'];
-  reviewers: Array<Scalars['String']>;
   approvers: Array<Scalars['String']>;
   signers: Array<Scalars['String']>;
   requiredTaskApprovals: Scalars['BigInt'];
   requiredConfirmations: Scalars['BigInt'];
   rewardMultiplier: Scalars['BigInt'];
-  rewardSlashDivisor: Scalars['BigInt'];
+  rewardSlashMultiplier: Scalars['BigInt'];
   slashRewardEvery: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   isInitialized: Scalars['Boolean'];
@@ -258,12 +257,6 @@ export type Organization_filter = {
   description_ends_with_nocase?: InputMaybe<Scalars['String']>;
   description_not_ends_with?: InputMaybe<Scalars['String']>;
   description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  reviewers?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_contains?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   approvers?: InputMaybe<Array<Scalars['String']>>;
   approvers_not?: InputMaybe<Array<Scalars['String']>>;
   approvers_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -300,14 +293,14 @@ export type Organization_filter = {
   rewardMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
   rewardMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  rewardSlashDivisor?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_not?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_gt?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_lt?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_gte?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_lte?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  rewardSlashDivisor_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  rewardSlashMultiplier?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_not?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_gt?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_lt?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_gte?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  rewardSlashMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   slashRewardEvery?: InputMaybe<Scalars['BigInt']>;
   slashRewardEvery_not?: InputMaybe<Scalars['BigInt']>;
   slashRewardEvery_gt?: InputMaybe<Scalars['BigInt']>;
@@ -356,13 +349,12 @@ export type Organization_orderBy =
   | 'orgId'
   | 'name'
   | 'description'
-  | 'reviewers'
   | 'approvers'
   | 'signers'
   | 'requiredTaskApprovals'
   | 'requiredConfirmations'
   | 'rewardMultiplier'
-  | 'rewardSlashDivisor'
+  | 'rewardSlashMultiplier'
   | 'slashRewardEvery'
   | 'rewardToken'
   | 'isInitialized'
@@ -1432,6 +1424,8 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']>;
   /** The block number */
   number: Scalars['Int'];
+  /** Integer representation of the timestamp stored in blocks for the chain */
+  timestamp?: Maybe<Scalars['Int']>;
 };
 
 /** The type for the top-level _meta field */

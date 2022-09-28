@@ -12,13 +12,12 @@ query GetOrganization(
     orgId
     name
     description
-    reviewers
     approvers
     signers
     requiredTaskApprovals
     requiredConfirmations
     rewardMultiplier
-    rewardSlashDivisor
+    rewardSlashMultiplier
     slashRewardEvery
     rewardToken
     isInitialized
@@ -54,14 +53,13 @@ query GetOrganizations(
     orgId
     name
     description
-    reviewers
     approvers
     signers
     requiredTaskApprovals
     requiredConfirmations
     rewardMultiplier
     rewardToken
-    rewardSlashDivisor
+    rewardSlashMultiplier
     slashRewardEvery
     isInitialized
     treasury {

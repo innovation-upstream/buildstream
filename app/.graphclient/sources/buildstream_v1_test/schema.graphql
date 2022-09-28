@@ -188,13 +188,12 @@ type Organization {
   orgId: BigInt!
   name: String!
   description: String!
-  reviewers: [String!]!
   approvers: [String!]!
   signers: [String!]!
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
-  rewardSlashDivisor: BigInt!
+  rewardSlashMultiplier: BigInt!
   slashRewardEvery: BigInt!
   rewardToken: Bytes!
   isInitialized: Boolean!
@@ -258,12 +257,6 @@ input Organization_filter {
   description_ends_with_nocase: String
   description_not_ends_with: String
   description_not_ends_with_nocase: String
-  reviewers: [String!]
-  reviewers_not: [String!]
-  reviewers_contains: [String!]
-  reviewers_contains_nocase: [String!]
-  reviewers_not_contains: [String!]
-  reviewers_not_contains_nocase: [String!]
   approvers: [String!]
   approvers_not: [String!]
   approvers_contains: [String!]
@@ -300,14 +293,14 @@ input Organization_filter {
   rewardMultiplier_lte: BigInt
   rewardMultiplier_in: [BigInt!]
   rewardMultiplier_not_in: [BigInt!]
-  rewardSlashDivisor: BigInt
-  rewardSlashDivisor_not: BigInt
-  rewardSlashDivisor_gt: BigInt
-  rewardSlashDivisor_lt: BigInt
-  rewardSlashDivisor_gte: BigInt
-  rewardSlashDivisor_lte: BigInt
-  rewardSlashDivisor_in: [BigInt!]
-  rewardSlashDivisor_not_in: [BigInt!]
+  rewardSlashMultiplier: BigInt
+  rewardSlashMultiplier_not: BigInt
+  rewardSlashMultiplier_gt: BigInt
+  rewardSlashMultiplier_lt: BigInt
+  rewardSlashMultiplier_gte: BigInt
+  rewardSlashMultiplier_lte: BigInt
+  rewardSlashMultiplier_in: [BigInt!]
+  rewardSlashMultiplier_not_in: [BigInt!]
   slashRewardEvery: BigInt
   slashRewardEvery_not: BigInt
   slashRewardEvery_gt: BigInt
@@ -356,13 +349,12 @@ enum Organization_orderBy {
   orgId
   name
   description
-  reviewers
   approvers
   signers
   requiredTaskApprovals
   requiredConfirmations
   rewardMultiplier
-  rewardSlashDivisor
+  rewardSlashMultiplier
   slashRewardEvery
   rewardToken
   isInitialized
@@ -1503,6 +1495,8 @@ type _Block_ {
   hash: Bytes
   """The block number"""
   number: Int!
+  """Integer representation of the timestamp stored in blocks for the chain"""
+  timestamp: Int
 }
 
 """The type for the top-level _meta field"""

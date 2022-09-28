@@ -1,6 +1,6 @@
-import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
 import { addOrganizationConfig } from 'hooks/organization/functions'
 import router from 'next/router'
 import React, { useState } from 'react'
@@ -10,7 +10,7 @@ const initialData = {
   requiredConfirmations: 0,
   rewardMultiplier: 0,
   rewardToken: ethers.constants.AddressZero,
-  rewardSlashDivisor: 1,
+  rewardSlashMultiplier: 1,
   slashRewardEvery: 1
 }
 
@@ -58,7 +58,7 @@ const OrgConfigForm: React.FC<{ orgId: number }> = ({ orgId }) => {
         orgData.requiredConfirmations,
         ethers.utils.parseUnits(orgData.rewardMultiplier.toString()),
         orgData.rewardToken,
-        ethers.utils.parseUnits(orgData.rewardSlashDivisor.toString()),
+        ethers.utils.parseUnits(orgData.rewardSlashMultiplier.toString()),
         orgData.slashRewardEvery,
         library.getSigner()
       )
@@ -160,17 +160,17 @@ const OrgConfigForm: React.FC<{ orgId: number }> = ({ orgId }) => {
         <div className='p-2 w-1/2'>
           <div className='relative'>
             <label
-              htmlFor='rewardSlashDivisor'
+              htmlFor='rewardSlashMultiplier'
               className='leading-7 text-sm text-gray-600'
             >
-              Reward Slash Divisor
+              Reward Slash Multiplier
             </label>
             <input
               type='number'
-              id='rewardSlashDivisor'
+              id='rewardSlashMultiplier'
               required
-              name='rewardSlashDivisor'
-              value={orgData.rewardSlashDivisor}
+              name='rewardSlashMultiplier'
+              value={orgData.rewardSlashMultiplier}
               onChange={handleChange}
               className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
             />

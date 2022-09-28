@@ -170,9 +170,13 @@ contract TaskContract {
             uint256 overtime = task.submitDate -
                 task.assignDate -
                 task.taskDuration;
-            uint256 slashRatio = overtime / orgConfig.slashRewardEvery;
-            uint256 slashAmount = (slashRatio * task.rewardAmount * 10**18) /
-                orgConfig.rewardSlashDivisor;
+            // Round up values
+            uint256 roundedRemainder = overtime % orgConfig.slashRewardEvery > 0 ? 1 : 0;
+            uint256 slashRatio = (overtime / orgConfig.slashRewardEvery) + 
+                roundedRemainder;
+            uint256 slashAmount = slashRatio *
+                orgConfig.rewardSlashMultiplier *
+                task.rewardAmount / 10 ** 18;
             if (slashAmount > task.rewardAmount)
                 slashAmount = task.rewardAmount;
             rewardAmount = task.rewardAmount - slashAmount;
@@ -288,7 +292,12 @@ contract TaskContract {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         if (task.rewardToken == address(0))
             treasury.unlockBalance(task.orgId, task.rewardAmount);
-        else treasury.unlockBalance(task.orgId, task.rewardToken, task.rewardAmount);
+        else
+            treasury.unlockBalance(
+                task.orgId,
+                task.rewardToken,
+                task.rewardAmount
+            );
         taskStorage.archive(taskId);
     }
 
