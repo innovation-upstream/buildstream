@@ -6,10 +6,8 @@ import "./Organization.sol";
 library ActionLib {
     enum ActionType {
         WITHDRAWAL,
-        ADD_REVIEWER,
         ADD_APPROVER,
         ADD_SIGNER,
-        REMOVE_REVIEWER,
         REMOVE_APPROVER,
         REMOVE_SIGNER,
         UPDATE_NAME,
@@ -18,7 +16,7 @@ library ActionLib {
         UPDATE_REQUIRED_CONFIRMATIONS,
         UPDATE_REWARD_MULTIPLIER,
         UPDATE_REWARD_TOKEN,
-        UPDATE_REWARD_SLASH_DIVISOR,
+        UPDATE_REWARD_SLASH_MULTIPLIER,
         UPDATE_SLASH_REWARD_EVERY,
         UPDATE_TAG_REWARD_MULTIPLIER
     }

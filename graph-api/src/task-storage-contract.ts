@@ -42,7 +42,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.status = 2
   taskEntity.assignee = event.params.sender.toHexString()
   taskEntity.assigner = event.transaction.from.toHexString()
-  taskEntity.assignDate = event.block.number
+  taskEntity.assignDate = event.block.timestamp
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -173,7 +173,7 @@ export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   if (!taskEntity) return
   taskEntity.status = 3
   taskEntity.comment = event.params.comment
-  taskEntity.submitDate = event.block.number
+  taskEntity.submitDate = event.block.timestamp
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)

@@ -207,13 +207,12 @@ export type Organization = {
   orgId: Scalars['BigInt'];
   name: Scalars['String'];
   description: Scalars['String'];
-  reviewers: Array<Scalars['String']>;
   approvers: Array<Scalars['String']>;
   signers: Array<Scalars['String']>;
   requiredTaskApprovals: Scalars['BigInt'];
   requiredConfirmations: Scalars['BigInt'];
   rewardMultiplier: Scalars['BigInt'];
-  rewardSlashDivisor: Scalars['BigInt'];
+  rewardSlashMultiplier: Scalars['BigInt'];
   slashRewardEvery: Scalars['BigInt'];
   rewardToken: Scalars['Bytes'];
   isInitialized: Scalars['Boolean'];
@@ -277,12 +276,6 @@ export type Organization_filter = {
   description_ends_with_nocase?: InputMaybe<Scalars['String']>;
   description_not_ends_with?: InputMaybe<Scalars['String']>;
   description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  reviewers?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_contains?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  reviewers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   approvers?: InputMaybe<Array<Scalars['String']>>;
   approvers_not?: InputMaybe<Array<Scalars['String']>>;
   approvers_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -319,14 +312,14 @@ export type Organization_filter = {
   rewardMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
   rewardMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  rewardSlashDivisor?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_not?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_gt?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_lt?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_gte?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_lte?: InputMaybe<Scalars['BigInt']>;
-  rewardSlashDivisor_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  rewardSlashDivisor_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  rewardSlashMultiplier?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_not?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_gt?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_lt?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_gte?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
+  rewardSlashMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  rewardSlashMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   slashRewardEvery?: InputMaybe<Scalars['BigInt']>;
   slashRewardEvery_not?: InputMaybe<Scalars['BigInt']>;
   slashRewardEvery_gt?: InputMaybe<Scalars['BigInt']>;
@@ -375,13 +368,12 @@ export type Organization_orderBy =
   | 'orgId'
   | 'name'
   | 'description'
-  | 'reviewers'
   | 'approvers'
   | 'signers'
   | 'requiredTaskApprovals'
   | 'requiredConfirmations'
   | 'rewardMultiplier'
-  | 'rewardSlashDivisor'
+  | 'rewardSlashMultiplier'
   | 'slashRewardEvery'
   | 'rewardToken'
   | 'isInitialized'
@@ -1451,6 +1443,8 @@ export type _Block_ = {
   hash?: Maybe<Scalars['Bytes']>;
   /** The block number */
   number: Scalars['Int'];
+  /** Integer representation of the timestamp stored in blocks for the chain */
+  timestamp?: Maybe<Scalars['Int']>;
 };
 
 /** The type for the top-level _meta field */
@@ -1664,13 +1658,12 @@ export type OrganizationResolvers<ContextType = MeshContext, ParentType extends 
   orgId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  reviewers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   approvers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   signers?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   requiredTaskApprovals?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   requiredConfirmations?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   rewardMultiplier?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  rewardSlashDivisor?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  rewardSlashMultiplier?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   slashRewardEvery?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   rewardToken?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   isInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1791,6 +1784,7 @@ export type TreasuryTokenResolvers<ContextType = MeshContext, ParentType extends
 export type _Block_Resolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['_Block_'] = ResolversParentTypes['_Block_']> = ResolversObject<{
   hash?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timestamp?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1870,7 +1864,7 @@ const buildstreamV1TestTransforms = [];
 const additionalTypeDefs = [] as any[];
 const buildstreamV1TestHandler = new GraphqlHandler({
               name: "buildstream_v1_test",
-              config: {"endpoint":"http://localhost:8000/subgraphs/name/kil-san/buildstream-v1-test"},
+              config: {"endpoint":"https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v1-test"},
               baseDir,
               cache,
               pubsub,
@@ -2037,7 +2031,7 @@ export type GetOrganizationQueryVariables = Exact<{
 
 
 export type GetOrganizationQuery = { organization?: Maybe<(
-    Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
+    Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
   )> };
 
@@ -2053,7 +2047,7 @@ export type GetOrganizationsQueryVariables = Exact<{
 
 
 export type GetOrganizationsQuery = { organizations: Array<(
-    Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'isInitialized'>
+    Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
   )> };
 
@@ -2067,7 +2061,7 @@ export type GetTaskQueryVariables = Exact<{
 export type GetTaskQuery = { task?: Maybe<(
     Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
-      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'isInitialized'>
+      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
     ) }
   )> };
@@ -2086,7 +2080,7 @@ export type GetTasksQueryVariables = Exact<{
 export type GetTasksQuery = { tasks: Array<(
     Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
-      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'isInitialized'>
+      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
     ) }
   )> };
@@ -2127,7 +2121,7 @@ export type GetTaskSnapshotsQueryVariables = Exact<{
 export type GetTaskSnapshotsQuery = { taskSnapshots: Array<(
     Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
-      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'reviewers' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashDivisor' | 'slashRewardEvery' | 'isInitialized'>
+      Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
     ) }
   )> };
@@ -2216,13 +2210,12 @@ export const GetOrganizationDocument = gql`
     orgId
     name
     description
-    reviewers
     approvers
     signers
     requiredTaskApprovals
     requiredConfirmations
     rewardMultiplier
-    rewardSlashDivisor
+    rewardSlashMultiplier
     slashRewardEvery
     rewardToken
     isInitialized
@@ -2251,14 +2244,13 @@ export const GetOrganizationsDocument = gql`
     orgId
     name
     description
-    reviewers
     approvers
     signers
     requiredTaskApprovals
     requiredConfirmations
     rewardMultiplier
     rewardToken
-    rewardSlashDivisor
+    rewardSlashMultiplier
     slashRewardEvery
     isInitialized
     treasury {
@@ -2281,14 +2273,13 @@ export const GetTaskDocument = gql`
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {
@@ -2337,14 +2328,13 @@ export const GetTasksDocument = gql`
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {
@@ -2420,14 +2410,13 @@ export const GetTaskSnapshotsDocument = gql`
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {

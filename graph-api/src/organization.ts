@@ -5,8 +5,6 @@ import {
   OrganizationApproverRemoval as OrganizationApproverRemovalEvent,
   OrganizationCreation as OrganizationCreationEvent,
   OrganizationInitialized as OrganizationInitializedEvent,
-  OrganizationReviewerAddition as OrganizationReviewerAdditionEvent,
-  OrganizationReviewerRemoval as OrganizationReviewerRemovalEvent,
   OrganizationSignerAddition as OrganizationSignerAdditionEvent,
   OrganizationSignerRemoval as OrganizationSignerRemovalEvent
 } from '../generated/Organization/Organization'
@@ -57,21 +55,22 @@ export function handleOrganizationCreation(
   entity.orgId = org.id
   entity.name = org.name
   entity.description = org.description
-  entity.reviewers = org.reviewers.map<string>((a) => a.toHexString())
   entity.approvers = org.approvers.map<string>((a) => a.toHexString())
   entity.signers = org.signers.map<string>((a) => a.toHexString())
   entity.requiredTaskApprovals = new BigInt(0)
   entity.requiredConfirmations = new BigInt(0)
   entity.rewardMultiplier = new BigInt(0)
   entity.rewardToken = Address.zero()
-  entity.rewardSlashDivisor = new BigInt(0)
+  entity.rewardSlashMultiplier = new BigInt(0)
   entity.slashRewardEvery = new BigInt(0)
   entity.isInitialized = false
   entity.treasury = orgId.toString()
   entity.save()
 }
 
-export function handleOrganizationInitialized(event: OrganizationInitializedEvent): void {
+export function handleOrganizationInitialized(
+  event: OrganizationInitializedEvent
+): void {
   const orgId = event.params.orgId
   let contract = Contract.bind(event.address)
   const orgConfig = contract.getOrganizationConfig(orgId)
@@ -83,40 +82,10 @@ export function handleOrganizationInitialized(event: OrganizationInitializedEven
   entity.requiredConfirmations = orgConfig.requiredConfirmations
   entity.rewardMultiplier = orgConfig.rewardMultiplier
   entity.rewardToken = orgConfig.rewardToken
-  entity.rewardSlashDivisor = orgConfig.rewardSlashDivisor
+  entity.rewardSlashMultiplier = orgConfig.rewardSlashMultiplier
   entity.slashRewardEvery = orgConfig.slashRewardEvery
   entity.isInitialized = true
   entity.save()
-}
-
-export function handleOrganizationReviewerAddition(
-  event: OrganizationReviewerAdditionEvent
-): void {
-  let orgEntity = Organization.load(event.params._orgId.toString())
-  if (!orgEntity) {
-    return
-  }
-  let reviewers = orgEntity.reviewers
-  if (!reviewers) return
-  reviewers.push(event.params._reviewer.toHexString())
-  orgEntity.reviewers = reviewers
-  orgEntity.save()
-}
-
-export function handleOrganizationReviewerRemoval(
-  event: OrganizationReviewerRemovalEvent
-): void {
-  let orgEntity = Organization.load(event.params._orgId.toString())
-  if (!orgEntity) {
-    return
-  }
-  let reviewers = orgEntity.reviewers || []
-  const index = reviewers.indexOf(event.params._reviewer.toHexString())
-  if (index != -1) {
-    reviewers.splice(index, 1)
-    orgEntity.reviewers = reviewers
-    orgEntity.save()
-  }
 }
 
 export function handleOrganizationSignerAddition(

@@ -1,5 +1,5 @@
 {
-  "address": "0x79433e241aee5a3544bBadE1c68b2D4f3D702628",
+  "address": "0xA39899B918FE1e0eCF6B1f25eCBa715C802c7250",
   "abi": [
     {
       "type": "constructor",
@@ -67,40 +67,6 @@
     {
       "type": "event",
       "anonymous": false,
-      "name": "OrganizationReviewerAddition",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId",
-          "indexed": true
-        },
-        {
-          "type": "address",
-          "name": "_reviewer",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
-      "name": "OrganizationReviewerRemoval",
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId",
-          "indexed": true
-        },
-        {
-          "type": "address",
-          "name": "_reviewer",
-          "indexed": true
-        }
-      ]
-    },
-    {
-      "type": "event",
-      "anonymous": false,
       "name": "OrganizationSignerAddition",
       "inputs": [
         {
@@ -161,7 +127,7 @@
         },
         {
           "type": "uint256",
-          "name": "rewardSlashDivisor"
+          "name": "rewardSlashMultiplier"
         },
         {
           "type": "uint256",
@@ -187,15 +153,15 @@
         },
         {
           "type": "address[]",
-          "name": "reviewers"
-        },
-        {
-          "type": "address[]",
           "name": "approvers"
         },
         {
           "type": "address[]",
           "name": "signers"
+        },
+        {
+          "type": "bool",
+          "name": "initializeConfig"
         }
       ],
       "outputs": [
@@ -326,10 +292,6 @@
             },
             {
               "type": "address[]",
-              "name": "reviewers"
-            },
-            {
-              "type": "address[]",
               "name": "approvers"
             },
             {
@@ -383,32 +345,13 @@
             },
             {
               "type": "uint256",
-              "name": "rewardSlashDivisor"
+              "name": "rewardSlashMultiplier"
             },
             {
               "type": "uint256",
               "name": "slashRewardEvery"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getReviewers",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address[]"
         }
       ]
     },
@@ -477,29 +420,6 @@
     {
       "type": "function",
       "name": "isApproverAddress",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "_orgId"
-        },
-        {
-          "type": "address",
-          "name": "_address"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "isReviewerAddress",
       "constant": true,
       "stateMutability": "view",
       "payable": false,

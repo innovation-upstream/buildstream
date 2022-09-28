@@ -90,50 +90,6 @@ export class OrganizationInitialized__Params {
   }
 }
 
-export class OrganizationReviewerAddition extends ethereum.Event {
-  get params(): OrganizationReviewerAddition__Params {
-    return new OrganizationReviewerAddition__Params(this);
-  }
-}
-
-export class OrganizationReviewerAddition__Params {
-  _event: OrganizationReviewerAddition;
-
-  constructor(event: OrganizationReviewerAddition) {
-    this._event = event;
-  }
-
-  get _orgId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get _reviewer(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
-export class OrganizationReviewerRemoval extends ethereum.Event {
-  get params(): OrganizationReviewerRemoval__Params {
-    return new OrganizationReviewerRemoval__Params(this);
-  }
-}
-
-export class OrganizationReviewerRemoval__Params {
-  _event: OrganizationReviewerRemoval;
-
-  constructor(event: OrganizationReviewerRemoval) {
-    this._event = event;
-  }
-
-  get _orgId(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get _reviewer(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-}
-
 export class OrganizationSignerAddition extends ethereum.Event {
   get params(): OrganizationSignerAddition__Params {
     return new OrganizationSignerAddition__Params(this);
@@ -191,20 +147,16 @@ export class Organization__getOrganizationResultValue0Struct extends ethereum.Tu
     return this[2].toString();
   }
 
-  get reviewers(): Array<Address> {
+  get approvers(): Array<Address> {
     return this[3].toAddressArray();
   }
 
-  get approvers(): Array<Address> {
+  get signers(): Array<Address> {
     return this[4].toAddressArray();
   }
 
-  get signers(): Array<Address> {
-    return this[5].toAddressArray();
-  }
-
   get isInitialized(): boolean {
-    return this[6].toBoolean();
+    return this[5].toBoolean();
   }
 }
 
@@ -229,7 +181,7 @@ export class Organization__getOrganizationConfigResultValue0Struct extends ether
     return this[4].toAddress();
   }
 
-  get rewardSlashDivisor(): BigInt {
+  get rewardSlashMultiplier(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -246,19 +198,19 @@ export class Organization extends ethereum.SmartContract {
   createOrg(
     name: string,
     description: string,
-    reviewers: Array<Address>,
     approvers: Array<Address>,
-    signers: Array<Address>
+    signers: Array<Address>,
+    initializeConfig: boolean
   ): BigInt {
     let result = super.call(
       "createOrg",
-      "createOrg(string,string,address[],address[],address[]):(uint256)",
+      "createOrg(string,string,address[],address[],bool):(uint256)",
       [
         ethereum.Value.fromString(name),
         ethereum.Value.fromString(description),
-        ethereum.Value.fromAddressArray(reviewers),
         ethereum.Value.fromAddressArray(approvers),
-        ethereum.Value.fromAddressArray(signers)
+        ethereum.Value.fromAddressArray(signers),
+        ethereum.Value.fromBoolean(initializeConfig)
       ]
     );
 
@@ -268,19 +220,19 @@ export class Organization extends ethereum.SmartContract {
   try_createOrg(
     name: string,
     description: string,
-    reviewers: Array<Address>,
     approvers: Array<Address>,
-    signers: Array<Address>
+    signers: Array<Address>,
+    initializeConfig: boolean
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createOrg",
-      "createOrg(string,string,address[],address[],address[]):(uint256)",
+      "createOrg(string,string,address[],address[],bool):(uint256)",
       [
         ethereum.Value.fromString(name),
         ethereum.Value.fromString(description),
-        ethereum.Value.fromAddressArray(reviewers),
         ethereum.Value.fromAddressArray(approvers),
-        ethereum.Value.fromAddressArray(signers)
+        ethereum.Value.fromAddressArray(signers),
+        ethereum.Value.fromBoolean(initializeConfig)
       ]
     );
     if (result.reverted) {
@@ -383,7 +335,7 @@ export class Organization extends ethereum.SmartContract {
   ): Organization__getOrganizationResultValue0Struct {
     let result = super.call(
       "getOrganization",
-      "getOrganization(uint256):((uint256,string,string,address[],address[],address[],bool))",
+      "getOrganization(uint256):((uint256,string,string,address[],address[],bool))",
       [ethereum.Value.fromUnsignedBigInt(_orgId)]
     );
 
@@ -397,7 +349,7 @@ export class Organization extends ethereum.SmartContract {
   ): ethereum.CallResult<Organization__getOrganizationResultValue0Struct> {
     let result = super.tryCall(
       "getOrganization",
-      "getOrganization(uint256):((uint256,string,string,address[],address[],address[],bool))",
+      "getOrganization(uint256):((uint256,string,string,address[],address[],bool))",
       [ethereum.Value.fromUnsignedBigInt(_orgId)]
     );
     if (result.reverted) {
@@ -444,29 +396,6 @@ export class Organization extends ethereum.SmartContract {
         value[0].toTuple()
       )
     );
-  }
-
-  getReviewers(_orgId: BigInt): Array<Address> {
-    let result = super.call(
-      "getReviewers",
-      "getReviewers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-
-    return result[0].toAddressArray();
-  }
-
-  try_getReviewers(_orgId: BigInt): ethereum.CallResult<Array<Address>> {
-    let result = super.tryCall(
-      "getReviewers",
-      "getReviewers(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(_orgId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
   getRewardMultiplier(orgId: BigInt, tags: Array<string>): BigInt {
@@ -577,38 +506,6 @@ export class Organization extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  isReviewerAddress(_orgId: BigInt, _address: Address): boolean {
-    let result = super.call(
-      "isReviewerAddress",
-      "isReviewerAddress(uint256,address):(bool)",
-      [
-        ethereum.Value.fromUnsignedBigInt(_orgId),
-        ethereum.Value.fromAddress(_address)
-      ]
-    );
-
-    return result[0].toBoolean();
-  }
-
-  try_isReviewerAddress(
-    _orgId: BigInt,
-    _address: Address
-  ): ethereum.CallResult<boolean> {
-    let result = super.tryCall(
-      "isReviewerAddress",
-      "isReviewerAddress(uint256,address):(bool)",
-      [
-        ethereum.Value.fromUnsignedBigInt(_orgId),
-        ethereum.Value.fromAddress(_address)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
   isSignerAddress(_orgId: BigInt, _address: Address): boolean {
     let result = super.call(
       "isSignerAddress",
@@ -705,7 +602,7 @@ export class AddOrgConfigCall__Inputs {
     return this._call.inputValues[4].value.toBigInt();
   }
 
-  get rewardSlashDivisor(): BigInt {
+  get rewardSlashMultiplier(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
 
@@ -747,16 +644,16 @@ export class CreateOrgCall__Inputs {
     return this._call.inputValues[1].value.toString();
   }
 
-  get reviewers(): Array<Address> {
+  get approvers(): Array<Address> {
     return this._call.inputValues[2].value.toAddressArray();
   }
 
-  get approvers(): Array<Address> {
+  get signers(): Array<Address> {
     return this._call.inputValues[3].value.toAddressArray();
   }
 
-  get signers(): Array<Address> {
-    return this._call.inputValues[4].value.toAddressArray();
+  get initializeConfig(): boolean {
+    return this._call.inputValues[4].value.toBoolean();
   }
 }
 

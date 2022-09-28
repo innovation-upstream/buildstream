@@ -6,7 +6,7 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0x79433e241aee5a3544bBadE1c68b2D4f3D702628"
+      address: "0xA39899B918FE1e0eCF6B1f25eCBa715C802c7250"
       abi: Organization
     mapping:
       kind: ethereum/events
@@ -26,10 +26,6 @@ dataSources:
           handler: handleOrganizationCreation
         - event: OrganizationInitialized(indexed uint256)
           handler: handleOrganizationInitialized
-        - event: OrganizationReviewerAddition(indexed uint256,indexed address)
-          handler: handleOrganizationReviewerAddition
-        - event: OrganizationReviewerRemoval(indexed uint256,indexed address)
-          handler: handleOrganizationReviewerRemoval
         - event: OrganizationSignerAddition(indexed uint256,indexed address)
           handler: handleOrganizationSignerAddition
         - event: OrganizationSignerRemoval(indexed uint256,indexed address)
@@ -39,7 +35,7 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0xb7F83C45236E65876DA8b551C1dD2bcD696c1a9e"
+      address: "0xE9ee3DC4d33bdA7c139856B4CA252B4Eb2C08BE4"
       abi: Treasury
     mapping:
       kind: ethereum/events
@@ -65,7 +61,7 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0x9559313ef7aA522Ecd553390cb9013D36F79Bc5b"
+      address: "0x7405266B783Dd9CC0E77214455b47F44c584458F"
       abi: ActionContract
     mapping:
       kind: ethereum/events
@@ -88,7 +84,7 @@ dataSources:
     name: TaskStorageContract
     network: goerli
     source:
-      address: "0xb74405a7ce3be6a3ce65A286B8B7e854596f2eb9"
+      address: "0x985BfAa6BddDb72A1542d556354E6C15E33b792B"
       abi: TaskStorageContract
     mapping:
       kind: ethereum/events

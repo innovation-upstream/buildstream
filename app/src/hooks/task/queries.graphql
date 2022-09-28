@@ -11,14 +11,13 @@ query GetTask(
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {
@@ -74,14 +73,13 @@ query GetTasks(
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {
@@ -174,14 +172,13 @@ query GetTaskSnapshots(
       orgId
       name
       description
-      reviewers
       approvers
       signers
       requiredTaskApprovals
       requiredConfirmations
       rewardMultiplier
       rewardToken
-      rewardSlashDivisor
+      rewardSlashMultiplier
       slashRewardEvery
       isInitialized
       treasury {

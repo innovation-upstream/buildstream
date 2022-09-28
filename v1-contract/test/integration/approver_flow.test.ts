@@ -1,21 +1,13 @@
+/* eslint-disable node/no-missing-import */
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
+import { actionType } from '../../utils/globals'
 
 const multiplier = 0.00001
 const requiredConfirmations = 2
 const requiredApprovals = 1
-const rewardSlashDivisor = 0.01
-const slashRewardEvery = 1
-
-const actionType = {
-  WITHDRAWAL: 0,
-  ADD_REVIEWER: 1,
-  ADD_APPROVER: 2,
-  ADD_SIGNER: 3,
-  REMOVE_REVIEWER: 4,
-  REMOVE_APPROVER: 5,
-  REMOVE_SIGNER: 6
-}
+const rewardSlashMultiplier = 0.01
+const slashRewardEvery = 86400
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -35,16 +27,16 @@ const getContractInstances = async () => {
 
 describe('Integration test: Approver flow', function () {
   it('Should add approver', async function () {
-    const [, signer, approver1, approver2] = await ethers.getSigners()
+    const [owner, signer, approver1, approver2] = await ethers.getSigners()
     const { actionContract, orgContract } = await getContractInstances()
 
     // Create organization
     const createOrgTx = await orgContract.createOrg(
       'Buildstream',
       'Decentralized task managers',
-      [ethers.constants.AddressZero],
       [approver1.address],
-      [signer.address]
+      [owner.address, signer.address],
+      false
     )
 
     const orgCreateReceipt = await createOrgTx.wait()
@@ -59,7 +51,7 @@ describe('Integration test: Approver flow', function () {
       ethers.constants.AddressZero,
       requiredConfirmations,
       requiredApprovals,
-      ethers.utils.parseUnits(rewardSlashDivisor.toString(), 4),
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
       slashRewardEvery
     )
     await addOrgConfigTx.wait()
@@ -91,7 +83,7 @@ describe('Integration test: Approver flow', function () {
   })
 
   it('Should remove approver', async function () {
-    const [, signer, approver1, approver2, approver3] =
+    const [owner, signer, approver1, approver2, approver3] =
       await ethers.getSigners()
     const { actionContract, orgContract } = await getContractInstances()
 
@@ -99,9 +91,9 @@ describe('Integration test: Approver flow', function () {
     const createOrgTx = await orgContract.createOrg(
       'Buildstream',
       'Decentralized task managers',
-      [ethers.constants.AddressZero],
       [approver1.address, approver2.address],
-      [signer.address]
+      [owner.address, signer.address],
+      false
     )
 
     const orgCreateReceipt = await createOrgTx.wait()
@@ -116,7 +108,7 @@ describe('Integration test: Approver flow', function () {
       ethers.constants.AddressZero,
       requiredConfirmations,
       requiredApprovals,
-      ethers.utils.parseUnits(rewardSlashDivisor.toString(), 4),
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
       slashRewardEvery
     )
     await addOrgConfigTx.wait()
@@ -163,8 +155,8 @@ describe('Integration test: Approver flow', function () {
 
     await orgContract.executeAction(actionId)
 
-    const reviewers = await orgContract.getApprovers(orgId)
+    const approvers = await orgContract.getApprovers(orgId)
 
-    expect(await reviewers.includes(approver3.address)).to.be.equal(false)
+    expect(await approvers.includes(approver3.address)).to.be.equal(false)
   })
 })
