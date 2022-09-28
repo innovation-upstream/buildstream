@@ -163,7 +163,7 @@ const OrgConfigForm: React.FC<{ orgId: number }> = ({ orgId }) => {
               htmlFor='rewardSlashMultiplier'
               className='leading-7 text-sm text-gray-600'
             >
-              Reward Slash Divisor
+              Reward Slash Multiplier
             </label>
             <input
               type='number'
