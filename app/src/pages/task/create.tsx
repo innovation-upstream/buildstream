@@ -9,6 +9,7 @@ import client from 'graphclient/client'
 import { GetOrganizationsDocument, Organization } from '../../../.graphclient'
 import { Converter } from 'utils/converter'
 import { ComplexityScoreMap } from 'hooks/task/types'
+import { TaskDurationCalc } from 'utils/task_duration'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -31,6 +32,9 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: 0,
+  weeks: 0,
+  days: 0,
+  hours: 0,
   taskDuration: 0
 }
 
@@ -47,6 +51,9 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
   const [status, setStatus] = useState({ text: '', error: false })
   const taskComplexities = Object.entries(ComplexityScoreMap)
   const router = useRouter()
+  const weeksSelection = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const daysSelection = [0, 1, 2, 3, 4, 5, 6]
+  const hoursSelection = [0, 1, 2, 4, 8, 16]
 
   const { data, startPolling, stopPolling } = useGetOrganizationsQuery()
   usePolling(startPolling, stopPolling)
@@ -98,6 +105,15 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
       setStatus({ text: 'Wallet Not Connected', error: true })
       return
     }
+    const taskDuration = TaskDurationCalc.getDurationInSeconds(
+      taskData.weeks,
+      taskData.days,
+      taskData.hours
+    )
+    if (taskDuration === 0) {
+      setStatus({ text: 'Wrong Task Duration Input', error: true })
+      return
+    }
     setProcessing(true)
     try {
       const response = await createNewTask(
@@ -107,7 +123,7 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
         taskData.taskTags,
         taskData.complexityScore,
         taskData.reputationLevel,
-        taskData.taskDuration,
+        taskDuration,
         library.getSigner()
       )
       router.push(`/task`)
@@ -229,20 +245,79 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
               </div>
               <div className='p-2 w-full'>
                 <div className='relative'>
-                  <label
-                    htmlFor='taskDuration'
-                    className='leading-7 text-sm text-gray-600'
-                  >
-                    Task Duration
-                  </label>
-                  <input
-                    type='number'
-                    id='taskDuration'
-                    name='taskDuration'
-                    value={taskData.taskDuration}
-                    onChange={handleChange}
-                    className='w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                  />
+                  <div className='flex justify-between gap-x-2'>
+                    <div className='w-full'>
+                      <label
+                        htmlFor='taskDuration'
+                        className='leading-7 text-sm text-gray-600 block'
+                      >
+                        Duration(Weeks)
+                      </label>
+                      <select
+                        id='weeks'
+                        name='weeks'
+                        value={taskData.weeks}
+                        onChange={handleChange}
+                        className='w-full bg-gray-100 py-3 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                      >
+                        {weeksSelection.map((value) => {
+                          return (
+                            <option key={value} value={value}>
+                              {value}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </div>
+
+                    <div className='w-full'>
+                      <label
+                        htmlFor='taskDuration'
+                        className='leading-7 text-sm text-gray-600 block'
+                      >
+                        Days
+                      </label>
+                      <select
+                        id='days'
+                        name='days'
+                        value={taskData.days}
+                        onChange={handleChange}
+                        className='w-full bg-gray-100 py-3 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                      >
+                        {daysSelection.map((value) => {
+                          return (
+                            <option key={value} value={value}>
+                              {value}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </div>
+
+                    <div className='w-full'>
+                      <label
+                        htmlFor='taskDuration'
+                        className='leading-7 text-sm text-gray-600 block'
+                      >
+                        Hours
+                      </label>
+                      <select
+                        id='hours'
+                        name='hours'
+                        value={taskData.hours}
+                        onChange={handleChange}
+                        className='w-full bg-gray-100 py-3 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                      >
+                        {hoursSelection.map((value) => {
+                          return (
+                            <option key={value} value={value}>
+                              {value}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className='p-2 w-full'>
