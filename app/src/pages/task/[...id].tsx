@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { getTaskDiff } from 'utils/taskDiff'
+import { TaskDurationCalc } from 'utils/task_duration'
 import {
   GetTaskDocument,
   GetTaskSnapshotsDocument,
@@ -273,7 +274,7 @@ const TaskPage: NextPage<PageProps> = ({ task, snapshots }) => {
         <p className='text-lg mt-3 break-all'>
           Task Duration:{' '}
           <span className='text-sm text-gray-500'>
-            {currentTask?.taskDuration.toString()}
+            {TaskDurationCalc.getTaskDuration(currentTask?.taskDuration)}
           </span>
         </p>
         <div className='w-full flex justify-between align-center mt-4'>

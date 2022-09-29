@@ -62,7 +62,6 @@ const OrgConfigForm: React.FC<{ orgId: number }> = ({ orgId }) => {
         orgData.slashRewardEvery,
         library.getSigner()
       )
-      setProcessing(false)
       if (tx) router.push(`/organization/${orgId}`)
     } catch (e) {
       setProcessing(false)
