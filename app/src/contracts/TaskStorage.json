@@ -1,5 +1,5 @@
 {
-  "address": "0x985BfAa6BddDb72A1542d556354E6C15E33b792B",
+  "address": "0x199fff39c9D04EC9CfF0116EA73cB28B19ED5D88",
   "abi": [
     {
       "type": "constructor",
@@ -125,16 +125,35 @@
               "name": "taskTags"
             },
             {
-              "type": "uint8",
-              "name": "status"
-            },
-            {
               "type": "uint256",
               "name": "complexityScore"
             },
             {
               "type": "uint256",
               "name": "reputationLevel"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            },
+            {
+              "type": "string",
+              "name": "comment"
+            },
+            {
+              "type": "uint256",
+              "name": "taskDuration"
+            }
+          ]
+        },
+        {
+          "type": "tuple",
+          "name": "taskMetadata",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
             },
             {
               "type": "uint256",
@@ -157,12 +176,46 @@
               "name": "submitDate"
             },
             {
-              "type": "uint256",
-              "name": "taskDuration"
+              "type": "bool",
+              "name": "staked"
             },
             {
-              "type": "string",
-              "name": "comment"
+              "type": "tuple[]",
+              "name": "revisions",
+              "components": [
+                {
+                  "type": "uint256",
+                  "name": "id"
+                },
+                {
+                  "type": "address",
+                  "name": "requester"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionId"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionHash"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtension"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtensionRequest"
+                },
+                {
+                  "type": "uint8",
+                  "name": "status"
+                }
+              ]
+            },
+            {
+              "type": "address[]",
+              "name": "assignmentRequests"
             }
           ]
         }
@@ -187,6 +240,119 @@
           "type": "address",
           "name": "rewardToken",
           "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRejected",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "sender",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRevisionAccepted",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "id",
+          "indexed": false
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionId",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRevisionChangesRequested",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "id",
+          "indexed": false
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionId",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "durationExtension",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRevisionRequested",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "revision",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "address",
+              "name": "requester"
+            },
+            {
+              "type": "bytes32",
+              "name": "revisionId"
+            },
+            {
+              "type": "bytes32",
+              "name": "revisionHash"
+            },
+            {
+              "type": "uint256",
+              "name": "durationExtension"
+            },
+            {
+              "type": "uint256",
+              "name": "durationExtensionRequest"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            }
+          ]
         }
       ]
     },
@@ -285,10 +451,6 @@
               "name": "taskTags"
             },
             {
-              "type": "uint8",
-              "name": "status"
-            },
-            {
               "type": "uint256",
               "name": "complexityScore"
             },
@@ -297,36 +459,38 @@
               "name": "reputationLevel"
             },
             {
-              "type": "uint256",
-              "name": "requiredApprovals"
-            },
-            {
-              "type": "uint256",
-              "name": "rewardAmount"
-            },
-            {
-              "type": "address",
-              "name": "rewardToken"
-            },
-            {
-              "type": "uint256",
-              "name": "assignDate"
-            },
-            {
-              "type": "uint256",
-              "name": "submitDate"
-            },
-            {
-              "type": "uint256",
-              "name": "taskDuration"
+              "type": "uint8",
+              "name": "status"
             },
             {
               "type": "string",
               "name": "comment"
+            },
+            {
+              "type": "uint256",
+              "name": "taskDuration"
             }
           ]
         }
       ]
+    },
+    {
+      "type": "function",
+      "name": "acceptTaskRevision",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "revisionIndex"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",
@@ -378,6 +542,10 @@
         {
           "type": "address",
           "name": "assigner"
+        },
+        {
+          "type": "bool",
+          "name": "staked"
         }
       ],
       "outputs": []
@@ -468,25 +636,6 @@
     },
     {
       "type": "function",
-      "name": "getAssignmentRequests",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address[]"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "getTask",
       "constant": true,
       "stateMutability": "view",
@@ -531,16 +680,49 @@
               "name": "taskTags"
             },
             {
-              "type": "uint8",
-              "name": "status"
-            },
-            {
               "type": "uint256",
               "name": "complexityScore"
             },
             {
               "type": "uint256",
               "name": "reputationLevel"
+            },
+            {
+              "type": "uint8",
+              "name": "status"
+            },
+            {
+              "type": "string",
+              "name": "comment"
+            },
+            {
+              "type": "uint256",
+              "name": "taskDuration"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTaskMetadata",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
             },
             {
               "type": "uint256",
@@ -563,29 +745,48 @@
               "name": "submitDate"
             },
             {
-              "type": "uint256",
-              "name": "taskDuration"
+              "type": "bool",
+              "name": "staked"
             },
             {
-              "type": "string",
-              "name": "comment"
+              "type": "tuple[]",
+              "name": "revisions",
+              "components": [
+                {
+                  "type": "uint256",
+                  "name": "id"
+                },
+                {
+                  "type": "address",
+                  "name": "requester"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionId"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionHash"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtension"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtensionRequest"
+                },
+                {
+                  "type": "uint8",
+                  "name": "status"
+                }
+              ]
+            },
+            {
+              "type": "address[]",
+              "name": "assignmentRequests"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getTaskCount",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256",
-          "name": "count"
         }
       ]
     },
@@ -625,6 +826,58 @@
         {
           "type": "address",
           "name": "rewardToken"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "requestForTaskRevision",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionId"
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionHash"
+        },
+        {
+          "type": "uint256",
+          "name": "durationExtension"
+        },
+        {
+          "type": "address",
+          "name": "approver"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "requestForTaskRevisionDurationExtension",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "revisionIndex"
+        },
+        {
+          "type": "uint256",
+          "name": "durationExtension"
         }
       ],
       "outputs": []

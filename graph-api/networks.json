@@ -1,19 +1,19 @@
 {
   "mainnet": {
     "Organization": {
-      "address": "0x388b451F5c9416fc337a4FA1f917041c4a5f7517"
-    },
-    "TaskContract": {
-      "address": "0xa481835E79db52116DDD81CF6f5130f07872b8Ac"
+      "address": "0xAFFF5a724488d7940b42E5b15C2E43f767e104D0"
     },
     "Treasury": {
-      "address": "0x1124de744E4d3A0A8248D9888078be174C663E35"
+      "address": "0x9441d8CA8373337CC5fcdfAa739FF852313610Da"
     },
     "ActionContract": {
-      "address": "0x96bf3917f132c3F8F230b0ACd93bd036988E7a5d"
+      "address": "0x2a5f8bB1b7EB513C68288F05fC19737703d72C3f"
     },
     "TaskStorageContract": {
-      "address": "0x0A8F4c07C6bfE56ecBe6E125BF52F616f6cB86e1"
+      "address": "0x199fff39c9D04EC9CfF0116EA73cB28B19ED5D88"
+    },
+    "TeamContract": {
+      "address": "0x6677Ae167d3C939C8B99239bb3DEB75774941a88"
     }
   },
   "goerli": {
@@ -28,6 +28,9 @@
     },
     "ActionContract": {
       "address": "0x21162C5cB94677C32193d3A1896bCE424Ac2ed12"
+    },
+    "TeamContract": {
+      "address": "0xb7aC25a608c897Dbd9e6a3F95dBFbA5723bDB0B6"
     }
   }
 }

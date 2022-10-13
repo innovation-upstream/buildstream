@@ -1,5 +1,5 @@
 {
-  "address": "0x96BB467fB1E260133EaDa0706c5FaeE0d1958bA4",
+  "address": "0x600e7bf85a2f874AbdCF146116426f277E81527E",
   "abi": [
     {
       "type": "constructor",
@@ -144,133 +144,6 @@
     },
     {
       "type": "function",
-      "name": "getAssignmentRequests",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "address[]"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getState",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint8"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "getTask",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "tuple",
-          "components": [
-            {
-              "type": "uint256",
-              "name": "id"
-            },
-            {
-              "type": "uint256",
-              "name": "orgId"
-            },
-            {
-              "type": "string",
-              "name": "title"
-            },
-            {
-              "type": "string",
-              "name": "description"
-            },
-            {
-              "type": "address",
-              "name": "assigner"
-            },
-            {
-              "type": "address",
-              "name": "assigneeAddress"
-            },
-            {
-              "type": "string[]",
-              "name": "taskTags"
-            },
-            {
-              "type": "uint8",
-              "name": "status"
-            },
-            {
-              "type": "uint256",
-              "name": "complexityScore"
-            },
-            {
-              "type": "uint256",
-              "name": "reputationLevel"
-            },
-            {
-              "type": "uint256",
-              "name": "requiredApprovals"
-            },
-            {
-              "type": "uint256",
-              "name": "rewardAmount"
-            },
-            {
-              "type": "address",
-              "name": "rewardToken"
-            },
-            {
-              "type": "uint256",
-              "name": "assignDate"
-            },
-            {
-              "type": "uint256",
-              "name": "submitDate"
-            },
-            {
-              "type": "uint256",
-              "name": "taskDuration"
-            },
-            {
-              "type": "string",
-              "name": "comment"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "openTask",
       "constant": false,
       "payable": false,
@@ -283,6 +156,32 @@
         {
           "type": "address",
           "name": "rewardToken"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "requestForTaskRevision",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "bytes32",
+          "name": "reviewId"
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionHash"
+        },
+        {
+          "type": "uint256",
+          "name": "durationExtension"
         }
       ],
       "outputs": []
@@ -367,6 +266,20 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTeamContract",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "_address"
         }
       ],
       "outputs": []

@@ -167,7 +167,7 @@ contract Organization {
         uint256 slashRewardEvery
     ) public onlySigner(orgId) {
         require(!orgs[orgId].isInitialized, "org is initialized");
-        require(rewardSlashMultiplier < (10 ** 18), "invalid slash multiplier");
+        require(rewardSlashMultiplier <= (10 ** 18), "invalid slash multiplier");
         orgs[orgId].isInitialized = true;
         orgConfigs[orgId] = OrgLib.OrgConfig({
             orgId: orgId,
@@ -304,7 +304,7 @@ contract Organization {
             action.actionType ==
             ActionLib.ActionType.UPDATE_REWARD_SLASH_MULTIPLIER
         ) {
-            require(action.value < (10 ** 18), "invalid slash multiplier");
+            require(action.value <= (10 ** 18), "invalid slash multiplier");
             orgConfigs[action.orgId].rewardSlashMultiplier = action.value;
         }
 

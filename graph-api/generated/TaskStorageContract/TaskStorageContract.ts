@@ -134,6 +134,12 @@ export class TaskCreation__Params {
       this._event.parameters[1].value.toTuple()
     );
   }
+
+  get taskMetadata(): TaskCreationTaskMetadataStruct {
+    return changetype<TaskCreationTaskMetadataStruct>(
+      this._event.parameters[2].value.toTuple()
+    );
+  }
 }
 
 export class TaskCreationTaskStruct extends ethereum.Tuple {
@@ -165,44 +171,92 @@ export class TaskCreationTaskStruct extends ethereum.Tuple {
     return this[6].toStringArray();
   }
 
-  get status(): i32 {
-    return this[7].toI32();
-  }
-
   get complexityScore(): BigInt {
-    return this[8].toBigInt();
+    return this[7].toBigInt();
   }
 
   get reputationLevel(): BigInt {
-    return this[9].toBigInt();
+    return this[8].toBigInt();
   }
 
-  get requiredApprovals(): BigInt {
-    return this[10].toBigInt();
-  }
-
-  get rewardAmount(): BigInt {
-    return this[11].toBigInt();
-  }
-
-  get rewardToken(): Address {
-    return this[12].toAddress();
-  }
-
-  get assignDate(): BigInt {
-    return this[13].toBigInt();
-  }
-
-  get submitDate(): BigInt {
-    return this[14].toBigInt();
-  }
-
-  get taskDuration(): BigInt {
-    return this[15].toBigInt();
+  get status(): i32 {
+    return this[9].toI32();
   }
 
   get comment(): string {
-    return this[16].toString();
+    return this[10].toString();
+  }
+
+  get taskDuration(): BigInt {
+    return this[11].toBigInt();
+  }
+}
+
+export class TaskCreationTaskMetadataStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requiredApprovals(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[3].toAddress();
+  }
+
+  get assignDate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get submitDate(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get staked(): boolean {
+    return this[6].toBoolean();
+  }
+
+  get revisions(): Array<TaskCreationTaskMetadataRevisionsStruct> {
+    return this[7].toTupleArray<TaskCreationTaskMetadataRevisionsStruct>();
+  }
+
+  get assignmentRequests(): Array<Address> {
+    return this[8].toAddressArray();
+  }
+}
+
+export class TaskCreationTaskMetadataRevisionsStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requester(): Address {
+    return this[1].toAddress();
+  }
+
+  get revisionId(): Bytes {
+    return this[2].toBytes();
+  }
+
+  get revisionHash(): Bytes {
+    return this[3].toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get durationExtensionRequest(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get status(): i32 {
+    return this[6].toI32();
   }
 }
 
@@ -229,6 +283,138 @@ export class TaskOpened__Params {
 
   get rewardToken(): Address {
     return this._event.parameters[2].value.toAddress();
+  }
+}
+
+export class TaskRejected extends ethereum.Event {
+  get params(): TaskRejected__Params {
+    return new TaskRejected__Params(this);
+  }
+}
+
+export class TaskRejected__Params {
+  _event: TaskRejected;
+
+  constructor(event: TaskRejected) {
+    this._event = event;
+  }
+
+  get sender(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class TaskRevisionAccepted extends ethereum.Event {
+  get params(): TaskRevisionAccepted__Params {
+    return new TaskRevisionAccepted__Params(this);
+  }
+}
+
+export class TaskRevisionAccepted__Params {
+  _event: TaskRevisionAccepted;
+
+  constructor(event: TaskRevisionAccepted) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get revisionId(): Bytes {
+    return this._event.parameters[2].value.toBytes();
+  }
+}
+
+export class TaskRevisionChangesRequested extends ethereum.Event {
+  get params(): TaskRevisionChangesRequested__Params {
+    return new TaskRevisionChangesRequested__Params(this);
+  }
+}
+
+export class TaskRevisionChangesRequested__Params {
+  _event: TaskRevisionChangesRequested;
+
+  constructor(event: TaskRevisionChangesRequested) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get revisionId(): Bytes {
+    return this._event.parameters[2].value.toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class TaskRevisionRequested extends ethereum.Event {
+  get params(): TaskRevisionRequested__Params {
+    return new TaskRevisionRequested__Params(this);
+  }
+}
+
+export class TaskRevisionRequested__Params {
+  _event: TaskRevisionRequested;
+
+  constructor(event: TaskRevisionRequested) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get revision(): TaskRevisionRequestedRevisionStruct {
+    return changetype<TaskRevisionRequestedRevisionStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+}
+
+export class TaskRevisionRequestedRevisionStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requester(): Address {
+    return this[1].toAddress();
+  }
+
+  get revisionId(): Bytes {
+    return this[2].toBytes();
+  }
+
+  get revisionHash(): Bytes {
+    return this[3].toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get durationExtensionRequest(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get status(): i32 {
+    return this[6].toI32();
   }
 }
 
@@ -351,44 +537,24 @@ export class TaskUpdatedTaskStruct extends ethereum.Tuple {
     return this[6].toStringArray();
   }
 
-  get status(): i32 {
-    return this[7].toI32();
-  }
-
   get complexityScore(): BigInt {
-    return this[8].toBigInt();
+    return this[7].toBigInt();
   }
 
   get reputationLevel(): BigInt {
-    return this[9].toBigInt();
+    return this[8].toBigInt();
   }
 
-  get requiredApprovals(): BigInt {
-    return this[10].toBigInt();
-  }
-
-  get rewardAmount(): BigInt {
-    return this[11].toBigInt();
-  }
-
-  get rewardToken(): Address {
-    return this[12].toAddress();
-  }
-
-  get assignDate(): BigInt {
-    return this[13].toBigInt();
-  }
-
-  get submitDate(): BigInt {
-    return this[14].toBigInt();
-  }
-
-  get taskDuration(): BigInt {
-    return this[15].toBigInt();
+  get status(): i32 {
+    return this[9].toI32();
   }
 
   get comment(): string {
-    return this[16].toString();
+    return this[10].toString();
+  }
+
+  get taskDuration(): BigInt {
+    return this[11].toBigInt();
   }
 }
 
@@ -421,44 +587,96 @@ export class TaskStorageContract__getTaskResultValue0Struct extends ethereum.Tup
     return this[6].toStringArray();
   }
 
-  get status(): i32 {
-    return this[7].toI32();
-  }
-
   get complexityScore(): BigInt {
-    return this[8].toBigInt();
+    return this[7].toBigInt();
   }
 
   get reputationLevel(): BigInt {
-    return this[9].toBigInt();
+    return this[8].toBigInt();
   }
 
-  get requiredApprovals(): BigInt {
-    return this[10].toBigInt();
-  }
-
-  get rewardAmount(): BigInt {
-    return this[11].toBigInt();
-  }
-
-  get rewardToken(): Address {
-    return this[12].toAddress();
-  }
-
-  get assignDate(): BigInt {
-    return this[13].toBigInt();
-  }
-
-  get submitDate(): BigInt {
-    return this[14].toBigInt();
-  }
-
-  get taskDuration(): BigInt {
-    return this[15].toBigInt();
+  get status(): i32 {
+    return this[9].toI32();
   }
 
   get comment(): string {
-    return this[16].toString();
+    return this[10].toString();
+  }
+
+  get taskDuration(): BigInt {
+    return this[11].toBigInt();
+  }
+}
+
+export class TaskStorageContract__getTaskMetadataResultValue0Struct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requiredApprovals(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[3].toAddress();
+  }
+
+  get assignDate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get submitDate(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get staked(): boolean {
+    return this[6].toBoolean();
+  }
+
+  get revisions(): Array<
+    TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct
+  > {
+    return this[7].toTupleArray<
+      TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct
+    >();
+  }
+
+  get assignmentRequests(): Array<Address> {
+    return this[8].toAddressArray();
+  }
+}
+
+export class TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requester(): Address {
+    return this[1].toAddress();
+  }
+
+  get revisionId(): Bytes {
+    return this[2].toBytes();
+  }
+
+  get revisionHash(): Bytes {
+    return this[3].toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get durationExtensionRequest(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get status(): i32 {
+    return this[6].toI32();
   }
 }
 
@@ -558,35 +776,10 @@ export class TaskStorageContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  getAssignmentRequests(taskId: BigInt): Array<Address> {
-    let result = super.call(
-      "getAssignmentRequests",
-      "getAssignmentRequests(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(taskId)]
-    );
-
-    return result[0].toAddressArray();
-  }
-
-  try_getAssignmentRequests(
-    taskId: BigInt
-  ): ethereum.CallResult<Array<Address>> {
-    let result = super.tryCall(
-      "getAssignmentRequests",
-      "getAssignmentRequests(uint256):(address[])",
-      [ethereum.Value.fromUnsignedBigInt(taskId)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
-  }
-
   getTask(taskId: BigInt): TaskStorageContract__getTaskResultValue0Struct {
     let result = super.call(
       "getTask",
-      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))",
+      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -600,7 +793,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): ethereum.CallResult<TaskStorageContract__getTaskResultValue0Struct> {
     let result = super.tryCall(
       "getTask",
-      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))",
+      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -614,19 +807,39 @@ export class TaskStorageContract extends ethereum.SmartContract {
     );
   }
 
-  getTaskCount(): BigInt {
-    let result = super.call("getTaskCount", "getTaskCount():(uint256)", []);
+  getTaskMetadata(
+    taskId: BigInt
+  ): TaskStorageContract__getTaskMetadataResultValue0Struct {
+    let result = super.call(
+      "getTaskMetadata",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[]))",
+      [ethereum.Value.fromUnsignedBigInt(taskId)]
+    );
 
-    return result[0].toBigInt();
+    return changetype<TaskStorageContract__getTaskMetadataResultValue0Struct>(
+      result[0].toTuple()
+    );
   }
 
-  try_getTaskCount(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("getTaskCount", "getTaskCount():(uint256)", []);
+  try_getTaskMetadata(
+    taskId: BigInt
+  ): ethereum.CallResult<
+    TaskStorageContract__getTaskMetadataResultValue0Struct
+  > {
+    let result = super.tryCall(
+      "getTaskMetadata",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[]))",
+      [ethereum.Value.fromUnsignedBigInt(taskId)]
+    );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
+    return ethereum.CallResult.fromValue(
+      changetype<TaskStorageContract__getTaskMetadataResultValue0Struct>(
+        value[0].toTuple()
+      )
+    );
   }
 }
 
@@ -652,6 +865,40 @@ export class ConstructorCall__Outputs {
   _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
+    this._call = call;
+  }
+}
+
+export class AcceptTaskRevisionCall extends ethereum.Call {
+  get inputs(): AcceptTaskRevisionCall__Inputs {
+    return new AcceptTaskRevisionCall__Inputs(this);
+  }
+
+  get outputs(): AcceptTaskRevisionCall__Outputs {
+    return new AcceptTaskRevisionCall__Outputs(this);
+  }
+}
+
+export class AcceptTaskRevisionCall__Inputs {
+  _call: AcceptTaskRevisionCall;
+
+  constructor(call: AcceptTaskRevisionCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get revisionIndex(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class AcceptTaskRevisionCall__Outputs {
+  _call: AcceptTaskRevisionCall;
+
+  constructor(call: AcceptTaskRevisionCall) {
     this._call = call;
   }
 }
@@ -747,6 +994,10 @@ export class AssignCall__Inputs {
 
   get assigner(): Address {
     return this._call.inputValues[2].value.toAddress();
+  }
+
+  get staked(): boolean {
+    return this._call.inputValues[3].value.toBoolean();
   }
 }
 
@@ -918,6 +1169,90 @@ export class OpenTaskCall__Outputs {
   _call: OpenTaskCall;
 
   constructor(call: OpenTaskCall) {
+    this._call = call;
+  }
+}
+
+export class RequestForTaskRevisionCall extends ethereum.Call {
+  get inputs(): RequestForTaskRevisionCall__Inputs {
+    return new RequestForTaskRevisionCall__Inputs(this);
+  }
+
+  get outputs(): RequestForTaskRevisionCall__Outputs {
+    return new RequestForTaskRevisionCall__Outputs(this);
+  }
+}
+
+export class RequestForTaskRevisionCall__Inputs {
+  _call: RequestForTaskRevisionCall;
+
+  constructor(call: RequestForTaskRevisionCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get revisionId(): Bytes {
+    return this._call.inputValues[1].value.toBytes();
+  }
+
+  get revisionHash(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get approver(): Address {
+    return this._call.inputValues[4].value.toAddress();
+  }
+}
+
+export class RequestForTaskRevisionCall__Outputs {
+  _call: RequestForTaskRevisionCall;
+
+  constructor(call: RequestForTaskRevisionCall) {
+    this._call = call;
+  }
+}
+
+export class RequestForTaskRevisionDurationExtensionCall extends ethereum.Call {
+  get inputs(): RequestForTaskRevisionDurationExtensionCall__Inputs {
+    return new RequestForTaskRevisionDurationExtensionCall__Inputs(this);
+  }
+
+  get outputs(): RequestForTaskRevisionDurationExtensionCall__Outputs {
+    return new RequestForTaskRevisionDurationExtensionCall__Outputs(this);
+  }
+}
+
+export class RequestForTaskRevisionDurationExtensionCall__Inputs {
+  _call: RequestForTaskRevisionDurationExtensionCall;
+
+  constructor(call: RequestForTaskRevisionDurationExtensionCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get revisionIndex(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get durationExtension(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+}
+
+export class RequestForTaskRevisionDurationExtensionCall__Outputs {
+  _call: RequestForTaskRevisionDurationExtensionCall;
+
+  constructor(call: RequestForTaskRevisionDurationExtensionCall) {
     this._call = call;
   }
 }

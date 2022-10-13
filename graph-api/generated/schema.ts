@@ -243,13 +243,21 @@ export class Task extends Entity {
     }
   }
 
-  get assigner(): string {
+  get assigner(): string | null {
     let value = this.get("assigner");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set assigner(value: string) {
-    this.set("assigner", Value.fromString(value));
+  set assigner(value: string | null) {
+    if (!value) {
+      this.unset("assigner");
+    } else {
+      this.set("assigner", Value.fromString(<string>value));
+    }
   }
 
   get assignee(): string | null {
@@ -266,6 +274,40 @@ export class Task extends Entity {
       this.unset("assignee");
     } else {
       this.set("assignee", Value.fromString(<string>value));
+    }
+  }
+
+  get teamAssignee(): string | null {
+    let value = this.get("teamAssignee");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set teamAssignee(value: string | null) {
+    if (!value) {
+      this.unset("teamAssignee");
+    } else {
+      this.set("teamAssignee", Value.fromString(<string>value));
+    }
+  }
+
+  get team(): string | null {
+    let value = this.get("team");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set team(value: string | null) {
+    if (!value) {
+      this.unset("team");
+    } else {
+      this.set("team", Value.fromString(<string>value));
     }
   }
 
@@ -443,6 +485,136 @@ export class Task extends Entity {
         Value.fromStringArray(<Array<string>>value)
       );
     }
+  }
+
+  get staked(): boolean {
+    let value = this.get("staked");
+    return value!.toBoolean();
+  }
+
+  set staked(value: boolean) {
+    this.set("staked", Value.fromBoolean(value));
+  }
+
+  get revisions(): Array<string> | null {
+    let value = this.get("revisions");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set revisions(value: Array<string> | null) {
+    if (!value) {
+      this.unset("revisions");
+    } else {
+      this.set("revisions", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+}
+
+export class TaskRevision extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TaskRevision entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type TaskRevision must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TaskRevision", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TaskRevision | null {
+    return changetype<TaskRevision | null>(store.get("TaskRevision", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get task(): string {
+    let value = this.get("task");
+    return value!.toString();
+  }
+
+  set task(value: string) {
+    this.set("task", Value.fromString(value));
+  }
+
+  get revisionId(): BigInt {
+    let value = this.get("revisionId");
+    return value!.toBigInt();
+  }
+
+  set revisionId(value: BigInt) {
+    this.set("revisionId", Value.fromBigInt(value));
+  }
+
+  get requester(): string {
+    let value = this.get("requester");
+    return value!.toString();
+  }
+
+  set requester(value: string) {
+    this.set("requester", Value.fromString(value));
+  }
+
+  get externalRevisionId(): Bytes {
+    let value = this.get("externalRevisionId");
+    return value!.toBytes();
+  }
+
+  set externalRevisionId(value: Bytes) {
+    this.set("externalRevisionId", Value.fromBytes(value));
+  }
+
+  get revisionHash(): Bytes {
+    let value = this.get("revisionHash");
+    return value!.toBytes();
+  }
+
+  set revisionHash(value: Bytes) {
+    this.set("revisionHash", Value.fromBytes(value));
+  }
+
+  get durationExtension(): BigInt {
+    let value = this.get("durationExtension");
+    return value!.toBigInt();
+  }
+
+  set durationExtension(value: BigInt) {
+    this.set("durationExtension", Value.fromBigInt(value));
+  }
+
+  get durationExtensionRequest(): BigInt {
+    let value = this.get("durationExtensionRequest");
+    return value!.toBigInt();
+  }
+
+  set durationExtensionRequest(value: BigInt) {
+    this.set("durationExtensionRequest", Value.fromBigInt(value));
+  }
+
+  get status(): i32 {
+    let value = this.get("status");
+    return value!.toI32();
+  }
+
+  set status(value: i32) {
+    this.set("status", Value.fromI32(value));
   }
 }
 
@@ -797,6 +969,15 @@ export class TaskSnapshot extends Entity {
       );
     }
   }
+
+  get staked(): boolean {
+    let value = this.get("staked");
+    return value!.toBoolean();
+  }
+
+  set staked(value: boolean) {
+    this.set("staked", Value.fromBoolean(value));
+  }
 }
 
 export class TaskCount extends Entity {
@@ -1142,5 +1323,100 @@ export class Action extends Entity {
     } else {
       this.set("approvedBy", Value.fromStringArray(<Array<string>>value));
     }
+  }
+}
+
+export class Team extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Team entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Team must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Team", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Team | null {
+    return changetype<Team | null>(store.get("Team", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get teamId(): BigInt {
+    let value = this.get("teamId");
+    return value!.toBigInt();
+  }
+
+  set teamId(value: BigInt) {
+    this.set("teamId", Value.fromBigInt(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value!.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get description(): string {
+    let value = this.get("description");
+    return value!.toString();
+  }
+
+  set description(value: string) {
+    this.set("description", Value.fromString(value));
+  }
+
+  get walletAddress(): string {
+    let value = this.get("walletAddress");
+    return value!.toString();
+  }
+
+  set walletAddress(value: string) {
+    this.set("walletAddress", Value.fromString(value));
+  }
+
+  get archived(): boolean {
+    let value = this.get("archived");
+    return value!.toBoolean();
+  }
+
+  set archived(value: boolean) {
+    this.set("archived", Value.fromBoolean(value));
+  }
+
+  get members(): Array<string> {
+    let value = this.get("members");
+    return value!.toStringArray();
+  }
+
+  set members(value: Array<string>) {
+    this.set("members", Value.fromStringArray(value));
+  }
+
+  get teamRewardMultiplier(): BigInt {
+    let value = this.get("teamRewardMultiplier");
+    return value!.toBigInt();
+  }
+
+  set teamRewardMultiplier(value: BigInt) {
+    this.set("teamRewardMultiplier", Value.fromBigInt(value));
   }
 }

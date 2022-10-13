@@ -9,6 +9,7 @@ const requiredConfirmations = 1
 const requiredApprovals = 2
 const reputationLevel = 1
 const taskDuration = 86400
+const teamRewardMultiplier = 0.1
 
 const contractDefaults = {
   multiplier: 0.0001,
@@ -18,6 +19,16 @@ const contractDefaults = {
 }
 
 const getContractInstances = async () => {
+  const taskLibrary = await ethers.getContractFactory('TaskLibrary')
+  const taskLib = await taskLibrary.deploy()
+  await taskLib.deployed()
+
+  const taskLogicLibrary = await ethers.getContractFactory(
+    'TaskControlLogicLibrary'
+  )
+  const taskLogicLib = await taskLogicLibrary.deploy()
+  await taskLogicLib.deployed()
+
   const org = await ethers.getContractFactory('Organization')
   const orgContract = await org.deploy({
     gasLimit: 3e7
@@ -28,11 +39,19 @@ const getContractInstances = async () => {
   const tokenContract = await reputationToken.deploy()
   await tokenContract.deployed()
 
-  const taskStorage = await ethers.getContractFactory('TaskStorageContract')
+  const taskStorage = await ethers.getContractFactory('TaskStorageContract', {
+    libraries: {
+      TaskLibrary: taskLib.address
+    }
+  })
   const storageContract = await taskStorage.deploy()
   await storageContract.deployed()
 
-  const task = await ethers.getContractFactory('TaskContract')
+  const task = await ethers.getContractFactory('TaskContract', {
+    libraries: {
+      TaskControlLogicLibrary: taskLogicLib.address
+    }
+  })
   const taskContract = await task.deploy(
     tokenContract.address,
     orgContract.address,
@@ -42,9 +61,10 @@ const getContractInstances = async () => {
     }
   )
   await taskContract.deployed()
-  await tokenContract.updateTaskContractAddress(taskContract.address)
 
-  await storageContract.updateTaskContractAddress(taskContract.address)
+  const team = await ethers.getContractFactory('TeamContract')
+  const teamContract = await team.deploy()
+  await teamContract.deployed()
 
   const treasury = await ethers.getContractFactory('Treasury')
   const treasuryContract = await treasury.deploy(
@@ -53,14 +73,19 @@ const getContractInstances = async () => {
   )
   await treasuryContract.deployed()
 
+  await tokenContract.updateTaskContractAddress(taskContract.address)
+  await storageContract.updateTaskContractAddress(taskContract.address)
   await taskContract.updateTreasuryContract(treasuryContract.address)
+  await taskContract.updateTeamContract(teamContract.address)
+  await teamContract.updateTaskStorageContractAddress(storageContract.address)
 
   return {
     tokenContract,
     taskContract,
     orgContract,
     treasuryContract,
-    storageContract
+    storageContract,
+    teamContract
   }
 }
 
@@ -475,6 +500,129 @@ describe('Integration test: Task flow', function () {
     const newBalance = await ethers.provider.getBalance(assignee.address)
     const reward = initialReward.sub(slashAmount)
     const expectedBalance = initialBalance.add(reward.isNegative() ? 0 : reward)
+    const isEqual = expectedBalance.eq(newBalance)
+
+    expect(
+      await tokenContract['balanceOf(address,uint256,uint256)'](
+        assignee.address,
+        complexityScore,
+        orgId
+      )
+    ).to.be.equal(1)
+    expect(isEqual).to.be.equal(true)
+  })
+
+  it('Should successfully complete the task flow as a team', async function () {
+    const [owner, approver1, approver2, assignee, teamAssignee] =
+      await ethers.getSigners()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract,
+      teamContract
+    } = await getContractInstances()
+
+    // Create organization
+    const createOrgTx = await orgContract.createOrg(
+      'Buildstream',
+      'Decentralized task managers',
+      [approver1.address, approver2.address],
+      [owner.address],
+      false
+    )
+
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'OrganizationCreation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract['deposit(uint256)'](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther('0.001')
+    })
+
+    // Create task using org id created earlier
+    const createTaskTx = await taskContract
+      .connect(approver1)
+      .createTask(
+        orgId,
+        'update ethers version',
+        'update ethers version to v2',
+        ['golang'],
+        complexityScore,
+        reputationLevel,
+        taskDuration
+      )
+
+    const taskCreateReceipt = await createTaskTx.wait()
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
+    )
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
+
+    // Open task
+    await taskContract
+      .connect(approver1)
+      .openTask(taskId, ethers.constants.AddressZero)
+
+    // Assign task created above to self
+    await taskContract.connect(assignee).assignSelf(taskId)
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address)
+
+    await teamContract
+      .connect(assignee)
+      .createTeam(
+        'Team 7',
+        'konoha team 7',
+        [teamAssignee.address],
+        ethers.utils.parseUnits(teamRewardMultiplier.toString())
+      )
+    await teamContract
+      .connect(assignee)
+      .assignTask(taskId, teamAssignee.address)
+
+    // Submit task
+    await taskContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
+    const initialBalance = await ethers.provider.getBalance(assignee.address)
+
+    // Approvers can confirm task
+    await taskContract.connect(approver1).approveTask(taskId)
+    await taskContract.connect(approver2).approveTask(taskId)
+
+    // Assignee should receive reward
+
+    const reward = ethers.utils
+      .parseUnits(multiplier.toString())
+      .mul(1 + complexityScore)
+    const teamReward = reward
+      .mul(ethers.utils.parseUnits(teamRewardMultiplier.toString()))
+      .div(ethers.utils.parseEther('1'))
+    const newBalance = await ethers.provider.getBalance(assignee.address)
+    const expectedBalance = teamReward.add(initialBalance)
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(

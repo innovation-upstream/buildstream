@@ -3,11 +3,20 @@ import { waitForInput } from '../utils/helpers'
 import ActionDeploy from './action'
 import OrgDeploy from './org'
 import TaskDeploy from './task'
+import TaskControlLogicLibraryDeploy from './taskControlLogicLibrary'
+import TaskLibraryDeploy from './taskLibrary'
 import TaskStorageDeploy from './task_storage'
+import TeamDeploy from './team'
 import TokenDeploy from './token'
 import TreasuryDeploy from './treasury'
 
 const deploySteps = [
+  { func: TaskLibraryDeploy, message: 'Will deploy Task library' },
+  {
+    func: TaskControlLogicLibraryDeploy,
+    message: 'Will deploy Task control logic library'
+  },
+  { func: TeamDeploy, message: 'Will deploy Team' },
   { func: OrgDeploy, message: 'Will deploy Org' },
   { func: TokenDeploy, message: 'Will deploy Token' },
   { func: TaskStorageDeploy, message: 'Will deploy TaskStorage' },

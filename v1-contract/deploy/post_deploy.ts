@@ -6,6 +6,12 @@ const { waitForInput, readJson } = require('../utils/helpers.ts')
 async function main() {
   await waitForInput('Contracts: initialize contracts')
 
+  const taskLib = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskLibrary.json')
+  )
+  const taskLogicLib = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskControlLogicLibrary.json')
+  )
   const OrgContract = readJson(
     path.join(__dirname, '../../app/src/contracts/Org.json')
   )
@@ -24,6 +30,9 @@ async function main() {
   const Treasury = readJson(
     path.join(__dirname, '../../app/src/contracts/Treasury.json')
   )
+  const Team = readJson(
+    path.join(__dirname, '../../app/src/contracts/Team.json')
+  )
 
   const org = await ethers.getContractFactory('Organization')
   const orgContract = await org.attach(OrgContract.address)
@@ -31,14 +40,25 @@ async function main() {
   const token = await ethers.getContractFactory('SBTToken')
   const tokenContract = await token.attach(SBTToken.address)
 
-  const task = await ethers.getContractFactory('TaskContract')
+  const task = await ethers.getContractFactory('TaskContract', {
+    libraries: {
+      TaskControlLogicLibrary: taskLogicLib.address
+    }
+  })
   const taskContract = await task.attach(Task.address)
 
-  const taskStorage = await ethers.getContractFactory('TaskStorageContract')
+  const taskStorage = await ethers.getContractFactory('TaskStorageContract', {
+    libraries: {
+      TaskLibrary: taskLib.address
+    }
+  })
   const taskStorageContract = await taskStorage.attach(TaskStorage.address)
 
   const treasury = await ethers.getContractFactory('Treasury')
   const treasuryContract = await treasury.attach(Treasury.address)
+
+  const team = await ethers.getContractFactory('TeamContract')
+  const teamContract = await team.attach(Team.address)
 
   const postdeploySteps = [
     {
@@ -64,6 +84,11 @@ async function main() {
     {
       func: () => treasuryContract.updateTaskContractAddress(Task.address),
       message: 'Treasury: updated task contract address'
+    },
+    {
+      func: () =>
+        teamContract.updateTaskStorageContractAddress(TaskStorage.address),
+      message: 'Team: updated task contract address'
     }
   ]
 

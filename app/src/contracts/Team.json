@@ -1,0 +1,384 @@
+{
+  "address": "0x6677Ae167d3C939C8B99239bb3DEB75774941a88",
+  "abi": [
+    {
+      "type": "constructor",
+      "payable": false,
+      "inputs": []
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskAssignment",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "assignee",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamArchived",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamCreation",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "team",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "walletAddress"
+            },
+            {
+              "type": "bool",
+              "name": "archived"
+            },
+            {
+              "type": "address[]",
+              "name": "members"
+            },
+            {
+              "type": "uint256",
+              "name": "teamRewardMultiplier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamMemberAdded",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "member",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamMemberRemoved",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "member",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamUnArchived",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TeamUpdated",
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress",
+          "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "team",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "walletAddress"
+            },
+            {
+              "type": "bool",
+              "name": "archived"
+            },
+            {
+              "type": "address[]",
+              "name": "members"
+            },
+            {
+              "type": "uint256",
+              "name": "teamRewardMultiplier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "addMember",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "member"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "assignTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "address",
+          "name": "assignee"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "createTeam",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "string",
+          "name": "name"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "address[]",
+          "name": "members"
+        },
+        {
+          "type": "uint256",
+          "name": "teamRewardMultiplier"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256",
+          "name": "teamId"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "doesTeamExist",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "walletAddress"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTaskAssignee",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTeam",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "teamAddress"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "tuple",
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address",
+              "name": "walletAddress"
+            },
+            {
+              "type": "bool",
+              "name": "archived"
+            },
+            {
+              "type": "address[]",
+              "name": "members"
+            },
+            {
+              "type": "uint256",
+              "name": "teamRewardMultiplier"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "removeMember",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "member"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTaskStorageContractAddress",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "taskStorageContractAddress"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "updateTeam",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "string",
+          "name": "name"
+        },
+        {
+          "type": "string",
+          "name": "description"
+        },
+        {
+          "type": "uint256",
+          "name": "teamRewardMultiplier"
+        }
+      ],
+      "outputs": []
+    }
+  ]
+}

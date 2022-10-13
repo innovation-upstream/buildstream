@@ -105,6 +105,7 @@ contract Treasury {
         orgExists(orgId)
         returns (uint256)
     {
+        if (tokenAddress == address(0)) return lockedBalances[orgId];
         return lockedTokenBalances[orgId][tokenAddress];
     }
 
@@ -127,6 +128,7 @@ contract Treasury {
         address tokenAddress,
         uint256 amount
     ) public orgExists(orgId) {
+        if (tokenAddress == address(0)) return deposit(orgId);
         IERC20 _token = IERC20(tokenAddress);
         if (!orgTokenMap[orgId][tokenAddress])
             orgTokens[orgId].push(tokenAddress);
@@ -174,7 +176,7 @@ contract Treasury {
         uint256 orgId,
         address to,
         uint256 amount
-    ) external onlyOrgContract orgExists(orgId) {
+    ) public onlyOrgContract orgExists(orgId) {
         require(!payments[actionId], "Payment made");
         require(balances[orgId] >= amount, "Insufficient funds");
         payments[actionId] = true;
@@ -191,6 +193,8 @@ contract Treasury {
         address tokenAddress,
         uint256 amount
     ) external onlyOrgContract orgExists(orgId) {
+        if (tokenAddress == address(0))
+            return withdrawForce(actionId, orgId, to, amount);
         require(
             tokenBalances[orgId][tokenAddress] >= amount,
             "Insufficient funds"
@@ -204,7 +208,7 @@ contract Treasury {
     }
 
     function lockBalance(uint256 orgId, uint256 amount)
-        external
+        public
         onlyTaskContract
         orgExists(orgId)
     {
@@ -219,6 +223,7 @@ contract Treasury {
         address tokenAddress,
         uint256 amount
     ) external onlyTaskContract orgExists(orgId) {
+        if (tokenAddress == address(0)) return lockBalance(orgId, amount);
         require(
             tokenBalances[orgId][tokenAddress] >= amount,
             "Insufficient funds"
@@ -228,7 +233,7 @@ contract Treasury {
         emit TreasuryTokenLocked(orgId, tokenAddress, amount);
     }
 
-    function unlockBalance(uint256 orgId, uint256 amount) external {
+    function unlockBalance(uint256 orgId, uint256 amount) public {
         lockedBalances[orgId] -= amount;
         balances[orgId] += amount;
         emit TreasuryTokenUnlocked(orgId, address(0), amount);
@@ -239,6 +244,7 @@ contract Treasury {
         address tokenAddress,
         uint256 amount
     ) external {
+        if (tokenAddress == address(0)) return unlockBalance(orgId, amount);
         lockedTokenBalances[orgId][tokenAddress] -= amount;
         tokenBalances[orgId][tokenAddress] += amount;
         emit TreasuryTokenUnlocked(orgId, tokenAddress, amount);
@@ -258,6 +264,7 @@ contract Treasury {
         address tokenAddress,
         uint256 amount
     ) external onlyTaskContract orgExists(orgId) {
+        if (tokenAddress == address(0)) return withdraw(orgId, to, amount);
         withdraw(orgId, to, tokenAddress, amount);
     }
 }
