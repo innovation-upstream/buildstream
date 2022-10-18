@@ -23,7 +23,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -31,6 +31,12 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "staked",
+        "type": "bool"
       }
     ],
     "name": "TaskAssignment",
@@ -42,7 +48,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -74,7 +80,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "approver",
         "type": "address"
       },
       {
@@ -134,11 +140,6 @@
             "type": "string[]"
           },
           {
-            "internalType": "enum TaskLib.TaskStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
             "internalType": "uint256",
             "name": "complexityScore",
             "type": "uint256"
@@ -146,6 +147,34 @@
           {
             "internalType": "uint256",
             "name": "reputationLevel",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "comment",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskDuration",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskLib.Task",
+        "name": "task",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
             "type": "uint256"
           },
           {
@@ -174,19 +203,71 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "taskDuration",
-            "type": "uint256"
+            "internalType": "bool",
+            "name": "staked",
+            "type": "bool"
           },
           {
-            "internalType": "string",
-            "name": "comment",
-            "type": "string"
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "requester",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionId",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtension",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtensionRequest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "enum TaskLib.TaskRevisionStatus",
+                "name": "status",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct TaskLib.TaskRevision[]",
+            "name": "revisions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "assignmentRequests",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWaitTime",
+            "type": "uint256"
           }
         ],
         "indexed": false,
-        "internalType": "struct TaskLib.Task",
-        "name": "task",
+        "internalType": "struct TaskLib.TaskMetadata",
+        "name": "taskMetadata",
         "type": "tuple"
       }
     ],
@@ -224,7 +305,175 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "approver",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskRejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "revisionId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "taskDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalWaitTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskRevisionAccepted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "revisionId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "durationExtension",
+        "type": "uint256"
+      }
+    ],
+    "name": "TaskRevisionChangesRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "revisionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "TaskRevisionRejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "requester",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "revisionId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "revisionHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "durationExtension",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "durationExtensionRequest",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TaskLib.TaskRevisionStatus",
+            "name": "status",
+            "type": "uint8"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskLib.TaskRevision",
+        "name": "revision",
+        "type": "tuple"
+      }
+    ],
+    "name": "TaskRevisionRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "approver",
         "type": "address"
       },
       {
@@ -262,7 +511,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -322,11 +571,6 @@
             "type": "string[]"
           },
           {
-            "internalType": "enum TaskLib.TaskStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
             "internalType": "uint256",
             "name": "complexityScore",
             "type": "uint256"
@@ -337,39 +581,19 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "requiredApprovals",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rewardAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "rewardToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "assignDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "submitDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "taskDuration",
-            "type": "uint256"
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
           },
           {
             "internalType": "string",
             "name": "comment",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskDuration",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -380,6 +604,24 @@
     ],
     "name": "TaskUpdated",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "revisionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "acceptTaskRevision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -428,6 +670,11 @@
         "internalType": "address",
         "name": "assigner",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "staked",
+        "type": "bool"
       }
     ],
     "name": "assign",
@@ -534,25 +781,6 @@
         "type": "uint256"
       }
     ],
-    "name": "getAssignmentRequests",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "taskId",
-        "type": "uint256"
-      }
-    ],
     "name": "getTask",
     "outputs": [
       {
@@ -593,11 +821,6 @@
             "type": "string[]"
           },
           {
-            "internalType": "enum TaskLib.TaskStatus",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
             "internalType": "uint256",
             "name": "complexityScore",
             "type": "uint256"
@@ -605,6 +828,47 @@
           {
             "internalType": "uint256",
             "name": "reputationLevel",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TaskLib.TaskStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "comment",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taskDuration",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct TaskLib.Task",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTaskMetadata",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
             "type": "uint256"
           },
           {
@@ -633,32 +897,71 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "taskDuration",
-            "type": "uint256"
+            "internalType": "bool",
+            "name": "staked",
+            "type": "bool"
           },
           {
-            "internalType": "string",
-            "name": "comment",
-            "type": "string"
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "requester",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionId",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtension",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtensionRequest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "enum TaskLib.TaskRevisionStatus",
+                "name": "status",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct TaskLib.TaskRevision[]",
+            "name": "revisions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "assignmentRequests",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWaitTime",
+            "type": "uint256"
           }
         ],
-        "internalType": "struct TaskLib.Task",
+        "internalType": "struct TaskLib.TaskMetadata",
         "name": "",
         "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTaskCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "count",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -701,6 +1004,80 @@
       }
     ],
     "name": "openTask",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "revisionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "rejectTaskRevision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "revisionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "revisionHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "durationExtension",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "approver",
+        "type": "address"
+      }
+    ],
+    "name": "requestForTaskRevision",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "revisionIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "durationExtension",
+        "type": "uint256"
+      }
+    ],
+    "name": "requestForTaskRevisionDurationExtension",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

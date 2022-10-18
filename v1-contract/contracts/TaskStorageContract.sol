@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "../libraries/TaskLibrary.sol";
+
 library TaskLib {
     enum TaskStatus {
         PROPOSED,
@@ -11,6 +13,23 @@ library TaskLib {
         ARCHIVED
     }
 
+    enum TaskRevisionStatus {
+        PROPOSED,
+        CHANGES_REQUESTED,
+        ACCEPTED,
+        REQUEST_FOR_NEW_TASK
+    }
+
+    struct TaskRevision {
+        uint256 id;
+        address requester;
+        bytes32 revisionId;
+        bytes32 revisionHash;
+        uint256 durationExtension;
+        uint256 durationExtensionRequest;
+        TaskRevisionStatus status;
+    }
+
     struct Task {
         uint256 id;
         uint256 orgId;
@@ -19,47 +38,87 @@ library TaskLib {
         address assigner;
         address assigneeAddress;
         string[] taskTags;
-        TaskStatus status;
         uint256 complexityScore;
         uint256 reputationLevel;
+        TaskStatus status;
+        string comment;
+        uint256 taskDuration;
+    }
+
+    struct TaskMetadata {
+        uint256 id;
         uint256 requiredApprovals;
         uint256 rewardAmount;
         address rewardToken;
         uint256 assignDate;
         uint256 submitDate;
-        uint256 taskDuration;
-        string comment;
+        bool staked;
+        TaskRevision[] revisions;
+        address[] assignmentRequests;
+        address[] approvers;
+        uint256 totalWaitTime;
     }
 }
 
 contract TaskStorageContract {
+    using TaskLibrary for TaskLib.Task;
+    using TaskLibrary for TaskLib.TaskMetadata;
+
     address private owner;
     address private taskContractAddress;
 
     mapping(uint256 => mapping(address => bool)) private approvals;
-    mapping(uint256 => address[]) private assignmentRequest;
+    mapping(uint256 => mapping(address => bool)) private assignmentRequests;
     mapping(uint256 => TaskLib.Task) private tasks;
+    mapping(uint256 => TaskLib.TaskMetadata) private taskMetadata;
     mapping(uint256 => bool) private _taskExists;
     uint256 private taskCount;
 
-    event TaskConfirmation(address indexed sender, uint256 indexed taskId);
-    event TaskRevocation(address indexed sender, uint256 indexed taskId);
-    event TaskCreation(uint256 indexed taskId, TaskLib.Task task);
+    event TaskConfirmation(address indexed approver, uint256 indexed taskId);
+    event TaskRejected(address indexed approver, uint256 indexed taskId);
+    event TaskRevocation(address indexed approver, uint256 indexed taskId);
+    event TaskCreation(
+        uint256 indexed taskId,
+        TaskLib.Task task,
+        TaskLib.TaskMetadata taskMetadata
+    );
     event TaskOpened(
         uint256 indexed taskId,
         uint256 rewardAmount,
         address rewardToken
     );
-    event TaskAssignment(address indexed sender, uint256 indexed taskId);
+    event TaskAssignment(address indexed assignee, uint256 indexed taskId, bool staked);
     event TaskAssignmentRequested(
-        address indexed sender,
+        address indexed assignee,
         uint256 indexed taskId
     );
-    event TaskUnassignment(address indexed sender, uint256 indexed taskId);
+    event TaskUnassignment(address indexed assignee, uint256 indexed taskId);
     event TaskSubmission(uint256 indexed taskId, string comment);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
     event TaskUpdated(uint256 indexed taskId, TaskLib.Task task);
+    event TaskRevisionRequested(
+        uint256 indexed taskId,
+        TaskLib.TaskRevision revision
+    );
+    event TaskRevisionAccepted(
+        uint256 indexed taskId,
+        uint256 id,
+        bytes32 revisionId,
+        uint256 taskDuration,
+        uint256 totalWaitTime
+    );
+    event TaskRevisionChangesRequested(
+        uint256 indexed taskId,
+        uint256 id,
+        bytes32 revisionId,
+        uint256 durationExtension
+    );
+    event TaskRevisionRejected(
+        uint256 indexed taskId,
+        uint256 id,
+        bytes32 revisionId
+    );
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Permission denied");
@@ -73,11 +132,6 @@ contract TaskStorageContract {
 
     modifier taskExists(uint256 taskId) {
         require(_taskExists[taskId], "Task not exist");
-        _;
-    }
-
-    modifier notNull(address _address) {
-        require(_address != address(0), "Value is null");
         _;
     }
 
@@ -111,28 +165,21 @@ contract TaskStorageContract {
         uint256 taskDuration
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
-        tasks[taskId] = TaskLib.Task({
-            id: taskId,
-            orgId: orgId,
-            title: title,
-            description: description,
-            taskTags: taskTags,
-            complexityScore: complexityScore,
-            reputationLevel: reputationLevel,
-            requiredApprovals: requiredApprovals,
-            assigner: address(0),
-            assigneeAddress: address(0),
-            rewardAmount: 0,
-            rewardToken: address(0),
-            assignDate: 0,
-            submitDate: 0,
-            taskDuration: taskDuration,
-            status: TaskLib.TaskStatus.PROPOSED,
-            comment: ""
-        });
+        tasks[taskId].createTask(
+            taskId,
+            orgId,
+            title,
+            description,
+            taskTags,
+            complexityScore,
+            reputationLevel,
+            taskDuration
+        );
+
+        taskMetadata[taskId].createTaskMetadata(taskId, requiredApprovals);
         taskCount += 1;
         _taskExists[taskId] = true;
-        emit TaskCreation(taskId, tasks[taskId]);
+        emit TaskCreation(taskId, tasks[taskId], taskMetadata[taskId]);
     }
 
     /// @dev Allows an approver to update a task.
@@ -145,18 +192,16 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration
-    ) external taskExists(taskId) onlyTaskContract {
-        TaskLib.Task memory task = tasks[taskId];
-        require(task.status <= TaskLib.TaskStatus.OPEN, "Task is assigned");
-        task.title = title;
-        task.description = description;
-        task.taskDuration = taskDuration;
-        task.reputationLevel = reputationLevel;
-        if (task.status == TaskLib.TaskStatus.PROPOSED) {
-            task.taskTags = taskTags;
-            task.complexityScore = complexityScore;
-        }
-        tasks[taskId] = task;
+    ) external onlyTaskContract {
+        require(msg.sender == taskContractAddress, "Permission denied");
+        tasks[taskId].updateTask(
+            title,
+            description,
+            taskTags,
+            complexityScore,
+            reputationLevel,
+            taskDuration
+        );
         emit TaskUpdated(taskId, tasks[taskId]);
     }
 
@@ -167,16 +212,7 @@ contract TaskStorageContract {
         uint256 rewardAmount,
         address rewardToken
     ) external taskExists(taskId) onlyTaskContract {
-        TaskLib.Task memory task = tasks[taskId];
-        require(
-            task.status == TaskLib.TaskStatus.PROPOSED ||
-                task.status == TaskLib.TaskStatus.ARCHIVED,
-            "Task is opened"
-        );
-        task.status = TaskLib.TaskStatus.OPEN;
-        task.rewardAmount = rewardAmount;
-        task.rewardToken = rewardToken;
-        tasks[taskId] = task;
+        tasks[taskId].openTask(taskMetadata[taskId], rewardAmount, rewardToken);
         emit TaskOpened(taskId, rewardAmount, rewardToken);
     }
 
@@ -187,11 +223,7 @@ contract TaskStorageContract {
         taskExists(taskId)
         onlyTaskContract
     {
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.SUBMITTED,
-            "Task is not submitted"
-        );
-        tasks[taskId].status = TaskLib.TaskStatus.CLOSED;
+        tasks[taskId].closeTask();
         emit TaskClosed(taskId);
     }
 
@@ -207,6 +239,15 @@ contract TaskStorageContract {
         return tasks[taskId];
     }
 
+    function getTaskMetadata(uint256 taskId)
+        external
+        view
+        taskExists(taskId)
+        returns (TaskLib.TaskMetadata memory)
+    {
+        return taskMetadata[taskId];
+    }
+
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
     function submitTask(
@@ -214,14 +255,7 @@ contract TaskStorageContract {
         address assignee,
         string memory comment
     ) external onlyTaskContract taskExists(taskId) {
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.ASSIGNED,
-            "Task is not assigned"
-        );
-        require(tasks[taskId].assigneeAddress == assignee, "Task not yours");
-        tasks[taskId].status = TaskLib.TaskStatus.SUBMITTED;
-        tasks[taskId].submitDate = block.timestamp;
-        tasks[taskId].comment = comment;
+        tasks[taskId].submitTask(taskMetadata[taskId], assignee, comment);
         emit TaskSubmission(taskId, comment);
     }
 
@@ -230,16 +264,11 @@ contract TaskStorageContract {
     function assign(
         uint256 taskId,
         address assignee,
-        address assigner
+        address assigner,
+        bool staked
     ) external onlyTaskContract taskExists(taskId) {
-        TaskLib.Task memory task = tasks[taskId];
-        require(task.status == TaskLib.TaskStatus.OPEN, "Task is not opened");
-        task.status = TaskLib.TaskStatus.ASSIGNED;
-        task.assigneeAddress = assignee;
-        task.assignDate = block.timestamp;
-        task.assigner = assigner;
-        tasks[taskId] = task;
-        emit TaskAssignment(assignee, taskId);
+        tasks[taskId].assign(taskMetadata[taskId], assignee, assigner, staked);
+        emit TaskAssignment(assignee, taskId, staked);
     }
 
     /// @dev Allows assignees assign task to themselves.
@@ -249,23 +278,9 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        uint256 i;
-        bool requestExist;
-        for (i = 0; i < assignmentRequest[taskId].length; i++)
-            if (assignmentRequest[taskId][i] == assignee) requestExist = true;
-        if (!requestExist) {
-            assignmentRequest[taskId].push(assignee);
-            emit TaskAssignmentRequested(assignee, taskId);
-        }
-    }
-
-    function getAssignmentRequests(uint256 taskId)
-        external
-        view
-        taskExists(taskId)
-        returns (address[] memory)
-    {
-        return assignmentRequest[taskId];
+        require(!assignmentRequests[taskId][assignee], "Already assigned");
+        taskMetadata[taskId].makeAssignmentRequest(assignee);
+        emit TaskAssignmentRequested(assignee, taskId);
     }
 
     /// @dev Allows assignees drop tasks.
@@ -275,14 +290,10 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        TaskLib.Task memory task = tasks[taskId];
-        require(task.assigneeAddress == assignee, "Task not yours");
-        require(task.status == TaskLib.TaskStatus.ASSIGNED, "Task not opened");
-        task.assigneeAddress = address(0);
-        task.status = TaskLib.TaskStatus.OPEN;
-        task.assignDate = 0;
-        task.submitDate = 0;
-        tasks[taskId] = task;
+        TaskLib.TaskMetadata storage taskM = taskMetadata[taskId];
+        for (uint256 i; i < taskM.approvers.length; i++)
+            approvals[taskId][taskM.approvers[i]] = false;
+        tasks[taskId].unassign(taskM, assignee);
         emit TaskUnassignment(assignee, taskId);
     }
 
@@ -294,10 +305,7 @@ contract TaskStorageContract {
         taskExists(taskId)
     {
         require(!approvals[taskId][approver], "Task is approved");
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.SUBMITTED,
-            "Task not submitted"
-        );
+        tasks[taskId].approveTask(taskMetadata[taskId], approver);
         approvals[taskId][approver] = true;
         emit TaskConfirmation(approver, taskId);
     }
@@ -309,13 +317,82 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.SUBMITTED,
-            "Task is not submitted"
-        );
         require(approvals[taskId][approver], "Task not approved");
+        tasks[taskId].revokeApproval(taskMetadata[taskId], approver);
         approvals[taskId][approver] = false;
         emit TaskRevocation(approver, taskId);
+    }
+
+    function requestForTaskRevision(
+        uint256 taskId,
+        bytes32 revisionId,
+        bytes32 revisionHash,
+        uint256 durationExtension,
+        address approver
+    ) external onlyTaskContract {
+        tasks[taskId].requestForTaskRevision(
+            taskMetadata[taskId],
+            revisionId,
+            revisionHash,
+            durationExtension,
+            approver
+        );
+        uint256 revisionsLength = taskMetadata[taskId].revisions.length;
+        emit TaskRevisionRequested(
+            taskId,
+            taskMetadata[taskId].revisions[revisionsLength - 1]
+        );
+    }
+
+    function acceptTaskRevision(uint256 taskId, uint256 revisionIndex)
+        external
+    {
+        tasks[taskId].acceptTaskRevision(
+            taskMetadata[taskId],
+            revisionIndex,
+            msg.sender
+        );
+        emit TaskRevisionAccepted(
+            taskId,
+            revisionIndex,
+            taskMetadata[taskId].revisions[revisionIndex].revisionId,
+            tasks[taskId].taskDuration,
+            taskMetadata[taskId].totalWaitTime
+        );
+    }
+
+    function requestForTaskRevisionDurationExtension(
+        uint256 taskId,
+        uint256 revisionIndex,
+        uint256 durationExtension
+    ) external {
+        tasks[taskId].requestForTaskRevisionDurationExtension(
+            taskMetadata[taskId],
+            revisionIndex,
+            durationExtension,
+            msg.sender
+        );
+        emit TaskRevisionChangesRequested(
+            taskId,
+            revisionIndex,
+            taskMetadata[taskId].revisions[revisionIndex].revisionId,
+            durationExtension
+        );
+    }
+
+    function rejectTaskRevision(uint256 taskId, uint256 revisionIndex)
+        external
+    {
+        tasks[taskId].rejectTaskRevision(
+            taskMetadata[taskId],
+            revisionIndex,
+            msg.sender
+        );
+        emit TaskRevisionRejected(
+            taskId,
+            revisionIndex,
+            taskMetadata[taskId].revisions[revisionIndex].revisionId
+        );
     }
 
     /// @dev Check if an approver approved a task.
@@ -337,17 +414,7 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.OPEN,
-            "Task is not opened"
-        );
-        tasks[taskId].status = TaskLib.TaskStatus.ARCHIVED;
+        tasks[taskId].archive(taskMetadata[taskId]);
         emit TaskArchived(taskId);
-    }
-
-    /// @dev Returns total number of tasks.
-    /// @return count Total number of tasks after filters are applied.
-    function getTaskCount() external view returns (uint256 count) {
-        return taskCount;
     }
 }

@@ -6,8 +6,8 @@ dataSources:
     name: Organization
     network: goerli
     source:
-      address: "0xA39899B918FE1e0eCF6B1f25eCBa715C802c7250"
       abi: Organization
+      address: "0xbE4929ae823B0b5E796b27C9567A6098B6173780"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -35,8 +35,8 @@ dataSources:
     name: Treasury
     network: goerli
     source:
-      address: "0xE9ee3DC4d33bdA7c139856B4CA252B4Eb2C08BE4"
       abi: Treasury
+      address: "0x728fdddd41D093113D591218BB4196348F8E59B3"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -61,8 +61,8 @@ dataSources:
     name: ActionContract
     network: goerli
     source:
-      address: "0x7405266B783Dd9CC0E77214455b47F44c584458F"
       abi: ActionContract
+      address: "0x3970882116996FE47E38BBB504F4D9b35e8497AB"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -84,8 +84,8 @@ dataSources:
     name: TaskStorageContract
     network: goerli
     source:
-      address: "0x985BfAa6BddDb72A1542d556354E6C15E33b792B"
       abi: TaskStorageContract
+      address: "0x255F951bF825BdDC4fA27dEd704C6423c35A8Ff3"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -99,7 +99,7 @@ dataSources:
       eventHandlers:
         - event: TaskArchived(indexed uint256)
           handler: handleTaskArchived
-        - event: TaskAssignment(indexed address,indexed uint256)
+        - event: TaskAssignment(indexed address,indexed uint256,bool)
           handler: handleTaskAssignment
         - event: TaskAssignmentRequested(indexed address,indexed uint256)
           handler: handleTaskAssignmentRequest
@@ -107,11 +107,13 @@ dataSources:
           handler: handleTaskClosed
         - event: TaskConfirmation(indexed address,indexed uint256)
           handler: handleTaskConfirmation
-        - event: TaskCreation(indexed uint256,(uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))
+        - event: TaskCreation(indexed
+            uint256,(uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[],address[],uint256))
           handler: handleTaskCreation
         - event: TaskOpened(indexed uint256,uint256,address)
           handler: handleTaskOpened
-        - event: TaskUpdated(indexed uint256,(uint256,uint256,string,string,address,address,string[],uint8,uint256,uint256,uint256,uint256,address,uint256,uint256,uint256,string))
+        - event: TaskUpdated(indexed
+            uint256,(uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256))
           handler: handleTaskUpdated
         - event: TaskRevocation(indexed address,indexed uint256)
           handler: handleTaskRevocation
@@ -119,4 +121,52 @@ dataSources:
           handler: handleTaskSubmission
         - event: TaskUnassignment(indexed address,indexed uint256)
           handler: handleTaskUnassignment
+        - event: TaskRevisionAccepted(indexed uint256,uint256,bytes32,uint256,uint256)
+          handler: handleTaskRevisionAccepted
+        - event: TaskRevisionRejected(indexed uint256,uint256,bytes32)
+          handler: handleTaskRevisionRejected
+        - event: TaskRevisionRequested(indexed
+            uint256,(uint256,address,bytes32,bytes32,uint256,uint256,uint8))
+          handler: handleTaskRevisionRequested
+        - event: TaskRevisionChangesRequested(indexed uint256,uint256,bytes32,uint256)
+          handler: handleTaskRevisionChangesRequested
       file: ./src/task-storage-contract.ts
+  - kind: ethereum
+    name: TeamContract
+    network: goerli
+    source:
+      abi: TeamContract
+      address: "0xDEC2e6eF0355d089561d56F90b8029Cb06255F63"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - TaskAssignment
+        - TeamArchived
+        - TeamCreation
+        - TeamMemberAdded
+        - TeamMemberRemoved
+        - TeamUnArchived
+        - TeamUpdated
+      abis:
+        - name: TeamContract
+          file: ./abis/TeamContract.json
+      eventHandlers:
+        - event: TaskAssignment(indexed address,indexed uint256,indexed address)
+          handler: handleTaskAssignment
+        - event: TeamArchived(indexed address)
+          handler: handleTeamArchived
+        - event: TeamCreation(indexed
+            address,(uint256,string,string,address,bool,address[],uint256))
+          handler: handleTeamCreation
+        - event: TeamMemberAdded(indexed address,indexed address)
+          handler: handleTeamMemberAdded
+        - event: TeamMemberRemoved(indexed address,indexed address)
+          handler: handleTeamMemberRemoved
+        - event: TeamUnArchived(indexed address)
+          handler: handleTeamUnArchived
+        - event: TeamUpdated(indexed
+            address,(uint256,string,string,address,bool,address[],uint256))
+          handler: handleTeamUpdated
+      file: ./src/team-contract.ts

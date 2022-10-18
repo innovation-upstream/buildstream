@@ -21,8 +21,10 @@ type Task @entity {
   orgId: Organization!
   title: String
   description: String
-  assigner: String!
+  assigner: String
   assignee: String
+  teamAssignee: String
+  team: Team
   taskTags: [String!]!
   status: Int!
   complexityScore: BigInt!
@@ -33,9 +35,24 @@ type Task @entity {
   assignDate: BigInt
   submitDate: BigInt
   taskDuration: BigInt!
+  totalWaitTime: BigInt!
   comment: String
   approvedBy: [String!]
   assignmentRequest: [String!]
+  staked: Boolean!
+  revisions: [TaskRevision!] @derivedFrom(field: "task")
+}
+
+type TaskRevision @entity {
+  id: ID!
+  task: Task!
+  revisionId: BigInt!
+  requester: String!
+  externalRevisionId: Bytes!
+  revisionHash: Bytes!
+  durationExtension: BigInt!
+  durationExtensionRequest: BigInt!
+  status: Int!
 }
 
 type TaskSnapshot @entity {
@@ -59,9 +76,11 @@ type TaskSnapshot @entity {
   assignDate: BigInt
   submitDate: BigInt
   taskDuration: BigInt
+  totalWaitTime: BigInt
   comment: String
   approvedBy: [String!]
   assignmentRequest: [String!]
+  staked: Boolean!
 }
 
 type TaskCount @entity {
@@ -96,4 +115,15 @@ type Action @entity {
   tokenAddress: String
   actionType: Int!
   approvedBy: [String!]
+}
+
+type Team @entity {
+  id: ID!
+  teamId: BigInt!
+  name: String!
+  description: String!
+  walletAddress: String!
+  archived: Boolean!
+  members: [String!]!
+  teamRewardMultiplier: BigInt!
 }

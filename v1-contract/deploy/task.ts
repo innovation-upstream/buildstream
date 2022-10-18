@@ -5,7 +5,15 @@ const fs = require('fs')
 const path = require('path')
 
 async function main() {
-  const contract = await ethers.getContractFactory('TaskContract')
+  const taskLogicLib = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskControlLogicLibrary.json')
+  )
+
+  const contract = await ethers.getContractFactory('TaskContract', {
+    libraries: {
+      TaskControlLogicLibrary: taskLogicLib.address
+    }
+  })
 
   const OrgContract = readJson(
     path.join(__dirname, '../../app/src/contracts/Org.json')

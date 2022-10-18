@@ -1,4 +1,9 @@
-import { Task, TaskCount, TaskSnapshot } from '../generated/schema'
+import {
+  Task,
+  TaskCount,
+  TaskSnapshot,
+  TaskRevision
+} from '../generated/schema'
 
 import {
   TaskArchived as TaskArchivedEvent,
@@ -11,7 +16,11 @@ import {
   TaskRevocation as TaskRevocationEvent,
   TaskSubmission as TaskSubmissionEvent,
   TaskUnassignment as TaskUnassignmentEvent,
-  TaskUpdated as TaskUpdatedEvent
+  TaskUpdated as TaskUpdatedEvent,
+  TaskRevisionRequested as TaskRevisionRequestedEvent,
+  TaskRevisionAccepted as TaskRevisionAcceptedEvent,
+  TaskRevisionRejected as TaskRevisionRejectedEvent,
+  TaskRevisionChangesRequested as TaskRevisionChangesRequestedEvent
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
@@ -40,9 +49,11 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 2
-  taskEntity.assignee = event.params.sender.toHexString()
+  taskEntity.assignee = event.params.assignee.toHexString()
+  taskEntity.team = event.params.assignee.toHexString()
   taskEntity.assigner = event.transaction.from.toHexString()
   taskEntity.assignDate = event.block.timestamp
+  taskEntity.staked = event.params.staked
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -55,7 +66,7 @@ export function handleTaskAssignmentRequest(
   if (!taskEntity) return
   let assignmentRequests = taskEntity.assignmentRequest
   if (assignmentRequests == null) assignmentRequests = []
-  assignmentRequests.push(event.params.sender.toHexString())
+  assignmentRequests.push(event.params.assignee.toHexString())
   taskEntity.assignmentRequest = assignmentRequests
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -93,7 +104,7 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
   if (!taskEntity) return
   let approvers = taskEntity.approvedBy
   if (approvers == null) approvers = []
-  approvers.push(event.params.sender.toHexString())
+  approvers.push(event.params.approver.toHexString())
   taskEntity.approvedBy = approvers
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -103,25 +114,26 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
 export function handleTaskCreation(event: TaskCreationEvent): void {
   const taskId = event.params.taskId.toString()
   const task = event.params.task
+  const taskMetadata = event.params.taskMetadata
   const taskEntity = new Task(taskId)
 
   taskEntity.taskId = event.params.taskId
   taskEntity.orgId = task.orgId.toString()
   taskEntity.title = task.title
   taskEntity.description = task.description
-  taskEntity.assigner = task.assigner.toHexString()
-  taskEntity.assignee = task.assigneeAddress.toHexString()
   taskEntity.taskTags = task.taskTags
   taskEntity.status = task.status
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
-  taskEntity.requiredApprovals = task.requiredApprovals
-  taskEntity.rewardAmount = task.rewardAmount
-  taskEntity.rewardToken = task.rewardToken
-  taskEntity.assignDate = task.assignDate
-  taskEntity.submitDate = task.submitDate
+  taskEntity.requiredApprovals = taskMetadata.requiredApprovals
+  taskEntity.rewardAmount = taskMetadata.rewardAmount
+  taskEntity.rewardToken = taskMetadata.rewardToken
+  taskEntity.assignDate = taskMetadata.assignDate
+  taskEntity.submitDate = taskMetadata.submitDate
   taskEntity.taskDuration = task.taskDuration
   taskEntity.comment = task.comment
+  taskEntity.staked = false
+  taskEntity.totalWaitTime = new BigInt(0)
 
   taskEntity.save()
 
@@ -156,7 +168,7 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
   if (!taskEntity) return
   let approvers = taskEntity.approvedBy
   if (approvers == null) return
-  const index = approvers.indexOf(event.params.sender.toHexString())
+  const index = approvers.indexOf(event.params.approver.toHexString())
   if (index != -1) {
     approvers.splice(index, 1)
     taskEntity.approvedBy = approvers
@@ -201,4 +213,68 @@ export function handleTaskArchived(event: TaskArchivedEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+}
+
+export function handleTaskRevisionRequested(
+  event: TaskRevisionRequestedEvent
+): void {
+  const revision = event.params.revision
+  const entityId = revision.revisionId
+  const revisionEntity = new TaskRevision(entityId.toHexString())
+
+  revisionEntity.task = event.params.taskId.toString()
+  revisionEntity.revisionId = revision.id
+  revisionEntity.requester = revision.requester.toHexString()
+  revisionEntity.externalRevisionId = revision.revisionId
+  revisionEntity.revisionHash = revision.revisionHash
+  revisionEntity.durationExtension = revision.durationExtension
+  revisionEntity.durationExtensionRequest = revision.durationExtensionRequest
+  revisionEntity.status = revision.status
+
+  revisionEntity.save()
+}
+
+export function handleTaskRevisionAccepted(
+  event: TaskRevisionAcceptedEvent
+): void {
+  const entityId = event.params.revisionId
+  const revisionEntity = TaskRevision.load(entityId.toHexString())
+  if (!revisionEntity) return
+  revisionEntity.status = 2
+
+  revisionEntity.save()
+
+  const taskId = event.params.taskId.toString()
+  const taskEntity = Task.load(taskId)
+  if (!taskEntity) return
+  taskEntity.status = 2
+  taskEntity.taskDuration = event.params.taskDuration
+  taskEntity.totalWaitTime = event.params.totalWaitTime
+  taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
+}
+
+export function handleTaskRevisionRejected(
+  event: TaskRevisionRejectedEvent
+): void {
+  const entityId = event.params.revisionId
+  const revisionEntity = TaskRevision.load(entityId.toHexString())
+  if (!revisionEntity) return
+  revisionEntity.status = 3
+
+  revisionEntity.save()
+}
+
+export function handleTaskRevisionChangesRequested(
+  event: TaskRevisionChangesRequestedEvent
+): void {
+  const entityId = event.params.revisionId
+  const revisionEntity = TaskRevision.load(entityId.toHexString())
+  if (!revisionEntity) return
+  revisionEntity.status = 1
+  revisionEntity.durationExtensionRequest = event.params.durationExtension
+
+  revisionEntity.save()
 }
