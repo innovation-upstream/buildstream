@@ -17,7 +17,7 @@ library TaskLib {
         PROPOSED,
         CHANGES_REQUESTED,
         ACCEPTED,
-        REJECTED
+        REQUEST_FOR_NEW_TASK
     }
 
     struct TaskRevision {
@@ -55,6 +55,8 @@ library TaskLib {
         bool staked;
         TaskRevision[] revisions;
         address[] assignmentRequests;
+        address[] approvers;
+        uint256 totalWaitTime;
     }
 }
 
@@ -72,9 +74,9 @@ contract TaskStorageContract {
     mapping(uint256 => bool) private _taskExists;
     uint256 private taskCount;
 
-    event TaskConfirmation(address indexed sender, uint256 indexed taskId);
-    event TaskRejected(address indexed sender, uint256 indexed taskId);
-    event TaskRevocation(address indexed sender, uint256 indexed taskId);
+    event TaskConfirmation(address indexed approver, uint256 indexed taskId);
+    event TaskRejected(address indexed approver, uint256 indexed taskId);
+    event TaskRevocation(address indexed approver, uint256 indexed taskId);
     event TaskCreation(
         uint256 indexed taskId,
         TaskLib.Task task,
@@ -85,12 +87,12 @@ contract TaskStorageContract {
         uint256 rewardAmount,
         address rewardToken
     );
-    event TaskAssignment(address indexed sender, uint256 indexed taskId);
+    event TaskAssignment(address indexed assignee, uint256 indexed taskId, bool staked);
     event TaskAssignmentRequested(
-        address indexed sender,
+        address indexed assignee,
         uint256 indexed taskId
     );
-    event TaskUnassignment(address indexed sender, uint256 indexed taskId);
+    event TaskUnassignment(address indexed assignee, uint256 indexed taskId);
     event TaskSubmission(uint256 indexed taskId, string comment);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
@@ -102,13 +104,20 @@ contract TaskStorageContract {
     event TaskRevisionAccepted(
         uint256 indexed taskId,
         uint256 id,
-        bytes32 revisionId
+        bytes32 revisionId,
+        uint256 taskDuration,
+        uint256 totalWaitTime
     );
     event TaskRevisionChangesRequested(
         uint256 indexed taskId,
         uint256 id,
         bytes32 revisionId,
         uint256 durationExtension
+    );
+    event TaskRevisionRejected(
+        uint256 indexed taskId,
+        uint256 id,
+        bytes32 revisionId
     );
 
     modifier onlyOwner() {
@@ -259,7 +268,7 @@ contract TaskStorageContract {
         bool staked
     ) external onlyTaskContract taskExists(taskId) {
         tasks[taskId].assign(taskMetadata[taskId], assignee, assigner, staked);
-        emit TaskAssignment(assignee, taskId);
+        emit TaskAssignment(assignee, taskId, staked);
     }
 
     /// @dev Allows assignees assign task to themselves.
@@ -281,7 +290,10 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        tasks[taskId].unassign(taskMetadata[taskId], assignee);
+        TaskLib.TaskMetadata storage taskM = taskMetadata[taskId];
+        for (uint256 i; i < taskM.approvers.length; i++)
+            approvals[taskId][taskM.approvers[i]] = false;
+        tasks[taskId].unassign(taskM, assignee);
         emit TaskUnassignment(assignee, taskId);
     }
 
@@ -293,10 +305,7 @@ contract TaskStorageContract {
         taskExists(taskId)
     {
         require(!approvals[taskId][approver], "Task is approved");
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.SUBMITTED,
-            "Task not submitted"
-        );
+        tasks[taskId].approveTask(taskMetadata[taskId], approver);
         approvals[taskId][approver] = true;
         emit TaskConfirmation(approver, taskId);
     }
@@ -308,11 +317,8 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        require(
-            tasks[taskId].status == TaskLib.TaskStatus.SUBMITTED,
-            "Task is not submitted"
-        );
         require(approvals[taskId][approver], "Task not approved");
+        tasks[taskId].revokeApproval(taskMetadata[taskId], approver);
         approvals[taskId][approver] = false;
         emit TaskRevocation(approver, taskId);
     }
@@ -349,7 +355,9 @@ contract TaskStorageContract {
         emit TaskRevisionAccepted(
             taskId,
             revisionIndex,
-            taskMetadata[taskId].revisions[revisionIndex].revisionId
+            taskMetadata[taskId].revisions[revisionIndex].revisionId,
+            tasks[taskId].taskDuration,
+            taskMetadata[taskId].totalWaitTime
         );
     }
 
@@ -372,6 +380,21 @@ contract TaskStorageContract {
         );
     }
 
+    function rejectTaskRevision(uint256 taskId, uint256 revisionIndex)
+        external
+    {
+        tasks[taskId].rejectTaskRevision(
+            taskMetadata[taskId],
+            revisionIndex,
+            msg.sender
+        );
+        emit TaskRevisionRejected(
+            taskId,
+            revisionIndex,
+            taskMetadata[taskId].revisions[revisionIndex].revisionId
+        );
+    }
+
     /// @dev Check if an approver approved a task.
     /// @param taskId Task ID.
     /// @param approver Approver address.
@@ -391,7 +414,7 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        tasks[taskId].archive();
+        tasks[taskId].archive(taskMetadata[taskId]);
         emit TaskArchived(taskId);
     }
 }

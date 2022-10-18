@@ -23,7 +23,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -31,6 +31,12 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "staked",
+        "type": "bool"
       }
     ],
     "name": "TaskAssignment",
@@ -42,7 +48,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -74,7 +80,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "approver",
         "type": "address"
       },
       {
@@ -247,6 +253,16 @@
             "internalType": "address[]",
             "name": "assignmentRequests",
             "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWaitTime",
+            "type": "uint256"
           }
         ],
         "indexed": false,
@@ -289,7 +305,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "approver",
         "type": "address"
       },
       {
@@ -322,6 +338,18 @@
         "internalType": "bytes32",
         "name": "revisionId",
         "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "taskDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "totalWaitTime",
+        "type": "uint256"
       }
     ],
     "name": "TaskRevisionAccepted",
@@ -356,6 +384,31 @@
       }
     ],
     "name": "TaskRevisionChangesRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "revisionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "TaskRevisionRejected",
     "type": "event"
   },
   {
@@ -420,7 +473,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "approver",
         "type": "address"
       },
       {
@@ -458,7 +511,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "assignee",
         "type": "address"
       },
       {
@@ -894,6 +947,16 @@
             "internalType": "address[]",
             "name": "assignmentRequests",
             "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWaitTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct TaskLib.TaskMetadata",
@@ -941,6 +1004,24 @@
       }
     ],
     "name": "openTask",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "revisionIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "rejectTaskRevision",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

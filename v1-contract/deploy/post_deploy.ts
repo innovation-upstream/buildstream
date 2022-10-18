@@ -74,6 +74,10 @@ async function main() {
       message: 'Task: update treasury contract address'
     },
     {
+      func: () => taskContract.updateTeamContract(Team.address),
+      message: 'Task: update team contract address'
+    },
+    {
       func: () => tokenContract.updateTaskContractAddress(Task.address),
       message: 'Token: update task contract address'
     },

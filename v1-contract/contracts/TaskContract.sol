@@ -138,8 +138,7 @@ contract TaskContract {
         if (
             TaskControlLogicLibrary.canCloseTask(
                 taskId,
-                taskStorage,
-                organization
+                taskStorage
             )
         ) closeTask(taskId);
     }
@@ -242,6 +241,23 @@ contract TaskContract {
             );
     }
 
+    /// @dev Allows approver to unassign assignee.
+    /// @param taskId Task ID.
+    function unassign(uint256 taskId) onlyApprover(taskId) external {
+        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
+            taskId
+        );
+        taskStorage.unassign(taskId, task.assigneeAddress);
+        if (taskMetadata.staked)
+            sbtToken.unStake(
+                msg.sender,
+                task.complexityScore,
+                task.reputationLevel,
+                task.orgId
+            );
+    }
+
     function requestForTaskRevision(
         uint256 taskId,
         bytes32 reviewId,
@@ -270,21 +286,5 @@ contract TaskContract {
             taskMetadata.rewardAmount
         );
         taskStorage.archive(taskId);
-    }
-
-    /// @dev Returns array with approver addresses, which approved task.
-    /// @param taskId Task ID.
-    /// @return _approvals array of owner addresses.
-    function getApprovals(uint256 taskId)
-        public
-        view
-        returns (address[] memory _approvals)
-    {
-        return
-            TaskControlLogicLibrary.getApprovals(
-                taskId,
-                taskStorage,
-                organization
-            );
     }
 }

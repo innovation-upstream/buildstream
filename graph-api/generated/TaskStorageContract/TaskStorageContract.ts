@@ -41,12 +41,16 @@ export class TaskAssignment__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get assignee(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
   get taskId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
+  }
+
+  get staked(): boolean {
+    return this._event.parameters[2].value.toBoolean();
   }
 }
 
@@ -63,7 +67,7 @@ export class TaskAssignmentRequested__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get assignee(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -103,7 +107,7 @@ export class TaskConfirmation__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get approver(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -228,6 +232,14 @@ export class TaskCreationTaskMetadataStruct extends ethereum.Tuple {
   get assignmentRequests(): Array<Address> {
     return this[8].toAddressArray();
   }
+
+  get approvers(): Array<Address> {
+    return this[9].toAddressArray();
+  }
+
+  get totalWaitTime(): BigInt {
+    return this[10].toBigInt();
+  }
 }
 
 export class TaskCreationTaskMetadataRevisionsStruct extends ethereum.Tuple {
@@ -299,7 +311,7 @@ export class TaskRejected__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get approver(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -332,6 +344,14 @@ export class TaskRevisionAccepted__Params {
   get revisionId(): Bytes {
     return this._event.parameters[2].value.toBytes();
   }
+
+  get taskDuration(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get totalWaitTime(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
 }
 
 export class TaskRevisionChangesRequested extends ethereum.Event {
@@ -361,6 +381,32 @@ export class TaskRevisionChangesRequested__Params {
 
   get durationExtension(): BigInt {
     return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class TaskRevisionRejected extends ethereum.Event {
+  get params(): TaskRevisionRejected__Params {
+    return new TaskRevisionRejected__Params(this);
+  }
+}
+
+export class TaskRevisionRejected__Params {
+  _event: TaskRevisionRejected;
+
+  constructor(event: TaskRevisionRejected) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get id(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get revisionId(): Bytes {
+    return this._event.parameters[2].value.toBytes();
   }
 }
 
@@ -431,7 +477,7 @@ export class TaskRevocation__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get approver(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -475,7 +521,7 @@ export class TaskUnassignment__Params {
     this._event = event;
   }
 
-  get sender(): Address {
+  get assignee(): Address {
     return this._event.parameters[0].value.toAddress();
   }
 
@@ -648,6 +694,14 @@ export class TaskStorageContract__getTaskMetadataResultValue0Struct extends ethe
   get assignmentRequests(): Array<Address> {
     return this[8].toAddressArray();
   }
+
+  get approvers(): Array<Address> {
+    return this[9].toAddressArray();
+  }
+
+  get totalWaitTime(): BigInt {
+    return this[10].toBigInt();
+  }
 }
 
 export class TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct extends ethereum.Tuple {
@@ -812,7 +866,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): TaskStorageContract__getTaskMetadataResultValue0Struct {
     let result = super.call(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[]))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[],address[],uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -828,7 +882,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   > {
     let result = super.tryCall(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[]))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[],address[],uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -1169,6 +1223,40 @@ export class OpenTaskCall__Outputs {
   _call: OpenTaskCall;
 
   constructor(call: OpenTaskCall) {
+    this._call = call;
+  }
+}
+
+export class RejectTaskRevisionCall extends ethereum.Call {
+  get inputs(): RejectTaskRevisionCall__Inputs {
+    return new RejectTaskRevisionCall__Inputs(this);
+  }
+
+  get outputs(): RejectTaskRevisionCall__Outputs {
+    return new RejectTaskRevisionCall__Outputs(this);
+  }
+}
+
+export class RejectTaskRevisionCall__Inputs {
+  _call: RejectTaskRevisionCall;
+
+  constructor(call: RejectTaskRevisionCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get revisionIndex(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class RejectTaskRevisionCall__Outputs {
+  _call: RejectTaskRevisionCall;
+
+  constructor(call: RejectTaskRevisionCall) {
     this._call = call;
   }
 }

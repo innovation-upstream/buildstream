@@ -71,6 +71,38 @@ library TaskLibrary {
         taskMetadata.rewardToken = rewardToken;
     }
 
+    /// @dev Allows a approver to approve a task.
+    function approveTask(
+        TaskLib.Task storage self,
+        TaskLib.TaskMetadata storage taskMetadata,
+        address approver
+    ) external {
+        require(
+            self.status == TaskLib.TaskStatus.SUBMITTED,
+            "Task not submitted"
+        );
+        taskMetadata.approvers.push(approver);
+    }
+
+    /// @dev Allows a approver to revoke approval for a task.
+    function revokeApproval(
+        TaskLib.Task storage self,
+        TaskLib.TaskMetadata storage taskMetadata,
+        address approver
+    ) external {
+        require(
+            self.status == TaskLib.TaskStatus.SUBMITTED,
+            "Task is not submitted"
+        );
+        address[] storage approvers = taskMetadata.approvers;
+        for (uint256 i = 0; i < approvers.length; i++)
+            if (approvers[i] == approver) {
+                approvers[i] = approvers[approvers.length - 1];
+                break;
+            }
+        approvers.pop();
+    }
+
     /// @dev Allows closing an approved task.
     function closeTask(TaskLib.Task storage self) external {
         require(
@@ -127,8 +159,11 @@ library TaskLibrary {
         require(self.status == TaskLib.TaskStatus.ASSIGNED, "Task not opened");
         self.assigneeAddress = address(0);
         self.status = TaskLib.TaskStatus.OPEN;
+        self.comment = "";
         taskMetadata.assignDate = 0;
         taskMetadata.submitDate = 0;
+        taskMetadata.staked = false;
+        delete taskMetadata.approvers;
     }
 
     /// @dev Allows a approver to reject a task.
@@ -144,6 +179,13 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
+        if (taskMetadata.revisions.length > 0) {
+            require(
+                taskMetadata.revisions[taskMetadata.revisions.length - 1].status !=
+                    TaskLib.TaskRevisionStatus.PROPOSED,
+                "decide on last revision"
+            );
+        }
         taskMetadata.revisions.push(
             TaskLib.TaskRevision({
                 id: taskMetadata.revisions.length,
@@ -167,13 +209,26 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
+        require(
+            taskMetadata.revisions.length > revisionIndex,
+            "revision invalid"
+        );
+        require(
+            taskMetadata.revisions[revisionIndex].status ==
+                TaskLib.TaskRevisionStatus.PROPOSED,
+            "decide made already"
+        );
         self.status = TaskLib.TaskStatus.ASSIGNED;
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
             .ACCEPTED;
+        // Account for time spent during reviews
+        uint256 timeOffset = block.timestamp - taskMetadata.submitDate;
         self.taskDuration =
             self.taskDuration +
             taskMetadata.revisions[revisionIndex].durationExtension;
+        taskMetadata.totalWaitTime = taskMetadata.totalWaitTime + timeOffset;
+        taskMetadata.submitDate = 0;
     }
 
     function requestForTaskRevisionDurationExtension(
@@ -187,6 +242,15 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
+        require(
+            taskMetadata.revisions.length > revisionIndex,
+            "revision invalid"
+        );
+        require(
+            taskMetadata.revisions[revisionIndex].status ==
+                TaskLib.TaskRevisionStatus.PROPOSED,
+            "decide made already"
+        );
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
             .CHANGES_REQUESTED;
@@ -195,9 +259,37 @@ library TaskLibrary {
             .durationExtensionRequest = durationExtension;
     }
 
+    function rejectTaskRevision(
+        TaskLib.Task storage self,
+        TaskLib.TaskMetadata storage taskMetadata,
+        uint256 revisionIndex,
+        address assignee
+    ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
+        require(
+            self.status == TaskLib.TaskStatus.SUBMITTED,
+            "Task not submitted"
+        );
+        require(
+            taskMetadata.revisions.length > revisionIndex,
+            "revision invalid"
+        );
+        require(
+            taskMetadata.revisions[revisionIndex].status ==
+                TaskLib.TaskRevisionStatus.PROPOSED,
+            "decide made already"
+        );
+        taskMetadata.revisions[revisionIndex].status = TaskLib
+            .TaskRevisionStatus
+            .REQUEST_FOR_NEW_TASK;
+    }
+
     /// @dev Allows approvers to archive open tasks.
-    function archive(TaskLib.Task storage self) external {
+    function archive(
+        TaskLib.Task storage self,
+        TaskLib.TaskMetadata storage taskMetadata
+    ) external {
         require(self.status == TaskLib.TaskStatus.OPEN, "Task is not opened");
+        taskMetadata.staked = false;
         self.status = TaskLib.TaskStatus.ARCHIVED;
     }
 }

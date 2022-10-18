@@ -433,6 +433,15 @@ export class Task extends Entity {
     this.set("taskDuration", Value.fromBigInt(value));
   }
 
+  get totalWaitTime(): BigInt {
+    let value = this.get("totalWaitTime");
+    return value!.toBigInt();
+  }
+
+  set totalWaitTime(value: BigInt) {
+    this.set("totalWaitTime", Value.fromBigInt(value));
+  }
+
   get comment(): string | null {
     let value = this.get("comment");
     if (!value || value.kind == ValueKind.NULL) {

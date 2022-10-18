@@ -1,5 +1,5 @@
 {
-  "address": "0x199fff39c9D04EC9CfF0116EA73cB28B19ED5D88",
+  "address": "0x255F951bF825BdDC4fA27dEd704C6423c35A8Ff3",
   "abi": [
     {
       "type": "constructor",
@@ -25,13 +25,18 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "assignee",
           "indexed": true
         },
         {
           "type": "uint256",
           "name": "taskId",
           "indexed": true
+        },
+        {
+          "type": "bool",
+          "name": "staked",
+          "indexed": false
         }
       ]
     },
@@ -42,7 +47,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "assignee",
           "indexed": true
         },
         {
@@ -71,7 +76,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "approver",
           "indexed": true
         },
         {
@@ -216,6 +221,14 @@
             {
               "type": "address[]",
               "name": "assignmentRequests"
+            },
+            {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "uint256",
+              "name": "totalWaitTime"
             }
           ]
         }
@@ -250,7 +263,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "approver",
           "indexed": true
         },
         {
@@ -279,6 +292,16 @@
           "type": "bytes32",
           "name": "revisionId",
           "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "taskDuration",
+          "indexed": false
+        },
+        {
+          "type": "uint256",
+          "name": "totalWaitTime",
+          "indexed": false
         }
       ]
     },
@@ -305,6 +328,28 @@
         {
           "type": "uint256",
           "name": "durationExtension",
+          "indexed": false
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskRevisionRejected",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
+        },
+        {
+          "type": "uint256",
+          "name": "id",
+          "indexed": false
+        },
+        {
+          "type": "bytes32",
+          "name": "revisionId",
           "indexed": false
         }
       ]
@@ -363,7 +408,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "approver",
           "indexed": true
         },
         {
@@ -397,7 +442,7 @@
       "inputs": [
         {
           "type": "address",
-          "name": "sender",
+          "name": "assignee",
           "indexed": true
         },
         {
@@ -785,6 +830,14 @@
             {
               "type": "address[]",
               "name": "assignmentRequests"
+            },
+            {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "uint256",
+              "name": "totalWaitTime"
             }
           ]
         }
@@ -826,6 +879,24 @@
         {
           "type": "address",
           "name": "rewardToken"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "rejectTaskRevision",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
+          "type": "uint256",
+          "name": "revisionIndex"
         }
       ],
       "outputs": []

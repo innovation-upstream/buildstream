@@ -37,17 +37,15 @@ library TaskControlLogicLibrary {
         rewardAmount = multiplier * (task.complexityScore + 1);
     }
 
-    function canCloseTask(
-        uint256 taskId,
-        TaskStorageContract taskStorage,
-        Organization organization
-    ) external view returns (bool) {
+    function canCloseTask(uint256 taskId, TaskStorageContract taskStorage)
+        external
+        view
+        returns (bool)
+    {
         TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
             taskId
         );
-        return
-            getApprovals(taskId, taskStorage, organization).length ==
-            taskMetadata.requiredApprovals;
+        return taskMetadata.approvers.length >= taskMetadata.requiredApprovals;
     }
 
     /// @dev Allows closing an approved task.
@@ -65,7 +63,7 @@ library TaskControlLogicLibrary {
         );
 
         if (
-            task.taskDuration >=
+            task.taskDuration + taskMetadata.totalWaitTime >=
             taskMetadata.submitDate - taskMetadata.assignDate
         ) rewardAmount = taskMetadata.rewardAmount;
         else {
@@ -117,27 +115,5 @@ library TaskControlLogicLibrary {
             amount: rewardAmount - teamReward
         });
         payees[1] = Payee({walletAddress: assignee, amount: teamReward});
-    }
-
-    /// @dev Returns array with approver addresses, which approved task.
-    /// @param taskId Task ID.
-    /// @return _approvals array of owner addresses.
-    function getApprovals(
-        uint256 taskId,
-        TaskStorageContract taskStorage,
-        Organization organization
-    ) public view returns (address[] memory _approvals) {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        address[] memory approvers = organization.getApprovers(task.orgId);
-        address[] memory approvalsTemp = new address[](approvers.length);
-        uint256 count = 0;
-        uint256 i;
-        for (i = 0; i < approvers.length; i++)
-            if (taskStorage.didApprove(taskId, approvers[i])) {
-                approvalsTemp[count] = approvers[i];
-                count += 1;
-            }
-        _approvals = new address[](count);
-        for (i = 0; i < count; i++) _approvals[i] = approvalsTemp[i];
     }
 }
