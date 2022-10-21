@@ -47,6 +47,10 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
   const onSelect = (id: number) => {
     setSelectedTask(id)
   }
+
+  const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
+  const redirect_uri = process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL
+
   return (
     <div>
       <Head>
@@ -59,6 +63,15 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
           <a className='mr-5 hover:text-gray-900'>
             <button className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'>
               Create
+            </button>
+          </a>
+        </Link>
+        <Link
+          href={`https://app.clickup.com/api?client_id=${client_id}&redirect_uri=${redirect_uri}`}
+        >
+          <a className='mr-5 hover:text-gray-900'>
+            <button className='bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'>
+              Import
             </button>
           </a>
         </Link>
