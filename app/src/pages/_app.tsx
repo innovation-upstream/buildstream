@@ -1,15 +1,16 @@
-import { ApolloProvider } from "@apollo/client"
+import { ApolloProvider } from '@apollo/client'
 import { Web3Provider } from '@ethersproject/providers'
 import { Web3ReactProvider } from '@web3-react/core'
 import Footer from 'components/Footer/Footer'
 import Header from 'components/Header/Header'
 import Spinner from 'components/Spinner/Spinner'
-import client from "graphclient/client"
+import client from 'graphclient/client'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import store, { wrapper } from 'state/store'
+import ThemeProvider from '../theme/Theme.provider'
 import '../styles/globals.css'
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -40,17 +41,22 @@ function WrappedApp({ Component, pageProps }: AppProps) {
     <ApolloProvider client={client}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <Provider store={store}>
-          <div className='relative sm:py-20 py-40' style={{ minHeight: '100vh' }}>
-            <Header />
-            {loading ? (
-              <div className='absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2'>
-                <Spinner className='text-indigo-500' width={50} height={50} />
-              </div>
-            ) : (
-              <Component {...pageProps} />
-            )}
-            <Footer />
-          </div>
+          <ThemeProvider>
+            <div
+              className='relative sm:py-20 py-40'
+              style={{ minHeight: '100vh' }}
+            >
+              <Header />
+              {loading ? (
+                <div className='absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2'>
+                  <Spinner className='text-indigo-500' width={50} height={50} />
+                </div>
+              ) : (
+                <Component {...pageProps} />
+              )}
+              <Footer />
+            </div>
+          </ThemeProvider>
         </Provider>
       </Web3ReactProvider>
     </ApolloProvider>
