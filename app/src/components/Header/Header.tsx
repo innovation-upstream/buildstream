@@ -1,21 +1,23 @@
+import React, { useState } from 'react'
 import { useWeb3 } from 'hooks'
 import Balances from 'components/Balances/Balances'
-import injected from 'config/Walletconnectors'
-import Image from 'next/image'
 import Link from 'next/link'
-import Logo from '../../../public/vercel.svg'
-import styles from './Header.module.css'
+import Logo from '../IconSvg/Logo'
+import ChevronDown from '../IconSvg/ChevronDown'
+import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
+import WalletModal from 'components/Modals/WalletModal'
+import { Navbar, MenuLinkContainer, ConnectWalletButton } from './styled'
+
+const navMenu = [
+  { label: 'About', url: '/' },
+  { label: 'FAQ', url: '/' },
+  { label: 'Support', url: '/' }
+]
 
 const Header = () => {
-  const { account: address, activate, deactivate } = useWeb3()
+  const { account: address, deactivate } = useWeb3()
 
-  async function connect() {
-    try {
-      await activate(injected)
-    } catch (ex) {
-      console.log(ex)
-    }
-  }
+  const [showModal, setShowModal] = useState(false)
 
   async function disconnect() {
     try {
@@ -26,69 +28,48 @@ const Header = () => {
   }
 
   return (
-    <>
-      <header
-        style={{
-          background: 'white',
-          zIndex: 5
-        }}
-        className='fixed w-full top-0 text-gray-600 body-font'
-      >
-        <div className='container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center'>
-          <Link href='/'>
-            <a className='flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0'>
-              <Image src={Logo.src} width={100} height={60} />
-            </a>
-          </Link>
-          <nav className='md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400	flex flex-wrap items-center text-base justify-center'>
-            <Link href='/organization'>
-              <a className='mr-5 hover:text-gray-900'>Organizations</a>
-            </Link>
-            <Link href='/task'>
-              <a className='mr-5 hover:text-gray-900'>Tasks</a>
-            </Link>
-          </nav>
+    <Navbar>
+      <WalletModal
+        show={showModal}
+        toggleModal={() => setShowModal(!showModal)}
+      />
+      <div className='container mx-auto flex flex-wrap p-5 top-0 md:flex-row items-center'>
+        <Link href='/'>
+          <a>
+            <Logo />
+          </a>
+        </Link>
+        <div className='ml-24 flex flex-grow justify-between items-center'>
+          <MenuLinkContainer>
+            {navMenu.map((menu, index) => {
+              return (
+                <Link href={menu.url} key={index}>
+                  <a>{menu.label}</a>
+                </Link>
+              )
+            })}
+          </MenuLinkContainer>
 
           {address ? (
-            <>
-              <button
-                onClick={disconnect}
-                className='mr-2 inline-flex items-center bg-neutral-300 border-0 py-1 px-5 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0'
-              >
-                Disconnect
-              </button>
-              <div
-                className={`relative inline-flex items-center bg-neutral-100 border border-neutral-300 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0 ${styles.accountContainer}`}
-              >
-                <div className='inline-flex font-mono items-center bg-white border-0 py-1 px-4 focus:outline-none rounded-lg text-base text-black mt-4 mt-0'>
-                  {address.substring(0, 6)}...
-                  {address.substring(address.length - 4)}
-                </div>
-                <Balances className={styles.balances} />
-              </div>
-            </>
-          ) : (
             <button
-              onClick={connect}
-              className='inline-flex items-center bg-neutral-300 border-0 py-1 px-5 focus:outline-none rounded-lg text-base text-black mt-4 md:mt-0'
+              className='btn-tag inline-flex items-center py-3 px-4 gap-x-3 rounded-full text-sm'
+              onClick={disconnect}
             >
-              Connect your wallet
-              <svg
-                fill='none'
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                className='w-4 h-4 ml-1'
-                viewBox='0 0 24 24'
-              >
-                <path d='M5 12h14M12 5l7 7-7 7'></path>
-              </svg>
+              <MetamaskSvg />
+              <span className='text-sm'>
+                {address.substring(0, 6)}...
+                {address.substring(address.length - 4)}
+              </span>
+              <ChevronDown />
             </button>
+          ) : (
+            <ConnectWalletButton onClick={() => setShowModal(!showModal)}>
+              Connect your wallet
+            </ConnectWalletButton>
           )}
         </div>
-      </header>
-    </>
+      </div>
+    </Navbar>
   )
 }
 

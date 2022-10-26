@@ -3,22 +3,28 @@ export interface Theme {
     text: {
       primary: string,
       secondary: string
-      white: string
+      white: string,
+      grey1: string,
+      grey2: string,
+      blue: string
     },
     background: {
       common: {
-        white: string
+        white: string,
+        grey1: string
       },
       page: {
         white: string
+        black: string
       },
       card: {
         grey1: string
         grey2: string
       },
       button: {
-        primary: string
-      }
+        primary: string,
+        grey1: string
+      },
     }
   }
 }
