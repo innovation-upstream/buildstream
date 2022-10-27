@@ -1,10 +1,9 @@
-const Spinner = ({ className = 'text-white', width = 20, height = 20 }) => {
+const Spinner = ({ className = 'text-[#3667EA]', width = 20 }) => {
   return (
     <svg
       className={`animate-spin -ml-1 ${className}`}
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
-      height={height}
       width={width}
       viewBox='0 0 24 24'
     >

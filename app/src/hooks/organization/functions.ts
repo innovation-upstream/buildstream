@@ -18,6 +18,7 @@ export const createOrganization = async (
   description: string,
   approvers: string[],
   signers: string[],
+  initializeOrganization: boolean,
   provider: any
 ): Promise<number> => {
   const contract = getContract(
@@ -31,7 +32,7 @@ export const createOrganization = async (
     description,
     approvers,
     signers,
-    false
+    initializeOrganization
   )
   const response = await tx.wait()
   const event = response?.events?.find(

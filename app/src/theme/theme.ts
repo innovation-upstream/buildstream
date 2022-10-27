@@ -21,6 +21,9 @@ export interface Theme {
         grey1: string
         grey2: string
       },
+      paper: {
+        primary: string
+      },
       button: {
         primary: string,
         grey1: string

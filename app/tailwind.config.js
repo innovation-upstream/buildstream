@@ -17,6 +17,9 @@ module.exports = {
         8: '8px',
         9: '2.5rem'
       },
+      gap: {
+        full: '100%',
+      },
       boxShadow: {
         paper: '0px 4px 24px rgba(0, 0, 0, 0.03)'
       },

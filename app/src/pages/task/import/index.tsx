@@ -147,7 +147,7 @@ const ImportTask: NextPage<{ client_code: string }> = ({ client_code }) => {
             <h2 className='text-bold font-bold pb-3'>Spaces</h2>
             <ul className='grid gap-6 w-full md:grid-cols-1'>
               {spaceProcess ? (
-                <Spinner className='text-indigo-500' width={20} height={20} />
+                <Spinner className='text-indigo-500' width={20} />
               ) : (
                 spaces &&
                 spaces.length > 0 &&
@@ -196,7 +196,7 @@ const ImportTask: NextPage<{ client_code: string }> = ({ client_code }) => {
           <div className='w-full md:basis-8/12'>
             <ul className='w-full divide-y divide-gray-100'>
               {taskProcess ? (
-                <Spinner className='text-indigo-500' width={40} height={40} />
+                <Spinner className='text-indigo-500' width={40} />
               ) : (
                 tasks &&
                 tasks.map((task, index) => (
