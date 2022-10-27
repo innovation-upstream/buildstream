@@ -43,13 +43,13 @@ function WrappedApp({ Component, pageProps }: AppProps) {
         <Provider store={store}>
           <ThemeProvider>
             <div
-              className='text-neutral-900 relative sm:py-20 py-40'
+              className='bg-[#F5F7F9] text-neutral-900 relative sm:py-20 py-40'
               style={{ minHeight: '100vh' }}
             >
               <Header />
               {loading ? (
                 <div className='absolute top-1/2 right-1/2 -translate-y-1/2 translate-x-1/2'>
-                  <Spinner className='text-indigo-500' width={50} height={50} />
+                  <Spinner className='text-indigo-500' width={50} />
                 </div>
               ) : (
                 <Component {...pageProps} />

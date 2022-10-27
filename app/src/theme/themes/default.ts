@@ -23,6 +23,9 @@ export const defaultTheme: Theme = {
         grey1: '#D9D9D9',
         grey2: 'rgba(39, 39, 44, 0.2)'
       },
+      paper: {
+        primary: '#F0F0F0'
+      },
       button: {
         primary: '#3667EA',
         grey1: '#EFF0F1',
