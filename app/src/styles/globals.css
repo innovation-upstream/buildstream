@@ -16,6 +16,12 @@
     @apply grid gap-4 md:gap-6 grid-cols-12;
   }
   .input-base {
-    @apply border-2 border-solid border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 focus:outline-none text-[#646873] font-medium py-3.5 px-4 rounded-md;
+    @apply w-full border-2 border-solid border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 focus:outline-none text-[#646873] font-medium py-3.5 px-4 rounded-md;
+  }
+  .paper {
+    @apply rounded-2xl border border-[#EFF0F1] bg-white shadow-paper p-10
+  }
+  .text-secondary {
+    @apply text-gray-400
   }
 }
