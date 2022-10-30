@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import CreateOrgForm from 'components/Organization/CreateOrgForm'
+import CreateOrganizationForm from 'components/Organization/Create/CreateOrganizationForm'
 
 const CreateOrganization: React.FC = () => {
   return (
@@ -19,7 +19,7 @@ const CreateOrganization: React.FC = () => {
         </div>
 
         <div className='paper col-span-7 py-12 rounded-[46px] relative'>
-          <CreateOrgForm />
+          <CreateOrganizationForm />
         </div>
       </div>
     </div>

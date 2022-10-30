@@ -9,6 +9,7 @@ import {
   GetTaskDocument,
   GetTaskQueryVariables,
   GetTasksDocument,
+  GetTaskSnapshotsDocument,
   GetTaskSnapshotsQueryVariables,
   GetTasksQueryVariables,
   Task,
@@ -68,4 +69,4 @@ export const useGetTaskSnapshotsQuery = (
   ApolloReactHooks.useQuery<
     { taskSnapshots: TaskSnapshot[] },
     GetTaskSnapshotsQueryVariables
-  >(GetTasksDocument, baseOptions)
+  >(GetTaskSnapshotsDocument, baseOptions)
