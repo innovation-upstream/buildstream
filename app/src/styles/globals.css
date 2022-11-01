@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer components {
+  .layout-container {
+    @apply 2xl:max-w-[1368px] px-4 sm:px-8 2xl:px-0 mx-auto;
+  }
   .btn-primary {
     @apply py-3 px-4 font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-500 focus:outline-none focus:bg-blue-700;
   }
@@ -13,13 +16,13 @@
     @apply p-2 text-sm rounded-md text-gray-500 bg-zinc-100 hover:bg-zinc-200 focus:outline-none focus:bg-zinc-200;
   }
   .grid-layout {
-    @apply grid gap-4 md:gap-6 grid-cols-12;
+    @apply grid gap-6 grid-cols-4 md:grid-cols-8 lg:grid-cols-12;
   }
   .input-base {
     @apply w-full border-2 border-solid border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 focus:outline-none text-[#646873] font-medium py-3.5 px-4 rounded-md;
   }
   .paper {
-    @apply rounded-2xl border border-[#EFF0F1] bg-white shadow-paper p-10;
+    @apply rounded-2xl border border-[#EFF0F1] bg-white shadow-paper py-5 px-4 md:py-6 md:px-6;
   }
   .text-secondary {
     @apply text-gray-400;

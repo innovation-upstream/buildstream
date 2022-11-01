@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        '2xl': '1440px'
+      },
       borderWidth: {
         DEFAULT: '1px',
         0: '0',
@@ -24,8 +27,7 @@ module.exports = {
         paper: '0px 4px 24px rgba(0, 0, 0, 0.03)'
       },
       container: {
-        center: true,
-        padding: '2rem'
+        center: true
       },
       fontFamily: {
         sans: ['Manrope', ...defaultTheme.fontFamily.sans]

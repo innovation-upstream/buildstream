@@ -33,7 +33,7 @@ const Header = () => {
         show={showModal}
         toggleModal={() => setShowModal(!showModal)}
       />
-      <div className='container flex flex-wrap py-5 top-0 md:flex-row items-center'>
+      <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center'>
         <Link href='/'>
           <a>
             <Logo />

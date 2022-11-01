@@ -43,7 +43,7 @@ function WrappedApp({ Component, pageProps }: AppProps) {
         <Provider store={store}>
           <ThemeProvider>
             <div
-              className='bg-[#F5F7F9] text-neutral-900 relative sm:py-20 py-40'
+              className='bg-[#F5F7F9] text-neutral-900 text-sm sm:text-base relative sm:py-20 py-40'
               style={{ minHeight: '100vh' }}
             >
               <Header />

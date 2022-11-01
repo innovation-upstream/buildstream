@@ -16,7 +16,7 @@ const EmptyTaskView = () => {
   return (
     <div className='mt-6'>
       <p className='text-4xl font-bold mb-6'>Tasks</p>
-      <div className='paper px-32 py-10 text-center'>
+      <div className='paper lg:px-10 xl:px-20 2xl:px-24 py-10 text-center'>
         <p className='text-2xl font-semibold mb-3'>Create your first task</p>
         <span className='text-secondary'>
           You can create tasks from scratch or connect more task managers
@@ -73,7 +73,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
               {t.status < TaskStatus.ASSIGNED && (
                 <button
                   type='button'
-                  className='flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500'
+                  className='hidden xl:block flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500'
                 >
                   Recommended contributors
                 </button>
