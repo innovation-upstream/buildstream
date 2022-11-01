@@ -41,10 +41,10 @@ const TaskCard = ({
   )
   return (
     <div className='paper'>
-      <div className='flex'>
+      <div className='flex mb-2'>
         <div className='flex'>{task.organization.name}</div>
       </div>
-      <p className='text-[28px] font-bold mb-3.5'>
+      <p className='text-[28px] leading-8 font-bold mb-3.5'>
         {task.title}
         <span className='text-base whitespace-pre font-medium text-[#70C550]'>
           {'  '}

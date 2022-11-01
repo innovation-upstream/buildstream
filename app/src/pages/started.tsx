@@ -36,7 +36,7 @@ const Home: NextPage = () => {
   }, [account])
 
   return (
-    <div className='container'>
+    <div className='layout-container'>
       <Head>
         <title>Getting Started</title>
         <meta

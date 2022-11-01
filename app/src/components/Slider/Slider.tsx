@@ -24,9 +24,9 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
   return (
     <div className='w-full'>
       <section>
-        <div className='flex justify-between gap-x-10'>
+        <div className='flex flex-col lg:flex-row justify-between gap-10'>
           <p className='text-5xl font-bold'>{activeTitle?.title}</p>
-          <div className='flex items-center gap-3 rounded-2xl h-fit p-4 bg-[#F5F7F9]'>
+          <div className='flex items-center gap-3 rounded-2xl w-fit h-fit p-4 bg-[#F5F7F9]'>
             <div className='text-end'>
               <p className='text-xl font-bold'>Step {active + 1}</p>
               <span className='mt-1 text-secondary whitespace-nowrap'>
@@ -65,7 +65,7 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
             return (
               <div
                 ref={(ref) => (cardListRefs.current[index] = ref)}
-                className='basis-full shrink-0'
+                className={`basis-full shrink-0 ${active !== index ? 'invisible' : ''}`}
                 key={`slide-${index}`}
               >
                 {child}
@@ -78,7 +78,7 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
         {active < slideCount - 1 && (
           <button
             type='button'
-            className='btn-primary px-20'
+            className='btn-primary lg:px-20'
             onClick={() => gotoSlide(active + 1)}
           >
             Next
@@ -87,7 +87,7 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
         {active == slideCount - 1 && (
           <button
             type='submit'
-            className='btn-primary px-20'
+            className='btn-primary lg:px-20'
             onClick={onComplete}
           >
             Complete
@@ -96,7 +96,7 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
         {active > 0 && (
           <button
             type='button'
-            className='flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 px-16'
+            className='flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 lg:px-16'
             onClick={() => gotoSlide(active - 1)}
           >
             <Back />
@@ -106,7 +106,7 @@ const Slider = ({ onCancel, onComplete, titles, children }: SliderProps) => {
         {active === 0 && onCancel && (
           <button
             type='button'
-            className='btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 px-16'
+            className='btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500 lg:px-16'
             onClick={onCancel}
           >
             Cancel
