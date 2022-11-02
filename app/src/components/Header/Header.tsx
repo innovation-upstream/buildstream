@@ -7,16 +7,17 @@ import ChevronDown from '../IconSvg/ChevronDown'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
 import { Navbar, MenuLinkContainer, ConnectWalletButton } from './styled'
+import { useTranslation } from 'react-i18next'
 
 const navMenu = [
-  { label: 'About', url: '/' },
-  { label: 'FAQ', url: '/' },
-  { label: 'Support', url: '/' }
+  { label: 'about', url: '/' },
+  { label: 'faq', url: '/' },
+  { label: 'support', url: '/' }
 ]
 
 const Header = () => {
   const { account: address, deactivate } = useWeb3()
-
+  const { t } = useTranslation('header')
   const [showModal, setShowModal] = useState(false)
 
   async function disconnect() {
@@ -44,7 +45,7 @@ const Header = () => {
             {navMenu.map((menu, index) => {
               return (
                 <Link href={menu.url} key={index}>
-                  <a>{menu.label}</a>
+                  <a>{t(menu.label)}</a>
                 </Link>
               )
             })}

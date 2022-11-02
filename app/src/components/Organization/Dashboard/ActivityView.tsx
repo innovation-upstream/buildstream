@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Write from 'SVGs/Write'
 import { Converter } from 'utils/converter'
+import { useTranslation } from 'react-i18next'
 
 const messageTemplates: Record<any, string> = {
   0: 'Task:  <strong>{title}</strong> is <strong>created</strong>',
@@ -20,15 +21,16 @@ interface ActivityViewProps {
 }
 
 const EmptyActivityView = () => {
+  const { t } = useTranslation('organization')
   return (
     <div className='paper'>
-      <p className='text-2xl font-semibold mb-6'>Recent activity</p>
+      <p className='text-2xl font-semibold mb-6'>{t('recent_activity')}</p>
       <div className='divider' />
       <div className='flex items-center flex-col pt-10 pb-4'>
         <div className='p-4 bg-[#EFF0F1] rounded-xl'>
           <Write width={49} className='fill-gray-400' />
         </div>
-        <p className='mt-3 text-secondary'>Nothing to show</p>
+        <p className='mt-3 text-secondary'>{t('nothing_to_show')}</p>
       </div>
     </div>
   )
@@ -50,6 +52,7 @@ const ActivityView = ({
     }
   })
   usePolling(startPolling, stopPolling)
+  const { t } = useTranslation('organization')
 
   useEffect(() => {
     if (data?.taskSnapshots) {
@@ -67,7 +70,7 @@ const ActivityView = ({
 
   return (
     <div className='paper p-6'>
-      <p className='text-2xl font-semibold mb-6'>Recent activity</p>
+      <p className='text-2xl font-semibold mb-6'>{t('recent_activity')}</p>
       <div className='divider' />
       <ul className='pt-6'>
         {taskSnapshots.map((snapshot) => {
@@ -92,7 +95,7 @@ const ActivityView = ({
               />
               <Link href={`/task/${snapshot.taskId}`}>
                 <button className='btn-primary text-[#17191A] bg-white hover:bg-zinc-200 focus:bg-zinc-200'>
-                  View
+                  {t('view')}
                 </button>
               </Link>
             </li>

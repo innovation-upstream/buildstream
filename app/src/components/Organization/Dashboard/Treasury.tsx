@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
 import TreasuryAbi from 'contracts/Treasury.json'
 import Deposit from 'components/Deposit/Deposit'
+import { useTranslation } from 'react-i18next'
 
 interface TreasuryProps {
   organization: Organization
@@ -16,6 +17,7 @@ const Treasury = ({ organization }: TreasuryProps) => {
   const tokens = organization?.treasury?.tokens
   const [selected, setSelected] = useState(tokens?.[0]?.token)
   const [deposit, setDeposit] = useState(false)
+  const { t } = useTranslation('organization')
 
   const token = tokens?.find((t) => t.token === selected)
   const balance = ethers.utils.formatUnits(
@@ -26,7 +28,7 @@ const Treasury = ({ organization }: TreasuryProps) => {
   return (
     <div className='paper'>
       <div className='flex items-center justify-between mb-5'>
-        <p className='text-2xl font-semibold'>Treasury</p>
+        <p className='text-2xl font-semibold'>{t('treasury')}</p>
         <Gear />
       </div>
       <div className='flex items-center mb-5'>
@@ -45,7 +47,7 @@ const Treasury = ({ organization }: TreasuryProps) => {
         </button>
       </div>
       <div className='divider' />
-      <p className='mb-3 mt-4 text-lg font-medium'>Reward token:</p>
+      <p className='mb-3 mt-4 text-lg font-medium'>{t('reward_token')}</p>
       <select
         className='input-base text-2xl font-bold'
         value={selected}
@@ -64,7 +66,7 @@ const Treasury = ({ organization }: TreasuryProps) => {
           className='w-full btn-primary bg-[#17191A] flex items-center justify-center gap-x-2.5 mt-4'
         >
           <Plus />
-          Deposit
+          {t('deposit')}
         </button>
       )}
       {deposit && (

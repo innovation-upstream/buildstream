@@ -6,16 +6,17 @@ import React, { FormEvent, useState } from 'react'
 import MainInformation from 'components/Organization/Create/MainInformation'
 import TaskConnect from 'components/Organization/Create/TaskConnect'
 import Slider from 'components/Slider/Slider'
+import { useTranslation } from 'react-i18next'
 
 const sliderTitles = [
   {
     index: 0,
-    title: 'Main information'
+    title: 'main_information'
   },
   {
     index: 1,
-    shortTitle: 'Task manager',
-    title: 'Connect task manager  platform'
+    shortTitle: 'task_manager',
+    title: 'connect_task_manager'
   }
 ]
 
@@ -23,12 +24,13 @@ const CreateOrgForm = () => {
   const { account, library } = useWeb3()
   const [processing, setProcessing] = useState(false)
   const router = useRouter()
+  const { t } = useTranslation('organization')
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!account) {
       console.error('Wallet Not Connected')
-      alert('Wallet Not Connected')
+      alert(t('not_connected_wallet'))
       return
     }
     const formData = new FormData(e.target as any)

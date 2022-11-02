@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import store, { wrapper } from 'state/store'
 import ThemeProvider from '../theme/Theme.provider'
+import { appWithTranslation } from 'next-i18next'
 import '../styles/globals.css'
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -63,4 +64,4 @@ function WrappedApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default wrapper.withRedux(WrappedApp)
+export default appWithTranslation(wrapper.withRedux(WrappedApp))

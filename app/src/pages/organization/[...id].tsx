@@ -24,11 +24,13 @@ import Treasury from 'components/Organization/Dashboard/Treasury'
 import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
 import TaskView from 'components/Organization/Dashboard/TaskView'
 import ActivityView from 'components/Organization/Dashboard/ActivityView'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
       const orgId = context.params?.id?.[0] || '0'
+      const locale = context.locale ?? ''
       const { data } = await client.query({
         query: GetOrganizationDocument,
         variables: {
@@ -61,7 +63,13 @@ export const getServerSideProps: GetServerSideProps =
         props: {
           org: data?.organization,
           taskList: tasks.tasks,
-          snapshots: snapshots.taskSnapshots
+          snapshots: snapshots.taskSnapshots,
+          ...(await serverSideTranslations(locale, [
+            'common',
+            'organization',
+            'header',
+            'tasks'
+          ]))
         }
       }
     }

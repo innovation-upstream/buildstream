@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin')
+const { i18n } = require('./next-i18next.config');
 
 const nextConfig = {
   reactStrictMode: true,
+  i18n,
   swcMinify: true,
   webpack: (
     config,

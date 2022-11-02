@@ -1,11 +1,12 @@
 import { taskConnectors } from './taskConnectors'
+import { useTranslation } from 'react-i18next'
 
 const TaskConnect = () => {
+  const { t } = useTranslation('organization')
   return (
     <div className='mt-6'>
       <p className='mb-9 text-secondary'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dolor, lobortis
-        auctor amet, sit amet. Nisl parturient nisl.
+        {t('connect_task_manager_sub')}
       </p>
       <div className='flex flex-wrap gap-4'>
         {taskConnectors.map((connector) => {

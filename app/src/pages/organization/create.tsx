@@ -1,7 +1,29 @@
 import Head from 'next/head'
 import CreateOrganizationForm from 'components/Organization/Create/CreateOrganizationForm'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
+import { wrapper } from 'state/store'
+
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    (store) => async (context: GetServerSidePropsContext) => {
+      const locale = context.locale ?? ''
+
+      return {
+        props: {
+          ...(await serverSideTranslations(locale, [
+            'common',
+            'organization',
+            'header'
+          ]))
+        }
+      }
+    }
+  )
 
 const CreateOrganization: React.FC = () => {
+  const { t } = useTranslation('organization')
   return (
     <div>
       <Head>
@@ -11,10 +33,11 @@ const CreateOrganization: React.FC = () => {
       </Head>
       <div className='layout-container grid-layout py-24'>
         <div className='col-span-4 md:col-span-8 lg:col-span-5'>
-          <h1 className='text-5xl lg:text-8xl mb-8 font-bold'>Start as Organization</h1>
+          <h1 className='text-5xl lg:text-8xl mb-8 font-bold'>
+            {t('start_as_org')}
+          </h1>
           <p className='lg:w-3/5 text-lg text-secondary'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dolor,
-            lobortis auctor amet, sit amet. Nisl parturient nisl.
+            {t('start_as_org_sub')}
           </p>
         </div>
 
