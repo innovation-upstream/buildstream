@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
-import type { NextPage } from 'next'
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage
+} from 'next'
 import Head from 'next/head'
 import Find from 'SVGs/Find'
 import Write from 'SVGs/Write'
@@ -7,6 +11,26 @@ import Team from 'SVGs/Team'
 import { useWeb3 } from 'hooks'
 import WalletModal from 'components/Modals/WalletModal'
 import { useRouter } from 'next/router'
+import { wrapper } from 'state/store'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
+
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    (store) => async (context: GetServerSidePropsContext) => {
+      const locale = context.locale ?? ''
+
+      return {
+        props: {
+          ...(await serverSideTranslations(locale, [
+            'common',
+            'home',
+            'header'
+          ]))
+        }
+      }
+    }
+  )
 
 enum action {
   findTask,
@@ -19,6 +43,7 @@ const Home: NextPage = () => {
   const [showModal, setShowModal] = useState(false)
   const [actionValue, setActionValue] = useState<typeof action | undefined>()
   const router = useRouter()
+  const { t } = useTranslation('home')
 
   const handleAction = (param?: any) => {
     setActionValue(param)
@@ -51,7 +76,7 @@ const Home: NextPage = () => {
       <main className='flex flex-col gap-28 flex-auto h-screen'>
         <section className='grid-layout mt-28'>
           <span className='col-span-8 block text-[#17191A] tracking-[-4px] text-[112px] leading-[111px] font-bold'>
-            <span className='block'>What you</span> wanna do first?
+            {t('what_you_wanna_do')}
           </span>
         </section>
         <section className='grid-layout'>
@@ -61,14 +86,17 @@ const Home: NextPage = () => {
             </div>
             <div className='flex flex-col items-start'>
               <span className='block font-bold text-4xl text-sm'>
-                Find a task
+                {t('find_task')}
               </span>
               <span className='font-normal opacity-50'>
-              Create an account as freelancer
+                {t('finde_task_sub')}
               </span>
             </div>
-            <button className='btn-primary' onClick={() => handleAction(action.findTask)}>
-              Get started now
+            <button
+              className='btn-primary'
+              onClick={() => handleAction(action.findTask)}
+            >
+              {t('get_started')}
             </button>
           </div>
 
@@ -78,14 +106,17 @@ const Home: NextPage = () => {
             </div>
             <div className='flex flex-col items-start'>
               <span className='block font-bold text-4xl text-sm'>
-                Create a task
+                {t('create_task')}
               </span>
               <span className='font-normal opacity-50'>
-              Create an account as organization
+                {t('create_task_sub')}
               </span>
             </div>
-            <button className='btn-primary' onClick={() => handleAction(action.createTask)}>
-              Get started now
+            <button
+              className='btn-primary'
+              onClick={() => handleAction(action.createTask)}
+            >
+              {t('get_started')}
             </button>
           </div>
 
@@ -95,14 +126,17 @@ const Home: NextPage = () => {
             </div>
             <div className='flex flex-col items-start'>
               <span className='block font-bold text-4xl text-sm'>
-                Find my team
+                {t('find_team_sub')}
               </span>
               <span className='font-normal opacity-50'>
-                Find your organization
+                {t('find_team')}
               </span>
             </div>
-            <button className='btn-primary' onClick={() => handleAction(action.findTeam)}>
-              Get started now
+            <button
+              className='btn-primary'
+              onClick={() => handleAction(action.findTeam)}
+            >
+              {t('get_started')}
             </button>
           </div>
         </section>

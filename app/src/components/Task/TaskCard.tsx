@@ -3,6 +3,7 @@ import Badge from 'SVGs/Badge'
 import { ethers } from 'ethers'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TaskCardProps {
   task: Task
@@ -22,18 +23,19 @@ const TaskCard = ({
   const reward = ethers.utils
     .formatEther(task?.rewardAmount.toString())
     .toString()
+  const { t } = useTranslation('tasks')
 
   const taskRequirement = (
     <div className='flex gap-6 items-center'>
       <div className='flex gap-1'>
-        <p className='text-[#646873]'>Level:</p>
+        <p className='text-[#646873]'>{t('level')}</p>
         <span className='font-semibold'>
           {ComplexityScoreMap[task.complexityScore].charAt(0).toUpperCase() +
             ComplexityScoreMap[task.complexityScore].slice(1)}
         </span>
       </div>
       <div className='flex gap-1'>
-        <p className='text-[#646873]'>Reputation:</p>
+        <p className='text-[#646873]'>{t('reputation')}:</p>
         <Badge />
         <span className='font-semibold'>{task.reputationLevel}</span>
       </div>
@@ -48,7 +50,7 @@ const TaskCard = ({
         {task.title}
         <span className='text-base whitespace-pre font-medium text-[#70C550]'>
           {'  '}
-          ID: {task.id}
+          {t('id')}: {task.id}
         </span>
       </p>
       {taskRequirementLocation === 'inline' && taskRequirement}
@@ -64,7 +66,7 @@ const TaskCard = ({
       <section className='flex justify-between items-center mt-6'>
         <div className='flex gap-5'>
           <button type='button' className='btn-primary px-6'>
-            Task Details
+            {t('task_details')}
           </button>
           {!hideChildren && children}
           {taskRequirementLocation === 'footer' && taskRequirement}

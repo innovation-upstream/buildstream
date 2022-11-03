@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { GetTasksDocument, Task } from '../../../.graphclient'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -20,10 +21,16 @@ export const getServerSideProps: GetServerSideProps =
       const { data } = await client.query({
         query: GetTasksDocument
       })
+      const locale = context.locale ?? ''
 
       return {
         props: {
-          taskList: data.tasks
+          taskList: data.tasks,
+          ...(await serverSideTranslations(locale, [
+            'common',
+            'tasks',
+            'header'
+          ]))
         }
       }
     }

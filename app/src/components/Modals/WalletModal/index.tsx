@@ -3,6 +3,7 @@ import WalletsInfo from './wallets_info'
 import CloseIcon from '../../IconSvg/CloseIcon'
 import injected from 'config/Walletconnectors'
 import { useWeb3 } from 'hooks'
+import { useTranslation } from 'next-i18next';
 import { IModalProps } from './interface'
 import {
   ModalContent,
@@ -13,6 +14,7 @@ import {
 
 const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
   const { account: address, activate } = useWeb3()
+  const { t } = useTranslation()
 
   async function connect() {
     try {
@@ -29,7 +31,7 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
           <ModalContent>
             <div className='py-5 flex justify-between align-center'>
               <div></div>
-              <div className='font-bold	text-xl'>Connect a Wallet</div>
+              <div className='font-bold	text-xl'>{t('common:connect_wallet')}</div>
               <button onClick={toggleModal}>
                 <CloseIcon />
               </button>
@@ -37,7 +39,7 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
             <ModalBody>
               <ModalItemWrapper>
                 <span className='block text-black-900 opacity-40 font-medium'>
-                  Ready to use
+                  {t('common:ready_to_use')}
                 </span>
                 <div className='flex flex-col'>
                   {WalletsInfo.filter((walletInfo) => walletInfo.available).map(
@@ -58,7 +60,7 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
               </ModalItemWrapper>
               <div>
                 <span className='block text-black-900 opacity-40 font-medium'>
-                  Coming soon
+                  {t('common:coming_soon')}
                 </span>
                 <div className='flex flex-col'>
                   {WalletsInfo.filter(
