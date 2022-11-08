@@ -69,14 +69,14 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       </div>
       <ul>
         {tasks.map((t) => (
-          <li key={t.id}>
+          <li key={t.id} className='mb-4'>
             <TaskCard task={t}>
               {t.status < TaskStatus.ASSIGNED && (
                 <button
                   type='button'
                   className='hidden xl:block flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500'
                 >
-                  {tr('import_from')}
+                  {tr('recommended_contributors')}
                 </button>
               )}
             </TaskCard>
