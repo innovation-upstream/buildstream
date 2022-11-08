@@ -563,6 +563,15 @@ export class TaskRevision extends Entity {
     this.set("task", Value.fromString(value));
   }
 
+  get taskSnapshot(): string {
+    let value = this.get("taskSnapshot");
+    return value!.toString();
+  }
+
+  set taskSnapshot(value: string) {
+    this.set("taskSnapshot", Value.fromString(value));
+  }
+
   get revisionId(): BigInt {
     let value = this.get("revisionId");
     return value!.toBigInt();
@@ -922,6 +931,23 @@ export class TaskSnapshot extends Entity {
       this.unset("taskDuration");
     } else {
       this.set("taskDuration", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get totalWaitTime(): BigInt | null {
+    let value = this.get("totalWaitTime");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set totalWaitTime(value: BigInt | null) {
+    if (!value) {
+      this.unset("totalWaitTime");
+    } else {
+      this.set("totalWaitTime", Value.fromBigInt(<BigInt>value));
     }
   }
 

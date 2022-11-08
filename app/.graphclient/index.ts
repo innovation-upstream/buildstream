@@ -384,6 +384,8 @@ export type Query = {
   organizations: Array<Organization>;
   task?: Maybe<Task>;
   tasks: Array<Task>;
+  taskRevision?: Maybe<TaskRevision>;
+  taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
   taskCount?: Maybe<TaskCount>;
@@ -394,6 +396,8 @@ export type Query = {
   treasuries: Array<Treasury>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  team?: Maybe<Team>;
+  teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -430,6 +434,24 @@ export type QuerytasksArgs = {
   orderBy?: InputMaybe<Task_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Task_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerytaskRevisionArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerytaskRevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -525,6 +547,24 @@ export type QueryactionsArgs = {
 };
 
 
+export type QueryteamArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryteamsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Team_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type Query_metaArgs = {
   block?: InputMaybe<Block_height>;
 };
@@ -534,6 +574,8 @@ export type Subscription = {
   organizations: Array<Organization>;
   task?: Maybe<Task>;
   tasks: Array<Task>;
+  taskRevision?: Maybe<TaskRevision>;
+  taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
   taskCount?: Maybe<TaskCount>;
@@ -544,6 +586,8 @@ export type Subscription = {
   treasuries: Array<Treasury>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  team?: Maybe<Team>;
+  teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -580,6 +624,24 @@ export type SubscriptiontasksArgs = {
   orderBy?: InputMaybe<Task_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Task_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiontaskRevisionArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiontaskRevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -675,6 +737,24 @@ export type SubscriptionactionsArgs = {
 };
 
 
+export type SubscriptionteamArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionteamsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Team_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type Subscription_metaArgs = {
   block?: InputMaybe<Block_height>;
 };
@@ -685,8 +765,10 @@ export type Task = {
   orgId: Organization;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  assigner: Scalars['String'];
+  assigner?: Maybe<Scalars['String']>;
   assignee?: Maybe<Scalars['String']>;
+  teamAssignee?: Maybe<Scalars['String']>;
+  team?: Maybe<Team>;
   taskTags: Array<Scalars['String']>;
   status: Scalars['Int'];
   complexityScore: Scalars['BigInt'];
@@ -697,9 +779,21 @@ export type Task = {
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
   taskDuration: Scalars['BigInt'];
+  totalWaitTime: Scalars['BigInt'];
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
+  staked: Scalars['Boolean'];
+  revisions?: Maybe<Array<TaskRevision>>;
+};
+
+
+export type TaskrevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
 };
 
 export type TaskCount = {
@@ -742,6 +836,150 @@ export type TaskCount_orderBy =
   | 'orgId'
   | 'count';
 
+export type TaskRevision = {
+  id: Scalars['ID'];
+  task: Task;
+  taskSnapshot: TaskSnapshot;
+  revisionId: Scalars['BigInt'];
+  requester: Scalars['String'];
+  externalRevisionId: Scalars['Bytes'];
+  revisionHash: Scalars['Bytes'];
+  durationExtension: Scalars['BigInt'];
+  durationExtensionRequest: Scalars['BigInt'];
+  status: Scalars['Int'];
+};
+
+export type TaskRevision_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  task?: InputMaybe<Scalars['String']>;
+  task_not?: InputMaybe<Scalars['String']>;
+  task_gt?: InputMaybe<Scalars['String']>;
+  task_lt?: InputMaybe<Scalars['String']>;
+  task_gte?: InputMaybe<Scalars['String']>;
+  task_lte?: InputMaybe<Scalars['String']>;
+  task_in?: InputMaybe<Array<Scalars['String']>>;
+  task_not_in?: InputMaybe<Array<Scalars['String']>>;
+  task_contains?: InputMaybe<Scalars['String']>;
+  task_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_not_contains?: InputMaybe<Scalars['String']>;
+  task_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_starts_with?: InputMaybe<Scalars['String']>;
+  task_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_starts_with?: InputMaybe<Scalars['String']>;
+  task_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_ends_with?: InputMaybe<Scalars['String']>;
+  task_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_ends_with?: InputMaybe<Scalars['String']>;
+  task_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_?: InputMaybe<Task_filter>;
+  taskSnapshot?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_not_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_?: InputMaybe<TaskSnapshot_filter>;
+  revisionId?: InputMaybe<Scalars['BigInt']>;
+  revisionId_not?: InputMaybe<Scalars['BigInt']>;
+  revisionId_gt?: InputMaybe<Scalars['BigInt']>;
+  revisionId_lt?: InputMaybe<Scalars['BigInt']>;
+  revisionId_gte?: InputMaybe<Scalars['BigInt']>;
+  revisionId_lte?: InputMaybe<Scalars['BigInt']>;
+  revisionId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  revisionId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  requester?: InputMaybe<Scalars['String']>;
+  requester_not?: InputMaybe<Scalars['String']>;
+  requester_gt?: InputMaybe<Scalars['String']>;
+  requester_lt?: InputMaybe<Scalars['String']>;
+  requester_gte?: InputMaybe<Scalars['String']>;
+  requester_lte?: InputMaybe<Scalars['String']>;
+  requester_in?: InputMaybe<Array<Scalars['String']>>;
+  requester_not_in?: InputMaybe<Array<Scalars['String']>>;
+  requester_contains?: InputMaybe<Scalars['String']>;
+  requester_contains_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_contains?: InputMaybe<Scalars['String']>;
+  requester_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  requester_starts_with?: InputMaybe<Scalars['String']>;
+  requester_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_starts_with?: InputMaybe<Scalars['String']>;
+  requester_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_ends_with?: InputMaybe<Scalars['String']>;
+  requester_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_ends_with?: InputMaybe<Scalars['String']>;
+  requester_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  externalRevisionId?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_not?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  externalRevisionId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  externalRevisionId_contains?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_not_contains?: InputMaybe<Scalars['Bytes']>;
+  revisionHash?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_not?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  revisionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  revisionHash_contains?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  durationExtension?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_not?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_gt?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_lt?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_gte?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_lte?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtensionRequest?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  status?: InputMaybe<Scalars['Int']>;
+  status_not?: InputMaybe<Scalars['Int']>;
+  status_gt?: InputMaybe<Scalars['Int']>;
+  status_lt?: InputMaybe<Scalars['Int']>;
+  status_gte?: InputMaybe<Scalars['Int']>;
+  status_lte?: InputMaybe<Scalars['Int']>;
+  status_in?: InputMaybe<Array<Scalars['Int']>>;
+  status_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type TaskRevision_orderBy =
+  | 'id'
+  | 'task'
+  | 'taskSnapshot'
+  | 'revisionId'
+  | 'requester'
+  | 'externalRevisionId'
+  | 'revisionHash'
+  | 'durationExtension'
+  | 'durationExtensionRequest'
+  | 'status';
+
 export type TaskSnapshot = {
   id: Scalars['ID'];
   actor: Scalars['String'];
@@ -763,9 +1001,11 @@ export type TaskSnapshot = {
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
   taskDuration?: Maybe<Scalars['BigInt']>;
+  totalWaitTime?: Maybe<Scalars['BigInt']>;
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
+  staked: Scalars['Boolean'];
 };
 
 export type TaskSnapshot_filter = {
@@ -998,6 +1238,14 @@ export type TaskSnapshot_filter = {
   taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
   taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
   taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -1030,6 +1278,10 @@ export type TaskSnapshot_filter = {
   assignmentRequest_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  staked?: InputMaybe<Scalars['Boolean']>;
+  staked_not?: InputMaybe<Scalars['Boolean']>;
+  staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -1055,9 +1307,11 @@ export type TaskSnapshot_orderBy =
   | 'assignDate'
   | 'submitDate'
   | 'taskDuration'
+  | 'totalWaitTime'
   | 'comment'
   | 'approvedBy'
-  | 'assignmentRequest';
+  | 'assignmentRequest'
+  | 'staked';
 
 export type Task_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -1177,6 +1431,47 @@ export type Task_filter = {
   assignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee?: InputMaybe<Scalars['String']>;
+  teamAssignee_not?: InputMaybe<Scalars['String']>;
+  teamAssignee_gt?: InputMaybe<Scalars['String']>;
+  teamAssignee_lt?: InputMaybe<Scalars['String']>;
+  teamAssignee_gte?: InputMaybe<Scalars['String']>;
+  teamAssignee_lte?: InputMaybe<Scalars['String']>;
+  teamAssignee_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_not_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team?: InputMaybe<Scalars['String']>;
+  team_not?: InputMaybe<Scalars['String']>;
+  team_gt?: InputMaybe<Scalars['String']>;
+  team_lt?: InputMaybe<Scalars['String']>;
+  team_gte?: InputMaybe<Scalars['String']>;
+  team_lte?: InputMaybe<Scalars['String']>;
+  team_in?: InputMaybe<Array<Scalars['String']>>;
+  team_not_in?: InputMaybe<Array<Scalars['String']>>;
+  team_contains?: InputMaybe<Scalars['String']>;
+  team_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_not_contains?: InputMaybe<Scalars['String']>;
+  team_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_starts_with?: InputMaybe<Scalars['String']>;
+  team_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_starts_with?: InputMaybe<Scalars['String']>;
+  team_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_ends_with?: InputMaybe<Scalars['String']>;
+  team_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_ends_with?: InputMaybe<Scalars['String']>;
+  team_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_?: InputMaybe<Team_filter>;
   taskTags?: InputMaybe<Array<Scalars['String']>>;
   taskTags_not?: InputMaybe<Array<Scalars['String']>>;
   taskTags_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -1253,6 +1548,14 @@ export type Task_filter = {
   taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
   taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
   taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -1285,6 +1588,11 @@ export type Task_filter = {
   assignmentRequest_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  staked?: InputMaybe<Scalars['Boolean']>;
+  staked_not?: InputMaybe<Scalars['Boolean']>;
+  staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  revisions_?: InputMaybe<TaskRevision_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -1297,6 +1605,8 @@ export type Task_orderBy =
   | 'description'
   | 'assigner'
   | 'assignee'
+  | 'teamAssignee'
+  | 'team'
   | 'taskTags'
   | 'status'
   | 'complexityScore'
@@ -1307,9 +1617,132 @@ export type Task_orderBy =
   | 'assignDate'
   | 'submitDate'
   | 'taskDuration'
+  | 'totalWaitTime'
   | 'comment'
   | 'approvedBy'
-  | 'assignmentRequest';
+  | 'assignmentRequest'
+  | 'staked'
+  | 'revisions';
+
+export type Team = {
+  id: Scalars['ID'];
+  teamId: Scalars['BigInt'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  walletAddress: Scalars['String'];
+  archived: Scalars['Boolean'];
+  members: Array<Scalars['String']>;
+  teamRewardMultiplier: Scalars['BigInt'];
+};
+
+export type Team_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  teamId?: InputMaybe<Scalars['BigInt']>;
+  teamId_not?: InputMaybe<Scalars['BigInt']>;
+  teamId_gt?: InputMaybe<Scalars['BigInt']>;
+  teamId_lt?: InputMaybe<Scalars['BigInt']>;
+  teamId_gte?: InputMaybe<Scalars['BigInt']>;
+  teamId_lte?: InputMaybe<Scalars['BigInt']>;
+  teamId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  teamId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  name?: InputMaybe<Scalars['String']>;
+  name_not?: InputMaybe<Scalars['String']>;
+  name_gt?: InputMaybe<Scalars['String']>;
+  name_lt?: InputMaybe<Scalars['String']>;
+  name_gte?: InputMaybe<Scalars['String']>;
+  name_lte?: InputMaybe<Scalars['String']>;
+  name_in?: InputMaybe<Array<Scalars['String']>>;
+  name_not_in?: InputMaybe<Array<Scalars['String']>>;
+  name_contains?: InputMaybe<Scalars['String']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_not?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_starts_with?: InputMaybe<Scalars['String']>;
+  description_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_starts_with?: InputMaybe<Scalars['String']>;
+  description_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_ends_with?: InputMaybe<Scalars['String']>;
+  description_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_ends_with?: InputMaybe<Scalars['String']>;
+  description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress?: InputMaybe<Scalars['String']>;
+  walletAddress_not?: InputMaybe<Scalars['String']>;
+  walletAddress_gt?: InputMaybe<Scalars['String']>;
+  walletAddress_lt?: InputMaybe<Scalars['String']>;
+  walletAddress_gte?: InputMaybe<Scalars['String']>;
+  walletAddress_lte?: InputMaybe<Scalars['String']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['String']>>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['String']>>;
+  walletAddress_contains?: InputMaybe<Scalars['String']>;
+  walletAddress_contains_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['String']>;
+  walletAddress_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_starts_with?: InputMaybe<Scalars['String']>;
+  walletAddress_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_starts_with?: InputMaybe<Scalars['String']>;
+  walletAddress_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_ends_with?: InputMaybe<Scalars['String']>;
+  walletAddress_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_ends_with?: InputMaybe<Scalars['String']>;
+  walletAddress_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  archived_not?: InputMaybe<Scalars['Boolean']>;
+  archived_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  archived_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  members?: InputMaybe<Array<Scalars['String']>>;
+  members_not?: InputMaybe<Array<Scalars['String']>>;
+  members_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  teamRewardMultiplier?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_not?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_gt?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_lt?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_gte?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  teamRewardMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type Team_orderBy =
+  | 'id'
+  | 'teamId'
+  | 'name'
+  | 'description'
+  | 'walletAddress'
+  | 'archived'
+  | 'members'
+  | 'teamRewardMultiplier';
 
 export type Treasury = {
   id: Scalars['ID'];
@@ -1562,11 +1995,17 @@ export type ResolversTypes = ResolversObject<{
   TaskCount: ResolverTypeWrapper<TaskCount>;
   TaskCount_filter: TaskCount_filter;
   TaskCount_orderBy: TaskCount_orderBy;
+  TaskRevision: ResolverTypeWrapper<TaskRevision>;
+  TaskRevision_filter: TaskRevision_filter;
+  TaskRevision_orderBy: TaskRevision_orderBy;
   TaskSnapshot: ResolverTypeWrapper<TaskSnapshot>;
   TaskSnapshot_filter: TaskSnapshot_filter;
   TaskSnapshot_orderBy: TaskSnapshot_orderBy;
   Task_filter: Task_filter;
   Task_orderBy: Task_orderBy;
+  Team: ResolverTypeWrapper<Team>;
+  Team_filter: Team_filter;
+  Team_orderBy: Team_orderBy;
   Treasury: ResolverTypeWrapper<Treasury>;
   TreasuryToken: ResolverTypeWrapper<TreasuryToken>;
   TreasuryToken_filter: TreasuryToken_filter;
@@ -1599,9 +2038,13 @@ export type ResolversParentTypes = ResolversObject<{
   Task: Task;
   TaskCount: TaskCount;
   TaskCount_filter: TaskCount_filter;
+  TaskRevision: TaskRevision;
+  TaskRevision_filter: TaskRevision_filter;
   TaskSnapshot: TaskSnapshot;
   TaskSnapshot_filter: TaskSnapshot_filter;
   Task_filter: Task_filter;
+  Team: Team;
+  Team_filter: Team_filter;
   Treasury: Treasury;
   TreasuryToken: TreasuryToken;
   TreasuryToken_filter: TreasuryToken_filter;
@@ -1676,6 +2119,8 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   organizations?: Resolver<Array<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryorganizationsArgs, 'skip' | 'first' | 'subgraphError'>>;
   task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QuerytaskArgs, 'id' | 'subgraphError'>>;
   tasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QuerytasksArgs, 'skip' | 'first' | 'subgraphError'>>;
+  taskRevision?: Resolver<Maybe<ResolversTypes['TaskRevision']>, ParentType, ContextType, RequireFields<QuerytaskRevisionArgs, 'id' | 'subgraphError'>>;
+  taskRevisions?: Resolver<Array<ResolversTypes['TaskRevision']>, ParentType, ContextType, RequireFields<QuerytaskRevisionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskSnapshot?: Resolver<Maybe<ResolversTypes['TaskSnapshot']>, ParentType, ContextType, RequireFields<QuerytaskSnapshotArgs, 'id' | 'subgraphError'>>;
   taskSnapshots?: Resolver<Array<ResolversTypes['TaskSnapshot']>, ParentType, ContextType, RequireFields<QuerytaskSnapshotsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskCount?: Resolver<Maybe<ResolversTypes['TaskCount']>, ParentType, ContextType, RequireFields<QuerytaskCountArgs, 'id' | 'subgraphError'>>;
@@ -1686,6 +2131,8 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   treasuries?: Resolver<Array<ResolversTypes['Treasury']>, ParentType, ContextType, RequireFields<QuerytreasuriesArgs, 'skip' | 'first' | 'subgraphError'>>;
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType, RequireFields<QueryactionArgs, 'id' | 'subgraphError'>>;
   actions?: Resolver<Array<ResolversTypes['Action']>, ParentType, ContextType, RequireFields<QueryactionsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType, RequireFields<QueryteamArgs, 'id' | 'subgraphError'>>;
+  teams?: Resolver<Array<ResolversTypes['Team']>, ParentType, ContextType, RequireFields<QueryteamsArgs, 'skip' | 'first' | 'subgraphError'>>;
   _meta?: Resolver<Maybe<ResolversTypes['_Meta_']>, ParentType, ContextType, Partial<Query_metaArgs>>;
 }>;
 
@@ -1694,6 +2141,8 @@ export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends 
   organizations?: SubscriptionResolver<Array<ResolversTypes['Organization']>, "organizations", ParentType, ContextType, RequireFields<SubscriptionorganizationsArgs, 'skip' | 'first' | 'subgraphError'>>;
   task?: SubscriptionResolver<Maybe<ResolversTypes['Task']>, "task", ParentType, ContextType, RequireFields<SubscriptiontaskArgs, 'id' | 'subgraphError'>>;
   tasks?: SubscriptionResolver<Array<ResolversTypes['Task']>, "tasks", ParentType, ContextType, RequireFields<SubscriptiontasksArgs, 'skip' | 'first' | 'subgraphError'>>;
+  taskRevision?: SubscriptionResolver<Maybe<ResolversTypes['TaskRevision']>, "taskRevision", ParentType, ContextType, RequireFields<SubscriptiontaskRevisionArgs, 'id' | 'subgraphError'>>;
+  taskRevisions?: SubscriptionResolver<Array<ResolversTypes['TaskRevision']>, "taskRevisions", ParentType, ContextType, RequireFields<SubscriptiontaskRevisionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskSnapshot?: SubscriptionResolver<Maybe<ResolversTypes['TaskSnapshot']>, "taskSnapshot", ParentType, ContextType, RequireFields<SubscriptiontaskSnapshotArgs, 'id' | 'subgraphError'>>;
   taskSnapshots?: SubscriptionResolver<Array<ResolversTypes['TaskSnapshot']>, "taskSnapshots", ParentType, ContextType, RequireFields<SubscriptiontaskSnapshotsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskCount?: SubscriptionResolver<Maybe<ResolversTypes['TaskCount']>, "taskCount", ParentType, ContextType, RequireFields<SubscriptiontaskCountArgs, 'id' | 'subgraphError'>>;
@@ -1704,6 +2153,8 @@ export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends 
   treasuries?: SubscriptionResolver<Array<ResolversTypes['Treasury']>, "treasuries", ParentType, ContextType, RequireFields<SubscriptiontreasuriesArgs, 'skip' | 'first' | 'subgraphError'>>;
   action?: SubscriptionResolver<Maybe<ResolversTypes['Action']>, "action", ParentType, ContextType, RequireFields<SubscriptionactionArgs, 'id' | 'subgraphError'>>;
   actions?: SubscriptionResolver<Array<ResolversTypes['Action']>, "actions", ParentType, ContextType, RequireFields<SubscriptionactionsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  team?: SubscriptionResolver<Maybe<ResolversTypes['Team']>, "team", ParentType, ContextType, RequireFields<SubscriptionteamArgs, 'id' | 'subgraphError'>>;
+  teams?: SubscriptionResolver<Array<ResolversTypes['Team']>, "teams", ParentType, ContextType, RequireFields<SubscriptionteamsArgs, 'skip' | 'first' | 'subgraphError'>>;
   _meta?: SubscriptionResolver<Maybe<ResolversTypes['_Meta_']>, "_meta", ParentType, ContextType, Partial<Subscription_metaArgs>>;
 }>;
 
@@ -1713,8 +2164,10 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   orgId?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  assigner?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  assigner?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   assignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  teamAssignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
   taskTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   complexityScore?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
@@ -1725,9 +2178,12 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   assignDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   submitDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   taskDuration?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  totalWaitTime?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  revisions?: Resolver<Maybe<Array<ResolversTypes['TaskRevision']>>, ParentType, ContextType, RequireFields<TaskrevisionsArgs, 'skip' | 'first'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1735,6 +2191,20 @@ export type TaskCountResolvers<ContextType = MeshContext, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   orgId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   count?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TaskRevisionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['TaskRevision'] = ResolversParentTypes['TaskRevision']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  task?: Resolver<ResolversTypes['Task'], ParentType, ContextType>;
+  taskSnapshot?: Resolver<ResolversTypes['TaskSnapshot'], ParentType, ContextType>;
+  revisionId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  requester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  externalRevisionId?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
+  revisionHash?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
+  durationExtension?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  durationExtensionRequest?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1759,9 +2229,23 @@ export type TaskSnapshotResolvers<ContextType = MeshContext, ParentType extends 
   assignDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   submitDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   taskDuration?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
+  totalWaitTime?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TeamResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Team'] = ResolversParentTypes['Team']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  teamId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  walletAddress?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  teamRewardMultiplier?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1805,7 +2289,9 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   Subscription?: SubscriptionResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
   TaskCount?: TaskCountResolvers<ContextType>;
+  TaskRevision?: TaskRevisionResolvers<ContextType>;
   TaskSnapshot?: TaskSnapshotResolvers<ContextType>;
+  Team?: TeamResolvers<ContextType>;
   Treasury?: TreasuryResolvers<ContextType>;
   TreasuryToken?: TreasuryTokenResolvers<ContextType>;
   _Block_?: _Block_Resolvers<ContextType>;
@@ -1951,6 +2437,12 @@ const merger = new(BareMerger as any)({
           return printWithCache(GetTaskSnapshotsDocument);
         },
         location: 'GetTaskSnapshotsDocument.graphql'
+      },{
+        document: GetTaskRevisionsDocument,
+        get rawSDL() {
+          return printWithCache(GetTaskRevisionsDocument);
+        },
+        location: 'GetTaskRevisionsDocument.graphql'
       },{
         document: GetTreasuryDocument,
         get rawSDL() {
@@ -2124,6 +2616,22 @@ export type GetTaskSnapshotsQuery = { taskSnapshots: Array<(
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
     ) }
+  )> };
+
+export type GetTaskRevisionsQueryVariables = Exact<{
+  block?: InputMaybe<Block_height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<TaskRevision_filter>;
+}>;
+
+
+export type GetTaskRevisionsQuery = { taskRevisions: Array<(
+    Pick<TaskRevision, 'id' | 'revisionId' | 'requester' | 'externalRevisionId' | 'revisionHash' | 'durationExtension' | 'durationExtensionRequest' | 'status'>
+    & { taskSnapshot: Pick<TaskSnapshot, 'comment' | 'status'> }
   )> };
 
 export type GetTreasuryQueryVariables = Exact<{
@@ -2447,6 +2955,32 @@ export const GetTaskSnapshotsDocument = gql`
   }
 }
     ` as unknown as DocumentNode<GetTaskSnapshotsQuery, GetTaskSnapshotsQueryVariables>;
+export const GetTaskRevisionsDocument = gql`
+    query GetTaskRevisions($block: Block_height, $first: Int = 100, $orderBy: TaskRevision_orderBy, $orderDirection: OrderDirection, $skip: Int = 0, $subgraphError: _SubgraphErrorPolicy_! = deny, $where: TaskRevision_filter) {
+  taskRevisions(
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    taskSnapshot {
+      comment
+      status
+    }
+    revisionId
+    requester
+    externalRevisionId
+    revisionHash
+    durationExtension
+    durationExtensionRequest
+    status
+  }
+}
+    ` as unknown as DocumentNode<GetTaskRevisionsQuery, GetTaskRevisionsQueryVariables>;
 export const GetTreasuryDocument = gql`
     query GetTreasury($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
   treasury(id: $id, block: $block, subgraphError: $subgraphError) {
@@ -2501,6 +3035,7 @@ export const GetTreasurysDocument = gql`
 
 
 
+
 export type Requester<C = {}, E = unknown> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C, E>(requester: Requester<C, E>) {
   return {
@@ -2530,6 +3065,9 @@ export function getSdk<C, E>(requester: Requester<C, E>) {
     },
     GetTaskSnapshots(variables?: GetTaskSnapshotsQueryVariables, options?: C): Promise<GetTaskSnapshotsQuery> {
       return requester<GetTaskSnapshotsQuery, GetTaskSnapshotsQueryVariables>(GetTaskSnapshotsDocument, variables, options) as Promise<GetTaskSnapshotsQuery>;
+    },
+    GetTaskRevisions(variables?: GetTaskRevisionsQueryVariables, options?: C): Promise<GetTaskRevisionsQuery> {
+      return requester<GetTaskRevisionsQuery, GetTaskRevisionsQueryVariables>(GetTaskRevisionsDocument, variables, options) as Promise<GetTaskRevisionsQuery>;
     },
     GetTreasury(variables: GetTreasuryQueryVariables, options?: C): Promise<GetTreasuryQuery> {
       return requester<GetTreasuryQuery, GetTreasuryQueryVariables>(GetTreasuryDocument, variables, options) as Promise<GetTreasuryQuery>;

@@ -208,3 +208,36 @@ query GetTaskSnapshots(
     assignmentRequest
   }
 }
+
+query GetTaskRevisions(
+  $block: Block_height
+  $first: Int = 100
+  $orderBy: TaskRevision_orderBy
+  $orderDirection: OrderDirection
+  $skip: Int = 0
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+  $where: TaskRevision_filter
+) {
+  taskRevisions (
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    taskSnapshot {
+      comment
+      status
+    }
+    revisionId
+    requester
+    externalRevisionId
+    revisionHash
+    durationExtension
+    durationExtensionRequest
+    status
+  }
+}
