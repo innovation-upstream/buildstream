@@ -4,11 +4,13 @@ import { ethers } from 'ethers'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import Link from 'next/link'
 
 interface TaskCardProps {
   task: Task
   showDescription?: boolean
   hideChildren?: boolean
+  hideViewButton?: boolean
   taskRequirementLocation?: 'inline' | 'footer'
   children?: ReactNode
 }
@@ -17,6 +19,7 @@ const TaskCard = ({
   task,
   showDescription,
   hideChildren,
+  hideViewButton,
   taskRequirementLocation = 'inline',
   children
 }: TaskCardProps) => {
@@ -65,15 +68,20 @@ const TaskCard = ({
       <div className='divider' />
       <section className='flex justify-between items-center mt-6'>
         <div className='flex gap-5'>
-          <button type='button' className='btn-primary px-6'>
-            {t('task_details')}
-          </button>
+          {!hideViewButton && (
+            <Link href={`/task/${task.id}`}>
+              <button type='button' className='btn-primary px-6'>
+                {t('task_details')}
+              </button>
+            </Link>
+          )}
           {!hideChildren && children}
           {taskRequirementLocation === 'footer' && taskRequirement}
         </div>
+
         <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
           <TokenGeneric />
-          <span className='font-semibold'>{reward} ETH</span>
+          <span className='font-semibold text-sm'>{reward} ETH</span>
         </div>
       </section>
     </div>

@@ -2,5 +2,22 @@
   "level": "Level",
   "reputation": "Reputation",
   "id": "ID",
-  "task_details": "Task Details"
+  "task_details": "Task Details",
+  "closed": "Closed",
+  "task_in_progress": "Task in progress",
+  "waiting_for_approval": "Waiting for Approve",
+  "need_fixes": "Need fixes",
+  "contributor_selection": "Contributor selection",
+  "task_status": "Task Status",
+  "back_to_all_tasks": "Back to all tasks",
+  "assign": "Assign",
+  "recent_tasks": "Recent tasks",
+  "requests": "Requests",
+  "cover_letter": "Cover letter",
+  "responsible_contributor": "Responsible contributor",
+  "solution_will_be_in": "Solution will be in {placeholder}",
+  "in_progress": "In progress",
+  "submit_solution": "Submit solution",
+  "task_closed": "Task Closed",
+  "reward_message": "Your reward  transfered to your account!"
 }
