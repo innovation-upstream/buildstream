@@ -73,7 +73,7 @@ export class Converter {
       rewardToken: task.rewardToken,
       taskDuration: Number(task.taskDuration),
       approvedBy: task.approvedBy || [],
-      assigner: task.assigner,
+      assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || []
     }
   }

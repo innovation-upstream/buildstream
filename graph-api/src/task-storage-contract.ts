@@ -231,6 +231,13 @@ export function handleTaskRevisionRequested(
   revisionEntity.durationExtensionRequest = revision.durationExtensionRequest
   revisionEntity.status = revision.status
 
+  const taskId = event.params.taskId.toString()
+  const taskEntity = Task.load(taskId)
+  if (!taskEntity) return
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
+
+  revisionEntity.taskSnapshot = taskSnapshotEntity.id
   revisionEntity.save()
 }
 

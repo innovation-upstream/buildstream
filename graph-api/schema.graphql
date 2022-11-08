@@ -46,6 +46,7 @@ type Task @entity {
 type TaskRevision @entity {
   id: ID!
   task: Task!
+  taskSnapshot: TaskSnapshot!
   revisionId: BigInt!
   requester: String!
   externalRevisionId: Bytes!

@@ -365,6 +365,8 @@ export type Query = {
   organizations: Array<Organization>;
   task?: Maybe<Task>;
   tasks: Array<Task>;
+  taskRevision?: Maybe<TaskRevision>;
+  taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
   taskCount?: Maybe<TaskCount>;
@@ -375,6 +377,8 @@ export type Query = {
   treasuries: Array<Treasury>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  team?: Maybe<Team>;
+  teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -411,6 +415,24 @@ export type QuerytasksArgs = {
   orderBy?: InputMaybe<Task_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Task_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerytaskRevisionArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerytaskRevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -506,6 +528,24 @@ export type QueryactionsArgs = {
 };
 
 
+export type QueryteamArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryteamsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Team_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type Query_metaArgs = {
   block?: InputMaybe<Block_height>;
 };
@@ -515,6 +555,8 @@ export type Subscription = {
   organizations: Array<Organization>;
   task?: Maybe<Task>;
   tasks: Array<Task>;
+  taskRevision?: Maybe<TaskRevision>;
+  taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
   taskCount?: Maybe<TaskCount>;
@@ -525,6 +567,8 @@ export type Subscription = {
   treasuries: Array<Treasury>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  team?: Maybe<Team>;
+  teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -561,6 +605,24 @@ export type SubscriptiontasksArgs = {
   orderBy?: InputMaybe<Task_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Task_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiontaskRevisionArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiontaskRevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -656,6 +718,24 @@ export type SubscriptionactionsArgs = {
 };
 
 
+export type SubscriptionteamArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionteamsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Team_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type Subscription_metaArgs = {
   block?: InputMaybe<Block_height>;
 };
@@ -666,8 +746,10 @@ export type Task = {
   orgId: Organization;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  assigner: Scalars['String'];
+  assigner?: Maybe<Scalars['String']>;
   assignee?: Maybe<Scalars['String']>;
+  teamAssignee?: Maybe<Scalars['String']>;
+  team?: Maybe<Team>;
   taskTags: Array<Scalars['String']>;
   status: Scalars['Int'];
   complexityScore: Scalars['BigInt'];
@@ -678,9 +760,21 @@ export type Task = {
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
   taskDuration: Scalars['BigInt'];
+  totalWaitTime: Scalars['BigInt'];
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
+  staked: Scalars['Boolean'];
+  revisions?: Maybe<Array<TaskRevision>>;
+};
+
+
+export type TaskrevisionsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<TaskRevision_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<TaskRevision_filter>;
 };
 
 export type TaskCount = {
@@ -723,6 +817,150 @@ export type TaskCount_orderBy =
   | 'orgId'
   | 'count';
 
+export type TaskRevision = {
+  id: Scalars['ID'];
+  task: Task;
+  taskSnapshot: TaskSnapshot;
+  revisionId: Scalars['BigInt'];
+  requester: Scalars['String'];
+  externalRevisionId: Scalars['Bytes'];
+  revisionHash: Scalars['Bytes'];
+  durationExtension: Scalars['BigInt'];
+  durationExtensionRequest: Scalars['BigInt'];
+  status: Scalars['Int'];
+};
+
+export type TaskRevision_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  task?: InputMaybe<Scalars['String']>;
+  task_not?: InputMaybe<Scalars['String']>;
+  task_gt?: InputMaybe<Scalars['String']>;
+  task_lt?: InputMaybe<Scalars['String']>;
+  task_gte?: InputMaybe<Scalars['String']>;
+  task_lte?: InputMaybe<Scalars['String']>;
+  task_in?: InputMaybe<Array<Scalars['String']>>;
+  task_not_in?: InputMaybe<Array<Scalars['String']>>;
+  task_contains?: InputMaybe<Scalars['String']>;
+  task_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_not_contains?: InputMaybe<Scalars['String']>;
+  task_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_starts_with?: InputMaybe<Scalars['String']>;
+  task_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_starts_with?: InputMaybe<Scalars['String']>;
+  task_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_ends_with?: InputMaybe<Scalars['String']>;
+  task_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_ends_with?: InputMaybe<Scalars['String']>;
+  task_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_?: InputMaybe<Task_filter>;
+  taskSnapshot?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_not_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_?: InputMaybe<TaskSnapshot_filter>;
+  revisionId?: InputMaybe<Scalars['BigInt']>;
+  revisionId_not?: InputMaybe<Scalars['BigInt']>;
+  revisionId_gt?: InputMaybe<Scalars['BigInt']>;
+  revisionId_lt?: InputMaybe<Scalars['BigInt']>;
+  revisionId_gte?: InputMaybe<Scalars['BigInt']>;
+  revisionId_lte?: InputMaybe<Scalars['BigInt']>;
+  revisionId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  revisionId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  requester?: InputMaybe<Scalars['String']>;
+  requester_not?: InputMaybe<Scalars['String']>;
+  requester_gt?: InputMaybe<Scalars['String']>;
+  requester_lt?: InputMaybe<Scalars['String']>;
+  requester_gte?: InputMaybe<Scalars['String']>;
+  requester_lte?: InputMaybe<Scalars['String']>;
+  requester_in?: InputMaybe<Array<Scalars['String']>>;
+  requester_not_in?: InputMaybe<Array<Scalars['String']>>;
+  requester_contains?: InputMaybe<Scalars['String']>;
+  requester_contains_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_contains?: InputMaybe<Scalars['String']>;
+  requester_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  requester_starts_with?: InputMaybe<Scalars['String']>;
+  requester_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_starts_with?: InputMaybe<Scalars['String']>;
+  requester_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_ends_with?: InputMaybe<Scalars['String']>;
+  requester_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  requester_not_ends_with?: InputMaybe<Scalars['String']>;
+  requester_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  externalRevisionId?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_not?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  externalRevisionId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  externalRevisionId_contains?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_not_contains?: InputMaybe<Scalars['Bytes']>;
+  revisionHash?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_not?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  revisionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  revisionHash_contains?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
+  durationExtension?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_not?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_gt?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_lt?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_gte?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_lte?: InputMaybe<Scalars['BigInt']>;
+  durationExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtensionRequest?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
+  durationExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  durationExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  status?: InputMaybe<Scalars['Int']>;
+  status_not?: InputMaybe<Scalars['Int']>;
+  status_gt?: InputMaybe<Scalars['Int']>;
+  status_lt?: InputMaybe<Scalars['Int']>;
+  status_gte?: InputMaybe<Scalars['Int']>;
+  status_lte?: InputMaybe<Scalars['Int']>;
+  status_in?: InputMaybe<Array<Scalars['Int']>>;
+  status_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type TaskRevision_orderBy =
+  | 'id'
+  | 'task'
+  | 'taskSnapshot'
+  | 'revisionId'
+  | 'requester'
+  | 'externalRevisionId'
+  | 'revisionHash'
+  | 'durationExtension'
+  | 'durationExtensionRequest'
+  | 'status';
+
 export type TaskSnapshot = {
   id: Scalars['ID'];
   actor: Scalars['String'];
@@ -744,9 +982,11 @@ export type TaskSnapshot = {
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
   taskDuration?: Maybe<Scalars['BigInt']>;
+  totalWaitTime?: Maybe<Scalars['BigInt']>;
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
+  staked: Scalars['Boolean'];
 };
 
 export type TaskSnapshot_filter = {
@@ -979,6 +1219,14 @@ export type TaskSnapshot_filter = {
   taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
   taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
   taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -1011,6 +1259,10 @@ export type TaskSnapshot_filter = {
   assignmentRequest_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  staked?: InputMaybe<Scalars['Boolean']>;
+  staked_not?: InputMaybe<Scalars['Boolean']>;
+  staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -1036,9 +1288,11 @@ export type TaskSnapshot_orderBy =
   | 'assignDate'
   | 'submitDate'
   | 'taskDuration'
+  | 'totalWaitTime'
   | 'comment'
   | 'approvedBy'
-  | 'assignmentRequest';
+  | 'assignmentRequest'
+  | 'staked';
 
 export type Task_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -1158,6 +1412,47 @@ export type Task_filter = {
   assignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee?: InputMaybe<Scalars['String']>;
+  teamAssignee_not?: InputMaybe<Scalars['String']>;
+  teamAssignee_gt?: InputMaybe<Scalars['String']>;
+  teamAssignee_lt?: InputMaybe<Scalars['String']>;
+  teamAssignee_gte?: InputMaybe<Scalars['String']>;
+  teamAssignee_lte?: InputMaybe<Scalars['String']>;
+  teamAssignee_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_not_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team?: InputMaybe<Scalars['String']>;
+  team_not?: InputMaybe<Scalars['String']>;
+  team_gt?: InputMaybe<Scalars['String']>;
+  team_lt?: InputMaybe<Scalars['String']>;
+  team_gte?: InputMaybe<Scalars['String']>;
+  team_lte?: InputMaybe<Scalars['String']>;
+  team_in?: InputMaybe<Array<Scalars['String']>>;
+  team_not_in?: InputMaybe<Array<Scalars['String']>>;
+  team_contains?: InputMaybe<Scalars['String']>;
+  team_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_not_contains?: InputMaybe<Scalars['String']>;
+  team_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_starts_with?: InputMaybe<Scalars['String']>;
+  team_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_starts_with?: InputMaybe<Scalars['String']>;
+  team_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_ends_with?: InputMaybe<Scalars['String']>;
+  team_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_ends_with?: InputMaybe<Scalars['String']>;
+  team_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_?: InputMaybe<Team_filter>;
   taskTags?: InputMaybe<Array<Scalars['String']>>;
   taskTags_not?: InputMaybe<Array<Scalars['String']>>;
   taskTags_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -1234,6 +1529,14 @@ export type Task_filter = {
   taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
   taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
   taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
+  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -1266,6 +1569,11 @@ export type Task_filter = {
   assignmentRequest_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains?: InputMaybe<Array<Scalars['String']>>;
   assignmentRequest_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  staked?: InputMaybe<Scalars['Boolean']>;
+  staked_not?: InputMaybe<Scalars['Boolean']>;
+  staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  revisions_?: InputMaybe<TaskRevision_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -1278,6 +1586,8 @@ export type Task_orderBy =
   | 'description'
   | 'assigner'
   | 'assignee'
+  | 'teamAssignee'
+  | 'team'
   | 'taskTags'
   | 'status'
   | 'complexityScore'
@@ -1288,9 +1598,132 @@ export type Task_orderBy =
   | 'assignDate'
   | 'submitDate'
   | 'taskDuration'
+  | 'totalWaitTime'
   | 'comment'
   | 'approvedBy'
-  | 'assignmentRequest';
+  | 'assignmentRequest'
+  | 'staked'
+  | 'revisions';
+
+export type Team = {
+  id: Scalars['ID'];
+  teamId: Scalars['BigInt'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  walletAddress: Scalars['String'];
+  archived: Scalars['Boolean'];
+  members: Array<Scalars['String']>;
+  teamRewardMultiplier: Scalars['BigInt'];
+};
+
+export type Team_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  teamId?: InputMaybe<Scalars['BigInt']>;
+  teamId_not?: InputMaybe<Scalars['BigInt']>;
+  teamId_gt?: InputMaybe<Scalars['BigInt']>;
+  teamId_lt?: InputMaybe<Scalars['BigInt']>;
+  teamId_gte?: InputMaybe<Scalars['BigInt']>;
+  teamId_lte?: InputMaybe<Scalars['BigInt']>;
+  teamId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  teamId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  name?: InputMaybe<Scalars['String']>;
+  name_not?: InputMaybe<Scalars['String']>;
+  name_gt?: InputMaybe<Scalars['String']>;
+  name_lt?: InputMaybe<Scalars['String']>;
+  name_gte?: InputMaybe<Scalars['String']>;
+  name_lte?: InputMaybe<Scalars['String']>;
+  name_in?: InputMaybe<Array<Scalars['String']>>;
+  name_not_in?: InputMaybe<Array<Scalars['String']>>;
+  name_contains?: InputMaybe<Scalars['String']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_not_contains?: InputMaybe<Scalars['String']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  name_starts_with?: InputMaybe<Scalars['String']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name_not_starts_with?: InputMaybe<Scalars['String']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  name_ends_with?: InputMaybe<Scalars['String']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  description_not?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_starts_with?: InputMaybe<Scalars['String']>;
+  description_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_starts_with?: InputMaybe<Scalars['String']>;
+  description_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_ends_with?: InputMaybe<Scalars['String']>;
+  description_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_ends_with?: InputMaybe<Scalars['String']>;
+  description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress?: InputMaybe<Scalars['String']>;
+  walletAddress_not?: InputMaybe<Scalars['String']>;
+  walletAddress_gt?: InputMaybe<Scalars['String']>;
+  walletAddress_lt?: InputMaybe<Scalars['String']>;
+  walletAddress_gte?: InputMaybe<Scalars['String']>;
+  walletAddress_lte?: InputMaybe<Scalars['String']>;
+  walletAddress_in?: InputMaybe<Array<Scalars['String']>>;
+  walletAddress_not_in?: InputMaybe<Array<Scalars['String']>>;
+  walletAddress_contains?: InputMaybe<Scalars['String']>;
+  walletAddress_contains_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_contains?: InputMaybe<Scalars['String']>;
+  walletAddress_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_starts_with?: InputMaybe<Scalars['String']>;
+  walletAddress_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_starts_with?: InputMaybe<Scalars['String']>;
+  walletAddress_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_ends_with?: InputMaybe<Scalars['String']>;
+  walletAddress_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  walletAddress_not_ends_with?: InputMaybe<Scalars['String']>;
+  walletAddress_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  archived?: InputMaybe<Scalars['Boolean']>;
+  archived_not?: InputMaybe<Scalars['Boolean']>;
+  archived_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  archived_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  members?: InputMaybe<Array<Scalars['String']>>;
+  members_not?: InputMaybe<Array<Scalars['String']>>;
+  members_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  teamRewardMultiplier?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_not?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_gt?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_lt?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_gte?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_lte?: InputMaybe<Scalars['BigInt']>;
+  teamRewardMultiplier_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  teamRewardMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type Team_orderBy =
+  | 'id'
+  | 'teamId'
+  | 'name'
+  | 'description'
+  | 'walletAddress'
+  | 'archived'
+  | 'members'
+  | 'teamRewardMultiplier';
 
 export type Treasury = {
   id: Scalars['ID'];
@@ -1461,6 +1894,10 @@ export type QueryBuildstreamV1TestSdk = {
   /** undefined **/
   tasks: InContextSdkMethod<BuildstreamV1TestTypes.Query['tasks'], BuildstreamV1TestTypes.QuerytasksArgs, MeshContext>,
   /** undefined **/
+  taskRevision: InContextSdkMethod<BuildstreamV1TestTypes.Query['taskRevision'], BuildstreamV1TestTypes.QuerytaskRevisionArgs, MeshContext>,
+  /** undefined **/
+  taskRevisions: InContextSdkMethod<BuildstreamV1TestTypes.Query['taskRevisions'], BuildstreamV1TestTypes.QuerytaskRevisionsArgs, MeshContext>,
+  /** undefined **/
   taskSnapshot: InContextSdkMethod<BuildstreamV1TestTypes.Query['taskSnapshot'], BuildstreamV1TestTypes.QuerytaskSnapshotArgs, MeshContext>,
   /** undefined **/
   taskSnapshots: InContextSdkMethod<BuildstreamV1TestTypes.Query['taskSnapshots'], BuildstreamV1TestTypes.QuerytaskSnapshotsArgs, MeshContext>,
@@ -1480,6 +1917,10 @@ export type QueryBuildstreamV1TestSdk = {
   action: InContextSdkMethod<BuildstreamV1TestTypes.Query['action'], BuildstreamV1TestTypes.QueryactionArgs, MeshContext>,
   /** undefined **/
   actions: InContextSdkMethod<BuildstreamV1TestTypes.Query['actions'], BuildstreamV1TestTypes.QueryactionsArgs, MeshContext>,
+  /** undefined **/
+  team: InContextSdkMethod<BuildstreamV1TestTypes.Query['team'], BuildstreamV1TestTypes.QueryteamArgs, MeshContext>,
+  /** undefined **/
+  teams: InContextSdkMethod<BuildstreamV1TestTypes.Query['teams'], BuildstreamV1TestTypes.QueryteamsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<BuildstreamV1TestTypes.Query['_meta'], BuildstreamV1TestTypes.Query_metaArgs, MeshContext>
 };
@@ -1497,6 +1938,10 @@ export type SubscriptionBuildstreamV1TestSdk = {
   task: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['task'], BuildstreamV1TestTypes.SubscriptiontaskArgs, MeshContext>,
   /** undefined **/
   tasks: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['tasks'], BuildstreamV1TestTypes.SubscriptiontasksArgs, MeshContext>,
+  /** undefined **/
+  taskRevision: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['taskRevision'], BuildstreamV1TestTypes.SubscriptiontaskRevisionArgs, MeshContext>,
+  /** undefined **/
+  taskRevisions: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['taskRevisions'], BuildstreamV1TestTypes.SubscriptiontaskRevisionsArgs, MeshContext>,
   /** undefined **/
   taskSnapshot: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['taskSnapshot'], BuildstreamV1TestTypes.SubscriptiontaskSnapshotArgs, MeshContext>,
   /** undefined **/
@@ -1517,6 +1962,10 @@ export type SubscriptionBuildstreamV1TestSdk = {
   action: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['action'], BuildstreamV1TestTypes.SubscriptionactionArgs, MeshContext>,
   /** undefined **/
   actions: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['actions'], BuildstreamV1TestTypes.SubscriptionactionsArgs, MeshContext>,
+  /** undefined **/
+  team: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['team'], BuildstreamV1TestTypes.SubscriptionteamArgs, MeshContext>,
+  /** undefined **/
+  teams: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['teams'], BuildstreamV1TestTypes.SubscriptionteamsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['_meta'], BuildstreamV1TestTypes.Subscription_metaArgs, MeshContext>
 };
