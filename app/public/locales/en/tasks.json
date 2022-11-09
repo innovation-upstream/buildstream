@@ -5,7 +5,7 @@
   "task_details": "Task Details",
   "closed": "Closed",
   "task_in_progress": "Task in progress",
-  "waiting_for_approval": "Waiting for Approve",
+  "waiting_for_approval": "Waiting for Approval",
   "need_fixes": "Need fixes",
   "contributor_selection": "Contributor selection",
   "task_status": "Task Status",
@@ -19,5 +19,17 @@
   "in_progress": "In progress",
   "submit_solution": "Submit solution",
   "task_closed": "Task Closed",
-  "reward_message": "Your reward  transfered to your account!"
+  "reward_message": "Your reward  transfered to your account!",
+  "solution": "Solution",
+  "updated_solution": "Updated solution",
+  "your_solution": "Your solution",
+  "your_updated_solution": "Your updated solution",
+  "new_revision_request": "New Revision request",
+  "accept": "Accept",
+  "change_conditions": "Change conditions",
+  "appeal_edits": "Appeal edits",
+  "approve_and_complete": "Approve and complete",
+  "request_changes": "Request Changes",
+  "dispute_task": "Dispute Task",
+  "changes_description": "Changes Description"
 }
