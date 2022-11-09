@@ -3,12 +3,13 @@ import {
   Action as ActionType,
   Organization as Org,
   Task as TaskType,
+  TaskRevision as TaskRevisionType,
   TaskSnapshot as TaskSnapshotType,
   Treasury as TreasuryType
 } from 'graphclient'
 import { Action } from 'hooks/action/types'
 import { Organization } from 'hooks/organization/types'
-import { Task, TaskSnapshot } from 'hooks/task/types'
+import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
 import { Treasury } from 'hooks/treasury/types'
 
 export class Converter {
@@ -74,7 +75,8 @@ export class Converter {
       taskDuration: Number(task.taskDuration),
       approvedBy: task.approvedBy || [],
       assigner: task.assigner || '',
-      assignmentRequests: task.assignmentRequest || []
+      assignmentRequests: task.assignmentRequest || [],
+      comment: task.comment || ''
     }
   }
 
@@ -88,6 +90,25 @@ export class Converter {
       taskId: Number(taskSnapshot.taskId),
       block: BigNumber.from(taskSnapshot.block),
       timestamp: BigNumber.from(taskSnapshot.timestamp)
+    }
+  }
+
+  public static TaskRevisionFromQuery = (
+    taskRevision: TaskRevisionType
+  ): TaskRevision => {
+    return {
+      id: Number(taskRevision.id),
+      taskSnapshot: {
+        comment: taskRevision.taskSnapshot.comment || '',
+        status: taskRevision.taskSnapshot.status
+      },
+      revisionId: taskRevision.revisionId.toString(),
+      requester: taskRevision.requester,
+      externalRevisionId: taskRevision.externalRevisionId,
+      revisionHash: taskRevision.revisionHash,
+      durationExtension: Number(taskRevision.durationExtension),
+      durationExtensionRequest:  Number(taskRevision.durationExtensionRequest),
+      status: taskRevision.status
     }
   }
 }

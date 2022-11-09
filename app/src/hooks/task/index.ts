@@ -12,8 +12,11 @@ import {
   GetTaskSnapshotsDocument,
   GetTaskSnapshotsQueryVariables,
   GetTasksQueryVariables,
+  GetTaskRevisionsDocument,
+  GetTaskRevisionsQueryVariables,
   Task,
-  TaskSnapshot
+  TaskSnapshot,
+  TaskRevision
 } from 'graphclient'
 
 export const useGetTasksQuery = (
@@ -70,3 +73,14 @@ export const useGetTaskSnapshotsQuery = (
     { taskSnapshots: TaskSnapshot[] },
     GetTaskSnapshotsQueryVariables
   >(GetTaskSnapshotsDocument, baseOptions)
+
+export const useGetTaskRevisionsQuery = (
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    { taskRevisions: TaskRevision[] },
+    GetTaskRevisionsQueryVariables
+  >
+) =>
+  ApolloReactHooks.useQuery<
+    { taskRevisions: TaskRevision[] },
+    GetTaskRevisionsQueryVariables
+  >(GetTaskRevisionsDocument, baseOptions)

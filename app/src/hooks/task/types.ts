@@ -1,5 +1,5 @@
-import { BigNumber } from "ethers"
-import { Organization } from "hooks/organization/types"
+import { BigNumber } from 'ethers'
+import { Organization } from 'hooks/organization/types'
 
 export enum TaskStatus {
   PROPOSED,
@@ -15,6 +15,13 @@ export enum ComplexityScore {
   INTERMEDIATE,
   ADVANCED,
   COMPLEX
+}
+
+export enum TaskRevisionStatus {
+  PROPOSED,
+  CHANGES_REQUESTED,
+  ACCEPTED,
+  REQUEST_FOR_NEW_TASK
 }
 
 export const TaskStatusMap: Record<TaskStatus, string> = {
@@ -51,6 +58,7 @@ export type Task = {
   approvedBy: string[]
   assigner: string
   assignmentRequests: string[]
+  comment: string
 }
 
 export type TaskSnapshot = {
@@ -59,3 +67,18 @@ export type TaskSnapshot = {
   block: BigNumber
   timestamp: BigNumber
 } & Task
+
+export type TaskRevision = {
+  id: number
+  taskSnapshot: {
+    comment: string
+    status: TaskStatus
+  }
+  revisionId: string
+  requester: string
+  externalRevisionId: string
+  revisionHash: string
+  durationExtension: number
+  durationExtensionRequest: number
+  status: TaskRevisionStatus
+}
