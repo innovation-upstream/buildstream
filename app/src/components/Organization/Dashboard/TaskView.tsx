@@ -58,14 +58,16 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
 
   return (
     <div className='mt-6'>
-      <div className='flex gap-4 items-center mb-6'>
+      <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
         <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
-        <button className='btn-outline flex justify-center gap-2.5 items-center'>
-          <Plus className='fill-[#3667EA]' /> {tr('add_task')}
-        </button>
-        <button className='btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>
-          {tr('import_from')} <JiraLogo /> Jira
-        </button>
+        <div className='flex gap-4'>
+          <button className='btn-outline flex justify-center gap-2.5 items-center'>
+            <Plus className='fill-[#3667EA]' /> {tr('add_task')}
+          </button>
+          <button className='btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>
+            {tr('import_from')} <JiraLogo /> Jira
+          </button>
+        </div>
       </div>
       <ul>
         {tasks.map((t) => (

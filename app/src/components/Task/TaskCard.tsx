@@ -12,7 +12,34 @@ interface TaskCardProps {
   hideChildren?: boolean
   hideViewButton?: boolean
   taskRequirementLocation?: 'inline' | 'footer'
+  taskRequirementLocationTablet?: 'inline' | 'footer'
   children?: ReactNode
+}
+
+const TaskRequirement = ({
+  complexityScore,
+  reputationLevel,
+  className
+}: any) => {
+  const { t } = useTranslation('tasks')
+  return (
+    <div className={`gap-6 items-center ${className}`}>
+      <div className='flex gap-1'>
+        <p className='text-[#646873]'>{t('level')}</p>
+        <span className='font-semibold'>
+          {ComplexityScoreMap[complexityScore as ComplexityScore]
+            .charAt(0)
+            .toUpperCase() +
+            ComplexityScoreMap[complexityScore as ComplexityScore].slice(1)}
+        </span>
+      </div>
+      <div className='flex gap-1'>
+        <p className='text-[#646873]'>{t('reputation')}:</p>
+        <Badge />
+        <span className='font-semibold'>{reputationLevel}</span>
+      </div>
+    </div>
+  )
 }
 
 const TaskCard = ({
@@ -21,6 +48,7 @@ const TaskCard = ({
   hideChildren,
   hideViewButton,
   taskRequirementLocation = 'inline',
+  taskRequirementLocationTablet = 'inline',
   children
 }: TaskCardProps) => {
   const reward = ethers.utils
@@ -28,22 +56,6 @@ const TaskCard = ({
     .toString()
   const { t } = useTranslation('tasks')
 
-  const taskRequirement = (
-    <div className='flex gap-6 items-center'>
-      <div className='flex gap-1'>
-        <p className='text-[#646873]'>{t('level')}</p>
-        <span className='font-semibold'>
-          {ComplexityScoreMap[task.complexityScore].charAt(0).toUpperCase() +
-            ComplexityScoreMap[task.complexityScore].slice(1)}
-        </span>
-      </div>
-      <div className='flex gap-1'>
-        <p className='text-[#646873]'>{t('reputation')}:</p>
-        <Badge />
-        <span className='font-semibold'>{task.reputationLevel}</span>
-      </div>
-    </div>
-  )
   return (
     <div className='paper'>
       <div className='flex mb-2'>
@@ -56,7 +68,20 @@ const TaskCard = ({
           {t('id')}: {task.id}
         </span>
       </p>
-      {taskRequirementLocation === 'inline' && taskRequirement}
+      {taskRequirementLocation === 'inline' && (
+        <TaskRequirement
+          complexityScore={task.complexityScore}
+          reputationLevel={task.reputationLevel}
+          className='hidden lg:flex'
+        />
+      )}
+      {taskRequirementLocationTablet === 'inline' && (
+        <TaskRequirement
+          complexityScore={task.complexityScore}
+          reputationLevel={task.reputationLevel}
+          className='flex lg:hidden'
+        />
+      )}
       <div className={`flex gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}>
         {task.taskTags?.map((tag) => (
           <div key={tag} className='btn-tag'>
@@ -76,7 +101,13 @@ const TaskCard = ({
             </Link>
           )}
           {!hideChildren && children}
-          {taskRequirementLocation === 'footer' && taskRequirement}
+          {taskRequirementLocation === 'footer' && (
+            <TaskRequirement
+              complexityScore={task.complexityScore}
+              reputationLevel={task.reputationLevel}
+              className='hidden lg:flex'
+            />
+          )}
         </div>
 
         <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
