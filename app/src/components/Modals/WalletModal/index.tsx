@@ -3,7 +3,7 @@ import WalletsInfo from './wallets_info'
 import CloseIcon from '../../IconSvg/CloseIcon'
 import injected from 'config/Walletconnectors'
 import { useWeb3 } from 'hooks'
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-i18next'
 import { IModalProps } from './interface'
 import {
   ModalContent,
@@ -31,7 +31,9 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
           <ModalContent>
             <div className='py-5 flex justify-between align-center'>
               <div></div>
-              <div className='font-bold	text-xl'>{t('common:connect_wallet')}</div>
+              <div className='font-bold	text-xl'>
+                {t('common:connect_wallet')}
+              </div>
               <button onClick={toggleModal}>
                 <CloseIcon />
               </button>

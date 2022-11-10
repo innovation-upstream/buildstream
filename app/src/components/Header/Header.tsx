@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import { useWeb3 } from 'hooks'
-import Balances from 'components/Balances/Balances'
-import Link from 'next/link'
-import Logo from '../IconSvg/Logo'
-import ChevronDown from '../IconSvg/ChevronDown'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
-import { Navbar, MenuLinkContainer, ConnectWalletButton } from './styled'
+import { useWeb3 } from 'hooks'
+import Link from 'next/link'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import Hamburger from 'SVGs/Hamburger'
+import ChevronDown from '../IconSvg/ChevronDown'
+import Logo from '../IconSvg/Logo'
+import { ConnectWalletButton, MenuLinkContainer, Navbar } from './styled'
 
 const navMenu = [
   { label: 'about', url: '/' },
@@ -34,13 +34,16 @@ const Header = () => {
         show={showModal}
         toggleModal={() => setShowModal(!showModal)}
       />
-      <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center'>
+      <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center justify-between md:justify-start'>
         <Link href='/'>
           <a>
             <Logo />
           </a>
         </Link>
-        <div className='ml-24 flex flex-grow justify-between items-center'>
+        <button className='md:hidden'>
+          <Hamburger />
+        </button>
+        <div className='ml-24 hidden md:flex flex-grow justify-between items-center'>
           <MenuLinkContainer>
             {navMenu.map((menu, index) => {
               return (
