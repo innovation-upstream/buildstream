@@ -1,12 +1,13 @@
-import Plus from 'SVGs/Plus'
-import JiraLogo from 'SVGs/JiraLogo'
-import { Task, TaskStatus } from 'hooks/task/types'
+import CreateTaskModal from 'components/Task/CreateTask'
 import TaskCard from 'components/Task/TaskCard'
-import { useEffect, useState } from 'react'
 import { useGetTasksQuery, usePolling } from 'hooks'
-import { Converter } from 'utils/converter'
 import { Organization } from 'hooks/organization/types'
+import { Task, TaskStatus } from 'hooks/task/types'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import JiraLogo from 'SVGs/JiraLogo'
+import Plus from 'SVGs/Plus'
+import { Converter } from 'utils/converter'
 
 interface TaskViewProps {
   organization: Organization
@@ -36,6 +37,7 @@ const EmptyTaskView = () => {
 
 const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [tasks, setTasks] = useState(taskList)
+  const [showModal, toggleModal] = useState(false)
   const { data, startPolling, stopPolling } = useGetTasksQuery({
     variables: {
       where: {
@@ -58,10 +60,19 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
 
   return (
     <div className='mt-6'>
+      {showModal && (
+        <CreateTaskModal
+          orgId={organization.id}
+          close={() => toggleModal(!showModal)}
+        />
+      )}
       <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
         <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
         <div className='flex gap-4'>
-          <button className='btn-outline flex justify-center gap-2.5 items-center'>
+          <button
+            className='btn-outline flex justify-center gap-2.5 items-center'
+            onClick={() => toggleModal(!showModal)}
+          >
             <Plus className='fill-[#3667EA]' /> {tr('add_task')}
           </button>
           <button className='btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>

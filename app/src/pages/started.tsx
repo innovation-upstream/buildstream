@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react'
+import WalletModal from 'components/Modals/WalletModal'
+import { useWeb3 } from 'hooks'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage
 } from 'next'
-import Head from 'next/head'
-import Find from 'SVGs/Find'
-import Write from 'SVGs/Write'
-import Team from 'SVGs/Team'
-import { useWeb3 } from 'hooks'
-import WalletModal from 'components/Modals/WalletModal'
-import { useRouter } from 'next/router'
-import { wrapper } from 'state/store'
+import { Trans } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { wrapper } from 'state/store'
+import Find from 'SVGs/Find'
+import Team from 'SVGs/Team'
+import Write from 'SVGs/Write'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -73,10 +74,15 @@ const Home: NextPage = () => {
         show={showModal}
         toggleModal={() => setShowModal(!showModal)}
       />
-      <main className='flex flex-col gap-28 flex-auto h-screen'>
-        <section className='grid-layout mt-28'>
-          <span className='col-span-8 block text-[#17191A] tracking-[-4px] text-[112px] leading-[111px] font-bold'>
-            {t('what_you_wanna_do')}
+      <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
+        <section className='grid-layout mt-0 md:mt-28 gap-0'>
+          <span className='col-span-12 md:col-span-8 block text-[#17191A] tracking-[-4px] text-4xl md:text-[112px] leading-normal md:leading-[111px] font-bold'>
+            <Trans i18nKey='what_you_wanna_do'>
+              What you <br /> wanna do first?
+            </Trans>
+          </span>
+          <span className='block col-span-12 md:hidden'>
+            {t('what_you_wanna_do_sub')}
           </span>
         </section>
         <section className='grid-layout'>
