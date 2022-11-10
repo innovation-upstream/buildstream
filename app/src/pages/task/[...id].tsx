@@ -207,7 +207,7 @@ const TaskPage: NextPage<PageProps> = ({
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='grid-layout py-24'>
-        <div className='col-span-4 md:col-span-8 lg:col-span-2'>
+        <div className='w-fit col-span-4 md:col-span-8 lg:col-span-12 2xl:col-span-2'>
           <button
             type='button'
             className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'
@@ -216,13 +216,22 @@ const TaskPage: NextPage<PageProps> = ({
             {t('back_to_all_tasks')}
           </button>
         </div>
-        <div className='col-span-4 md:col-span-5 lg:col-span-7'>
+        <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
           <TaskCard
             task={currentTask}
             showDescription
             hideViewButton
             taskRequirementLocation='footer'
           />
+          <div className='mt-7 md:hidden'>
+            <TaskStatusCard
+              taskId={currentTask.id}
+              taskSnapshots={snapshots?.map((t) =>
+                Converter.TaskSnapshotFromQuery(t as any)
+              )}
+              organization={currentTask.organization}
+            />
+          </div>
           {currentTask.status === TaskStatus.OPEN &&
             !!currentTask.assignmentRequests.length && (
               <div className='mt-7'>
@@ -274,7 +283,7 @@ const TaskPage: NextPage<PageProps> = ({
           )}
           {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}
         </div>
-        <div className='col-span-4 md:col-span-3'>
+        <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>
           <TaskStatusCard
             taskId={currentTask.id}
             taskSnapshots={snapshots?.map((t) =>

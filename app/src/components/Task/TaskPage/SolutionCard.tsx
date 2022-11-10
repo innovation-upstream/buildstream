@@ -51,7 +51,7 @@ const SolutionCard = ({
           {task.comment}
         </div>
         {showControls && (
-          <div className='flex gap-4 mt-4'>
+          <div className='flex flex-col lg:flex-row gap-4 mt-4'>
             <button
               className='btn-primary text-sm flex justify-center gap-2.5 items-center'
               onClick={approve}

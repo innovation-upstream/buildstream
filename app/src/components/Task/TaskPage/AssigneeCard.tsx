@@ -79,7 +79,7 @@ const AssigneeCard: React.FC<Props> = ({
         </div>
       )}
       {!isAssigned && !!assignee.tasks.length && (
-        <div className='flex gap-3 mt-4'>
+        <div className='flex flex-col md:flex-row gap-3 mt-4'>
           <p className='text-xl font-semibold'>{t('recent_tasks')}:</p>
           <ul className='mt-1 list-disc ml-4'>
             {assignee.tasks.map((task) => (

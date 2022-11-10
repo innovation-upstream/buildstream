@@ -29,7 +29,7 @@ const ChangeRequest = ({ revision, isAssignee }: ChangeRequestProps) => {
       </div>
       <p className='mt-4'>{demoRevision}</p>
       {revision.status === TaskRevisionStatus.PROPOSED && isAssignee && (
-        <div className='flex gap-4 mt-4'>
+        <div className='flex flex-col lg:flex-row gap-4 mt-4'>
           <button className='btn-primary text-sm'>{t('accept')}</button>
           <button className='btn-outline border-[#EFF0F1] text-sm flex justify-center gap-2.5 items-center'>
             <FileWrite />

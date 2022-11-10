@@ -81,7 +81,8 @@ const TaskStatusCard = ({
       )
         return prev
       return [...prev, curr.status]
-    }, [] as TaskStatus[]).reverse()
+    }, [] as TaskStatus[])
+    .reverse()
 
   return (
     <div className='paper p-6'>
@@ -97,7 +98,9 @@ const TaskStatusCard = ({
             <StyledListItem
               showLine={statuses.length > 1}
               key={`task-timeline-${index}`}
-              className='relative flex items-center gap-x-3 lg:gap-x-4 mb-5'
+              className={`relative items-center gap-x-3 lg:gap-x-4 mb-5 ${
+                !isLastState ? 'hidden lg:flex' : 'flex'
+              }`}
             >
               <div
                 className={`iconContainer shrink-0 flex items-center justify-center rounded-full h-9 md:h-10 w-9 md:w-10 ${
