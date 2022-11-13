@@ -1,3 +1,23 @@
+type UserStat @entity {
+  id: ID!
+  proposedTasks: BigInt!
+  openedTasks: BigInt!
+  assignedTasks: BigInt!
+  submittedTasks: BigInt!
+  closedTasks: BigInt!
+  archivedTasks: BigInt!
+}
+
+type OrganizationStat @entity {
+  id: ID!
+  proposedTasks: BigInt!
+  openedTasks: BigInt!
+  assignedTasks: BigInt!
+  submittedTasks: BigInt!
+  closedTasks: BigInt!
+  archivedTasks: BigInt!
+}
+
 type Organization @entity {
   id: ID!
   orgId: BigInt!
@@ -82,12 +102,6 @@ type TaskSnapshot @entity {
   approvedBy: [String!]
   assignmentRequest: [String!]
   staked: Boolean!
-}
-
-type TaskCount @entity {
-  id: ID!
-  orgId: BigInt!
-  count: BigInt!
 }
 
 type TreasuryToken @entity {
