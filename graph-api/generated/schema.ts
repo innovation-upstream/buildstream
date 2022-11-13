@@ -332,6 +332,23 @@ export class Organization extends Entity {
   set treasury(value: string) {
     this.set("treasury", Value.fromString(value));
   }
+
+  get stat(): string | null {
+    let value = this.get("stat");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set stat(value: string | null) {
+    if (!value) {
+      this.unset("stat");
+    } else {
+      this.set("stat", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class Task extends Entity {

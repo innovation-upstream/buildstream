@@ -33,6 +33,7 @@ type Organization @entity {
   rewardToken: Bytes!
   isInitialized: Boolean!
   treasury: Treasury!
+  stat: OrganizationStat
 }
 
 type Task @entity {
