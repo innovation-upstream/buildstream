@@ -15,8 +15,8 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   if (!tTokenEntity) {
     tTokenEntity = new TreasuryToken(`${orgId}_${token}`)
     tTokenEntity.orgId = orgId
-    tTokenEntity.balance = new BigInt(0)
-    tTokenEntity.lockedBalance = new BigInt(0)
+    tTokenEntity.balance = BigInt.fromI32(0)
+    tTokenEntity.lockedBalance = BigInt.fromI32(0)
     tTokenEntity.token = token
   }
   tTokenEntity.balance = tTokenEntity.balance.plus(event.params.amount)

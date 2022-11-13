@@ -92,7 +92,8 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Task
-        - TaskCount
+        - UserStats
+        - OrganizationStats
       abis:
         - name: TaskStorageContract
           file: ./abis/TaskStorageContract.json
@@ -142,13 +143,7 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - TaskAssignment
-        - TeamArchived
-        - TeamCreation
-        - TeamMemberAdded
-        - TeamMemberRemoved
-        - TeamUnArchived
-        - TeamUpdated
+        - Team
       abis:
         - name: TeamContract
           file: ./abis/TeamContract.json

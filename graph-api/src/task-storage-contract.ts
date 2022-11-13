@@ -1,8 +1,9 @@
 import {
   Task,
-  TaskCount,
   TaskSnapshot,
-  TaskRevision
+  TaskRevision,
+  UserStat,
+  OrganizationStat
 } from '../generated/schema'
 
 import {
@@ -25,6 +26,15 @@ import {
 
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
+enum TaskStatus {
+  PROPOSED,
+  OPEN,
+  ASSIGNED,
+  SUBMITTED,
+  CLOSED,
+  ARCHIVED
+}
+
 function createTaskSnapshot(
   event: ethereum.Event,
   taskEntity: Task
@@ -44,8 +54,146 @@ function createTaskSnapshot(
   return taskSnapshotEntity
 }
 
+function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
+  let assignee: string = Address.zero().toHexString()
+  if (taskEntity && taskEntity.assignee)
+    assignee = taskEntity.assignee as string
+  let previousAssignee: string = Address.zero().toHexString()
+  if (previousTaskEntity && previousTaskEntity.assignee)
+    previousAssignee = previousTaskEntity.assignee as string
+  const ONE = BigInt.fromI32(1)
+  const ZERO = BigInt.fromI32(0)
+
+  let previousUserStatsEntity = UserStat.load(previousAssignee)
+  if (!previousUserStatsEntity) {
+    previousUserStatsEntity = new UserStat(assignee)
+    previousUserStatsEntity.proposedTasks = ZERO
+    previousUserStatsEntity.openedTasks = ZERO
+    previousUserStatsEntity.assignedTasks = ZERO
+    previousUserStatsEntity.submittedTasks = ZERO
+    previousUserStatsEntity.closedTasks = ZERO
+    previousUserStatsEntity.archivedTasks = ZERO
+  }
+  let organizationStatsEntity = OrganizationStat.load(taskEntity.orgId)
+  if (!organizationStatsEntity) {
+    organizationStatsEntity = new OrganizationStat(taskEntity.orgId)
+    organizationStatsEntity.proposedTasks = ZERO
+    organizationStatsEntity.openedTasks = ZERO
+    organizationStatsEntity.assignedTasks = ZERO
+    organizationStatsEntity.submittedTasks = ZERO
+    organizationStatsEntity.closedTasks = ZERO
+    organizationStatsEntity.archivedTasks = ZERO
+  }
+  if (previousTaskEntity)
+    switch (previousTaskEntity.status) {
+      case TaskStatus.PROPOSED: {
+        previousUserStatsEntity.proposedTasks = previousUserStatsEntity.proposedTasks.minus(
+          ONE
+        )
+        organizationStatsEntity.proposedTasks = organizationStatsEntity.proposedTasks.minus(
+          ONE
+        )
+        break
+      }
+      case TaskStatus.OPEN: {
+        previousUserStatsEntity.openedTasks = previousUserStatsEntity.openedTasks.minus(
+          ONE
+        )
+        organizationStatsEntity.openedTasks = organizationStatsEntity.openedTasks.minus(
+          ONE
+        )
+        break
+      }
+      case TaskStatus.ASSIGNED: {
+        previousUserStatsEntity.assignedTasks = previousUserStatsEntity.assignedTasks.minus(
+          ONE
+        )
+        organizationStatsEntity.assignedTasks = organizationStatsEntity.assignedTasks.minus(
+          ONE
+        )
+        break
+      }
+      case TaskStatus.SUBMITTED: {
+        previousUserStatsEntity.submittedTasks = previousUserStatsEntity.submittedTasks.minus(
+          ONE
+        )
+        organizationStatsEntity.submittedTasks = organizationStatsEntity.submittedTasks.minus(
+          ONE
+        )
+        break
+      }
+      case TaskStatus.ARCHIVED: {
+        previousUserStatsEntity.archivedTasks = previousUserStatsEntity.archivedTasks.minus(
+          ONE
+        )
+        organizationStatsEntity.archivedTasks = organizationStatsEntity.archivedTasks.minus(
+          ONE
+        )
+        break
+      }
+    }
+  previousUserStatsEntity.save()
+
+  let userStatsEntity = UserStat.load(assignee)
+  if (!userStatsEntity) {
+    userStatsEntity = new UserStat(assignee)
+    userStatsEntity.proposedTasks = ZERO
+    userStatsEntity.openedTasks = ZERO
+    userStatsEntity.assignedTasks = ZERO
+    userStatsEntity.submittedTasks = ZERO
+    userStatsEntity.closedTasks = ZERO
+    userStatsEntity.archivedTasks = ZERO
+  }
+  switch (taskEntity.status) {
+    case TaskStatus.PROPOSED: {
+      userStatsEntity.proposedTasks = ONE
+      organizationStatsEntity.proposedTasks = ONE
+      break
+    }
+    case TaskStatus.OPEN: {
+      userStatsEntity.openedTasks = userStatsEntity.openedTasks.plus(ONE)
+      organizationStatsEntity.openedTasks = organizationStatsEntity.openedTasks.plus(
+        ONE
+      )
+      break
+    }
+    case TaskStatus.ASSIGNED: {
+      userStatsEntity.assignedTasks = userStatsEntity.assignedTasks.plus(ONE)
+      organizationStatsEntity.assignedTasks = organizationStatsEntity.assignedTasks.plus(
+        ONE
+      )
+      break
+    }
+    case TaskStatus.SUBMITTED: {
+      userStatsEntity.submittedTasks = userStatsEntity.submittedTasks.plus(ONE)
+      organizationStatsEntity.submittedTasks = organizationStatsEntity.submittedTasks.plus(
+        ONE
+      )
+      break
+    }
+    case TaskStatus.CLOSED: {
+      userStatsEntity.closedTasks = userStatsEntity.closedTasks.plus(ONE)
+      organizationStatsEntity.closedTasks = organizationStatsEntity.closedTasks.plus(
+        ONE
+      )
+      break
+    }
+    case TaskStatus.ARCHIVED: {
+      userStatsEntity.archivedTasks = userStatsEntity.archivedTasks.plus(ONE)
+      organizationStatsEntity.archivedTasks = organizationStatsEntity.archivedTasks.plus(
+        ONE
+      )
+      break
+    }
+  }
+
+  userStatsEntity.save()
+  organizationStatsEntity.save()
+}
+
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 2
@@ -57,6 +205,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskAssignmentRequest(
@@ -75,12 +224,14 @@ export function handleTaskAssignmentRequest(
 
 export function handleTaskClosed(event: TaskClosedEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 4
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
@@ -137,21 +288,14 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
 
   taskEntity.save()
 
-  let tCountEntity = TaskCount.load(task.orgId.toString())
-  if (!tCountEntity) {
-    tCountEntity = new TaskCount(task.orgId.toString())
-    tCountEntity.orgId = task.orgId
-    tCountEntity.count = new BigInt(0)
-  }
-  tCountEntity.count = tCountEntity.count.plus(BigInt.fromI32(1))
-  tCountEntity.save()
-
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, null)
 }
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 1
@@ -161,6 +305,7 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskRevocation(event: TaskRevocationEvent): void {
@@ -181,6 +326,7 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
 
 export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 3
@@ -190,10 +336,12 @@ export function handleTaskSubmission(event: TaskSubmissionEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 1
@@ -202,10 +350,12 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskArchived(event: TaskArchivedEvent): void {
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 5
@@ -213,6 +363,7 @@ export function handleTaskArchived(event: TaskArchivedEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 }
 
 export function handleTaskRevisionRequested(

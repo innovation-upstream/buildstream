@@ -11,6 +11,180 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class UserStat extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserStat entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type UserStat must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UserStat", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserStat | null {
+    return changetype<UserStat | null>(store.get("UserStat", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get proposedTasks(): BigInt {
+    let value = this.get("proposedTasks");
+    return value!.toBigInt();
+  }
+
+  set proposedTasks(value: BigInt) {
+    this.set("proposedTasks", Value.fromBigInt(value));
+  }
+
+  get openedTasks(): BigInt {
+    let value = this.get("openedTasks");
+    return value!.toBigInt();
+  }
+
+  set openedTasks(value: BigInt) {
+    this.set("openedTasks", Value.fromBigInt(value));
+  }
+
+  get assignedTasks(): BigInt {
+    let value = this.get("assignedTasks");
+    return value!.toBigInt();
+  }
+
+  set assignedTasks(value: BigInt) {
+    this.set("assignedTasks", Value.fromBigInt(value));
+  }
+
+  get submittedTasks(): BigInt {
+    let value = this.get("submittedTasks");
+    return value!.toBigInt();
+  }
+
+  set submittedTasks(value: BigInt) {
+    this.set("submittedTasks", Value.fromBigInt(value));
+  }
+
+  get closedTasks(): BigInt {
+    let value = this.get("closedTasks");
+    return value!.toBigInt();
+  }
+
+  set closedTasks(value: BigInt) {
+    this.set("closedTasks", Value.fromBigInt(value));
+  }
+
+  get archivedTasks(): BigInt {
+    let value = this.get("archivedTasks");
+    return value!.toBigInt();
+  }
+
+  set archivedTasks(value: BigInt) {
+    this.set("archivedTasks", Value.fromBigInt(value));
+  }
+}
+
+export class OrganizationStat extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OrganizationStat entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type OrganizationStat must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("OrganizationStat", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OrganizationStat | null {
+    return changetype<OrganizationStat | null>(
+      store.get("OrganizationStat", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get proposedTasks(): BigInt {
+    let value = this.get("proposedTasks");
+    return value!.toBigInt();
+  }
+
+  set proposedTasks(value: BigInt) {
+    this.set("proposedTasks", Value.fromBigInt(value));
+  }
+
+  get openedTasks(): BigInt {
+    let value = this.get("openedTasks");
+    return value!.toBigInt();
+  }
+
+  set openedTasks(value: BigInt) {
+    this.set("openedTasks", Value.fromBigInt(value));
+  }
+
+  get assignedTasks(): BigInt {
+    let value = this.get("assignedTasks");
+    return value!.toBigInt();
+  }
+
+  set assignedTasks(value: BigInt) {
+    this.set("assignedTasks", Value.fromBigInt(value));
+  }
+
+  get submittedTasks(): BigInt {
+    let value = this.get("submittedTasks");
+    return value!.toBigInt();
+  }
+
+  set submittedTasks(value: BigInt) {
+    this.set("submittedTasks", Value.fromBigInt(value));
+  }
+
+  get closedTasks(): BigInt {
+    let value = this.get("closedTasks");
+    return value!.toBigInt();
+  }
+
+  set closedTasks(value: BigInt) {
+    this.set("closedTasks", Value.fromBigInt(value));
+  }
+
+  get archivedTasks(): BigInt {
+    let value = this.get("archivedTasks");
+    return value!.toBigInt();
+  }
+
+  set archivedTasks(value: BigInt) {
+    this.set("archivedTasks", Value.fromBigInt(value));
+  }
+}
+
 export class Organization extends Entity {
   constructor(id: string) {
     super();
@@ -1012,56 +1186,6 @@ export class TaskSnapshot extends Entity {
 
   set staked(value: boolean) {
     this.set("staked", Value.fromBoolean(value));
-  }
-}
-
-export class TaskCount extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save TaskCount entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type TaskCount must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("TaskCount", id.toString(), this);
-    }
-  }
-
-  static load(id: string): TaskCount | null {
-    return changetype<TaskCount | null>(store.get("TaskCount", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get orgId(): BigInt {
-    let value = this.get("orgId");
-    return value!.toBigInt();
-  }
-
-  set orgId(value: BigInt) {
-    this.set("orgId", Value.fromBigInt(value));
-  }
-
-  get count(): BigInt {
-    let value = this.get("count");
-    return value!.toBigInt();
-  }
-
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
   }
 }
 

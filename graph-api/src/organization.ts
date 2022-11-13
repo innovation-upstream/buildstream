@@ -57,12 +57,12 @@ export function handleOrganizationCreation(
   entity.description = org.description
   entity.approvers = org.approvers.map<string>((a) => a.toHexString())
   entity.signers = org.signers.map<string>((a) => a.toHexString())
-  entity.requiredTaskApprovals = new BigInt(0)
-  entity.requiredConfirmations = new BigInt(0)
-  entity.rewardMultiplier = new BigInt(0)
+  entity.requiredTaskApprovals = BigInt.fromI32(0)
+  entity.requiredConfirmations = BigInt.fromI32(0)
+  entity.rewardMultiplier = BigInt.fromI32(0)
   entity.rewardToken = Address.zero()
-  entity.rewardSlashMultiplier = new BigInt(0)
-  entity.slashRewardEvery = new BigInt(0)
+  entity.rewardSlashMultiplier = BigInt.fromI32(0)
+  entity.slashRewardEvery = BigInt.fromI32(0)
   entity.isInitialized = false
   entity.treasury = orgId.toString()
   entity.save()
