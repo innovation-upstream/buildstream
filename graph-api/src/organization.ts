@@ -8,7 +8,7 @@ import {
   OrganizationSignerAddition as OrganizationSignerAdditionEvent,
   OrganizationSignerRemoval as OrganizationSignerRemovalEvent
 } from '../generated/Organization/Organization'
-import { Organization, Treasury } from '../generated/schema'
+import { Organization, OrganizationStat, Treasury } from '../generated/schema'
 
 export function handleOrganizationApproverAddition(
   event: OrganizationApproverAdditionEvent
@@ -52,7 +52,17 @@ export function handleOrganizationCreation(
   tEntity.orgId = event.params.orgId
   tEntity.save()
 
+  const organizationStatsEntity = new OrganizationStat(org.id.toString())
+  organizationStatsEntity.proposedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.openedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.assignedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.submittedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.closedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.archivedTasks = BigInt.fromI32(0)
+  organizationStatsEntity.save()
+
   entity.orgId = org.id
+  entity.stat = org.id.toString()
   entity.name = org.name
   entity.description = org.description
   entity.approvers = org.approvers.map<string>((a) => a.toHexString())
