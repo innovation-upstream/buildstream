@@ -1,0 +1,16 @@
+query GetUserStat(
+  $id: ID!
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  userStat(id: $id, block: $block, subgraphError: $subgraphError) {
+    id
+    proposedTasks
+    openedTasks
+    assignedTasks
+    submittedTasks
+    closedTasks
+    archivedTasks
+    tags
+  }
+}

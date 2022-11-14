@@ -18,12 +18,14 @@ import {
   GetTaskSnapshotsDocument,
   Task,
   TaskSnapshot
-} from '../../../.graphclient'
+} from 'graphclient'
 import { useTranslation } from 'next-i18next'
 import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
 import ClosedCard from 'components/Task/TaskPage/ClosedCard'
 import SubmitCard from 'components/Task/TaskPage/SubmitCard'
 import SolutionTime from 'components/Task/TaskPage/SolutionTime'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 type AssigneeData = {
   tags: string[]
@@ -166,6 +168,7 @@ const TaskPage: NextPage<PageProps> = ({
 }) => {
   const { account } = useWeb3()
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
+  const router = useRouter()
 
   const { t } = useTranslation('tasks')
 
@@ -208,13 +211,12 @@ const TaskPage: NextPage<PageProps> = ({
       </Head>
       <div className='grid-layout py-24'>
         <div className='w-fit col-span-4 md:col-span-8 lg:col-span-12 2xl:col-span-2'>
-          <button
-            type='button'
-            className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'
-          >
-            <Back />
-            {t('back_to_all_tasks')}
-          </button>
+          <Link href='/task'>
+            <a className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'>
+              <Back />
+              {t('back_to_all_tasks')}
+            </a>
+          </Link>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
           <TaskCard

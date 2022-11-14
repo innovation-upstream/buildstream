@@ -8,3 +8,4 @@ documents:
   - ./src/hooks/task/queries.graphql
   - ./src/hooks/action/queries.graphql
   - ./src/hooks/treasury/queries.graphql
+  - ./src/hooks/userstat/queries.graphql

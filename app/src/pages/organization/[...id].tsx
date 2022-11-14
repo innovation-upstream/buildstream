@@ -118,7 +118,7 @@ const OrganizationPage: NextPage<PageProps> = ({
             />
           </div>
           <div className='mt-4'>
-            <TaskStatistics />
+            <TaskStatistics stat={organization.stat} />
           </div>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6 order-1 2xl:order-2'>

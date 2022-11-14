@@ -217,7 +217,96 @@ export type Organization = {
   rewardToken: Scalars['Bytes'];
   isInitialized: Scalars['Boolean'];
   treasury: Treasury;
+  stat?: Maybe<OrganizationStat>;
 };
+
+export type OrganizationStat = {
+  id: Scalars['ID'];
+  proposedTasks: Scalars['BigInt'];
+  openedTasks: Scalars['BigInt'];
+  assignedTasks: Scalars['BigInt'];
+  submittedTasks: Scalars['BigInt'];
+  closedTasks: Scalars['BigInt'];
+  archivedTasks: Scalars['BigInt'];
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type OrganizationStat_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  proposedTasks?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  proposedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  openedTasks?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  openedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  assignedTasks?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  assignedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  submittedTasks?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  submittedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  closedTasks?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  closedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  archivedTasks?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  tags_not?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type OrganizationStat_orderBy =
+  | 'id'
+  | 'proposedTasks'
+  | 'openedTasks'
+  | 'assignedTasks'
+  | 'submittedTasks'
+  | 'closedTasks'
+  | 'archivedTasks'
+  | 'tags';
 
 export type Organization_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -359,6 +448,27 @@ export type Organization_filter = {
   treasury_not_ends_with?: InputMaybe<Scalars['String']>;
   treasury_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   treasury_?: InputMaybe<Treasury_filter>;
+  stat?: InputMaybe<Scalars['String']>;
+  stat_not?: InputMaybe<Scalars['String']>;
+  stat_gt?: InputMaybe<Scalars['String']>;
+  stat_lt?: InputMaybe<Scalars['String']>;
+  stat_gte?: InputMaybe<Scalars['String']>;
+  stat_lte?: InputMaybe<Scalars['String']>;
+  stat_in?: InputMaybe<Array<Scalars['String']>>;
+  stat_not_in?: InputMaybe<Array<Scalars['String']>>;
+  stat_contains?: InputMaybe<Scalars['String']>;
+  stat_contains_nocase?: InputMaybe<Scalars['String']>;
+  stat_not_contains?: InputMaybe<Scalars['String']>;
+  stat_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  stat_starts_with?: InputMaybe<Scalars['String']>;
+  stat_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  stat_not_starts_with?: InputMaybe<Scalars['String']>;
+  stat_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  stat_ends_with?: InputMaybe<Scalars['String']>;
+  stat_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  stat_not_ends_with?: InputMaybe<Scalars['String']>;
+  stat_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  stat_?: InputMaybe<OrganizationStat_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -377,9 +487,14 @@ export type Organization_orderBy =
   | 'slashRewardEvery'
   | 'rewardToken'
   | 'isInitialized'
-  | 'treasury';
+  | 'treasury'
+  | 'stat';
 
 export type Query = {
+  userStat?: Maybe<UserStat>;
+  userStats: Array<UserStat>;
+  organizationStat?: Maybe<OrganizationStat>;
+  organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
   organizations: Array<Organization>;
   task?: Maybe<Task>;
@@ -388,8 +503,6 @@ export type Query = {
   taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
-  taskCount?: Maybe<TaskCount>;
-  taskCounts: Array<TaskCount>;
   treasuryToken?: Maybe<TreasuryToken>;
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
@@ -400,6 +513,42 @@ export type Query = {
   teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
+};
+
+
+export type QueryuserStatArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryuserStatsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserStat_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryorganizationStatArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryorganizationStatsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<OrganizationStat_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<OrganizationStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
@@ -470,24 +619,6 @@ export type QuerytaskSnapshotsArgs = {
   orderBy?: InputMaybe<TaskSnapshot_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<TaskSnapshot_filter>;
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QuerytaskCountArgs = {
-  id: Scalars['ID'];
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QuerytaskCountsArgs = {
-  skip?: InputMaybe<Scalars['Int']>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TaskCount_orderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TaskCount_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -570,6 +701,10 @@ export type Query_metaArgs = {
 };
 
 export type Subscription = {
+  userStat?: Maybe<UserStat>;
+  userStats: Array<UserStat>;
+  organizationStat?: Maybe<OrganizationStat>;
+  organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
   organizations: Array<Organization>;
   task?: Maybe<Task>;
@@ -578,8 +713,6 @@ export type Subscription = {
   taskRevisions: Array<TaskRevision>;
   taskSnapshot?: Maybe<TaskSnapshot>;
   taskSnapshots: Array<TaskSnapshot>;
-  taskCount?: Maybe<TaskCount>;
-  taskCounts: Array<TaskCount>;
   treasuryToken?: Maybe<TreasuryToken>;
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
@@ -590,6 +723,42 @@ export type Subscription = {
   teams: Array<Team>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
+};
+
+
+export type SubscriptionuserStatArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionuserStatsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserStat_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionorganizationStatArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionorganizationStatsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<OrganizationStat_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<OrganizationStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
@@ -660,24 +829,6 @@ export type SubscriptiontaskSnapshotsArgs = {
   orderBy?: InputMaybe<TaskSnapshot_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<TaskSnapshot_filter>;
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptiontaskCountArgs = {
-  id: Scalars['ID'];
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptiontaskCountsArgs = {
-  skip?: InputMaybe<Scalars['Int']>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TaskCount_orderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TaskCount_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -795,46 +946,6 @@ export type TaskrevisionsArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<TaskRevision_filter>;
 };
-
-export type TaskCount = {
-  id: Scalars['ID'];
-  orgId: Scalars['BigInt'];
-  count: Scalars['BigInt'];
-};
-
-export type TaskCount_filter = {
-  id?: InputMaybe<Scalars['ID']>;
-  id_not?: InputMaybe<Scalars['ID']>;
-  id_gt?: InputMaybe<Scalars['ID']>;
-  id_lt?: InputMaybe<Scalars['ID']>;
-  id_gte?: InputMaybe<Scalars['ID']>;
-  id_lte?: InputMaybe<Scalars['ID']>;
-  id_in?: InputMaybe<Array<Scalars['ID']>>;
-  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
-  orgId?: InputMaybe<Scalars['BigInt']>;
-  orgId_not?: InputMaybe<Scalars['BigInt']>;
-  orgId_gt?: InputMaybe<Scalars['BigInt']>;
-  orgId_lt?: InputMaybe<Scalars['BigInt']>;
-  orgId_gte?: InputMaybe<Scalars['BigInt']>;
-  orgId_lte?: InputMaybe<Scalars['BigInt']>;
-  orgId_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  orgId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  count?: InputMaybe<Scalars['BigInt']>;
-  count_not?: InputMaybe<Scalars['BigInt']>;
-  count_gt?: InputMaybe<Scalars['BigInt']>;
-  count_lt?: InputMaybe<Scalars['BigInt']>;
-  count_gte?: InputMaybe<Scalars['BigInt']>;
-  count_lte?: InputMaybe<Scalars['BigInt']>;
-  count_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  count_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-};
-
-export type TaskCount_orderBy =
-  | 'id'
-  | 'orgId'
-  | 'count';
 
 export type TaskRevision = {
   id: Scalars['ID'];
@@ -1871,6 +1982,94 @@ export type Treasury_orderBy =
   | 'orgId'
   | 'tokens';
 
+export type UserStat = {
+  id: Scalars['ID'];
+  proposedTasks: Scalars['BigInt'];
+  openedTasks: Scalars['BigInt'];
+  assignedTasks: Scalars['BigInt'];
+  submittedTasks: Scalars['BigInt'];
+  closedTasks: Scalars['BigInt'];
+  archivedTasks: Scalars['BigInt'];
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
+export type UserStat_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  proposedTasks?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  proposedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  proposedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  openedTasks?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  openedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  openedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  assignedTasks?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  assignedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  assignedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  submittedTasks?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  submittedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  submittedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  closedTasks?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  closedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  closedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  archivedTasks?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_not?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_gt?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_lt?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_gte?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
+  archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  tags_not?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type UserStat_orderBy =
+  | 'id'
+  | 'proposedTasks'
+  | 'openedTasks'
+  | 'assignedTasks'
+  | 'submittedTasks'
+  | 'closedTasks'
+  | 'archivedTasks'
+  | 'tags';
+
 export type _Block_ = {
   /** The hash of the block */
   hash?: Maybe<Scalars['Bytes']>;
@@ -1986,15 +2185,15 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>;
   OrderDirection: OrderDirection;
   Organization: ResolverTypeWrapper<Organization>;
+  OrganizationStat: ResolverTypeWrapper<OrganizationStat>;
+  OrganizationStat_filter: OrganizationStat_filter;
+  OrganizationStat_orderBy: OrganizationStat_orderBy;
   Organization_filter: Organization_filter;
   Organization_orderBy: Organization_orderBy;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   Task: ResolverTypeWrapper<Task>;
-  TaskCount: ResolverTypeWrapper<TaskCount>;
-  TaskCount_filter: TaskCount_filter;
-  TaskCount_orderBy: TaskCount_orderBy;
   TaskRevision: ResolverTypeWrapper<TaskRevision>;
   TaskRevision_filter: TaskRevision_filter;
   TaskRevision_orderBy: TaskRevision_orderBy;
@@ -2012,6 +2211,9 @@ export type ResolversTypes = ResolversObject<{
   TreasuryToken_orderBy: TreasuryToken_orderBy;
   Treasury_filter: Treasury_filter;
   Treasury_orderBy: Treasury_orderBy;
+  UserStat: ResolverTypeWrapper<UserStat>;
+  UserStat_filter: UserStat_filter;
+  UserStat_orderBy: UserStat_orderBy;
   _Block_: ResolverTypeWrapper<_Block_>;
   _Meta_: ResolverTypeWrapper<_Meta_>;
   _SubgraphErrorPolicy_: _SubgraphErrorPolicy_;
@@ -2031,13 +2233,13 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   Organization: Organization;
+  OrganizationStat: OrganizationStat;
+  OrganizationStat_filter: OrganizationStat_filter;
   Organization_filter: Organization_filter;
   Query: {};
   String: Scalars['String'];
   Subscription: {};
   Task: Task;
-  TaskCount: TaskCount;
-  TaskCount_filter: TaskCount_filter;
   TaskRevision: TaskRevision;
   TaskRevision_filter: TaskRevision_filter;
   TaskSnapshot: TaskSnapshot;
@@ -2049,6 +2251,8 @@ export type ResolversParentTypes = ResolversObject<{
   TreasuryToken: TreasuryToken;
   TreasuryToken_filter: TreasuryToken_filter;
   Treasury_filter: Treasury_filter;
+  UserStat: UserStat;
+  UserStat_filter: UserStat_filter;
   _Block_: _Block_;
   _Meta_: _Meta_;
 }>;
@@ -2111,10 +2315,27 @@ export type OrganizationResolvers<ContextType = MeshContext, ParentType extends 
   rewardToken?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   isInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   treasury?: Resolver<ResolversTypes['Treasury'], ParentType, ContextType>;
+  stat?: Resolver<Maybe<ResolversTypes['OrganizationStat']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type OrganizationStatResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['OrganizationStat'] = ResolversParentTypes['OrganizationStat']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  proposedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  openedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  assignedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  submittedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  closedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  archivedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  userStat?: Resolver<Maybe<ResolversTypes['UserStat']>, ParentType, ContextType, RequireFields<QueryuserStatArgs, 'id' | 'subgraphError'>>;
+  userStats?: Resolver<Array<ResolversTypes['UserStat']>, ParentType, ContextType, RequireFields<QueryuserStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  organizationStat?: Resolver<Maybe<ResolversTypes['OrganizationStat']>, ParentType, ContextType, RequireFields<QueryorganizationStatArgs, 'id' | 'subgraphError'>>;
+  organizationStats?: Resolver<Array<ResolversTypes['OrganizationStat']>, ParentType, ContextType, RequireFields<QueryorganizationStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
   organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryorganizationArgs, 'id' | 'subgraphError'>>;
   organizations?: Resolver<Array<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryorganizationsArgs, 'skip' | 'first' | 'subgraphError'>>;
   task?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<QuerytaskArgs, 'id' | 'subgraphError'>>;
@@ -2123,8 +2344,6 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   taskRevisions?: Resolver<Array<ResolversTypes['TaskRevision']>, ParentType, ContextType, RequireFields<QuerytaskRevisionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskSnapshot?: Resolver<Maybe<ResolversTypes['TaskSnapshot']>, ParentType, ContextType, RequireFields<QuerytaskSnapshotArgs, 'id' | 'subgraphError'>>;
   taskSnapshots?: Resolver<Array<ResolversTypes['TaskSnapshot']>, ParentType, ContextType, RequireFields<QuerytaskSnapshotsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  taskCount?: Resolver<Maybe<ResolversTypes['TaskCount']>, ParentType, ContextType, RequireFields<QuerytaskCountArgs, 'id' | 'subgraphError'>>;
-  taskCounts?: Resolver<Array<ResolversTypes['TaskCount']>, ParentType, ContextType, RequireFields<QuerytaskCountsArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasuryToken?: Resolver<Maybe<ResolversTypes['TreasuryToken']>, ParentType, ContextType, RequireFields<QuerytreasuryTokenArgs, 'id' | 'subgraphError'>>;
   treasuryTokens?: Resolver<Array<ResolversTypes['TreasuryToken']>, ParentType, ContextType, RequireFields<QuerytreasuryTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasury?: Resolver<Maybe<ResolversTypes['Treasury']>, ParentType, ContextType, RequireFields<QuerytreasuryArgs, 'id' | 'subgraphError'>>;
@@ -2137,6 +2356,10 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
 }>;
 
 export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  userStat?: SubscriptionResolver<Maybe<ResolversTypes['UserStat']>, "userStat", ParentType, ContextType, RequireFields<SubscriptionuserStatArgs, 'id' | 'subgraphError'>>;
+  userStats?: SubscriptionResolver<Array<ResolversTypes['UserStat']>, "userStats", ParentType, ContextType, RequireFields<SubscriptionuserStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  organizationStat?: SubscriptionResolver<Maybe<ResolversTypes['OrganizationStat']>, "organizationStat", ParentType, ContextType, RequireFields<SubscriptionorganizationStatArgs, 'id' | 'subgraphError'>>;
+  organizationStats?: SubscriptionResolver<Array<ResolversTypes['OrganizationStat']>, "organizationStats", ParentType, ContextType, RequireFields<SubscriptionorganizationStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
   organization?: SubscriptionResolver<Maybe<ResolversTypes['Organization']>, "organization", ParentType, ContextType, RequireFields<SubscriptionorganizationArgs, 'id' | 'subgraphError'>>;
   organizations?: SubscriptionResolver<Array<ResolversTypes['Organization']>, "organizations", ParentType, ContextType, RequireFields<SubscriptionorganizationsArgs, 'skip' | 'first' | 'subgraphError'>>;
   task?: SubscriptionResolver<Maybe<ResolversTypes['Task']>, "task", ParentType, ContextType, RequireFields<SubscriptiontaskArgs, 'id' | 'subgraphError'>>;
@@ -2145,8 +2368,6 @@ export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends 
   taskRevisions?: SubscriptionResolver<Array<ResolversTypes['TaskRevision']>, "taskRevisions", ParentType, ContextType, RequireFields<SubscriptiontaskRevisionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   taskSnapshot?: SubscriptionResolver<Maybe<ResolversTypes['TaskSnapshot']>, "taskSnapshot", ParentType, ContextType, RequireFields<SubscriptiontaskSnapshotArgs, 'id' | 'subgraphError'>>;
   taskSnapshots?: SubscriptionResolver<Array<ResolversTypes['TaskSnapshot']>, "taskSnapshots", ParentType, ContextType, RequireFields<SubscriptiontaskSnapshotsArgs, 'skip' | 'first' | 'subgraphError'>>;
-  taskCount?: SubscriptionResolver<Maybe<ResolversTypes['TaskCount']>, "taskCount", ParentType, ContextType, RequireFields<SubscriptiontaskCountArgs, 'id' | 'subgraphError'>>;
-  taskCounts?: SubscriptionResolver<Array<ResolversTypes['TaskCount']>, "taskCounts", ParentType, ContextType, RequireFields<SubscriptiontaskCountsArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasuryToken?: SubscriptionResolver<Maybe<ResolversTypes['TreasuryToken']>, "treasuryToken", ParentType, ContextType, RequireFields<SubscriptiontreasuryTokenArgs, 'id' | 'subgraphError'>>;
   treasuryTokens?: SubscriptionResolver<Array<ResolversTypes['TreasuryToken']>, "treasuryTokens", ParentType, ContextType, RequireFields<SubscriptiontreasuryTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasury?: SubscriptionResolver<Maybe<ResolversTypes['Treasury']>, "treasury", ParentType, ContextType, RequireFields<SubscriptiontreasuryArgs, 'id' | 'subgraphError'>>;
@@ -2184,13 +2405,6 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   revisions?: Resolver<Maybe<Array<ResolversTypes['TaskRevision']>>, ParentType, ContextType, RequireFields<TaskrevisionsArgs, 'skip' | 'first'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TaskCountResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['TaskCount'] = ResolversParentTypes['TaskCount']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  orgId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  count?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2265,6 +2479,18 @@ export type TreasuryTokenResolvers<ContextType = MeshContext, ParentType extends
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UserStatResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['UserStat'] = ResolversParentTypes['UserStat']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  proposedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  openedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  assignedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  submittedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  closedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  archivedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type _Block_Resolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['_Block_'] = ResolversParentTypes['_Block_']> = ResolversObject<{
   hash?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2285,15 +2511,16 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   BigInt?: GraphQLScalarType;
   Bytes?: GraphQLScalarType;
   Organization?: OrganizationResolvers<ContextType>;
+  OrganizationStat?: OrganizationStatResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
-  TaskCount?: TaskCountResolvers<ContextType>;
   TaskRevision?: TaskRevisionResolvers<ContextType>;
   TaskSnapshot?: TaskSnapshotResolvers<ContextType>;
   Team?: TeamResolvers<ContextType>;
   Treasury?: TreasuryResolvers<ContextType>;
   TreasuryToken?: TreasuryTokenResolvers<ContextType>;
+  UserStat?: UserStatResolvers<ContextType>;
   _Block_?: _Block_Resolvers<ContextType>;
   _Meta_?: _Meta_Resolvers<ContextType>;
 }>;
@@ -2420,18 +2647,6 @@ const merger = new(BareMerger as any)({
         },
         location: 'GetTasksDocument.graphql'
       },{
-        document: GetTaskCountDocument,
-        get rawSDL() {
-          return printWithCache(GetTaskCountDocument);
-        },
-        location: 'GetTaskCountDocument.graphql'
-      },{
-        document: GetTaskCountsDocument,
-        get rawSDL() {
-          return printWithCache(GetTaskCountsDocument);
-        },
-        location: 'GetTaskCountsDocument.graphql'
-      },{
         document: GetTaskSnapshotsDocument,
         get rawSDL() {
           return printWithCache(GetTaskSnapshotsDocument);
@@ -2455,6 +2670,12 @@ const merger = new(BareMerger as any)({
           return printWithCache(GetTreasurysDocument);
         },
         location: 'GetTreasurysDocument.graphql'
+      },{
+        document: GetUserStatDocument,
+        get rawSDL() {
+          return printWithCache(GetUserStatDocument);
+        },
+        location: 'GetUserStatDocument.graphql'
       }
     ];
     },
@@ -2524,7 +2745,7 @@ export type GetOrganizationQueryVariables = Exact<{
 
 export type GetOrganizationQuery = { organization?: Maybe<(
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
-    & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
+    & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
   )> };
 
 export type GetOrganizationsQueryVariables = Exact<{
@@ -2540,7 +2761,7 @@ export type GetOrganizationsQueryVariables = Exact<{
 
 export type GetOrganizationsQuery = { organizations: Array<(
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardToken' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'isInitialized'>
-    & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
+    & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks'>> }
   )> };
 
 export type GetTaskQueryVariables = Exact<{
@@ -2576,28 +2797,6 @@ export type GetTasksQuery = { tasks: Array<(
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> } }
     ) }
   )> };
-
-export type GetTaskCountQueryVariables = Exact<{
-  id: Scalars['ID'];
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-}>;
-
-
-export type GetTaskCountQuery = { taskCount?: Maybe<Pick<TaskCount, 'orgId' | 'count'>> };
-
-export type GetTaskCountsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars['Int']>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TaskCount_orderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TaskCount_filter>;
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-}>;
-
-
-export type GetTaskCountsQuery = { taskCounts: Array<Pick<TaskCount, 'orgId' | 'count'>> };
 
 export type GetTaskSnapshotsQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
@@ -2668,6 +2867,15 @@ export type GetTreasurysQuery = { treasuries: Array<(
     )>> }
   )> };
 
+export type GetUserStatQueryVariables = Exact<{
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+}>;
+
+
+export type GetUserStatQuery = { userStat?: Maybe<Pick<UserStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> };
+
 
 export const GetActionDocument = gql`
     query GetAction($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
@@ -2734,6 +2942,15 @@ export const GetOrganizationDocument = gql`
         lockedBalance
       }
     }
+    stat {
+      proposedTasks
+      openedTasks
+      assignedTasks
+      submittedTasks
+      closedTasks
+      archivedTasks
+      tags
+    }
   }
 }
     ` as unknown as DocumentNode<GetOrganizationQuery, GetOrganizationQueryVariables>;
@@ -2767,6 +2984,13 @@ export const GetOrganizationsDocument = gql`
         balance
         lockedBalance
       }
+    }
+    stat {
+      proposedTasks
+      openedTasks
+      assignedTasks
+      submittedTasks
+      closedTasks
     }
   }
 }
@@ -2873,30 +3097,6 @@ export const GetTasksDocument = gql`
   }
 }
     ` as unknown as DocumentNode<GetTasksQuery, GetTasksQueryVariables>;
-export const GetTaskCountDocument = gql`
-    query GetTaskCount($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
-  taskCount(id: $id, block: $block, subgraphError: $subgraphError) {
-    orgId
-    count
-  }
-}
-    ` as unknown as DocumentNode<GetTaskCountQuery, GetTaskCountQueryVariables>;
-export const GetTaskCountsDocument = gql`
-    query GetTaskCounts($skip: Int = 0, $first: Int = 100, $orderBy: TaskCount_orderBy, $orderDirection: OrderDirection, $where: TaskCount_filter, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
-  taskCounts(
-    skip: $skip
-    first: $first
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-    where: $where
-    block: $block
-    subgraphError: $subgraphError
-  ) {
-    orgId
-    count
-  }
-}
-    ` as unknown as DocumentNode<GetTaskCountsQuery, GetTaskCountsQueryVariables>;
 export const GetTaskSnapshotsDocument = gql`
     query GetTaskSnapshots($skip: Int = 0, $first: Int = 100, $orderBy: TaskSnapshot_orderBy, $orderDirection: OrderDirection, $where: TaskSnapshot_filter, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
   taskSnapshots(
@@ -3023,7 +3223,20 @@ export const GetTreasurysDocument = gql`
   }
 }
     ` as unknown as DocumentNode<GetTreasurysQuery, GetTreasurysQueryVariables>;
-
+export const GetUserStatDocument = gql`
+    query GetUserStat($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
+  userStat(id: $id, block: $block, subgraphError: $subgraphError) {
+    id
+    proposedTasks
+    openedTasks
+    assignedTasks
+    submittedTasks
+    closedTasks
+    archivedTasks
+    tags
+  }
+}
+    ` as unknown as DocumentNode<GetUserStatQuery, GetUserStatQueryVariables>;
 
 
 
@@ -3057,12 +3270,6 @@ export function getSdk<C, E>(requester: Requester<C, E>) {
     GetTasks(variables?: GetTasksQueryVariables, options?: C): Promise<GetTasksQuery> {
       return requester<GetTasksQuery, GetTasksQueryVariables>(GetTasksDocument, variables, options) as Promise<GetTasksQuery>;
     },
-    GetTaskCount(variables: GetTaskCountQueryVariables, options?: C): Promise<GetTaskCountQuery> {
-      return requester<GetTaskCountQuery, GetTaskCountQueryVariables>(GetTaskCountDocument, variables, options) as Promise<GetTaskCountQuery>;
-    },
-    GetTaskCounts(variables?: GetTaskCountsQueryVariables, options?: C): Promise<GetTaskCountsQuery> {
-      return requester<GetTaskCountsQuery, GetTaskCountsQueryVariables>(GetTaskCountsDocument, variables, options) as Promise<GetTaskCountsQuery>;
-    },
     GetTaskSnapshots(variables?: GetTaskSnapshotsQueryVariables, options?: C): Promise<GetTaskSnapshotsQuery> {
       return requester<GetTaskSnapshotsQuery, GetTaskSnapshotsQueryVariables>(GetTaskSnapshotsDocument, variables, options) as Promise<GetTaskSnapshotsQuery>;
     },
@@ -3074,6 +3281,9 @@ export function getSdk<C, E>(requester: Requester<C, E>) {
     },
     GetTreasurys(variables?: GetTreasurysQueryVariables, options?: C): Promise<GetTreasurysQuery> {
       return requester<GetTreasurysQuery, GetTreasurysQueryVariables>(GetTreasurysDocument, variables, options) as Promise<GetTreasurysQuery>;
+    },
+    GetUserStat(variables: GetUserStatQueryVariables, options?: C): Promise<GetUserStatQuery> {
+      return requester<GetUserStatQuery, GetUserStatQueryVariables>(GetUserStatDocument, variables, options) as Promise<GetUserStatQuery>;
     }
   };
 }
