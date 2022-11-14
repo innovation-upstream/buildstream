@@ -14,7 +14,11 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import TaskView from 'components/Task/TaskListPage/TaskView'
 import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
 import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
-import { useGetUserStatLazyQuery, useGetUserStatQuery, useUserStat } from 'hooks/userstat'
+import {
+  useGetUserStatLazyQuery,
+  useGetUserStatQuery,
+  useUserStat
+} from 'hooks/userstat'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -62,16 +66,20 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
       </Head>
       <div className='grid-layout py-24'>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
-          <ProfileCard />
-          <div className='mt-4 2xl:hidden'>
-            <TaskStatistics stat={stats} />
+          <div className='md:sticky top-[140px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <ProfileCard />
+            <div className='mt-4 2xl:hidden'>
+              <TaskStatistics stat={stats} />
+            </div>
           </div>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6 order-1 2xl:order-2'>
           <TaskView tasks={tasks} />
         </div>
         <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
-          <TaskStatistics stat={stats} />
+          <div className='2xl:sticky top-[150px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <TaskStatistics stat={stats} />
+          </div>
         </div>
       </div>
     </div>
