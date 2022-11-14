@@ -148,6 +148,14 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
     case TaskStatus.PROPOSED: {
       userStatsEntity.proposedTasks = ONE
       organizationStatsEntity.proposedTasks = ONE
+      const taskTags = taskEntity.taskTags
+      const organizationTags = (organizationStatsEntity.tags || []) as string[]
+      for (let i = 0; i < taskTags.length; i++) {
+        const index = organizationTags.indexOf(taskTags[i] as string)
+        if (index === -1) organizationTags.push(taskTags[i] as string)
+      }
+      if (!!organizationTags.length)
+        organizationStatsEntity.tags = organizationTags
       break
     }
     case TaskStatus.OPEN: {
@@ -176,6 +184,13 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
       organizationStatsEntity.closedTasks = organizationStatsEntity.closedTasks.plus(
         ONE
       )
+      const taskTags = taskEntity.taskTags
+      const userTags = (userStatsEntity.tags || []) as string[]
+      for (let i = 0; i < taskTags.length; i++) {
+        const index = userTags.indexOf(taskTags[i] as string)
+        if (index === -1) userTags.push(taskTags[i] as string)
+      }
+      if (!!userTags.length) userStatsEntity.tags = userTags
       break
     }
     case TaskStatus.ARCHIVED: {
