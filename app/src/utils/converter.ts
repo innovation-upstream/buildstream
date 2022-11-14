@@ -5,12 +5,14 @@ import {
   Task as TaskType,
   TaskRevision as TaskRevisionType,
   TaskSnapshot as TaskSnapshotType,
-  Treasury as TreasuryType
+  Treasury as TreasuryType,
+  UserStat
 } from 'graphclient'
 import { Action } from 'hooks/action/types'
 import { Organization } from 'hooks/organization/types'
 import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
 import { Treasury } from 'hooks/treasury/types'
+import { Stat } from 'hooks/userstat/types'
 
 export class Converter {
   public static OrganizationFromQuery = (org: Org): Organization => {
@@ -27,7 +29,21 @@ export class Converter {
       rewardSlashMultiplier: BigNumber.from(org.rewardSlashMultiplier),
       slashRewardEvery: Number(org.slashRewardEvery),
       isInitialized: org.isInitialized,
-      treasury: Converter.TreasuryFromQuery(org.treasury)
+      treasury: Converter.TreasuryFromQuery(org.treasury),
+      stat: Converter.StatFromQuery(org.stat as any)
+    }
+  }
+
+  public static StatFromQuery = (stat?: UserStat): Stat => {
+    return {
+      id: stat?.id || '',
+      proposedTasks: BigNumber.from(stat?.proposedTasks || 0),
+      openedTasks: BigNumber.from(stat?.openedTasks || 0),
+      assignedTasks: BigNumber.from(stat?.assignedTasks || 0),
+      submittedTasks: BigNumber.from(stat?.submittedTasks || 0),
+      closedTasks: BigNumber.from(stat?.closedTasks || 0),
+      archivedTasks: BigNumber.from(stat?.archivedTasks || 0),
+      tags: stat?.tags || []
     }
   }
 

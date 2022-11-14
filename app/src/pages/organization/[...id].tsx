@@ -108,17 +108,19 @@ const OrganizationPage: NextPage<PageProps> = ({
       </Head>
       <div className='grid-layout py-24'>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
-          <Treasury organization={organization} />
-          <div className='mt-4 hidden lg:block 2xl:hidden'>
-            <ActivityView
-              organization={organization}
-              taskSnapshots={snapshots?.map((t) =>
-                Converter.TaskSnapshotFromQuery(t as any)
-              )}
-            />
-          </div>
-          <div className='mt-4'>
-            <TaskStatistics />
+          <div className='md:sticky top-[140px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <Treasury organization={organization} />
+            <div className='mt-4 hidden lg:block 2xl:hidden'>
+              <ActivityView
+                organization={organization}
+                taskSnapshots={snapshots?.map((t) =>
+                  Converter.TaskSnapshotFromQuery(t as any)
+                )}
+              />
+            </div>
+            <div className='mt-4'>
+              <TaskStatistics stat={organization.stat} />
+            </div>
           </div>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6 order-1 2xl:order-2'>
@@ -128,12 +130,14 @@ const OrganizationPage: NextPage<PageProps> = ({
           />
         </div>
         <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
-          <ActivityView
-            organization={organization}
-            taskSnapshots={snapshots?.map((t) =>
-              Converter.TaskSnapshotFromQuery(t as any)
-            )}
-          />
+          <div className='md:sticky top-[140px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <ActivityView
+              organization={organization}
+              taskSnapshots={snapshots?.map((t) =>
+                Converter.TaskSnapshotFromQuery(t as any)
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>

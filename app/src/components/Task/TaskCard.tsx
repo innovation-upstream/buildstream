@@ -61,7 +61,7 @@ const TaskCard = ({
       <div className='flex mb-2'>
         <div className='flex'>{task.organization.name}</div>
       </div>
-      <p className='text-[28px] leading-8 font-bold mb-3.5'>
+      <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
         {task.title}
         <span className='text-base whitespace-pre font-medium text-[#70C550]'>
           {'  '}
@@ -82,7 +82,7 @@ const TaskCard = ({
           className='flex lg:hidden'
         />
       )}
-      <div className={`flex gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}>
+      <div className={`flex flex-wrap gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}>
         {task.taskTags?.map((tag) => (
           <div key={tag} className='btn-tag'>
             {tag}

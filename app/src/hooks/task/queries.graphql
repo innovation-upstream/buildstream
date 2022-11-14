@@ -110,40 +110,6 @@ query GetTasks(
   }
 }
 
-query GetTaskCount(
-  $id: ID!
-  $block: Block_height
-  $subgraphError: _SubgraphErrorPolicy_! = deny
-) {
-  taskCount(id: $id, block: $block, subgraphError: $subgraphError) {
-    orgId
-    count
-  }
-}
-
-query GetTaskCounts(
-  $skip: Int = 0
-  $first: Int = 100
-  $orderBy: TaskCount_orderBy
-  $orderDirection: OrderDirection
-  $where: TaskCount_filter
-  $block: Block_height
-  $subgraphError: _SubgraphErrorPolicy_! = deny
-) {
-  taskCounts(
-    skip: $skip
-    first: $first
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-    where: $where
-    block: $block
-    subgraphError: $subgraphError
-  ) {
-    orgId
-    count
-  }
-}
-
 query GetTaskSnapshots(
   $skip: Int = 0
   $first: Int = 100

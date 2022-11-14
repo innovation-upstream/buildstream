@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { Stat } from 'hooks/userstat/types'
 
 export interface Organization {
   id: number
@@ -20,4 +21,5 @@ export interface Organization {
       lockedBalance: BigNumber
     }[]
   }
+  stat: Stat
 }

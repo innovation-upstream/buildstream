@@ -28,6 +28,15 @@ query GetOrganization(
         lockedBalance
       }
     }
+    stat {
+      proposedTasks
+      openedTasks
+      assignedTasks
+      submittedTasks
+      closedTasks
+      archivedTasks
+      tags
+    }
   }
 }
 
@@ -68,6 +77,13 @@ query GetOrganizations(
         balance
         lockedBalance
       }
+    }
+    stat {
+      proposedTasks
+      openedTasks
+      assignedTasks
+      submittedTasks
+      closedTasks
     }
   }
 }
