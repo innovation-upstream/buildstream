@@ -95,6 +95,23 @@ export class UserStat extends Entity {
   set archivedTasks(value: BigInt) {
     this.set("archivedTasks", Value.fromBigInt(value));
   }
+
+  get tags(): Array<string> | null {
+    let value = this.get("tags");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tags(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tags");
+    } else {
+      this.set("tags", Value.fromStringArray(<Array<string>>value));
+    }
+  }
 }
 
 export class OrganizationStat extends Entity {
@@ -182,6 +199,23 @@ export class OrganizationStat extends Entity {
 
   set archivedTasks(value: BigInt) {
     this.set("archivedTasks", Value.fromBigInt(value));
+  }
+
+  get tags(): Array<string> | null {
+    let value = this.get("tags");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tags(value: Array<string> | null) {
+    if (!value) {
+      this.unset("tags");
+    } else {
+      this.set("tags", Value.fromStringArray(<Array<string>>value));
+    }
   }
 }
 

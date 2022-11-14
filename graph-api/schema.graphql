@@ -6,6 +6,7 @@ type UserStat @entity {
   submittedTasks: BigInt!
   closedTasks: BigInt!
   archivedTasks: BigInt!
+  tags: [String!]
 }
 
 type OrganizationStat @entity {
@@ -16,6 +17,7 @@ type OrganizationStat @entity {
   submittedTasks: BigInt!
   closedTasks: BigInt!
   archivedTasks: BigInt!
+  tags: [String!]
 }
 
 type Organization @entity {
