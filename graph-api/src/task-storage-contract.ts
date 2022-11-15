@@ -260,6 +260,7 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
+  taskEntity.raw = `${task.title} # ${task.description} # ${task.taskTags.toString()}`
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -300,7 +301,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.comment = task.comment
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
-
+  taskEntity.raw = `${task.title} # ${task.description} # ${task.taskTags.toString()}`
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)

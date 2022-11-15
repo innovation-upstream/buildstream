@@ -746,6 +746,15 @@ export class Task extends Entity {
       this.set("revisions", Value.fromStringArray(<Array<string>>value));
     }
   }
+
+  get raw(): string {
+    let value = this.get("raw");
+    return value!.toString();
+  }
+
+  set raw(value: string) {
+    this.set("raw", Value.fromString(value));
+  }
 }
 
 export class TaskRevision extends Entity {
