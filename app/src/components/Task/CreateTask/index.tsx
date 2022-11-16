@@ -4,7 +4,7 @@ import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { createNewTask } from 'hooks/task/functions'
 import { ComplexityScoreMap } from 'hooks/task/types'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import ComplexityScore from 'SVGs/ComplexityScore'
@@ -13,7 +13,7 @@ import Link from 'SVGs/Link'
 import Reputation from 'SVGs/Reputation'
 import Settings from 'SVGs/Settings'
 import { TaskDurationCalc } from 'utils/task_duration'
-import { ICreateTaskProps } from './interface'
+import { ICreateTask } from './types'
 import { StyledScrollableContainer } from './styled'
 import TaskTagInput from './TaskTagInput'
 
@@ -26,19 +26,17 @@ const initialTaskData = {
   duration: 0,
   taskDuration: 0
 }
-
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
-const CreateTaskModal: React.FC<ICreateTaskProps> = ({ orgId, close }) => {
+const daysSelection = [0, 1, 3, 5, 7, 9, 11, 14]
+const taskComplexities = Object.entries(ComplexityScoreMap)
+
+const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
+  const [showAdvanced, toggleShowAdvanced] = useState(false)
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
+  const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
   const { account, library } = useWeb3()
-  const [status, setStatus] = useState({ text: '', error: false })
-  const [showAdvanced, toggleShowAdvanced] = useState(false)
-
-  const taskComplexities = Object.entries(ComplexityScoreMap)
-  const daysSelection = [0, 1, 3, 5, 7, 9, 11, 14]
-
   const { t } = useTranslation('tasks')
 
   const handleChange = (ev: any) => {
@@ -76,7 +74,7 @@ const CreateTaskModal: React.FC<ICreateTaskProps> = ({ orgId, close }) => {
     setProcessing(true)
     try {
       const response = await createNewTask(
-        orgId,
+        oranization.id,
         taskData.title,
         taskData.description,
         taskData.taskTags,
@@ -143,7 +141,7 @@ const CreateTaskModal: React.FC<ICreateTaskProps> = ({ orgId, close }) => {
                     value={taskData.description}
                     onChange={handleChange}
                     rows={5}
-                    className='rounded-md p-2 border border-gray-200 w-full focus:outline-none resize-none	'
+                    className='rounded-md p-2 border border-gray-200 w-full focus:outline-none resize-none'
                   ></textarea>
                 </div>
               </section>
@@ -323,4 +321,4 @@ const CreateTaskModal: React.FC<ICreateTaskProps> = ({ orgId, close }) => {
   )
 }
 
-export default CreateTaskModal
+export default CreateTask

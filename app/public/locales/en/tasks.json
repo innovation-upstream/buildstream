@@ -52,8 +52,20 @@
   "your_profile": "Your profile",
   "your_skills": "Your Skills",
   "filter": "Filter",
-  "complexity": "Complexity",
   "skills": "Skills",
   "apply_filter": "Apply filter",
-  "any": "Any"
+  "any": "Any",
+  "organization": "Organization",
+  "duration": "Duration",
+  "days": "Days",
+  "complexity": "Complexity",
+  "reward": "Reward",
+  "submit_duration_of_task": "Submit duration of the task",
+  "blockchain_record": "Blockchain Record",
+  "task_comment": "Task Comment",
+  "comment": "Comment",
+  "add_comment_to_submit": "Add Comment to Submit",
+  "open_task": "Open Task",
+  "request_assignment": "Request Assignment",
+  "submit_task": "Submit Task"
 }

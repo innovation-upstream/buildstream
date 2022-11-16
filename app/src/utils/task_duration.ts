@@ -27,6 +27,10 @@ export class TaskDurationCalc {
     return weeks * 604800 + days * 86400 + hours * 3600
   }
 
+  public static getDurationInDays(seconds: number): number {
+    return Math.trunc(seconds / 86400)
+  }
+
   public static getDurationSegments = (
     seconds: number
   ): { weeks: number; days: number; hours: number } => {
