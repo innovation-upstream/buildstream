@@ -936,6 +936,7 @@ export type Task = {
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
   revisions?: Maybe<Array<TaskRevision>>;
+  raw: Scalars['String'];
 };
 
 
@@ -1704,6 +1705,26 @@ export type Task_filter = {
   staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
   staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   revisions_?: InputMaybe<TaskRevision_filter>;
+  raw?: InputMaybe<Scalars['String']>;
+  raw_not?: InputMaybe<Scalars['String']>;
+  raw_gt?: InputMaybe<Scalars['String']>;
+  raw_lt?: InputMaybe<Scalars['String']>;
+  raw_gte?: InputMaybe<Scalars['String']>;
+  raw_lte?: InputMaybe<Scalars['String']>;
+  raw_in?: InputMaybe<Array<Scalars['String']>>;
+  raw_not_in?: InputMaybe<Array<Scalars['String']>>;
+  raw_contains?: InputMaybe<Scalars['String']>;
+  raw_contains_nocase?: InputMaybe<Scalars['String']>;
+  raw_not_contains?: InputMaybe<Scalars['String']>;
+  raw_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  raw_starts_with?: InputMaybe<Scalars['String']>;
+  raw_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  raw_not_starts_with?: InputMaybe<Scalars['String']>;
+  raw_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  raw_ends_with?: InputMaybe<Scalars['String']>;
+  raw_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  raw_not_ends_with?: InputMaybe<Scalars['String']>;
+  raw_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -1733,7 +1754,8 @@ export type Task_orderBy =
   | 'approvedBy'
   | 'assignmentRequest'
   | 'staked'
-  | 'revisions';
+  | 'revisions'
+  | 'raw';
 
 export type Team = {
   id: Scalars['ID'];
@@ -2405,6 +2427,7 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   revisions?: Resolver<Maybe<Array<ResolversTypes['TaskRevision']>>, ParentType, ContextType, RequireFields<TaskrevisionsArgs, 'skip' | 'first'>>;
+  raw?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

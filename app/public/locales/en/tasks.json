@@ -50,5 +50,10 @@
   "dispute_task": "Dispute Task",
   "changes_description": "Changes Description",
   "your_profile": "Your profile",
-  "your_skills": "Your Skills"
+  "your_skills": "Your Skills",
+  "filter": "Filter",
+  "complexity": "Complexity",
+  "skills": "Skills",
+  "apply_filter": "Apply filter",
+  "any": "Any"
 }

@@ -38,6 +38,8 @@ export const getServerSideProps: GetServerSideProps =
       const { data: tasks } = await client.query({
         query: GetTasksDocument,
         variables: {
+          orderBy: 'taskId',
+          orderDirection: 'desc',
           where: {
             orgId: orgId
           }
@@ -108,7 +110,7 @@ const OrganizationPage: NextPage<PageProps> = ({
       </Head>
       <div className='grid-layout py-24'>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
-          <div className='md:sticky top-[140px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+          <div className='md:sticky top-[140px] md:max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
             <Treasury organization={organization} />
             <div className='mt-4 hidden lg:block 2xl:hidden'>
               <ActivityView
@@ -130,7 +132,7 @@ const OrganizationPage: NextPage<PageProps> = ({
           />
         </div>
         <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
-          <div className='md:sticky top-[140px] max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+          <div className='md:sticky top-[140px] md:max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
             <ActivityView
               organization={organization}
               taskSnapshots={snapshots?.map((t) =>
