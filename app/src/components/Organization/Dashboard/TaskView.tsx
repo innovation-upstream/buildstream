@@ -1,4 +1,6 @@
-import CreateTaskModal from 'components/Task/CreateTask'
+import CreateTask from 'components/Task/CreateTask'
+import TaskDetail from 'components/Task/CreateTask/TaskDetail'
+import { ModalType } from 'components/Task/CreateTask/types'
 import TaskCard from 'components/Task/TaskCard'
 import { useGetTasksQuery, usePolling } from 'hooks'
 import { Organization } from 'hooks/organization/types'
@@ -14,16 +16,26 @@ interface TaskViewProps {
   tasks?: Task[]
 }
 
-const EmptyTaskView = () => {
+const EmptyTaskView = ({ organization }: TaskViewProps) => {
   const { t } = useTranslation('organization')
+  const [showModal, toggleModal] = useState(false)
   return (
     <div className='mt-6'>
+      {showModal && (
+        <CreateTask
+          oranization={organization}
+          close={() => toggleModal(!showModal)}
+        />
+      )}
       <p className='text-4xl font-bold mb-6'>{t('task')}</p>
       <div className='paper lg:px-10 xl:px-20 2xl:px-24 py-10 text-center'>
         <p className='text-2xl font-semibold mb-3'>{t('create_first_task')}</p>
         <span className='text-secondary'>{t('create_task_from_scratch')}</span>
         <div className='flex justify-center gap-4 items-center mt-8'>
-          <button className='w-full btn-outline flex justify-center gap-2.5 items-center'>
+          <button
+            className='w-full btn-outline flex justify-center gap-2.5 items-center'
+            onClick={() => toggleModal(!showModal)}
+          >
             <Plus className='fill-[#3667EA]' /> {t('add_task')}
           </button>
           <button className='w-full btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>
@@ -47,6 +59,14 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   })
   usePolling(startPolling, stopPolling)
   const { t: tr } = useTranslation('organization')
+  const [modalType, setModalType] = useState(ModalType.createTask)
+  const [taskIndex, setTaskIndex] = useState(0)
+
+  const openDetail = (index: number) => {
+    setTaskIndex(index)
+    setModalType(ModalType.taskDetail)
+    toggleModal(!showModal)
+  }
 
   useEffect(() => {
     if (data?.tasks) {
@@ -55,23 +75,26 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   }, [data])
 
   if (!tasks?.length) {
-    return <EmptyTaskView />
+    return <EmptyTaskView organization={organization} />
   }
 
   return (
     <div className='mt-6'>
       {showModal && (
-        <CreateTaskModal
-          orgId={organization.id}
+        modalType == ModalType.createTask ?
+        <CreateTask
+          oranization={organization}
           close={() => toggleModal(!showModal)}
         />
+        :
+        <TaskDetail task={tasks[taskIndex]} close={() => toggleModal(!showModal)} />
       )}
       <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
         <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
         <div className='flex gap-4'>
           <button
             className='btn-outline flex justify-center gap-2.5 items-center'
-            onClick={() => toggleModal(!showModal)}
+            onClick={() => {setModalType(ModalType.createTask); toggleModal(!showModal) }}
           >
             <Plus className='fill-[#3667EA]' /> {tr('add_task')}
           </button>
@@ -81,8 +104,8 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         </div>
       </div>
       <ul>
-        {tasks.map((t) => (
-          <li key={t.id} className='mb-4'>
+        {tasks.map((t, index) => (
+          <li key={t.id} className='mb-4 cursor-pointer hover:drop-shadow-xl' onClick={() => openDetail(index)}>
             <TaskCard task={t}>
               {t.status < TaskStatus.ASSIGNED && (
                 <button
