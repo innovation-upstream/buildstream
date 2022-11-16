@@ -35,18 +35,26 @@ export const useUserStat = () => {
 
   const [getUserStat, { data, startPolling, stopPolling }] =
     useGetUserStatLazyQuery()
-  usePolling(startPolling, stopPolling)
+  const { disablePolling, enablePolling } = usePolling(
+    startPolling,
+    stopPolling,
+    60 * 1000
+  )
 
   useEffect(() => {
-    if (!account) return
+    if (!account) {
+      disablePolling()
+      return
+    }
     getUserStat({
       variables: {
         id: account
       }
     })
-  }, [account, getUserStat])
+    enablePolling()
+  }, [account, getUserStat, enablePolling, disablePolling])
 
-  const stats = Converter.StatFromQuery(data?.userStat)
+  const stats = Converter.StatFromQuery(account ? data?.userStat : undefined)
 
   return stats
 }
