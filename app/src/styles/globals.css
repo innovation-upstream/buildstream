@@ -30,4 +30,23 @@
   .divider {
     @apply border border-[#EFF0F1];
   }
+  .scrollbar-thin {
+    scrollbar-color: rgba(26, 43, 93, 0.16) rgba(26, 43, 93, 0.08);
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(26, 43, 93, 0.08);
+    border-radius: 100vw;
+    margin-block: 0.5em;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(26, 43, 93, 0.16);
+    border-radius: 100vw;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(26, 43, 93, 0.26);
+  }
 }

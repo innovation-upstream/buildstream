@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export const usePolling = (
   startPolling: (pollInterval: number) => void,
@@ -19,10 +19,19 @@ export const usePolling = (
     }
   }, [startPolling, stopPolling, pollInterval, disablePolling])
 
+  const enablePolling = useCallback(
+    () => setDisablePolling(false),
+    [setDisablePolling]
+  )
+  const shopPoll = useCallback(
+    () => setDisablePolling(true),
+    [setDisablePolling]
+  )
+
   return {
     pollingDisabled: disablePolling,
-    enablePolling: () => setDisablePolling(false),
-    disablePolling: () => setDisablePolling(true)
+    enablePolling,
+    disablePolling: shopPoll
   }
 }
 
