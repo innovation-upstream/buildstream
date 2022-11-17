@@ -64,6 +64,7 @@ type Task @entity {
   assignmentRequest: [String!]
   staked: Boolean!
   revisions: [TaskRevision!] @derivedFrom(field: "task")
+  raw: String!
 }
 
 type TaskRevision @entity {
