@@ -1,5 +1,3 @@
-export enum ModalType {createTask, taskDetail}
-
 import { Organization } from 'hooks/organization/types'
 import { Task } from 'hooks/task/types'
 

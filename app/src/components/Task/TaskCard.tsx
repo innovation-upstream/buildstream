@@ -14,6 +14,7 @@ interface TaskCardProps {
   taskRequirementLocation?: 'inline' | 'footer'
   taskRequirementLocationTablet?: 'inline' | 'footer'
   children?: ReactNode
+  onClick?: (id: number) => void
 }
 
 const TaskRequirement = ({
@@ -49,6 +50,7 @@ const TaskCard = ({
   hideViewButton,
   taskRequirementLocation = 'inline',
   taskRequirementLocationTablet = 'inline',
+  onClick,
   children
 }: TaskCardProps) => {
   const reward = ethers.utils
@@ -57,7 +59,7 @@ const TaskCard = ({
   const { t } = useTranslation('tasks')
 
   return (
-    <div className='paper'>
+    <div className='paper cursor-pointer hover:drop-shadow-xl hover:brightness-[0.98]' onClick={() => onClick?.(task.id)}>
       <div className='flex mb-2'>
         <div className='flex'>{task.organization.name}</div>
       </div>

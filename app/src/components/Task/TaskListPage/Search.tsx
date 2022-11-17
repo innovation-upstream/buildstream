@@ -10,7 +10,7 @@ interface SearchProps {
 }
 
 const Search = ({ showControls }: SearchProps) => {
-  const { setText } = useTaskFilter()
+  const { updateFilters } = useTaskFilter()
   const [openControls, setOpenControls] = useState(false)
   const [controlMaxHeight, setControlMaxHeight] = useState(0)
   const controlRef = useRef<HTMLDivElement>(null)
@@ -37,7 +37,7 @@ const Search = ({ showControls }: SearchProps) => {
     <div className='relative'>
       <input
         className='input-base w-full rounded-[10px] pl-12'
-        onChange={(e) => setText?.(e.target.value)}
+        onChange={(e) => updateFilters?.({ text: e.target.value })}
       />
       <span className='absolute top-1/2 left-5 -translate-y-1/2'>
         <Find width={16} className='fill-[#B5B7BC]' />

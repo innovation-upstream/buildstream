@@ -19,10 +19,10 @@ const TaskStatistics = ({ stat }: TaskStatisticsProps) => {
           <Clock />
         </div>
         <div>
-          <p className='text-2xl font-semibold'>
+          <p className='text-base lg:text-2xl font-semibold'>
             {stat.assignedTasks.toString()}
           </p>
-          <span>{t('task_in_progress')}</span>
+          <span className='text-sm lg:text-base'>{t('task_in_progress')}</span>
         </div>
       </div>
       <div className='mt-3 p-3 gap-5 flex rounded-lg bg-[#F5F7F9]'>
@@ -30,10 +30,10 @@ const TaskStatistics = ({ stat }: TaskStatisticsProps) => {
           <Close />
         </div>
         <div>
-          <p className='text-2xl font-semibold'>
+          <p className='text-base lg:text-2xl font-semibold'>
             {stat.closedTasks.toString()}
           </p>
-          <span>{t('closed_tasks')}</span>
+          <span className='text-sm lg:text-base'>{t('closed_tasks')}</span>
         </div>
       </div>
       <div className='mt-3 p-3 gap-5 flex rounded-lg bg-[#F5F7F9]'>
@@ -41,8 +41,8 @@ const TaskStatistics = ({ stat }: TaskStatisticsProps) => {
           <Calendar />
         </div>
         <div>
-          <p className='text-2xl font-semibold'>0</p>
-          <span>{t('overdue_tasks')}</span>
+          <p className='text-base lg:text-2xl font-semibold'>0</p>
+          <span className='text-sm lg:text-base'>{t('overdue_tasks')}</span>
         </div>
       </div>
     </div>
