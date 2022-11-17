@@ -57,7 +57,6 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
     }
   })
   const { t: tr } = useTranslation('organization')
-  const [taskIndex, setTaskIndex] = useState(0)
   const [selected, setSelected] = useState<number>()
 
   useEffect(() => {
@@ -81,10 +80,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         />
       )}
       {selectedTask && (
-        <TaskDetail
-          task={tasks[taskIndex]}
-          close={() => setSelected(undefined)}
-        />
+        <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
       )}
       <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
         <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
@@ -101,7 +97,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         </div>
       </div>
       <ul>
-        {tasks.map((t, index) => (
+        {tasks.map((t) => (
           <li key={t.id} className='mb-4'>
             <TaskCard task={t} onClick={(id) => setSelected(id)}>
               {t.status < TaskStatus.ASSIGNED && (
