@@ -4,7 +4,6 @@ import {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useState
 } from 'react'
 
@@ -13,9 +12,13 @@ interface IFilterContext {
   complexity?: ComplexityScore
   tags?: string[]
   filterQueryVariables?: GetTasksQueryVariables[]
-  setText?: (text?: string) => void
-  setComplexity?: (complexity?: ComplexityScore) => void
-  setTags?: (tags?: string[]) => void
+  updateFilters?: (filter: FilterUpdate) => void
+}
+
+export interface FilterUpdate {
+  text?: string
+  complexity?: ComplexityScore
+  tags?: string[]
 }
 
 export const FilterContext = createContext<IFilterContext>({})
@@ -40,11 +43,7 @@ const trimPayload = (data: Record<string, any>): Record<string, any> => {
 }
 
 export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
-  const [filters, setFilters] = useState<{
-    text?: string
-    complexity?: ComplexityScore
-    tags?: string[]
-  }>({})
+  const [filters, setFilters] = useState<FilterUpdate>({})
   const [filterQueryVariables, setFilterQueryVariables] = useState<
     GetTasksQueryVariables[]
   >([
@@ -54,16 +53,16 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
     }
   ])
 
-  const updateFilters = (key: string, value: any) => {
+  const updateFilters = (filter: FilterUpdate) => {
     setFilters((prev: any) => ({
       ...prev,
-      [key]: value
+      ...filter
     }))
 
-    const text = (key === 'text' ? (value as string) : filters.text)?.trim()
+    const text = filter.text || filters.text?.trim()
     const complexity =
-      key === 'complexity' ? (value as ComplexityScore) : filters.complexity
-    const tags = key === 'tags' ? (value as string[]) : filters.tags
+      filter.complexity || filters.complexity
+    const tags = filter.tags || filters.tags
 
     let payload: GetTasksQueryVariables[] = [
       {
@@ -99,15 +98,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
       value={{
         ...filters,
         filterQueryVariables,
-        setText(text) {
-          updateFilters('text', text)
-        },
-        setComplexity(complexity) {
-          updateFilters('complexity', complexity)
-        },
-        setTags(tags) {
-          updateFilters('tags', Array.from(new Set(tags || [])))
-        }
+        updateFilters
       }}
     >
       {children}

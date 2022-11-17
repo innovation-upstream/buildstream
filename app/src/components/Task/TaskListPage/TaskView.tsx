@@ -3,9 +3,9 @@ import TaskCard from 'components/Task/TaskCard'
 import { useEffect, useState } from 'react'
 import { useGetTasksQuery } from 'hooks'
 import { Converter } from 'utils/converter'
-import { useTranslation } from 'react-i18next'
 import { useTaskFilter } from './FilterContext'
 import Search from './Search'
+import TaskDetail from '../CreateTask/TaskDetail'
 
 interface TaskViewProps {
   tasks?: Task[]
@@ -14,7 +14,8 @@ interface TaskViewProps {
 const TaskView = ({ tasks: taskList }: TaskViewProps) => {
   const [tasks, setTasks] = useState(taskList || [])
   const { refetch } = useGetTasksQuery()
-  const { filterQueryVariables, setText } = useTaskFilter()
+  const { filterQueryVariables } = useTaskFilter()
+  const [selected, setSelected] = useState<number>()
 
   const filterTasks = async () => {
     const result = await Promise.all(
@@ -66,15 +67,24 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
     filterTasks()
   }, [filterQueryVariables])
 
+  const selectedTask = tasks.find((t) => t.id === selected)
+
   return (
     <div>
       <div className='mb-5 hidden lg:block'>
         <Search />
       </div>
+      {selectedTask && (
+        <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
+      )}
       <ul>
         {tasks?.map((t) => (
           <li key={t.id} className='mb-4'>
-            <TaskCard showDescription task={t} />
+            <TaskCard
+              showDescription
+              task={t}
+              onClick={(id) => setSelected(id)}
+            />
           </li>
         ))}
       </ul>

@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { ComplexityScore, ComplexityScoreMap } from 'hooks/task/types'
+import { ComplexityScoreMap } from 'hooks/task/types'
 import { useUserStat } from 'hooks/userstat'
 import TaskTagInput from '../CreateTask/TaskTagInput'
 import ChevronDown from 'components/IconSvg/ChevronDown'
 import { useState } from 'react'
-import { useTaskFilter } from './FilterContext'
+import { FilterUpdate, useTaskFilter } from './FilterContext'
 import { StyledContainer } from './styled'
 
 interface FilterProps {
@@ -15,12 +15,9 @@ interface FilterProps {
 const Filter = ({ expand, maxHeight }: FilterProps) => {
   const { t } = useTranslation('tasks')
   const stats = useUserStat()
-  const { tags, setComplexity, setTags } = useTaskFilter()
+  const { tags, updateFilters: applyFilters } = useTaskFilter()
   const [openSkills, setOpenSkills] = useState(expand || !!tags?.length)
-  const [filters, setFilters] = useState<{
-    complexity?: ComplexityScore
-    tags?: string[]
-  }>({})
+  const [filters, setFilters] = useState<FilterUpdate>({})
 
   const updateFilters = (key: string, value: any) => {
     setFilters((prev: any) => ({
@@ -38,8 +35,7 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
   }
 
   const applyFilter = () => {
-    setTags?.(filters.tags)
-    setComplexity?.(filters.complexity)
+    applyFilters?.(filters)
   }
 
   return (
@@ -108,7 +104,9 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
                     type='checkbox'
                     className='w-5 h-5'
                     checked={!!filters?.tags?.includes(tag)}
-                    onChange={() => handleCheckbox(tags || [], tag, 'tags')}
+                    onChange={() =>
+                      handleCheckbox(filters?.tags || [], tag, 'tags')
+                    }
                   />
                   <span className='text-[#646873] capitalize'>{tag}</span>
                 </label>
