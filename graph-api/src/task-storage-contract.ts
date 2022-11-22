@@ -3,7 +3,9 @@ import {
   TaskSnapshot,
   TaskRevision,
   UserStat,
-  OrganizationStat
+  OrganizationStat,
+  Organization,
+  Team
 } from '../generated/schema'
 
 import {
@@ -217,6 +219,18 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.assigner = event.transaction.from.toHexString()
   taskEntity.assignDate = event.block.timestamp
   taskEntity.staked = event.params.staked
+
+  const organizationEntity = Organization.load(taskEntity.orgId)
+  const teamEntity = taskEntity.team
+    ? Team.load(taskEntity.team as string)
+    : null
+
+  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
+    organizationEntity ? organizationEntity.name.toString() : ''
+  } ~ ${taskEntity.assignee as string} ~ ${
+    teamEntity ? teamEntity.name.toString() : ''
+  }`
+
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -260,7 +274,18 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
-  taskEntity.raw = `${task.title} # ${task.description} # ${task.taskTags.toString()}`
+
+  const organizationEntity = Organization.load(taskEntity.orgId)
+  const teamEntity = taskEntity.team
+    ? Team.load(taskEntity.team as string)
+    : null
+
+  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
+    organizationEntity ? (organizationEntity.name as string) : ''
+  } ~ ${taskEntity.assignee as string} ~ ${
+    teamEntity ? (teamEntity.name as string) : ''
+  }`
+
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -301,7 +326,9 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.comment = task.comment
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
-  taskEntity.raw = `${task.title} # ${task.description} # ${task.taskTags.toString()}`
+  taskEntity.raw = `${task.title} ~ ${
+    task.description
+  } ~ ${task.taskTags.toString()}`
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -362,6 +389,15 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   if (!taskEntity) return
   taskEntity.status = 1
   taskEntity.assignee = Address.zero().toHexString()
+  taskEntity.team = Address.zero().toHexString()
+  taskEntity.teamAssignee = Address.zero().toHexString()
+
+  const organizationEntity = Organization.load(taskEntity.orgId)
+
+  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
+    organizationEntity ? (organizationEntity.name as string) : ''
+  }`
+
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)

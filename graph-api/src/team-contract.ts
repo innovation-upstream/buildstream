@@ -7,13 +7,22 @@ import {
   TeamUnArchived as TeamUnArchivedEvent,
   TeamUpdated as TeamUpdatedEvent
 } from '../generated/TeamContract/TeamContract'
-import { Task, Team } from '../generated/schema'
+import { Organization, Task, Team } from '../generated/schema'
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
+  const entity = Team.load(event.params.teamAddress.toHexString())
+  if (!entity) return
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.teamAssignee = event.params.assignee.toHexString()
+
+  const organizationEntity = Organization.load(taskEntity.orgId)
+
+  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
+    organizationEntity ? (organizationEntity.name as string) : ''
+  } ~ ${taskEntity.assignee as string} ~ ${entity.name as string} ~ ${taskEntity.teamAssignee as string}`
+
   taskEntity.save()
 }
 
