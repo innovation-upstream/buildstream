@@ -1,11 +1,6 @@
 import { GetTasksQueryVariables } from 'graphclient'
 import { ComplexityScore } from 'hooks/task/types'
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState
-} from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 interface IFilterContext {
   text?: string
@@ -59,9 +54,8 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
       ...filter
     }))
 
-    const text = filter.text || filters.text?.trim()
-    const complexity =
-      filter.complexity || filters.complexity
+    const text = (filter.text || filters.text)?.trim()
+    const complexity = filter.complexity
     const tags = filter.tags || filters.tags
 
     let payload: GetTasksQueryVariables[] = [
@@ -88,6 +82,35 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
             }
           } as GetTasksQueryVariables)
       )
+    }
+
+    const splittedText = text?.split(' ')
+    if (!!splittedText?.length && !!payload.length) {
+      const newPayload = splittedText.map((t) =>
+        payload.map((p) => ({
+          ...p,
+          where: {
+            ...(p.where || {}),
+            raw_contains_nocase: t
+          }
+        }))
+      )
+      payload = newPayload.flat()
+    }
+
+    if (!!splittedText?.length && !payload.length) {
+      const newPayload = splittedText.map(
+        (t) =>
+          ({
+            orderBy: 'taskId',
+            orderDirection: 'desc',
+            where: {
+              raw_contains_nocase: t,
+              complexityScore: complexity
+            }
+          } as GetTasksQueryVariables)
+      )
+      payload = newPayload.flat()
     }
 
     setFilterQueryVariables(payload.map((p) => trimPayload(p)))
