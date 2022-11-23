@@ -1383,6 +1383,83 @@ export class Treasury extends Entity {
   }
 }
 
+export class Deposit extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Deposit entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Deposit must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Deposit", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Deposit | null {
+    return changetype<Deposit | null>(store.get("Deposit", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get orgId(): BigInt {
+    let value = this.get("orgId");
+    return value!.toBigInt();
+  }
+
+  set orgId(value: BigInt) {
+    this.set("orgId", Value.fromBigInt(value));
+  }
+
+  get token(): string {
+    let value = this.get("token");
+    return value!.toString();
+  }
+
+  set token(value: string) {
+    this.set("token", Value.fromString(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get initiator(): string {
+    let value = this.get("initiator");
+    return value!.toString();
+  }
+
+  set initiator(value: string) {
+    this.set("initiator", Value.fromString(value));
+  }
+
+  get completedAt(): BigInt {
+    let value = this.get("completedAt");
+    return value!.toBigInt();
+  }
+
+  set completedAt(value: BigInt) {
+    this.set("completedAt", Value.fromBigInt(value));
+  }
+}
+
 export class Action extends Entity {
   constructor(id: string) {
     super();
@@ -1541,6 +1618,32 @@ export class Action extends Entity {
       this.unset("approvedBy");
     } else {
       this.set("approvedBy", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get initiatedAt(): BigInt {
+    let value = this.get("initiatedAt");
+    return value!.toBigInt();
+  }
+
+  set initiatedAt(value: BigInt) {
+    this.set("initiatedAt", Value.fromBigInt(value));
+  }
+
+  get completedAt(): BigInt | null {
+    let value = this.get("completedAt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set completedAt(value: BigInt | null) {
+    if (!value) {
+      this.unset("completedAt");
+    } else {
+      this.set("completedAt", Value.fromBigInt(<BigInt>value));
     }
   }
 }
