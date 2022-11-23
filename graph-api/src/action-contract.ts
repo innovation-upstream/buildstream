@@ -1,3 +1,4 @@
+import { BigInt } from '@graphprotocol/graph-ts'
 import {
   ActionConfirmation as ActionConfirmationEvent,
   ActionContract as Contract,
@@ -31,6 +32,7 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   entity.executed = action.executed
   entity.tokenAddress = action.tokenAddress.toHexString()
   entity.actionType = action.actionType
+  entity.initiatedAt = event.block.timestamp
   entity.save()
 }
 
@@ -38,5 +40,6 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
   let entity = Action.load(event.params.actionId.toString())
   if (!entity) return
   entity.executed = true
+  entity.completedAt = event.block.timestamp
   entity.save()
 }

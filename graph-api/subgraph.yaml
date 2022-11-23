@@ -44,6 +44,7 @@ dataSources:
       entities:
         - Treasury
         - TreasuryToken
+        - Deposit
       abis:
         - name: Treasury
           file: ./abis/Treasury.json

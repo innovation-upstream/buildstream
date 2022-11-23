@@ -1,5 +1,5 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { Treasury, TreasuryToken } from '../generated/schema'
+import { Deposit, TreasuryToken } from '../generated/schema'
 import {
   TreasuryDeposit as TreasuryDepositEvent,
   TreasuryTokenLocked as TreasuryTokenLockedEvent,
@@ -21,6 +21,16 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   }
   tTokenEntity.balance = tTokenEntity.balance.plus(event.params.amount)
   tTokenEntity.save()
+
+  const depositEntity = new Deposit(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  )
+  depositEntity.amount = event.params.amount
+  depositEntity.orgId = event.params.orgId
+  depositEntity.token = event.params.tokenAddress.toHexString()
+  depositEntity.initiator = event.transaction.from.toHexString()
+  depositEntity.completedAt = event.block.timestamp
+  depositEntity.save()
 }
 
 export function handleTreasuryWithdraw(event: TreasuryWithdrawEvent): void {
