@@ -308,6 +308,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   const task = event.params.task
   const taskMetadata = event.params.taskMetadata
   const taskEntity = new Task(taskId)
+  const organizationEntity = Organization.load(task.orgId.toString())
 
   taskEntity.taskId = event.params.taskId
   taskEntity.orgId = task.orgId.toString()
@@ -328,7 +329,9 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.totalWaitTime = new BigInt(0)
   taskEntity.raw = `${task.title} ~ ${
     task.description
-  } ~ ${task.taskTags.toString()}`
+  } ~ ${task.taskTags.toString()} ~ ${
+    organizationEntity ? (organizationEntity.name as string) : ''
+  }`
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
