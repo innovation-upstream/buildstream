@@ -67,5 +67,7 @@
   "add_comment_to_submit": "Add Comment to Submit",
   "open_task": "Open Task",
   "request_assignment": "Request Assignment",
-  "submit_task": "Submit Task"
+  "submit_task": "Submit Task",
+  "account_overview": "Account Overview",
+  "completed_tasks": "Completed tasks"
 }

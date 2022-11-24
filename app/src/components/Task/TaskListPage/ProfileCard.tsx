@@ -7,15 +7,24 @@ import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import Info from 'SVGs/Info'
 
-const ProfileCard = () => {
+interface Props {
+  address?: string
+}
+
+const ProfileCard = ({ address }: Props) => {
   const { account } = useWeb3()
-  const { balance } = useBalance()
-  const stat = useUserStat()
+  const { balance } = useBalance(address)
+  const stat = useUserStat(address)
 
   const totalTokens = balance?.reduce(
     (aggregator, curr) => aggregator.add(curr.balance),
     BigNumber.from(0)
   )
+
+  let userId = address
+  if (account && !address) {
+    userId = account
+  }
 
   const { t } = useTranslation('tasks')
   return (
@@ -26,8 +35,8 @@ const ProfileCard = () => {
           <MetamaskSvg width={32} />
         </div>
         <span className='font-semibold'>
-          {account?.substring(0, 7)}...
-          {account?.substring(account?.length - 4)}
+          {userId?.substring(0, 7)}...
+          {userId?.substring(userId?.length - 4)}
         </span>
       </div>
       <div className='divider' />
