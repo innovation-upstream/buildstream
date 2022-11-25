@@ -30,7 +30,7 @@ export const useGetUserStatLazyQuery = (
     GetUserStatQueryVariables
   >(GetUserStatDocument, baseOptions)
 
-export const useUserStat = () => {
+export const useUserStat = (address?: string) => {
   const { account } = useWeb3()
 
   const [getUserStat, { data, startPolling, stopPolling }] =
@@ -40,21 +40,25 @@ export const useUserStat = () => {
     stopPolling,
     60 * 1000
   )
+  let userId = address
+  if (account && !address) {
+    userId = account
+  }
 
   useEffect(() => {
-    if (!account) {
+    if (!userId) {
       disablePolling()
       return
     }
     getUserStat({
       variables: {
-        id: account
+        id: userId
       }
     })
     enablePolling()
-  }, [account, getUserStat, enablePolling, disablePolling])
+  }, [account, address, getUserStat, enablePolling, disablePolling])
 
-  const stats = Converter.StatFromQuery(account ? data?.userStat : undefined)
+  const stats = Converter.StatFromQuery(userId ? data?.userStat : undefined)
 
   return stats
 }

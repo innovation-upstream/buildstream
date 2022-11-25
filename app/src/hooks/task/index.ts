@@ -24,6 +24,17 @@ export const useGetTasksQuery = (
     baseOptions
   )
 
+export const useGetTasksLazyQuery = (
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    { tasks: Task[] },
+    GetTasksQueryVariables
+  >
+) =>
+  ApolloReactHooks.useLazyQuery<{ tasks: Task[] }, GetTasksQueryVariables>(
+    GetTasksDocument,
+    baseOptions
+  )
+
 export const useGetTaskQuery = (
   baseOptions?: ApolloReactHooks.QueryHookOptions<
     { task: Task },
