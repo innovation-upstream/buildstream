@@ -10,7 +10,6 @@ import {
 export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   const orgId = event.params.orgId.toString()
   let token = event.params.tokenAddress.toHexString()
-  if (token == Address.zero().toHexString()) token = 'ETH'
   let tTokenEntity = TreasuryToken.load(`${orgId}_${token}`)
   if (!tTokenEntity) {
     tTokenEntity = new TreasuryToken(`${orgId}_${token}`)
@@ -36,7 +35,6 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
 export function handleTreasuryWithdraw(event: TreasuryWithdrawEvent): void {
   const orgId = event.params.orgId.toString()
   let token = event.params.tokenAddress.toHexString()
-  if (token == Address.zero().toHexString()) token = 'ETH'
   let tTokenEntity = TreasuryToken.load(`${orgId}_${token}`)
   if (!tTokenEntity) return
 
@@ -49,7 +47,6 @@ export function handleTreasuryTokenLocked(
 ): void {
   const orgId = event.params.orgId.toString()
   let token = event.params.tokenAddress.toHexString()
-  if (token == Address.zero().toHexString()) token = 'ETH'
   let tTokenEntity = TreasuryToken.load(`${orgId}_${token}`)
   if (!tTokenEntity) return
 
@@ -64,7 +61,6 @@ export function handleTreasuryTokenUnlocked(
 ): void {
   const orgId = event.params.orgId.toString()
   let token = event.params.tokenAddress.toHexString()
-  if (token == Address.zero().toHexString()) token = 'ETH'
   let tTokenEntity = TreasuryToken.load(`${orgId}_${token}`)
   if (!tTokenEntity) return
 
