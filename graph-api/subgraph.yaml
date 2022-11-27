@@ -73,6 +73,8 @@ dataSources:
       abis:
         - name: ActionContract
           file: ./abis/ActionContract.json
+        - name: Organization
+          file: ./abis/Organization.json
       eventHandlers:
         - event: ActionConfirmation(indexed uint256,indexed address,indexed uint256)
           handler: handleActionConfirmation
