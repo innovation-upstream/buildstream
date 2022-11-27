@@ -1,11 +1,20 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 
 export enum ActionType {
   WITHDRAWAL,
   ADD_APPROVER,
   ADD_SIGNER,
   REMOVE_APPROVER,
-  REMOVE_SIGNER
+  REMOVE_SIGNER,
+  UPDATE_NAME,
+  UPDATE_DESCRIPTION,
+  UPDATE_REQUIRED_TASK_APPROVALS,
+  UPDATE_REQUIRED_CONFIRMATIONS,
+  UPDATE_REWARD_MULTIPLIER,
+  UPDATE_REWARD_TOKEN,
+  UPDATE_REWARD_SLASH_MULTIPLIER,
+  UPDATE_SLASH_REWARD_EVERY,
+  UPDATE_TAG_REWARD_MULTIPLIER
 }
 
 export const ActionTypeMap: Record<ActionType, string> = {
@@ -14,7 +23,7 @@ export const ActionTypeMap: Record<ActionType, string> = {
   [ActionType.ADD_SIGNER]: 'ADD_SIGNER',
   [ActionType.REMOVE_APPROVER]: 'REMOVE_APPROVER',
   [ActionType.REMOVE_SIGNER]: 'REMOVE_SIGNER'
-}
+} as any
 
 export type Action = {
   id: number
@@ -27,4 +36,6 @@ export type Action = {
   tokenAddress: string
   actionType: ActionType
   approvedBy: string[]
+  initiatedAt: BigNumber
+  completedAt?: BigNumber
 }

@@ -19,6 +19,8 @@ query GetAction(
     tokenAddress
     actionType
     approvedBy
+    initiatedAt
+    completedAt
   }
 }
 
@@ -51,5 +53,7 @@ query GetActions(
     tokenAddress
     actionType
     approvedBy
+    initiatedAt
+    completedAt
   }
 }

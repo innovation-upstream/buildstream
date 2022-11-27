@@ -4,51 +4,42 @@ import { BigNumber, ethers } from 'ethers'
 import { Organization } from 'hooks/organization/types'
 import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import { useEffect, useState } from 'react'
-import { depositNative, depositToken } from 'hooks/treasury/functions'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import { useTranslation } from 'next-i18next'
 import { TokenInfo } from 'hooks/tokenInfo/types'
+import { createWithdrawalAction } from 'hooks/action/functions'
 
-interface DepositProps {
+interface WithdrawalProps {
   organization: Organization
   onClose: () => void
 }
 
 const AddressZero = ethers.constants.AddressZero
 
-const Deposit = ({ organization, onClose }: DepositProps) => {
-  const orgHasRewardToken = organization?.rewardToken !== AddressZero
-  const [customToken, setCustomToken] = useState(orgHasRewardToken)
+const Withdrawal = ({ organization, onClose }: WithdrawalProps) => {
   const [amount, setAmount] = useState(0)
   const [tokenAddress, setTokenAddress] = useState(
-    orgHasRewardToken ? organization?.rewardToken : AddressZero
+    organization?.rewardToken || AddressZero
   )
+  const [recipient, setRecipientAddress] = useState('')
 
   const tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-  if (tokenList.indexOf(tokenAddress) === -1) tokenList.push(tokenAddress)
   const { tokenInfos } = useTokenInfos(tokenList)
   const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
 
-  const processNative = async () => {
-    await depositNative(
-      organization.id,
-      ethers.utils.parseEther(amount.toString()),
-      account as string,
-      library
-    )
-  }
+  const processWithdrawal = async (token: TokenInfo) => {
+    const withdrawAmount = token.isNative
+      ? ethers.utils.parseEther(amount.toString())
+      : ethers.utils.parseUnits(amount.toString(), token?.decimal)
 
-  const processCustom = async (token: TokenInfo) => {
-    await depositToken(
+    await createWithdrawalAction(
       organization.id,
-      ethers.utils.parseUnits(
-        amount.toString(),
-        token.decimal
-      ),
+      recipient,
+      withdrawAmount,
       token.address,
       account as string,
-      library
+      library.getSigner()
     )
   }
 
@@ -56,22 +47,22 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
     e.preventDefault()
     const token = tokenInfos?.find((i) => i.address === tokenAddress)
     if (!token) {
-      console.log('Deposit: invalid token')
+      console.log('Withdrawal: invalid token')
+      return
+    }
+    if (!ethers.utils.isAddress(recipient)) {
+      console.log('Withdrawal: invalid recipient')
       return
     }
     if (amount === 0) {
-      console.error('Deposit: amount is 0')
+      console.error('Withdrawal: amount is 0')
       return
     }
     setIsTransacting(true)
     try {
-      if (token.isNative) {
-        await processNative()
-      } else {
-        await processCustom(token)
-      }
+      await processWithdrawal(token)
       setAmount(0)
-      setCustomToken(false)
+      setRecipientAddress('')
     } catch (e) {
       console.error(e)
     } finally {
@@ -81,12 +72,6 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
 
   const handleSelect = (e: any) => {
     let value = e.target.value
-    if (value === 'newToken') {
-      setCustomToken(true)
-      setTokenAddress('')
-      return
-    }
-    setCustomToken(false)
     setTokenAddress(value)
   }
 
@@ -122,7 +107,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             <CloseIcon />
           </button>
           <p className='text-3xl text-center font-semibold'>
-            {t('deposit_funds')}
+            {t('withdraw_funds')}
           </p>
         </div>
 
@@ -132,7 +117,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
           </label>
           <select
             className='input-base mt-2'
-            value={customToken ? 'newToken' : tokenAddress}
+            value={tokenAddress}
             onChange={handleSelect}
           >
             {organization?.treasury?.tokens?.map((t) => {
@@ -145,42 +130,31 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
                 </option>
               )
             })}
-            <option value='newToken'>{t('new_token')}</option>
           </select>
 
-          {customToken && (
-            <div className='relative mt-4'>
-              <label
-                htmlFor='address'
-                className='font-medium'
-              >
-                {t('token_contract_address')}
-              </label>
-              <div className='relative flex rounded-md bg-sky-600'>
-                <div className='flex items-center px-4 text-white'>
-                  {tokenInfos?.find((i) => i.address === tokenAddress)?.symbol}
-                </div>
-                <input
-                  type='text'
-                  id='address'
-                  name='address'
-                  placeholder='Token address'
-                  required
-                  value={tokenAddress}
-                  onChange={(e) => setTokenAddress(e.target.value)}
-                  className='input-base w-full'
-                />
-              </div>
-            </div>
-          )}
+          <div className='relative mt-4'>
+            <label
+              htmlFor='address'
+              className='font-medium'
+            >
+              {t('recipient_address')}
+            </label>
+            <input
+              type='text'
+              id='address'
+              name='address'
+              placeholder={t('recipient_address')}
+              required
+              value={recipient}
+              onChange={(e) => setRecipientAddress(e.target.value)}
+              className='input-base w-full'
+            />
+          </div>
 
           <div className='flex items-center justify-between gap-20 mt-4'>
-            <label className='block font-medium'>
-              {t('enter_amount')}
-            </label>
+            <label className='block font-medium'>{t('enter_amount')}</label>
             <p className='text-sm'>
-              {t('balance')}:{' '}
-              <span className='font-normal'>{balance} {token?.symbol}</span>
+              {t('balance')}: <span className='font-normal'>{balance} {token?.symbol}</span>
             </p>
           </div>
           <input
@@ -199,7 +173,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             disabled={!organization.signers.includes(account as string)}
             className='w-full btn-primary mt-5'
           >
-            {isTransacting ? <Spinner className='fill-white' /> : t('deposit')}
+            {isTransacting ? <Spinner className='fill-white' /> : t('withdraw')}
           </button>
           <button onClick={onClose} className='w-full btn-outline mt-2'>
             {t('cancel')}
@@ -210,4 +184,4 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
   )
 }
 
-export default Deposit
+export default Withdrawal

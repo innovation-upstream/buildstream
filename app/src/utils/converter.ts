@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import {
   Action as ActionType,
+  Deposit,
   Organization as Org,
   Task as TaskType,
   TaskRevision as TaskRevisionType,
@@ -11,7 +12,7 @@ import {
 import { Action } from 'hooks/action/types'
 import { Organization } from 'hooks/organization/types'
 import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
-import { Treasury } from 'hooks/treasury/types'
+import { DepositRecord, Treasury } from 'hooks/treasury/types'
 import { Stat } from 'hooks/userstat/types'
 
 export class Converter {
@@ -58,7 +59,11 @@ export class Converter {
       executed: action.executed,
       tokenAddress: action.tokenAddress || ethers.constants.AddressZero,
       actionType: action.actionType,
-      approvedBy: action.approvedBy || []
+      approvedBy: action.approvedBy || [],
+      initiatedAt: BigNumber.from(action.initiatedAt),
+      completedAt: action.completedAt
+        ? BigNumber.from(action.completedAt)
+        : undefined
     }
   }
 
@@ -123,8 +128,19 @@ export class Converter {
       externalRevisionId: taskRevision.externalRevisionId,
       revisionHash: taskRevision.revisionHash,
       durationExtension: Number(taskRevision.durationExtension),
-      durationExtensionRequest:  Number(taskRevision.durationExtensionRequest),
+      durationExtensionRequest: Number(taskRevision.durationExtensionRequest),
       status: taskRevision.status
+    }
+  }
+
+  public static DepositFromQuery = (deposit: Deposit): DepositRecord => {
+    return {
+      id: deposit.id,
+      orgId: deposit.orgId.toString(),
+      initiator: deposit.initiator,
+      token: deposit.token,
+      amount: BigNumber.from(deposit.amount),
+      completedAt: BigNumber.from(deposit.completedAt)
     }
   }
 }

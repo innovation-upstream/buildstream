@@ -16,3 +16,12 @@ export type Treasury = {
     lockedBalance: BigNumber
   }[]
 }
+
+export type DepositRecord = {
+  id: string
+  orgId: string
+  amount: BigNumber
+  token: string
+  initiator: string
+  completedAt: BigNumber
+}
