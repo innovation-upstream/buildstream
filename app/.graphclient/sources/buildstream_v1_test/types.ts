@@ -32,6 +32,8 @@ export type Action = {
   tokenAddress?: Maybe<Scalars['String']>;
   actionType: Scalars['Int'];
   approvedBy?: Maybe<Array<Scalars['String']>>;
+  initiatedAt: Scalars['BigInt'];
+  completedAt?: Maybe<Scalars['BigInt']>;
 };
 
 export type Action_filter = {
@@ -151,6 +153,22 @@ export type Action_filter = {
   approvedBy_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   approvedBy_not_contains?: InputMaybe<Array<Scalars['String']>>;
   approvedBy_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  initiatedAt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_not?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiatedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_not?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -166,7 +184,9 @@ export type Action_orderBy =
   | 'executed'
   | 'tokenAddress'
   | 'actionType'
-  | 'approvedBy';
+  | 'approvedBy'
+  | 'initiatedAt'
+  | 'completedAt';
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int'];
@@ -177,6 +197,100 @@ export type Block_height = {
   number?: InputMaybe<Scalars['Int']>;
   number_gte?: InputMaybe<Scalars['Int']>;
 };
+
+export type Deposit = {
+  id: Scalars['ID'];
+  orgId: Scalars['BigInt'];
+  token: Scalars['String'];
+  amount: Scalars['BigInt'];
+  initiator: Scalars['String'];
+  completedAt: Scalars['BigInt'];
+};
+
+export type Deposit_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  orgId?: InputMaybe<Scalars['BigInt']>;
+  orgId_not?: InputMaybe<Scalars['BigInt']>;
+  orgId_gt?: InputMaybe<Scalars['BigInt']>;
+  orgId_lt?: InputMaybe<Scalars['BigInt']>;
+  orgId_gte?: InputMaybe<Scalars['BigInt']>;
+  orgId_lte?: InputMaybe<Scalars['BigInt']>;
+  orgId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  orgId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  token?: InputMaybe<Scalars['String']>;
+  token_not?: InputMaybe<Scalars['String']>;
+  token_gt?: InputMaybe<Scalars['String']>;
+  token_lt?: InputMaybe<Scalars['String']>;
+  token_gte?: InputMaybe<Scalars['String']>;
+  token_lte?: InputMaybe<Scalars['String']>;
+  token_in?: InputMaybe<Array<Scalars['String']>>;
+  token_not_in?: InputMaybe<Array<Scalars['String']>>;
+  token_contains?: InputMaybe<Scalars['String']>;
+  token_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_not_contains?: InputMaybe<Scalars['String']>;
+  token_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_starts_with?: InputMaybe<Scalars['String']>;
+  token_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  token_not_starts_with?: InputMaybe<Scalars['String']>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  token_ends_with?: InputMaybe<Scalars['String']>;
+  token_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  token_not_ends_with?: InputMaybe<Scalars['String']>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  amount?: InputMaybe<Scalars['BigInt']>;
+  amount_not?: InputMaybe<Scalars['BigInt']>;
+  amount_gt?: InputMaybe<Scalars['BigInt']>;
+  amount_lt?: InputMaybe<Scalars['BigInt']>;
+  amount_gte?: InputMaybe<Scalars['BigInt']>;
+  amount_lte?: InputMaybe<Scalars['BigInt']>;
+  amount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiator?: InputMaybe<Scalars['String']>;
+  initiator_not?: InputMaybe<Scalars['String']>;
+  initiator_gt?: InputMaybe<Scalars['String']>;
+  initiator_lt?: InputMaybe<Scalars['String']>;
+  initiator_gte?: InputMaybe<Scalars['String']>;
+  initiator_lte?: InputMaybe<Scalars['String']>;
+  initiator_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_not_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_contains?: InputMaybe<Scalars['String']>;
+  initiator_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_contains?: InputMaybe<Scalars['String']>;
+  initiator_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  completedAt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_not?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type Deposit_orderBy =
+  | 'id'
+  | 'orgId'
+  | 'token'
+  | 'amount'
+  | 'initiator'
+  | 'completedAt';
 
 /** Defines the order direction, either ascending or descending */
 export type OrderDirection =
@@ -488,6 +602,8 @@ export type Query = {
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
   treasuries: Array<Treasury>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
   team?: Maybe<Team>;
@@ -641,6 +757,24 @@ export type QuerytreasuriesArgs = {
 };
 
 
+export type QuerydepositArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerydepositsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Deposit_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Deposit_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type QueryactionArgs = {
   id: Scalars['ID'];
   block?: InputMaybe<Block_height>;
@@ -698,6 +832,8 @@ export type Subscription = {
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
   treasuries: Array<Treasury>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
   team?: Maybe<Team>;
@@ -846,6 +982,24 @@ export type SubscriptiontreasuriesArgs = {
   orderBy?: InputMaybe<Treasury_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Treasury_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiondepositArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiondepositsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Deposit_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Deposit_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -2139,6 +2293,10 @@ export type QueryBuildstreamV1TestSdk = {
   /** undefined **/
   treasuries: InContextSdkMethod<BuildstreamV1TestTypes.Query['treasuries'], BuildstreamV1TestTypes.QuerytreasuriesArgs, MeshContext>,
   /** undefined **/
+  deposit: InContextSdkMethod<BuildstreamV1TestTypes.Query['deposit'], BuildstreamV1TestTypes.QuerydepositArgs, MeshContext>,
+  /** undefined **/
+  deposits: InContextSdkMethod<BuildstreamV1TestTypes.Query['deposits'], BuildstreamV1TestTypes.QuerydepositsArgs, MeshContext>,
+  /** undefined **/
   action: InContextSdkMethod<BuildstreamV1TestTypes.Query['action'], BuildstreamV1TestTypes.QueryactionArgs, MeshContext>,
   /** undefined **/
   actions: InContextSdkMethod<BuildstreamV1TestTypes.Query['actions'], BuildstreamV1TestTypes.QueryactionsArgs, MeshContext>,
@@ -2187,6 +2345,10 @@ export type SubscriptionBuildstreamV1TestSdk = {
   treasury: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['treasury'], BuildstreamV1TestTypes.SubscriptiontreasuryArgs, MeshContext>,
   /** undefined **/
   treasuries: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['treasuries'], BuildstreamV1TestTypes.SubscriptiontreasuriesArgs, MeshContext>,
+  /** undefined **/
+  deposit: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['deposit'], BuildstreamV1TestTypes.SubscriptiondepositArgs, MeshContext>,
+  /** undefined **/
+  deposits: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['deposits'], BuildstreamV1TestTypes.SubscriptiondepositsArgs, MeshContext>,
   /** undefined **/
   action: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['action'], BuildstreamV1TestTypes.SubscriptionactionArgs, MeshContext>,
   /** undefined **/

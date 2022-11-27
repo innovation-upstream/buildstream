@@ -51,6 +51,8 @@ export type Action = {
   tokenAddress?: Maybe<Scalars['String']>;
   actionType: Scalars['Int'];
   approvedBy?: Maybe<Array<Scalars['String']>>;
+  initiatedAt: Scalars['BigInt'];
+  completedAt?: Maybe<Scalars['BigInt']>;
 };
 
 export type Action_filter = {
@@ -170,6 +172,22 @@ export type Action_filter = {
   approvedBy_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   approvedBy_not_contains?: InputMaybe<Array<Scalars['String']>>;
   approvedBy_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  initiatedAt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_not?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiatedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_not?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -185,7 +203,9 @@ export type Action_orderBy =
   | 'executed'
   | 'tokenAddress'
   | 'actionType'
-  | 'approvedBy';
+  | 'approvedBy'
+  | 'initiatedAt'
+  | 'completedAt';
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int'];
@@ -196,6 +216,100 @@ export type Block_height = {
   number?: InputMaybe<Scalars['Int']>;
   number_gte?: InputMaybe<Scalars['Int']>;
 };
+
+export type Deposit = {
+  id: Scalars['ID'];
+  orgId: Scalars['BigInt'];
+  token: Scalars['String'];
+  amount: Scalars['BigInt'];
+  initiator: Scalars['String'];
+  completedAt: Scalars['BigInt'];
+};
+
+export type Deposit_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  orgId?: InputMaybe<Scalars['BigInt']>;
+  orgId_not?: InputMaybe<Scalars['BigInt']>;
+  orgId_gt?: InputMaybe<Scalars['BigInt']>;
+  orgId_lt?: InputMaybe<Scalars['BigInt']>;
+  orgId_gte?: InputMaybe<Scalars['BigInt']>;
+  orgId_lte?: InputMaybe<Scalars['BigInt']>;
+  orgId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  orgId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  token?: InputMaybe<Scalars['String']>;
+  token_not?: InputMaybe<Scalars['String']>;
+  token_gt?: InputMaybe<Scalars['String']>;
+  token_lt?: InputMaybe<Scalars['String']>;
+  token_gte?: InputMaybe<Scalars['String']>;
+  token_lte?: InputMaybe<Scalars['String']>;
+  token_in?: InputMaybe<Array<Scalars['String']>>;
+  token_not_in?: InputMaybe<Array<Scalars['String']>>;
+  token_contains?: InputMaybe<Scalars['String']>;
+  token_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_not_contains?: InputMaybe<Scalars['String']>;
+  token_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  token_starts_with?: InputMaybe<Scalars['String']>;
+  token_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  token_not_starts_with?: InputMaybe<Scalars['String']>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  token_ends_with?: InputMaybe<Scalars['String']>;
+  token_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  token_not_ends_with?: InputMaybe<Scalars['String']>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  amount?: InputMaybe<Scalars['BigInt']>;
+  amount_not?: InputMaybe<Scalars['BigInt']>;
+  amount_gt?: InputMaybe<Scalars['BigInt']>;
+  amount_lt?: InputMaybe<Scalars['BigInt']>;
+  amount_gte?: InputMaybe<Scalars['BigInt']>;
+  amount_lte?: InputMaybe<Scalars['BigInt']>;
+  amount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiator?: InputMaybe<Scalars['String']>;
+  initiator_not?: InputMaybe<Scalars['String']>;
+  initiator_gt?: InputMaybe<Scalars['String']>;
+  initiator_lt?: InputMaybe<Scalars['String']>;
+  initiator_gte?: InputMaybe<Scalars['String']>;
+  initiator_lte?: InputMaybe<Scalars['String']>;
+  initiator_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_not_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_contains?: InputMaybe<Scalars['String']>;
+  initiator_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_contains?: InputMaybe<Scalars['String']>;
+  initiator_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  completedAt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_not?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type Deposit_orderBy =
+  | 'id'
+  | 'orgId'
+  | 'token'
+  | 'amount'
+  | 'initiator'
+  | 'completedAt';
 
 /** Defines the order direction, either ascending or descending */
 export type OrderDirection =
@@ -507,6 +621,8 @@ export type Query = {
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
   treasuries: Array<Treasury>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
   team?: Maybe<Team>;
@@ -660,6 +776,24 @@ export type QuerytreasuriesArgs = {
 };
 
 
+export type QuerydepositArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerydepositsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Deposit_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Deposit_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type QueryactionArgs = {
   id: Scalars['ID'];
   block?: InputMaybe<Block_height>;
@@ -717,6 +851,8 @@ export type Subscription = {
   treasuryTokens: Array<TreasuryToken>;
   treasury?: Maybe<Treasury>;
   treasuries: Array<Treasury>;
+  deposit?: Maybe<Deposit>;
+  deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
   team?: Maybe<Team>;
@@ -865,6 +1001,24 @@ export type SubscriptiontreasuriesArgs = {
   orderBy?: InputMaybe<Treasury_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Treasury_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiondepositArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptiondepositsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Deposit_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Deposit_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -2202,6 +2356,9 @@ export type ResolversTypes = ResolversObject<{
   Block_height: Block_height;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Bytes: ResolverTypeWrapper<Scalars['Bytes']>;
+  Deposit: ResolverTypeWrapper<Deposit>;
+  Deposit_filter: Deposit_filter;
+  Deposit_orderBy: Deposit_orderBy;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -2251,6 +2408,8 @@ export type ResolversParentTypes = ResolversObject<{
   Block_height: Block_height;
   Boolean: Scalars['Boolean'];
   Bytes: Scalars['Bytes'];
+  Deposit: Deposit;
+  Deposit_filter: Deposit_filter;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
@@ -2307,6 +2466,8 @@ export type ActionResolvers<ContextType = MeshContext, ParentType extends Resolv
   tokenAddress?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   actionType?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  initiatedAt?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2321,6 +2482,16 @@ export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export interface BytesScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Bytes'], any> {
   name: 'Bytes';
 }
+
+export type DepositResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Deposit'] = ResolversParentTypes['Deposit']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  orgId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  amount?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  initiator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  completedAt?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type OrganizationResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -2370,6 +2541,8 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
   treasuryTokens?: Resolver<Array<ResolversTypes['TreasuryToken']>, ParentType, ContextType, RequireFields<QuerytreasuryTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasury?: Resolver<Maybe<ResolversTypes['Treasury']>, ParentType, ContextType, RequireFields<QuerytreasuryArgs, 'id' | 'subgraphError'>>;
   treasuries?: Resolver<Array<ResolversTypes['Treasury']>, ParentType, ContextType, RequireFields<QuerytreasuriesArgs, 'skip' | 'first' | 'subgraphError'>>;
+  deposit?: Resolver<Maybe<ResolversTypes['Deposit']>, ParentType, ContextType, RequireFields<QuerydepositArgs, 'id' | 'subgraphError'>>;
+  deposits?: Resolver<Array<ResolversTypes['Deposit']>, ParentType, ContextType, RequireFields<QuerydepositsArgs, 'skip' | 'first' | 'subgraphError'>>;
   action?: Resolver<Maybe<ResolversTypes['Action']>, ParentType, ContextType, RequireFields<QueryactionArgs, 'id' | 'subgraphError'>>;
   actions?: Resolver<Array<ResolversTypes['Action']>, ParentType, ContextType, RequireFields<QueryactionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType, RequireFields<QueryteamArgs, 'id' | 'subgraphError'>>;
@@ -2394,6 +2567,8 @@ export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends 
   treasuryTokens?: SubscriptionResolver<Array<ResolversTypes['TreasuryToken']>, "treasuryTokens", ParentType, ContextType, RequireFields<SubscriptiontreasuryTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   treasury?: SubscriptionResolver<Maybe<ResolversTypes['Treasury']>, "treasury", ParentType, ContextType, RequireFields<SubscriptiontreasuryArgs, 'id' | 'subgraphError'>>;
   treasuries?: SubscriptionResolver<Array<ResolversTypes['Treasury']>, "treasuries", ParentType, ContextType, RequireFields<SubscriptiontreasuriesArgs, 'skip' | 'first' | 'subgraphError'>>;
+  deposit?: SubscriptionResolver<Maybe<ResolversTypes['Deposit']>, "deposit", ParentType, ContextType, RequireFields<SubscriptiondepositArgs, 'id' | 'subgraphError'>>;
+  deposits?: SubscriptionResolver<Array<ResolversTypes['Deposit']>, "deposits", ParentType, ContextType, RequireFields<SubscriptiondepositsArgs, 'skip' | 'first' | 'subgraphError'>>;
   action?: SubscriptionResolver<Maybe<ResolversTypes['Action']>, "action", ParentType, ContextType, RequireFields<SubscriptionactionArgs, 'id' | 'subgraphError'>>;
   actions?: SubscriptionResolver<Array<ResolversTypes['Action']>, "actions", ParentType, ContextType, RequireFields<SubscriptionactionsArgs, 'skip' | 'first' | 'subgraphError'>>;
   team?: SubscriptionResolver<Maybe<ResolversTypes['Team']>, "team", ParentType, ContextType, RequireFields<SubscriptionteamArgs, 'id' | 'subgraphError'>>;
@@ -2533,6 +2708,7 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   BigDecimal?: GraphQLScalarType;
   BigInt?: GraphQLScalarType;
   Bytes?: GraphQLScalarType;
+  Deposit?: DepositResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
   OrganizationStat?: OrganizationStatResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
@@ -2694,6 +2870,18 @@ const merger = new(BareMerger as any)({
         },
         location: 'GetTreasurysDocument.graphql'
       },{
+        document: GetDepositsDocument,
+        get rawSDL() {
+          return printWithCache(GetDepositsDocument);
+        },
+        location: 'GetDepositsDocument.graphql'
+      },{
+        document: GetDepositDocument,
+        get rawSDL() {
+          return printWithCache(GetDepositDocument);
+        },
+        location: 'GetDepositDocument.graphql'
+      },{
         document: GetUserStatDocument,
         get rawSDL() {
           return printWithCache(GetUserStatDocument);
@@ -2744,7 +2932,7 @@ export type GetActionQueryVariables = Exact<{
 }>;
 
 
-export type GetActionQuery = { action?: Maybe<Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy'>> };
+export type GetActionQuery = { action?: Maybe<Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>> };
 
 export type GetActionsQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
@@ -2757,7 +2945,7 @@ export type GetActionsQueryVariables = Exact<{
 }>;
 
 
-export type GetActionsQuery = { actions: Array<Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy'>> };
+export type GetActionsQuery = { actions: Array<Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>> };
 
 export type GetOrganizationQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -2890,6 +3078,28 @@ export type GetTreasurysQuery = { treasuries: Array<(
     )>> }
   )> };
 
+export type GetDepositsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Deposit_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Deposit_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+}>;
+
+
+export type GetDepositsQuery = { deposits: Array<Pick<Deposit, 'id' | 'orgId' | 'amount' | 'token' | 'initiator' | 'completedAt'>> };
+
+export type GetDepositQueryVariables = Exact<{
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+}>;
+
+
+export type GetDepositQuery = { deposit?: Maybe<Pick<Deposit, 'id' | 'orgId' | 'amount' | 'token' | 'initiator' | 'completedAt'>> };
+
 export type GetUserStatQueryVariables = Exact<{
   id: Scalars['ID'];
   block?: InputMaybe<Block_height>;
@@ -2914,6 +3124,8 @@ export const GetActionDocument = gql`
     tokenAddress
     actionType
     approvedBy
+    initiatedAt
+    completedAt
   }
 }
     ` as unknown as DocumentNode<GetActionQuery, GetActionQueryVariables>;
@@ -2939,6 +3151,8 @@ export const GetActionsDocument = gql`
     tokenAddress
     actionType
     approvedBy
+    initiatedAt
+    completedAt
   }
 }
     ` as unknown as DocumentNode<GetActionsQuery, GetActionsQueryVariables>;
@@ -3246,6 +3460,38 @@ export const GetTreasurysDocument = gql`
   }
 }
     ` as unknown as DocumentNode<GetTreasurysQuery, GetTreasurysQueryVariables>;
+export const GetDepositsDocument = gql`
+    query GetDeposits($skip: Int = 0, $first: Int = 100, $orderBy: Deposit_orderBy, $orderDirection: OrderDirection, $where: Deposit_filter, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
+  deposits(
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    orgId
+    amount
+    token
+    initiator
+    completedAt
+  }
+}
+    ` as unknown as DocumentNode<GetDepositsQuery, GetDepositsQueryVariables>;
+export const GetDepositDocument = gql`
+    query GetDeposit($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
+  deposit(id: $id, block: $block, subgraphError: $subgraphError) {
+    id
+    orgId
+    amount
+    token
+    initiator
+    completedAt
+  }
+}
+    ` as unknown as DocumentNode<GetDepositQuery, GetDepositQueryVariables>;
 export const GetUserStatDocument = gql`
     query GetUserStat($id: ID!, $block: Block_height, $subgraphError: _SubgraphErrorPolicy_! = deny) {
   userStat(id: $id, block: $block, subgraphError: $subgraphError) {
@@ -3260,6 +3506,8 @@ export const GetUserStatDocument = gql`
   }
 }
     ` as unknown as DocumentNode<GetUserStatQuery, GetUserStatQueryVariables>;
+
+
 
 
 
@@ -3304,6 +3552,12 @@ export function getSdk<C, E>(requester: Requester<C, E>) {
     },
     GetTreasurys(variables?: GetTreasurysQueryVariables, options?: C): Promise<GetTreasurysQuery> {
       return requester<GetTreasurysQuery, GetTreasurysQueryVariables>(GetTreasurysDocument, variables, options) as Promise<GetTreasurysQuery>;
+    },
+    GetDeposits(variables?: GetDepositsQueryVariables, options?: C): Promise<GetDepositsQuery> {
+      return requester<GetDepositsQuery, GetDepositsQueryVariables>(GetDepositsDocument, variables, options) as Promise<GetDepositsQuery>;
+    },
+    GetDeposit(variables: GetDepositQueryVariables, options?: C): Promise<GetDepositQuery> {
+      return requester<GetDepositQuery, GetDepositQueryVariables>(GetDepositDocument, variables, options) as Promise<GetDepositQuery>;
     },
     GetUserStat(variables: GetUserStatQueryVariables, options?: C): Promise<GetUserStatQuery> {
       return requester<GetUserStatQuery, GetUserStatQueryVariables>(GetUserStatDocument, variables, options) as Promise<GetUserStatQuery>;

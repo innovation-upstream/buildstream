@@ -26,6 +26,64 @@ export const createAction = async (
   return actionId.toNumber()
 }
 
+export const createUpdateRewardAction = async (
+  orgId: number,
+  value: ethers.BigNumber,
+  tokenAddress: string,
+  provider?: any
+): Promise<number> => {
+  const contract = getContract(
+    ActionContractInterface.address,
+    ActionContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract[
+    'createAction(uint256,address,uint8,bytes,uint256)'
+  ](
+    orgId,
+    ethers.constants.AddressZero,
+    ActionType.UPDATE_REWARD_MULTIPLIER,
+    ethers.utils.toUtf8Bytes(''),
+    value
+  )
+
+  const receipt = await tx.wait()
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
+  const actionId: BigNumber = event?.args?.[1]
+
+  return actionId.toNumber()
+}
+
+export const createUpdateNameOrDescriptionAction = async (
+  orgId: number,
+  value: string,
+  actionType: ActionType,
+  provider?: any
+): Promise<number> => {
+  const contract = getContract(
+    ActionContractInterface.address,
+    ActionContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract[
+    'createAction(uint256,address,uint8,bytes,uint256)'
+  ](
+    orgId,
+    ethers.constants.AddressZero,
+    actionType,
+    ethers.utils.toUtf8Bytes(value),
+    BigNumber.from(0)
+  )
+
+  const receipt = await tx.wait()
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
+  const actionId: BigNumber = event?.args?.[1]
+
+  return actionId.toNumber()
+}
+
 export const createWithdrawalAction = async (
   orgId: number,
   targetAddress: string,
