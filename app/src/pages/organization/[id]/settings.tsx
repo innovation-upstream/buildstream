@@ -131,7 +131,7 @@ const OrganizationPage: NextPage<PageProps> = ({
           </div>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6'>
-          <h2 className='text-[40px] font-bold mb-8'>
+          <h2 className='text-[40px] leading-none font-bold mb-8'>
             {t('organization_settings')}
           </h2>
           <TabControl

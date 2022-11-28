@@ -94,7 +94,7 @@ const TreasuryHistory = ({
       <h3 className='font-semibold text-2xl mb-5'>
         {t('deposit_withdrawal_history')}
       </h3>
-      <div className='rounded-[10px] bg-[#F5F7F9] py-5 px-6'>
+      <div className='rounded-[10px] bg-[#F5F7F9] py-5 px-6 overflow-auto scrollbar-hide'>
         <ul>
           {combinedHistory.map((c, index) => {
             const date = new Date(
@@ -132,8 +132,8 @@ const TreasuryHistory = ({
                           {`${rowDate.getHours()}:${rowDate.getMinutes()}`}
                         </td>
                         <td>{isWithdrawal ? t('Withdrawal') : t('Deposit')}</td>
-                        <td className='w-[15ch]'>
-                          <div className='flex gap-x-1.5 items-center'>
+                        <td className='w-[15ch] pl-5'>
+                          <div className='flex gap-x-1.5 items-center whitespace-nowrap'>
                             <span className={isWithdrawal ? '' : 'rotate-180'}>
                               <CaretFilled
                                 className={
