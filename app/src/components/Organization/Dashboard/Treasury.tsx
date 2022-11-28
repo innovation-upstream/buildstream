@@ -9,6 +9,7 @@ import TreasuryAbi from 'contracts/Treasury.json'
 import Deposit from 'components/Deposit/Deposit'
 import { useTranslation } from 'react-i18next'
 import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import Link from 'next/link'
 
 interface TreasuryProps {
   organization: Organization
@@ -21,8 +22,8 @@ const Treasury = ({ organization }: TreasuryProps) => {
   const { t } = useTranslation('organization')
 
   const token = tokens?.find((t) => t.token === selected)
-  const { tokenInfos } = useTokenInfos(tokens?.map(t => t.token))
-  const tokenInfo = tokenInfos?.find(i => i.address === selected)
+  const { tokenInfos } = useTokenInfos(tokens?.map((t) => t.token))
+  const tokenInfo = tokenInfos?.find((i) => i.address === selected)
   const balance = ethers.utils.formatUnits(
     BigNumber.from(token?.balance || 0)?.toString(),
     tokenInfo?.decimal
@@ -32,7 +33,11 @@ const Treasury = ({ organization }: TreasuryProps) => {
     <div className='paper'>
       <div className='flex items-center justify-between mb-5'>
         <p className='text-2xl font-semibold'>{t('treasury')}</p>
-        <Gear />
+        <Link href={`/organization/${organization.id}/settings`}>
+          <button>
+            <Gear />
+          </button>
+        </Link>
       </div>
       <div className='flex items-center mb-5'>
         <div className='flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#28C76F] to-[#81FBB8]'>
@@ -58,7 +63,7 @@ const Treasury = ({ organization }: TreasuryProps) => {
       >
         {tokens?.map((t) => (
           <option value={t.token} key={t.token}>
-            {tokenInfos?.find(i => i.address === t.token)?.symbol}
+            {tokenInfos?.find((i) => i.address === t.token)?.symbol}
           </option>
         ))}
       </select>

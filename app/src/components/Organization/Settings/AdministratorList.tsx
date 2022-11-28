@@ -25,7 +25,7 @@ const AdministratorList = ({ organization }: IAdministratorListProps) => {
       <h3 className='font-semibold text-2xl mb-5'>{t('administrators')}</h3>
       <p className='text-sm mt-2 text-[#646873] w-3/5'>{adminInfo}</p>
 
-      <div className='rounded-[10px] bg-[#F5F7F9] py-5 px-6 mt-6'>
+      <div className='rounded-[10px] bg-[#F5F7F9] py-5 px-6 mt-6 overflow-auto scrollbar-hide'>
         <table className='w-full'>
           <thead className='border-b border-[#E7E7E8]/50'>
             <td className='text-sm py-3.5'>{t('address')}</td>
