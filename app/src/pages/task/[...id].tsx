@@ -211,12 +211,10 @@ const TaskPage: NextPage<PageProps> = ({
       </Head>
       <div className='grid-layout py-24'>
         <div className='w-fit col-span-4 md:col-span-8 lg:col-span-12 2xl:col-span-2'>
-          <Link href='/task'>
-            <a className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'>
+            <button onClick={router.back} className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'>
               <Back />
               {t('back_to_all_tasks')}
-            </a>
-          </Link>
+            </button>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
           <TaskCard
