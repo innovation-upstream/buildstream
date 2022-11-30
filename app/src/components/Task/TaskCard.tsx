@@ -5,6 +5,7 @@ import TokenGeneric from 'SVGs/TokenGeneric'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
+import { useRouter } from 'next/router';
 
 interface TaskCardProps {
   task: Task
@@ -57,12 +58,20 @@ const TaskCard = ({
     .formatEther(task?.rewardAmount.toString())
     .toString()
   const { t } = useTranslation('tasks')
+  const { pathname } = useRouter()
 
   return (
     <div className='paper cursor-pointer hover:drop-shadow-xl hover:brightness-[0.98]' onClick={() => onClick?.(task.id)}>
       <div className='flex mb-2'>
-        <div className='flex'>{task.organization.name}</div>
-      </div>
+        {
+          pathname.includes('organization') ?  <span>{task.organization.name}</span> :
+        <div className='flex'>
+          <Link href={`/organization/${task.orgId}`}>
+            <a className='hover:text-blue-700 hover:underline'>{task.organization.name}</a>
+          </Link>
+        </div>
+        }
+      </div> 
       <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
         {task.title}
         <span className='text-base whitespace-pre font-medium text-[#70C550]'>

@@ -70,10 +70,7 @@ const Home: NextPage = () => {
           content='Buildstream for Freelancers and Companies'
         />
       </Head>
-      <WalletModal
-        show={showModal}
-        toggleModal={() => setShowModal(!showModal)}
-      />
+      {showModal && <WalletModal close={() => setShowModal(!showModal)} />}
       <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
         <section className='grid-layout mt-0 md:mt-28 gap-0'>
           <span className='col-span-12 md:col-span-8 block text-[#17191A] tracking-[-4px] text-4xl md:text-[112px] leading-normal md:leading-[111px] font-bold'>
@@ -134,9 +131,7 @@ const Home: NextPage = () => {
               <span className='block font-bold text-4xl text-sm'>
                 {t('find_team_sub')}
               </span>
-              <span className='font-normal opacity-50'>
-                {t('find_team')}
-              </span>
+              <span className='font-normal opacity-50'>{t('find_team')}</span>
             </div>
             <button
               className='btn-primary'

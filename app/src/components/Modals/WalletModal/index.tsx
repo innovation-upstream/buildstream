@@ -12,7 +12,7 @@ import {
   ModalBackDrop
 } from './styled'
 
-const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
+const WalletModal: React.FC<IModalProps> = ({ close }) => {
   const { account: address, activate } = useWeb3()
   const { t } = useTranslation()
 
@@ -25,16 +25,16 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
   }
 
   {
-    return show ? (
+    return (
       <div className='container flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 outline-none focus:outline-none z-50'>
-        <div className='relative w-full my-6 mx-auto z-50 max-w-[367px]'>
+        <div className='relative w-full my-6 lg:my-auto mx-auto z-50 max-w-[367px]'>
           <ModalContent>
             <div className='py-5 flex justify-between align-center'>
               <div></div>
               <div className='font-bold	text-xl'>
                 {t('common:connect_wallet')}
               </div>
-              <button onClick={toggleModal}>
+              <button onClick={close}>
                 <CloseIcon />
               </button>
             </div>
@@ -83,9 +83,9 @@ const WalletModal: React.FC<IModalProps> = ({ show = false, toggleModal }) => {
             </ModalBody>
           </ModalContent>
         </div>
-        <ModalBackDrop onClick={toggleModal}></ModalBackDrop>
+        <ModalBackDrop onClick={close}></ModalBackDrop>
       </div>
-    ) : null
+    )
   }
 }
 

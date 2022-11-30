@@ -12,20 +12,6 @@ export const Navbar = styled.nav`
   `}
 `
 
-export const MenuLinkContainer = styled.div.attrs({
-  className:
-    'flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'
-})`
-  ${({ theme }) => css`
-    a {
-      color: ${theme.color.text.grey2};
-    }
-    a:hover {
-      color: ${theme.color.text.primary};
-    }
-  `}
-`
-
 export const ConnectWalletButton = styled.button.attrs({
   className: 'btn-outline'
 })`

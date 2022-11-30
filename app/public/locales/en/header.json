@@ -2,5 +2,9 @@
   "about": "About",
   "faq": "FAQ",
   "support": "Support",
-  "connect_your_wallet": "Connect your Wallet"
+  "connect_your_wallet": "Connect your Wallet",
+  "find_tasks": "Find Tasks",
+  "my_work": "My Work",
+  "your_tasks": "Your Tasks",
+  "contributors": "Contributors"
 }

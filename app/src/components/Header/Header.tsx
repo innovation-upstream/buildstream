@@ -7,18 +7,18 @@ import { useTranslation } from 'react-i18next'
 import Hamburger from 'SVGs/Hamburger'
 import ChevronDown from '../IconSvg/ChevronDown'
 import Logo from '../IconSvg/Logo'
-import { ConnectWalletButton, MenuLinkContainer, Navbar } from './styled'
-
-const navMenu = [
-  { label: 'about', url: '/' },
-  { label: 'faq', url: '/' },
-  { label: 'support', url: '/' }
-]
+import MobileNav from './MobileNav'
+import { ConnectWalletButton, Navbar } from './styled'
+import { useRouter } from 'next/router'
+import { activeMenuItems } from './menuItems'
 
 const Header = () => {
   const { account: address, deactivate } = useWeb3()
   const { t } = useTranslation('header')
-  const [showModal, setShowModal] = useState(false)
+  const [showWalletModal, setWalletModal] = useState(false)
+  const [showMobileNav, setModalNav] = useState(false)
+  const { pathname } = useRouter()
+  const navMenu = activeMenuItems(pathname)
 
   async function disconnect() {
     try {
@@ -30,29 +30,45 @@ const Header = () => {
 
   return (
     <Navbar>
-      <WalletModal
-        show={showModal}
-        toggleModal={() => setShowModal(!showModal)}
-      />
+      {showWalletModal && <WalletModal close={() => setWalletModal(false)} />}
+      {showMobileNav && (
+        <MobileNav
+          close={() => setModalNav(!showMobileNav)}
+          connectWallet={() => setWalletModal(!showWalletModal)}
+        />
+      )}
       <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center justify-between md:justify-start'>
         <Link href='/'>
           <a>
             <Logo />
           </a>
         </Link>
-        <button className='md:hidden'>
+        <button
+          className='lg:hidden px-2 py-3 border-gray-100 border-2 rounded-lg'
+          onClick={() => setModalNav(!showMobileNav)}
+        >
           <Hamburger />
         </button>
         <div className='ml-24 hidden md:flex flex-grow justify-between items-center'>
-          <MenuLinkContainer>
+          <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
             {navMenu.map((menu, index) => {
               return (
-                <Link href={menu.url} key={index}>
-                  <a>{t(menu.label)}</a>
-                </Link>
+                <li key={index} className={`font-semibold hover:text-gray-900`}>
+                  <Link href={menu.url}>
+                    <a
+                      className={`${
+                        pathname.includes(menu.url)
+                          ? 'active:text-gray-900'
+                          : 'text-[#686C6F]'
+                      }`}
+                    >
+                      {t(menu.label)}
+                    </a>
+                  </Link>
+                </li>
               )
             })}
-          </MenuLinkContainer>
+          </ul>
 
           {address ? (
             <button
@@ -67,7 +83,9 @@ const Header = () => {
               <ChevronDown />
             </button>
           ) : (
-            <ConnectWalletButton onClick={() => setShowModal(!showModal)}>
+            <ConnectWalletButton
+              onClick={() => setWalletModal(!showWalletModal)}
+            >
               Connect your wallet
             </ConnectWalletButton>
           )}

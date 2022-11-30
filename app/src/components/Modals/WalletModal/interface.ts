@@ -1,4 +1,3 @@
 export interface IModalProps {
-  show: boolean
-  toggleModal: () => any
+  close: () => void
 }
