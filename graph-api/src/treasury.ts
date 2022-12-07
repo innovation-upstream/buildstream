@@ -1,11 +1,12 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { Deposit, TreasuryToken } from '../generated/schema'
+import { Deposit, Notification, TreasuryToken } from '../generated/schema'
 import {
   TreasuryDeposit as TreasuryDepositEvent,
   TreasuryTokenLocked as TreasuryTokenLockedEvent,
   TreasuryTokenUnlocked as TreasuryTokenUnlockedEvent,
   TreasuryWithdraw as TreasuryWithdrawEvent
 } from '../generated/Treasury/Treasury'
+import { TREASURY, DEPOSIT } from '../helpers/notification'
 
 export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   const orgId = event.params.orgId.toString()
@@ -30,6 +31,14 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   depositEntity.initiator = event.transaction.from.toHexString()
   depositEntity.completedAt = event.block.timestamp
   depositEntity.save()
+
+  const notificationEntity = new Notification(
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  )
+  notificationEntity.tags = [TREASURY, DEPOSIT]
+  notificationEntity.orgId = event.params.orgId.toString()
+  notificationEntity.deposit = depositEntity.id
+  notificationEntity.save()
 }
 
 export function handleTreasuryWithdraw(event: TreasuryWithdrawEvent): void {

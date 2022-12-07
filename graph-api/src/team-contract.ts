@@ -8,6 +8,10 @@ import {
   TeamUpdated as TeamUpdatedEvent
 } from '../generated/TeamContract/TeamContract'
 import { Organization, Task, Team } from '../generated/schema'
+import {
+  createTaskNotificationEntity,
+  createTaskSnapshot
+} from './task-storage-contract'
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
@@ -24,6 +28,13 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   } ~ ${taskEntity.assignee as string} ~ ${entity.name as string} ~ ${taskEntity.teamAssignee as string}`
 
   taskEntity.save()
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
+  const notificationEntity = createTaskNotificationEntity(
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTeamArchived(event: TeamArchivedEvent): void {

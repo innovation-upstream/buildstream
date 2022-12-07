@@ -1,12 +1,13 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   ActionConfirmation as ActionConfirmationEvent,
   ActionContract as Contract,
   ActionCreation as ActionCreationEvent,
   ActionExecution as ActionExecutionEvent
 } from '../generated/ActionContract/ActionContract'
-import { Action, Organization } from '../generated/schema'
+import { Action, Organization, Notification, ActionSnapshot } from '../generated/schema'
 import { Organization as OrganizationContract } from '../generated/Organization/Organization'
+import { ACTION, TREASURY } from '../helpers/notification'
 
 const organizationAddress = '0xbE4929ae823B0b5E796b27C9567A6098B6173780'
 
@@ -27,6 +28,25 @@ enum ActionType {
   UPDATE_TAG_REWARD_MULTIPLIER
 }
 
+function createActionSnapshot(
+  event: ethereum.Event,
+  actionEntity: Action
+): ActionSnapshot {
+  const id = event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  const actionSnapshotEntity = new ActionSnapshot(id)
+  const entries = actionEntity.entries
+  for (let i = 0; i < entries.length; i++) {
+    if (entries[i].key === 'id') continue
+    actionSnapshotEntity.set(entries[i].key, entries[i].value)
+  }
+  actionSnapshotEntity.id = id
+  actionSnapshotEntity.block = event.block.number
+  actionSnapshotEntity.timestamp = event.block.timestamp
+  actionSnapshotEntity.actor = event.transaction.from.toHexString()
+
+  return actionSnapshotEntity
+}
+
 export function handleActionConfirmation(event: ActionConfirmationEvent): void {
   let entity = Action.load(event.params.actionId.toString())
   if (!entity) return
@@ -35,6 +55,19 @@ export function handleActionConfirmation(event: ActionConfirmationEvent): void {
   approvers.push(event.params.sender.toHexString())
   entity.approvedBy = approvers
   entity.save()
+
+  const actionSnapshotEntity = createActionSnapshot(event, entity)
+  actionSnapshotEntity.save()
+
+  const notificationEntity = new Notification(event.params.actionId.toString())
+  const tags = [ACTION]
+  if (entity.actionType === ActionType.WITHDRAWAL)
+    tags.push(TREASURY)
+  notificationEntity.tags = tags
+  notificationEntity.action = entity.id
+  notificationEntity.orgId = entity.orgId.toString()
+  notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.save()
 }
 
 export function handleActionCreation(event: ActionCreationEvent): void {
@@ -53,6 +86,19 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   entity.actionType = action.actionType
   entity.initiatedAt = event.block.timestamp
   entity.save()
+
+  const actionSnapshotEntity = createActionSnapshot(event, entity)
+  actionSnapshotEntity.save()
+
+  const notificationEntity = new Notification(event.params.actionId.toString())
+  const tags = [ACTION]
+  if (action.actionType === ActionType.WITHDRAWAL)
+    tags.push(TREASURY)
+  notificationEntity.tags = tags
+  notificationEntity.action = entity.id
+  notificationEntity.orgId = entity.orgId.toString()
+  notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.save()
 }
 
 export function handleActionExecution(event: ActionExecutionEvent): void {
@@ -61,6 +107,19 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
   entity.executed = true
   entity.completedAt = event.block.timestamp
   entity.save()
+
+  const actionSnapshotEntity = createActionSnapshot(event, entity)
+  actionSnapshotEntity.save()
+
+  const notificationEntity = new Notification(event.params.actionId.toString())
+  const tags = [ACTION]
+  if (entity.actionType === ActionType.WITHDRAWAL)
+    tags.push(TREASURY)
+  notificationEntity.tags = tags
+  notificationEntity.action = entity.id
+  notificationEntity.orgId = entity.orgId.toString()
+  notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.save()
 
   if (
     entity.actionType === ActionType.ADD_APPROVER ||
