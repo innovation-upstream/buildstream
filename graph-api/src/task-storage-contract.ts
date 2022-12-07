@@ -5,7 +5,8 @@ import {
   UserStat,
   OrganizationStat,
   Organization,
-  Team
+  Team,
+  Notification
 } from '../generated/schema'
 
 import {
@@ -27,6 +28,7 @@ import {
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { TASK } from '../helpers/notification'
 
 enum TaskStatus {
   PROPOSED,
@@ -37,7 +39,7 @@ enum TaskStatus {
   ARCHIVED
 }
 
-function createTaskSnapshot(
+export function createTaskSnapshot(
   event: ethereum.Event,
   taskEntity: Task
 ): TaskSnapshot {
@@ -54,6 +56,25 @@ function createTaskSnapshot(
   taskSnapshotEntity.actor = event.transaction.from.toHexString()
 
   return taskSnapshotEntity
+}
+
+export function createTaskNotificationEntity(
+  taskEntity: Task,
+  taskSnapshotEntity: TaskSnapshot
+): Notification {
+  const notificationEntity = new Notification(taskSnapshotEntity.id.toString())
+  if (taskSnapshotEntity.status >= TaskStatus.ASSIGNED) {
+    const users = [taskSnapshotEntity.assignee as string]
+    if (taskSnapshotEntity.teamAssignee)
+      users.push(taskSnapshotEntity.teamAssignee as string)
+    notificationEntity.users = users
+  }
+  notificationEntity.tags = [TASK]
+  notificationEntity.orgId = taskEntity.orgId
+  notificationEntity.task = taskEntity.id
+  notificationEntity.taskSnapshot = taskSnapshotEntity.id
+
+  return notificationEntity
 }
 
 function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
@@ -235,6 +256,12 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskAssignmentRequest(
@@ -249,6 +276,13 @@ export function handleTaskAssignmentRequest(
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.users = [event.params.assignee.toHexString()]
+  notificationEntity.save()
 }
 
 export function handleTaskClosed(event: TaskClosedEvent): void {

@@ -91,6 +91,8 @@ type TaskSnapshot @entity {
   description: String
   assigner: String
   assignee: String
+  teamAssignee: String
+  team: Team
   taskTags: [String!]!
   status: Int!
   complexityScore: BigInt
@@ -147,6 +149,25 @@ type Action @entity {
   completedAt: BigInt
 }
 
+type ActionSnapshot @entity {
+  id: ID!
+  actionId: BigInt!
+  orgId: BigInt!
+  initiator: String!
+  targetAddress: String
+  value: BigInt
+  data: Bytes
+  executed: Boolean!
+  tokenAddress: String
+  actionType: Int!
+  approvedBy: [String!]
+  initiatedAt: BigInt!
+  completedAt: BigInt
+  actor: String!
+  block: BigInt!
+  timestamp: BigInt!
+}
+
 type Team @entity {
   id: ID!
   teamId: BigInt!
@@ -156,4 +177,16 @@ type Team @entity {
   archived: Boolean!
   members: [String!]!
   teamRewardMultiplier: BigInt!
+}
+
+type Notification @entity {
+  id: ID!
+  tags: [String!]!
+  users: [String!]
+  orgId: Organization!
+  task: Task
+  action: Action
+  deposit: Deposit
+  taskSnapshot: TaskSnapshot
+  actionSnapshot: ActionSnapshot
 }
