@@ -31,6 +31,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   const notificationEntity = createTaskNotificationEntity(
+    event,
     taskEntity,
     taskSnapshotEntity
   )

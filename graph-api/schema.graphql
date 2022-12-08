@@ -189,4 +189,5 @@ type Notification @entity {
   deposit: Deposit
   taskSnapshot: TaskSnapshot
   actionSnapshot: ActionSnapshot
+  timestamp: BigInt!
 }

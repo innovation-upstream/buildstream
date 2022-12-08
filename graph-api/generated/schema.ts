@@ -2142,4 +2142,13 @@ export class Notification extends Entity {
       this.set("actionSnapshot", Value.fromString(<string>value));
     }
   }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
 }

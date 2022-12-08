@@ -5,9 +5,14 @@ import {
   ActionCreation as ActionCreationEvent,
   ActionExecution as ActionExecutionEvent
 } from '../generated/ActionContract/ActionContract'
-import { Action, Organization, Notification, ActionSnapshot } from '../generated/schema'
+import {
+  Action,
+  Organization,
+  Notification,
+  ActionSnapshot
+} from '../generated/schema'
 import { Organization as OrganizationContract } from '../generated/Organization/Organization'
-import { ACTION, TREASURY } from '../helpers/notification'
+import { ACTION, TREASURY, WITHDRAWAL } from '../helpers/notification'
 
 const organizationAddress = '0xbE4929ae823B0b5E796b27C9567A6098B6173780'
 
@@ -59,14 +64,15 @@ export function handleActionConfirmation(event: ActionConfirmationEvent): void {
   const actionSnapshotEntity = createActionSnapshot(event, entity)
   actionSnapshotEntity.save()
 
-  const notificationEntity = new Notification(event.params.actionId.toString())
-  const tags = [ACTION]
+  const notificationEntity = new Notification(actionSnapshotEntity.id)
+  let tags = [ACTION]
   if (entity.actionType === ActionType.WITHDRAWAL)
-    tags.push(TREASURY)
+    tags = tags.concat([TREASURY, WITHDRAWAL])
   notificationEntity.tags = tags
   notificationEntity.action = entity.id
   notificationEntity.orgId = entity.orgId.toString()
   notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.timestamp = event.block.timestamp
   notificationEntity.save()
 }
 
@@ -90,14 +96,15 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   const actionSnapshotEntity = createActionSnapshot(event, entity)
   actionSnapshotEntity.save()
 
-  const notificationEntity = new Notification(event.params.actionId.toString())
-  const tags = [ACTION]
+  const notificationEntity = new Notification(actionSnapshotEntity.id)
+  let tags = [ACTION]
   if (action.actionType === ActionType.WITHDRAWAL)
-    tags.push(TREASURY)
+    tags = tags.concat([TREASURY, WITHDRAWAL])
   notificationEntity.tags = tags
   notificationEntity.action = entity.id
   notificationEntity.orgId = entity.orgId.toString()
   notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.timestamp = event.block.timestamp
   notificationEntity.save()
 }
 
@@ -111,14 +118,15 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
   const actionSnapshotEntity = createActionSnapshot(event, entity)
   actionSnapshotEntity.save()
 
-  const notificationEntity = new Notification(event.params.actionId.toString())
-  const tags = [ACTION]
+  const notificationEntity = new Notification(actionSnapshotEntity.id)
+  let tags = [ACTION]
   if (entity.actionType === ActionType.WITHDRAWAL)
-    tags.push(TREASURY)
+    tags = tags.concat([TREASURY, WITHDRAWAL])
   notificationEntity.tags = tags
   notificationEntity.action = entity.id
   notificationEntity.orgId = entity.orgId.toString()
   notificationEntity.actionSnapshot = actionSnapshotEntity.id
+  notificationEntity.timestamp = event.block.timestamp
   notificationEntity.save()
 
   if (
