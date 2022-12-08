@@ -59,6 +59,7 @@ export function createTaskSnapshot(
 }
 
 export function createTaskNotificationEntity(
+  event: ethereum.Event,
   taskEntity: Task,
   taskSnapshotEntity: TaskSnapshot
 ): Notification {
@@ -73,7 +74,7 @@ export function createTaskNotificationEntity(
   notificationEntity.orgId = taskEntity.orgId
   notificationEntity.task = taskEntity.id
   notificationEntity.taskSnapshot = taskSnapshotEntity.id
-
+  notificationEntity.timestamp = event.block.timestamp
   return notificationEntity
 }
 
@@ -258,6 +259,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   updateStats(taskEntity, prevTEntity)
 
   const notificationEntity = createTaskNotificationEntity(
+    event,
     taskEntity,
     taskSnapshotEntity
   )
@@ -278,6 +280,7 @@ export function handleTaskAssignmentRequest(
   taskSnapshotEntity.save()
 
   const notificationEntity = createTaskNotificationEntity(
+    event,
     taskEntity,
     taskSnapshotEntity
   )
@@ -295,6 +298,13 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
@@ -323,6 +333,13 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
@@ -335,6 +352,13 @@ export function handleTaskConfirmation(event: TaskConfirmationEvent): void {
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskCreation(event: TaskCreationEvent): void {
@@ -371,6 +395,13 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, null)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskOpened(event: TaskOpenedEvent): void {
@@ -386,6 +417,13 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskRevocation(event: TaskRevocationEvent): void {
@@ -402,6 +440,13 @@ export function handleTaskRevocation(event: TaskRevocationEvent): void {
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskSubmission(event: TaskSubmissionEvent): void {
@@ -417,6 +462,13 @@ export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
@@ -440,6 +492,13 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskArchived(event: TaskArchivedEvent): void {
@@ -453,6 +512,13 @@ export function handleTaskArchived(event: TaskArchivedEvent): void {
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskRevisionRequested(
@@ -479,6 +545,13 @@ export function handleTaskRevisionRequested(
 
   revisionEntity.taskSnapshot = taskSnapshotEntity.id
   revisionEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskRevisionAccepted(
@@ -501,6 +574,13 @@ export function handleTaskRevisionAccepted(
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }
 
 export function handleTaskRevisionRejected(

@@ -38,6 +38,7 @@ export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   notificationEntity.tags = [TREASURY, DEPOSIT]
   notificationEntity.orgId = event.params.orgId.toString()
   notificationEntity.deposit = depositEntity.id
+  notificationEntity.timestamp = event.block.timestamp
   notificationEntity.save()
 }
 
