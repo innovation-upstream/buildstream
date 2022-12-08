@@ -28,6 +28,217 @@ type Action {
   completedAt: BigInt
 }
 
+type ActionSnapshot {
+  id: ID!
+  actionId: BigInt!
+  orgId: BigInt!
+  initiator: String!
+  targetAddress: String
+  value: BigInt
+  data: Bytes
+  executed: Boolean!
+  tokenAddress: String
+  actionType: Int!
+  approvedBy: [String!]
+  initiatedAt: BigInt!
+  completedAt: BigInt
+  actor: String!
+  block: BigInt!
+  timestamp: BigInt!
+}
+
+input ActionSnapshot_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  actionId: BigInt
+  actionId_not: BigInt
+  actionId_gt: BigInt
+  actionId_lt: BigInt
+  actionId_gte: BigInt
+  actionId_lte: BigInt
+  actionId_in: [BigInt!]
+  actionId_not_in: [BigInt!]
+  orgId: BigInt
+  orgId_not: BigInt
+  orgId_gt: BigInt
+  orgId_lt: BigInt
+  orgId_gte: BigInt
+  orgId_lte: BigInt
+  orgId_in: [BigInt!]
+  orgId_not_in: [BigInt!]
+  initiator: String
+  initiator_not: String
+  initiator_gt: String
+  initiator_lt: String
+  initiator_gte: String
+  initiator_lte: String
+  initiator_in: [String!]
+  initiator_not_in: [String!]
+  initiator_contains: String
+  initiator_contains_nocase: String
+  initiator_not_contains: String
+  initiator_not_contains_nocase: String
+  initiator_starts_with: String
+  initiator_starts_with_nocase: String
+  initiator_not_starts_with: String
+  initiator_not_starts_with_nocase: String
+  initiator_ends_with: String
+  initiator_ends_with_nocase: String
+  initiator_not_ends_with: String
+  initiator_not_ends_with_nocase: String
+  targetAddress: String
+  targetAddress_not: String
+  targetAddress_gt: String
+  targetAddress_lt: String
+  targetAddress_gte: String
+  targetAddress_lte: String
+  targetAddress_in: [String!]
+  targetAddress_not_in: [String!]
+  targetAddress_contains: String
+  targetAddress_contains_nocase: String
+  targetAddress_not_contains: String
+  targetAddress_not_contains_nocase: String
+  targetAddress_starts_with: String
+  targetAddress_starts_with_nocase: String
+  targetAddress_not_starts_with: String
+  targetAddress_not_starts_with_nocase: String
+  targetAddress_ends_with: String
+  targetAddress_ends_with_nocase: String
+  targetAddress_not_ends_with: String
+  targetAddress_not_ends_with_nocase: String
+  value: BigInt
+  value_not: BigInt
+  value_gt: BigInt
+  value_lt: BigInt
+  value_gte: BigInt
+  value_lte: BigInt
+  value_in: [BigInt!]
+  value_not_in: [BigInt!]
+  data: Bytes
+  data_not: Bytes
+  data_in: [Bytes!]
+  data_not_in: [Bytes!]
+  data_contains: Bytes
+  data_not_contains: Bytes
+  executed: Boolean
+  executed_not: Boolean
+  executed_in: [Boolean!]
+  executed_not_in: [Boolean!]
+  tokenAddress: String
+  tokenAddress_not: String
+  tokenAddress_gt: String
+  tokenAddress_lt: String
+  tokenAddress_gte: String
+  tokenAddress_lte: String
+  tokenAddress_in: [String!]
+  tokenAddress_not_in: [String!]
+  tokenAddress_contains: String
+  tokenAddress_contains_nocase: String
+  tokenAddress_not_contains: String
+  tokenAddress_not_contains_nocase: String
+  tokenAddress_starts_with: String
+  tokenAddress_starts_with_nocase: String
+  tokenAddress_not_starts_with: String
+  tokenAddress_not_starts_with_nocase: String
+  tokenAddress_ends_with: String
+  tokenAddress_ends_with_nocase: String
+  tokenAddress_not_ends_with: String
+  tokenAddress_not_ends_with_nocase: String
+  actionType: Int
+  actionType_not: Int
+  actionType_gt: Int
+  actionType_lt: Int
+  actionType_gte: Int
+  actionType_lte: Int
+  actionType_in: [Int!]
+  actionType_not_in: [Int!]
+  approvedBy: [String!]
+  approvedBy_not: [String!]
+  approvedBy_contains: [String!]
+  approvedBy_contains_nocase: [String!]
+  approvedBy_not_contains: [String!]
+  approvedBy_not_contains_nocase: [String!]
+  initiatedAt: BigInt
+  initiatedAt_not: BigInt
+  initiatedAt_gt: BigInt
+  initiatedAt_lt: BigInt
+  initiatedAt_gte: BigInt
+  initiatedAt_lte: BigInt
+  initiatedAt_in: [BigInt!]
+  initiatedAt_not_in: [BigInt!]
+  completedAt: BigInt
+  completedAt_not: BigInt
+  completedAt_gt: BigInt
+  completedAt_lt: BigInt
+  completedAt_gte: BigInt
+  completedAt_lte: BigInt
+  completedAt_in: [BigInt!]
+  completedAt_not_in: [BigInt!]
+  actor: String
+  actor_not: String
+  actor_gt: String
+  actor_lt: String
+  actor_gte: String
+  actor_lte: String
+  actor_in: [String!]
+  actor_not_in: [String!]
+  actor_contains: String
+  actor_contains_nocase: String
+  actor_not_contains: String
+  actor_not_contains_nocase: String
+  actor_starts_with: String
+  actor_starts_with_nocase: String
+  actor_not_starts_with: String
+  actor_not_starts_with_nocase: String
+  actor_ends_with: String
+  actor_ends_with_nocase: String
+  actor_not_ends_with: String
+  actor_not_ends_with_nocase: String
+  block: BigInt
+  block_not: BigInt
+  block_gt: BigInt
+  block_lt: BigInt
+  block_gte: BigInt
+  block_lte: BigInt
+  block_in: [BigInt!]
+  block_not_in: [BigInt!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+}
+
+enum ActionSnapshot_orderBy {
+  id
+  actionId
+  orgId
+  initiator
+  targetAddress
+  value
+  data
+  executed
+  tokenAddress
+  actionType
+  approvedBy
+  initiatedAt
+  completedAt
+  actor
+  block
+  timestamp
+}
+
 input Action_filter {
   id: ID
   id_not: ID
@@ -290,6 +501,191 @@ enum Deposit_orderBy {
   amount
   initiator
   completedAt
+}
+
+type Notification {
+  id: ID!
+  tags: [String!]!
+  users: [String!]
+  orgId: Organization!
+  task: Task
+  action: Action
+  deposit: Deposit
+  taskSnapshot: TaskSnapshot
+  actionSnapshot: ActionSnapshot
+  timestamp: BigInt!
+}
+
+input Notification_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  tags: [String!]
+  tags_not: [String!]
+  tags_contains: [String!]
+  tags_contains_nocase: [String!]
+  tags_not_contains: [String!]
+  tags_not_contains_nocase: [String!]
+  users: [String!]
+  users_not: [String!]
+  users_contains: [String!]
+  users_contains_nocase: [String!]
+  users_not_contains: [String!]
+  users_not_contains_nocase: [String!]
+  orgId: String
+  orgId_not: String
+  orgId_gt: String
+  orgId_lt: String
+  orgId_gte: String
+  orgId_lte: String
+  orgId_in: [String!]
+  orgId_not_in: [String!]
+  orgId_contains: String
+  orgId_contains_nocase: String
+  orgId_not_contains: String
+  orgId_not_contains_nocase: String
+  orgId_starts_with: String
+  orgId_starts_with_nocase: String
+  orgId_not_starts_with: String
+  orgId_not_starts_with_nocase: String
+  orgId_ends_with: String
+  orgId_ends_with_nocase: String
+  orgId_not_ends_with: String
+  orgId_not_ends_with_nocase: String
+  orgId_: Organization_filter
+  task: String
+  task_not: String
+  task_gt: String
+  task_lt: String
+  task_gte: String
+  task_lte: String
+  task_in: [String!]
+  task_not_in: [String!]
+  task_contains: String
+  task_contains_nocase: String
+  task_not_contains: String
+  task_not_contains_nocase: String
+  task_starts_with: String
+  task_starts_with_nocase: String
+  task_not_starts_with: String
+  task_not_starts_with_nocase: String
+  task_ends_with: String
+  task_ends_with_nocase: String
+  task_not_ends_with: String
+  task_not_ends_with_nocase: String
+  task_: Task_filter
+  action: String
+  action_not: String
+  action_gt: String
+  action_lt: String
+  action_gte: String
+  action_lte: String
+  action_in: [String!]
+  action_not_in: [String!]
+  action_contains: String
+  action_contains_nocase: String
+  action_not_contains: String
+  action_not_contains_nocase: String
+  action_starts_with: String
+  action_starts_with_nocase: String
+  action_not_starts_with: String
+  action_not_starts_with_nocase: String
+  action_ends_with: String
+  action_ends_with_nocase: String
+  action_not_ends_with: String
+  action_not_ends_with_nocase: String
+  action_: Action_filter
+  deposit: String
+  deposit_not: String
+  deposit_gt: String
+  deposit_lt: String
+  deposit_gte: String
+  deposit_lte: String
+  deposit_in: [String!]
+  deposit_not_in: [String!]
+  deposit_contains: String
+  deposit_contains_nocase: String
+  deposit_not_contains: String
+  deposit_not_contains_nocase: String
+  deposit_starts_with: String
+  deposit_starts_with_nocase: String
+  deposit_not_starts_with: String
+  deposit_not_starts_with_nocase: String
+  deposit_ends_with: String
+  deposit_ends_with_nocase: String
+  deposit_not_ends_with: String
+  deposit_not_ends_with_nocase: String
+  deposit_: Deposit_filter
+  taskSnapshot: String
+  taskSnapshot_not: String
+  taskSnapshot_gt: String
+  taskSnapshot_lt: String
+  taskSnapshot_gte: String
+  taskSnapshot_lte: String
+  taskSnapshot_in: [String!]
+  taskSnapshot_not_in: [String!]
+  taskSnapshot_contains: String
+  taskSnapshot_contains_nocase: String
+  taskSnapshot_not_contains: String
+  taskSnapshot_not_contains_nocase: String
+  taskSnapshot_starts_with: String
+  taskSnapshot_starts_with_nocase: String
+  taskSnapshot_not_starts_with: String
+  taskSnapshot_not_starts_with_nocase: String
+  taskSnapshot_ends_with: String
+  taskSnapshot_ends_with_nocase: String
+  taskSnapshot_not_ends_with: String
+  taskSnapshot_not_ends_with_nocase: String
+  taskSnapshot_: TaskSnapshot_filter
+  actionSnapshot: String
+  actionSnapshot_not: String
+  actionSnapshot_gt: String
+  actionSnapshot_lt: String
+  actionSnapshot_gte: String
+  actionSnapshot_lte: String
+  actionSnapshot_in: [String!]
+  actionSnapshot_not_in: [String!]
+  actionSnapshot_contains: String
+  actionSnapshot_contains_nocase: String
+  actionSnapshot_not_contains: String
+  actionSnapshot_not_contains_nocase: String
+  actionSnapshot_starts_with: String
+  actionSnapshot_starts_with_nocase: String
+  actionSnapshot_not_starts_with: String
+  actionSnapshot_not_starts_with_nocase: String
+  actionSnapshot_ends_with: String
+  actionSnapshot_ends_with_nocase: String
+  actionSnapshot_not_ends_with: String
+  actionSnapshot_not_ends_with_nocase: String
+  actionSnapshot_: ActionSnapshot_filter
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+}
+
+enum Notification_orderBy {
+  id
+  tags
+  users
+  orgId
+  task
+  action
+  deposit
+  taskSnapshot
+  actionSnapshot
+  timestamp
 }
 
 """Defines the order direction, either ascending or descending"""
@@ -849,6 +1245,32 @@ type Query {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Action!]!
+  actionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ActionSnapshot
+  actionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ActionSnapshot_orderBy
+    orderDirection: OrderDirection
+    where: ActionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ActionSnapshot!]!
   team(
     id: ID!
     """
@@ -875,6 +1297,32 @@ type Query {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Team!]!
+  notification(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Notification
+  notifications(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Notification_orderBy
+    orderDirection: OrderDirection
+    where: Notification_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Notification!]!
   """Access to subgraph metadata"""
   _meta(block: Block_height): _Meta_
 }
@@ -1140,6 +1588,32 @@ type Subscription {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Action!]!
+  actionSnapshot(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ActionSnapshot
+  actionSnapshots(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ActionSnapshot_orderBy
+    orderDirection: OrderDirection
+    where: ActionSnapshot_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ActionSnapshot!]!
   team(
     id: ID!
     """
@@ -1166,6 +1640,32 @@ type Subscription {
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
   ): [Team!]!
+  notification(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Notification
+  notifications(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Notification_orderBy
+    orderDirection: OrderDirection
+    where: Notification_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Notification!]!
   """Access to subgraph metadata"""
   _meta(block: Block_height): _Meta_
 }
@@ -1355,6 +1855,8 @@ type TaskSnapshot {
   description: String
   assigner: String
   assignee: String
+  teamAssignee: String
+  team: Team
   taskTags: [String!]!
   status: Int!
   complexityScore: BigInt
@@ -1526,6 +2028,47 @@ input TaskSnapshot_filter {
   assignee_ends_with_nocase: String
   assignee_not_ends_with: String
   assignee_not_ends_with_nocase: String
+  teamAssignee: String
+  teamAssignee_not: String
+  teamAssignee_gt: String
+  teamAssignee_lt: String
+  teamAssignee_gte: String
+  teamAssignee_lte: String
+  teamAssignee_in: [String!]
+  teamAssignee_not_in: [String!]
+  teamAssignee_contains: String
+  teamAssignee_contains_nocase: String
+  teamAssignee_not_contains: String
+  teamAssignee_not_contains_nocase: String
+  teamAssignee_starts_with: String
+  teamAssignee_starts_with_nocase: String
+  teamAssignee_not_starts_with: String
+  teamAssignee_not_starts_with_nocase: String
+  teamAssignee_ends_with: String
+  teamAssignee_ends_with_nocase: String
+  teamAssignee_not_ends_with: String
+  teamAssignee_not_ends_with_nocase: String
+  team: String
+  team_not: String
+  team_gt: String
+  team_lt: String
+  team_gte: String
+  team_lte: String
+  team_in: [String!]
+  team_not_in: [String!]
+  team_contains: String
+  team_contains_nocase: String
+  team_not_contains: String
+  team_not_contains_nocase: String
+  team_starts_with: String
+  team_starts_with_nocase: String
+  team_not_starts_with: String
+  team_not_starts_with_nocase: String
+  team_ends_with: String
+  team_ends_with_nocase: String
+  team_not_ends_with: String
+  team_not_ends_with_nocase: String
+  team_: Team_filter
   taskTags: [String!]
   taskTags_not: [String!]
   taskTags_contains: [String!]
@@ -1661,6 +2204,8 @@ enum TaskSnapshot_orderBy {
   description
   assigner
   assignee
+  teamAssignee
+  team
   taskTags
   status
   complexityScore

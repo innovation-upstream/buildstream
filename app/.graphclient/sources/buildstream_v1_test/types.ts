@@ -36,6 +36,216 @@ export type Action = {
   completedAt?: Maybe<Scalars['BigInt']>;
 };
 
+export type ActionSnapshot = {
+  id: Scalars['ID'];
+  actionId: Scalars['BigInt'];
+  orgId: Scalars['BigInt'];
+  initiator: Scalars['String'];
+  targetAddress?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['BigInt']>;
+  data?: Maybe<Scalars['Bytes']>;
+  executed: Scalars['Boolean'];
+  tokenAddress?: Maybe<Scalars['String']>;
+  actionType: Scalars['Int'];
+  approvedBy?: Maybe<Array<Scalars['String']>>;
+  initiatedAt: Scalars['BigInt'];
+  completedAt?: Maybe<Scalars['BigInt']>;
+  actor: Scalars['String'];
+  block: Scalars['BigInt'];
+  timestamp: Scalars['BigInt'];
+};
+
+export type ActionSnapshot_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  actionId?: InputMaybe<Scalars['BigInt']>;
+  actionId_not?: InputMaybe<Scalars['BigInt']>;
+  actionId_gt?: InputMaybe<Scalars['BigInt']>;
+  actionId_lt?: InputMaybe<Scalars['BigInt']>;
+  actionId_gte?: InputMaybe<Scalars['BigInt']>;
+  actionId_lte?: InputMaybe<Scalars['BigInt']>;
+  actionId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  actionId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  orgId?: InputMaybe<Scalars['BigInt']>;
+  orgId_not?: InputMaybe<Scalars['BigInt']>;
+  orgId_gt?: InputMaybe<Scalars['BigInt']>;
+  orgId_lt?: InputMaybe<Scalars['BigInt']>;
+  orgId_gte?: InputMaybe<Scalars['BigInt']>;
+  orgId_lte?: InputMaybe<Scalars['BigInt']>;
+  orgId_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  orgId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiator?: InputMaybe<Scalars['String']>;
+  initiator_not?: InputMaybe<Scalars['String']>;
+  initiator_gt?: InputMaybe<Scalars['String']>;
+  initiator_lt?: InputMaybe<Scalars['String']>;
+  initiator_gte?: InputMaybe<Scalars['String']>;
+  initiator_lte?: InputMaybe<Scalars['String']>;
+  initiator_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_not_in?: InputMaybe<Array<Scalars['String']>>;
+  initiator_contains?: InputMaybe<Scalars['String']>;
+  initiator_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_contains?: InputMaybe<Scalars['String']>;
+  initiator_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  initiator_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with?: InputMaybe<Scalars['String']>;
+  initiator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with?: InputMaybe<Scalars['String']>;
+  initiator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress?: InputMaybe<Scalars['String']>;
+  targetAddress_not?: InputMaybe<Scalars['String']>;
+  targetAddress_gt?: InputMaybe<Scalars['String']>;
+  targetAddress_lt?: InputMaybe<Scalars['String']>;
+  targetAddress_gte?: InputMaybe<Scalars['String']>;
+  targetAddress_lte?: InputMaybe<Scalars['String']>;
+  targetAddress_in?: InputMaybe<Array<Scalars['String']>>;
+  targetAddress_not_in?: InputMaybe<Array<Scalars['String']>>;
+  targetAddress_contains?: InputMaybe<Scalars['String']>;
+  targetAddress_contains_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress_not_contains?: InputMaybe<Scalars['String']>;
+  targetAddress_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress_starts_with?: InputMaybe<Scalars['String']>;
+  targetAddress_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress_not_starts_with?: InputMaybe<Scalars['String']>;
+  targetAddress_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress_ends_with?: InputMaybe<Scalars['String']>;
+  targetAddress_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  targetAddress_not_ends_with?: InputMaybe<Scalars['String']>;
+  targetAddress_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['BigInt']>;
+  value_not?: InputMaybe<Scalars['BigInt']>;
+  value_gt?: InputMaybe<Scalars['BigInt']>;
+  value_lt?: InputMaybe<Scalars['BigInt']>;
+  value_gte?: InputMaybe<Scalars['BigInt']>;
+  value_lte?: InputMaybe<Scalars['BigInt']>;
+  value_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  value_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  data?: InputMaybe<Scalars['Bytes']>;
+  data_not?: InputMaybe<Scalars['Bytes']>;
+  data_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  data_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  data_contains?: InputMaybe<Scalars['Bytes']>;
+  data_not_contains?: InputMaybe<Scalars['Bytes']>;
+  executed?: InputMaybe<Scalars['Boolean']>;
+  executed_not?: InputMaybe<Scalars['Boolean']>;
+  executed_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  executed_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  tokenAddress?: InputMaybe<Scalars['String']>;
+  tokenAddress_not?: InputMaybe<Scalars['String']>;
+  tokenAddress_gt?: InputMaybe<Scalars['String']>;
+  tokenAddress_lt?: InputMaybe<Scalars['String']>;
+  tokenAddress_gte?: InputMaybe<Scalars['String']>;
+  tokenAddress_lte?: InputMaybe<Scalars['String']>;
+  tokenAddress_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenAddress_not_in?: InputMaybe<Array<Scalars['String']>>;
+  tokenAddress_contains?: InputMaybe<Scalars['String']>;
+  tokenAddress_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_contains?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  tokenAddress_starts_with?: InputMaybe<Scalars['String']>;
+  tokenAddress_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_starts_with?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenAddress_ends_with?: InputMaybe<Scalars['String']>;
+  tokenAddress_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_ends_with?: InputMaybe<Scalars['String']>;
+  tokenAddress_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  actionType?: InputMaybe<Scalars['Int']>;
+  actionType_not?: InputMaybe<Scalars['Int']>;
+  actionType_gt?: InputMaybe<Scalars['Int']>;
+  actionType_lt?: InputMaybe<Scalars['Int']>;
+  actionType_gte?: InputMaybe<Scalars['Int']>;
+  actionType_lte?: InputMaybe<Scalars['Int']>;
+  actionType_in?: InputMaybe<Array<Scalars['Int']>>;
+  actionType_not_in?: InputMaybe<Array<Scalars['Int']>>;
+  approvedBy?: InputMaybe<Array<Scalars['String']>>;
+  approvedBy_not?: InputMaybe<Array<Scalars['String']>>;
+  approvedBy_contains?: InputMaybe<Array<Scalars['String']>>;
+  approvedBy_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  approvedBy_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  approvedBy_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  initiatedAt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_not?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  initiatedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  initiatedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_not?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lt?: InputMaybe<Scalars['BigInt']>;
+  completedAt_gte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_lte?: InputMaybe<Scalars['BigInt']>;
+  completedAt_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  actor?: InputMaybe<Scalars['String']>;
+  actor_not?: InputMaybe<Scalars['String']>;
+  actor_gt?: InputMaybe<Scalars['String']>;
+  actor_lt?: InputMaybe<Scalars['String']>;
+  actor_gte?: InputMaybe<Scalars['String']>;
+  actor_lte?: InputMaybe<Scalars['String']>;
+  actor_in?: InputMaybe<Array<Scalars['String']>>;
+  actor_not_in?: InputMaybe<Array<Scalars['String']>>;
+  actor_contains?: InputMaybe<Scalars['String']>;
+  actor_contains_nocase?: InputMaybe<Scalars['String']>;
+  actor_not_contains?: InputMaybe<Scalars['String']>;
+  actor_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  actor_starts_with?: InputMaybe<Scalars['String']>;
+  actor_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  actor_not_starts_with?: InputMaybe<Scalars['String']>;
+  actor_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  actor_ends_with?: InputMaybe<Scalars['String']>;
+  actor_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  actor_not_ends_with?: InputMaybe<Scalars['String']>;
+  actor_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  block?: InputMaybe<Scalars['BigInt']>;
+  block_not?: InputMaybe<Scalars['BigInt']>;
+  block_gt?: InputMaybe<Scalars['BigInt']>;
+  block_lt?: InputMaybe<Scalars['BigInt']>;
+  block_gte?: InputMaybe<Scalars['BigInt']>;
+  block_lte?: InputMaybe<Scalars['BigInt']>;
+  block_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  block_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  timestamp?: InputMaybe<Scalars['BigInt']>;
+  timestamp_not?: InputMaybe<Scalars['BigInt']>;
+  timestamp_gt?: InputMaybe<Scalars['BigInt']>;
+  timestamp_lt?: InputMaybe<Scalars['BigInt']>;
+  timestamp_gte?: InputMaybe<Scalars['BigInt']>;
+  timestamp_lte?: InputMaybe<Scalars['BigInt']>;
+  timestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type ActionSnapshot_orderBy =
+  | 'id'
+  | 'actionId'
+  | 'orgId'
+  | 'initiator'
+  | 'targetAddress'
+  | 'value'
+  | 'data'
+  | 'executed'
+  | 'tokenAddress'
+  | 'actionType'
+  | 'approvedBy'
+  | 'initiatedAt'
+  | 'completedAt'
+  | 'actor'
+  | 'block'
+  | 'timestamp';
+
 export type Action_filter = {
   id?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
@@ -291,6 +501,190 @@ export type Deposit_orderBy =
   | 'amount'
   | 'initiator'
   | 'completedAt';
+
+export type Notification = {
+  id: Scalars['ID'];
+  tags: Array<Scalars['String']>;
+  users?: Maybe<Array<Scalars['String']>>;
+  orgId: Organization;
+  task?: Maybe<Task>;
+  action?: Maybe<Action>;
+  deposit?: Maybe<Deposit>;
+  taskSnapshot?: Maybe<TaskSnapshot>;
+  actionSnapshot?: Maybe<ActionSnapshot>;
+  timestamp: Scalars['BigInt'];
+};
+
+export type Notification_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  tags_not?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  users?: InputMaybe<Array<Scalars['String']>>;
+  users_not?: InputMaybe<Array<Scalars['String']>>;
+  users_contains?: InputMaybe<Array<Scalars['String']>>;
+  users_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  users_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  users_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  orgId?: InputMaybe<Scalars['String']>;
+  orgId_not?: InputMaybe<Scalars['String']>;
+  orgId_gt?: InputMaybe<Scalars['String']>;
+  orgId_lt?: InputMaybe<Scalars['String']>;
+  orgId_gte?: InputMaybe<Scalars['String']>;
+  orgId_lte?: InputMaybe<Scalars['String']>;
+  orgId_in?: InputMaybe<Array<Scalars['String']>>;
+  orgId_not_in?: InputMaybe<Array<Scalars['String']>>;
+  orgId_contains?: InputMaybe<Scalars['String']>;
+  orgId_contains_nocase?: InputMaybe<Scalars['String']>;
+  orgId_not_contains?: InputMaybe<Scalars['String']>;
+  orgId_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  orgId_starts_with?: InputMaybe<Scalars['String']>;
+  orgId_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  orgId_not_starts_with?: InputMaybe<Scalars['String']>;
+  orgId_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  orgId_ends_with?: InputMaybe<Scalars['String']>;
+  orgId_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  orgId_not_ends_with?: InputMaybe<Scalars['String']>;
+  orgId_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  orgId_?: InputMaybe<Organization_filter>;
+  task?: InputMaybe<Scalars['String']>;
+  task_not?: InputMaybe<Scalars['String']>;
+  task_gt?: InputMaybe<Scalars['String']>;
+  task_lt?: InputMaybe<Scalars['String']>;
+  task_gte?: InputMaybe<Scalars['String']>;
+  task_lte?: InputMaybe<Scalars['String']>;
+  task_in?: InputMaybe<Array<Scalars['String']>>;
+  task_not_in?: InputMaybe<Array<Scalars['String']>>;
+  task_contains?: InputMaybe<Scalars['String']>;
+  task_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_not_contains?: InputMaybe<Scalars['String']>;
+  task_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  task_starts_with?: InputMaybe<Scalars['String']>;
+  task_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_starts_with?: InputMaybe<Scalars['String']>;
+  task_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  task_ends_with?: InputMaybe<Scalars['String']>;
+  task_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_not_ends_with?: InputMaybe<Scalars['String']>;
+  task_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  task_?: InputMaybe<Task_filter>;
+  action?: InputMaybe<Scalars['String']>;
+  action_not?: InputMaybe<Scalars['String']>;
+  action_gt?: InputMaybe<Scalars['String']>;
+  action_lt?: InputMaybe<Scalars['String']>;
+  action_gte?: InputMaybe<Scalars['String']>;
+  action_lte?: InputMaybe<Scalars['String']>;
+  action_in?: InputMaybe<Array<Scalars['String']>>;
+  action_not_in?: InputMaybe<Array<Scalars['String']>>;
+  action_contains?: InputMaybe<Scalars['String']>;
+  action_contains_nocase?: InputMaybe<Scalars['String']>;
+  action_not_contains?: InputMaybe<Scalars['String']>;
+  action_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  action_starts_with?: InputMaybe<Scalars['String']>;
+  action_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  action_not_starts_with?: InputMaybe<Scalars['String']>;
+  action_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  action_ends_with?: InputMaybe<Scalars['String']>;
+  action_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  action_not_ends_with?: InputMaybe<Scalars['String']>;
+  action_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  action_?: InputMaybe<Action_filter>;
+  deposit?: InputMaybe<Scalars['String']>;
+  deposit_not?: InputMaybe<Scalars['String']>;
+  deposit_gt?: InputMaybe<Scalars['String']>;
+  deposit_lt?: InputMaybe<Scalars['String']>;
+  deposit_gte?: InputMaybe<Scalars['String']>;
+  deposit_lte?: InputMaybe<Scalars['String']>;
+  deposit_in?: InputMaybe<Array<Scalars['String']>>;
+  deposit_not_in?: InputMaybe<Array<Scalars['String']>>;
+  deposit_contains?: InputMaybe<Scalars['String']>;
+  deposit_contains_nocase?: InputMaybe<Scalars['String']>;
+  deposit_not_contains?: InputMaybe<Scalars['String']>;
+  deposit_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  deposit_starts_with?: InputMaybe<Scalars['String']>;
+  deposit_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  deposit_not_starts_with?: InputMaybe<Scalars['String']>;
+  deposit_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  deposit_ends_with?: InputMaybe<Scalars['String']>;
+  deposit_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  deposit_not_ends_with?: InputMaybe<Scalars['String']>;
+  deposit_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  deposit_?: InputMaybe<Deposit_filter>;
+  taskSnapshot?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lt?: InputMaybe<Scalars['String']>;
+  taskSnapshot_gte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_lte?: InputMaybe<Scalars['String']>;
+  taskSnapshot_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_not_in?: InputMaybe<Array<Scalars['String']>>;
+  taskSnapshot_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with?: InputMaybe<Scalars['String']>;
+  taskSnapshot_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  taskSnapshot_?: InputMaybe<TaskSnapshot_filter>;
+  actionSnapshot?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not?: InputMaybe<Scalars['String']>;
+  actionSnapshot_gt?: InputMaybe<Scalars['String']>;
+  actionSnapshot_lt?: InputMaybe<Scalars['String']>;
+  actionSnapshot_gte?: InputMaybe<Scalars['String']>;
+  actionSnapshot_lte?: InputMaybe<Scalars['String']>;
+  actionSnapshot_in?: InputMaybe<Array<Scalars['String']>>;
+  actionSnapshot_not_in?: InputMaybe<Array<Scalars['String']>>;
+  actionSnapshot_contains?: InputMaybe<Scalars['String']>;
+  actionSnapshot_contains_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_contains?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_starts_with?: InputMaybe<Scalars['String']>;
+  actionSnapshot_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_starts_with?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_ends_with?: InputMaybe<Scalars['String']>;
+  actionSnapshot_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_ends_with?: InputMaybe<Scalars['String']>;
+  actionSnapshot_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  actionSnapshot_?: InputMaybe<ActionSnapshot_filter>;
+  timestamp?: InputMaybe<Scalars['BigInt']>;
+  timestamp_not?: InputMaybe<Scalars['BigInt']>;
+  timestamp_gt?: InputMaybe<Scalars['BigInt']>;
+  timestamp_lt?: InputMaybe<Scalars['BigInt']>;
+  timestamp_gte?: InputMaybe<Scalars['BigInt']>;
+  timestamp_lte?: InputMaybe<Scalars['BigInt']>;
+  timestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+};
+
+export type Notification_orderBy =
+  | 'id'
+  | 'tags'
+  | 'users'
+  | 'orgId'
+  | 'task'
+  | 'action'
+  | 'deposit'
+  | 'taskSnapshot'
+  | 'actionSnapshot'
+  | 'timestamp';
 
 /** Defines the order direction, either ascending or descending */
 export type OrderDirection =
@@ -606,8 +1000,12 @@ export type Query = {
   deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  actionSnapshot?: Maybe<ActionSnapshot>;
+  actionSnapshots: Array<ActionSnapshot>;
   team?: Maybe<Team>;
   teams: Array<Team>;
+  notification?: Maybe<Notification>;
+  notifications: Array<Notification>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -793,6 +1191,24 @@ export type QueryactionsArgs = {
 };
 
 
+export type QueryactionSnapshotArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryactionSnapshotsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<ActionSnapshot_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<ActionSnapshot_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type QueryteamArgs = {
   id: Scalars['ID'];
   block?: InputMaybe<Block_height>;
@@ -806,6 +1222,24 @@ export type QueryteamsArgs = {
   orderBy?: InputMaybe<Team_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerynotificationArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QuerynotificationsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Notification_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Notification_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -836,8 +1270,12 @@ export type Subscription = {
   deposits: Array<Deposit>;
   action?: Maybe<Action>;
   actions: Array<Action>;
+  actionSnapshot?: Maybe<ActionSnapshot>;
+  actionSnapshots: Array<ActionSnapshot>;
   team?: Maybe<Team>;
   teams: Array<Team>;
+  notification?: Maybe<Notification>;
+  notifications: Array<Notification>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -1023,6 +1461,24 @@ export type SubscriptionactionsArgs = {
 };
 
 
+export type SubscriptionactionSnapshotArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionactionSnapshotsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<ActionSnapshot_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<ActionSnapshot_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type SubscriptionteamArgs = {
   id: Scalars['ID'];
   block?: InputMaybe<Block_height>;
@@ -1036,6 +1492,24 @@ export type SubscriptionteamsArgs = {
   orderBy?: InputMaybe<Team_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<Team_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionnotificationArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionnotificationsArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Notification_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<Notification_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -1238,6 +1712,8 @@ export type TaskSnapshot = {
   description?: Maybe<Scalars['String']>;
   assigner?: Maybe<Scalars['String']>;
   assignee?: Maybe<Scalars['String']>;
+  teamAssignee?: Maybe<Scalars['String']>;
+  team?: Maybe<Team>;
   taskTags: Array<Scalars['String']>;
   status: Scalars['Int'];
   complexityScore?: Maybe<Scalars['BigInt']>;
@@ -1409,6 +1885,47 @@ export type TaskSnapshot_filter = {
   assignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with?: InputMaybe<Scalars['String']>;
   assignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee?: InputMaybe<Scalars['String']>;
+  teamAssignee_not?: InputMaybe<Scalars['String']>;
+  teamAssignee_gt?: InputMaybe<Scalars['String']>;
+  teamAssignee_lt?: InputMaybe<Scalars['String']>;
+  teamAssignee_gte?: InputMaybe<Scalars['String']>;
+  teamAssignee_lte?: InputMaybe<Scalars['String']>;
+  teamAssignee_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_not_in?: InputMaybe<Array<Scalars['String']>>;
+  teamAssignee_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with?: InputMaybe<Scalars['String']>;
+  teamAssignee_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team?: InputMaybe<Scalars['String']>;
+  team_not?: InputMaybe<Scalars['String']>;
+  team_gt?: InputMaybe<Scalars['String']>;
+  team_lt?: InputMaybe<Scalars['String']>;
+  team_gte?: InputMaybe<Scalars['String']>;
+  team_lte?: InputMaybe<Scalars['String']>;
+  team_in?: InputMaybe<Array<Scalars['String']>>;
+  team_not_in?: InputMaybe<Array<Scalars['String']>>;
+  team_contains?: InputMaybe<Scalars['String']>;
+  team_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_not_contains?: InputMaybe<Scalars['String']>;
+  team_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  team_starts_with?: InputMaybe<Scalars['String']>;
+  team_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_starts_with?: InputMaybe<Scalars['String']>;
+  team_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  team_ends_with?: InputMaybe<Scalars['String']>;
+  team_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_not_ends_with?: InputMaybe<Scalars['String']>;
+  team_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  team_?: InputMaybe<Team_filter>;
   taskTags?: InputMaybe<Array<Scalars['String']>>;
   taskTags_not?: InputMaybe<Array<Scalars['String']>>;
   taskTags_contains?: InputMaybe<Array<Scalars['String']>>;
@@ -1544,6 +2061,8 @@ export type TaskSnapshot_orderBy =
   | 'description'
   | 'assigner'
   | 'assignee'
+  | 'teamAssignee'
+  | 'team'
   | 'taskTags'
   | 'status'
   | 'complexityScore'
@@ -2301,9 +2820,17 @@ export type QueryBuildstreamV1TestSdk = {
   /** undefined **/
   actions: InContextSdkMethod<BuildstreamV1TestTypes.Query['actions'], BuildstreamV1TestTypes.QueryactionsArgs, MeshContext>,
   /** undefined **/
+  actionSnapshot: InContextSdkMethod<BuildstreamV1TestTypes.Query['actionSnapshot'], BuildstreamV1TestTypes.QueryactionSnapshotArgs, MeshContext>,
+  /** undefined **/
+  actionSnapshots: InContextSdkMethod<BuildstreamV1TestTypes.Query['actionSnapshots'], BuildstreamV1TestTypes.QueryactionSnapshotsArgs, MeshContext>,
+  /** undefined **/
   team: InContextSdkMethod<BuildstreamV1TestTypes.Query['team'], BuildstreamV1TestTypes.QueryteamArgs, MeshContext>,
   /** undefined **/
   teams: InContextSdkMethod<BuildstreamV1TestTypes.Query['teams'], BuildstreamV1TestTypes.QueryteamsArgs, MeshContext>,
+  /** undefined **/
+  notification: InContextSdkMethod<BuildstreamV1TestTypes.Query['notification'], BuildstreamV1TestTypes.QuerynotificationArgs, MeshContext>,
+  /** undefined **/
+  notifications: InContextSdkMethod<BuildstreamV1TestTypes.Query['notifications'], BuildstreamV1TestTypes.QuerynotificationsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<BuildstreamV1TestTypes.Query['_meta'], BuildstreamV1TestTypes.Query_metaArgs, MeshContext>
 };
@@ -2354,9 +2881,17 @@ export type SubscriptionBuildstreamV1TestSdk = {
   /** undefined **/
   actions: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['actions'], BuildstreamV1TestTypes.SubscriptionactionsArgs, MeshContext>,
   /** undefined **/
+  actionSnapshot: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['actionSnapshot'], BuildstreamV1TestTypes.SubscriptionactionSnapshotArgs, MeshContext>,
+  /** undefined **/
+  actionSnapshots: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['actionSnapshots'], BuildstreamV1TestTypes.SubscriptionactionSnapshotsArgs, MeshContext>,
+  /** undefined **/
   team: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['team'], BuildstreamV1TestTypes.SubscriptionteamArgs, MeshContext>,
   /** undefined **/
   teams: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['teams'], BuildstreamV1TestTypes.SubscriptionteamsArgs, MeshContext>,
+  /** undefined **/
+  notification: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['notification'], BuildstreamV1TestTypes.SubscriptionnotificationArgs, MeshContext>,
+  /** undefined **/
+  notifications: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['notifications'], BuildstreamV1TestTypes.SubscriptionnotificationsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['_meta'], BuildstreamV1TestTypes.Subscription_metaArgs, MeshContext>
 };

@@ -1,5 +1,7 @@
 {
   "connect_wallet": "Connect a Wallet",
   "coming_soon": "Coming soon",
-  "ready_to_use": "Ready to use"
+  "ready_to_use": "Ready to use",
+  "recent_activity": "Recent Activity",
+  "notification": "Notification"
 }

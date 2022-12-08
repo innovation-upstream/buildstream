@@ -1,0 +1,47 @@
+query GetNotifications(
+  $skip: Int = 0
+  $first: Int = 100
+  $orderBy: Notification_orderBy
+  $orderDirection: OrderDirection
+  $where: Notification_filter
+  $block: Block_height
+  $subgraphError: _SubgraphErrorPolicy_! = deny
+) {
+  notifications(
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
+    subgraphError: $subgraphError
+  ) {
+    id
+    tags
+    users
+    orgId {
+      ...OrganizationFragment
+    }
+    task {
+      ...TaskFragment
+    }
+    action {
+      ...ActionFragment
+    }
+    deposit {
+      id
+      orgId
+      amount
+      token
+      initiator
+      completedAt
+    }
+    taskSnapshot {
+      ...TaskSnapshotFragment
+    }
+    actionSnapshot {
+      ...ActionSnapshotFragment
+    }
+    timestamp
+  }
+}

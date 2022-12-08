@@ -7,9 +7,12 @@ import {
   TaskRevision as TaskRevisionType,
   TaskSnapshot as TaskSnapshotType,
   Treasury as TreasuryType,
-  UserStat
+  ActionSnapshot as ActionSnapshotType,
+  UserStat,
+  Notification as NotificationType
 } from 'graphclient'
-import { Action } from 'hooks/action/types'
+import { Action, ActionSnapshot } from 'hooks/action/types'
+import { Notification } from 'hooks/notification/types'
 import { Organization } from 'hooks/organization/types'
 import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
 import { DepositRecord, Treasury } from 'hooks/treasury/types'
@@ -64,6 +67,18 @@ export class Converter {
       completedAt: action.completedAt
         ? BigNumber.from(action.completedAt)
         : undefined
+    }
+  }
+
+  public static ActionSnapshotFromQuery = (
+    actionSnapshot: ActionSnapshotType
+  ): ActionSnapshot => {
+    const snapShot = Converter.ActionFromQuery(actionSnapshot as any)
+    return {
+      ...snapShot,
+      actor: actionSnapshot.actor || '',
+      block: BigNumber.from(actionSnapshot.block),
+      timestamp: BigNumber.from(actionSnapshot.timestamp)
     }
   }
 
@@ -141,6 +156,33 @@ export class Converter {
       token: deposit.token,
       amount: BigNumber.from(deposit.amount),
       completedAt: BigNumber.from(deposit.completedAt)
+    }
+  }
+
+  public static NotificationFromQuery = (
+    notification: NotificationType
+  ): Notification => {
+    return {
+      id: notification.id,
+      tags: notification.tags,
+      users: notification.users as any,
+      timestamp: BigNumber.from(notification.timestamp),
+      orgId: Converter.OrganizationFromQuery(notification.orgId),
+      task: notification.task
+        ? Converter.TaskFromQuery(notification.task)
+        : undefined,
+      action: notification.action
+        ? Converter.ActionFromQuery(notification.action)
+        : undefined,
+      deposit: notification.deposit
+        ? Converter.DepositFromQuery(notification.deposit)
+        : undefined,
+      taskSnapshot: notification.taskSnapshot
+        ? Converter.TaskSnapshotFromQuery(notification.taskSnapshot)
+        : undefined,
+      actionSnapshot: notification.actionSnapshot
+        ? Converter.ActionSnapshotFromQuery(notification.actionSnapshot)
+        : undefined
     }
   }
 }
