@@ -41,7 +41,9 @@ export const getServerSideProps: GetServerSideProps =
           orderBy: 'taskId',
           orderDirection: 'desc',
           where: {
-            orgId: orgId
+            orgId: orgId,
+            status_lte: 1,
+            assignmentRequest: null
           }
         }
       })

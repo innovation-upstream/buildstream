@@ -69,5 +69,8 @@
   "request_assignment": "Request Assignment",
   "submit_task": "Submit Task",
   "account_overview": "Account Overview",
-  "completed_tasks": "Completed tasks"
+  "completed_tasks": "Completed tasks",
+  "without_request": "Without request",
+  "with_request": "With requests",
+  "closed_tasks": "Closed tasks"
 }
