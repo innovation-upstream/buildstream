@@ -43,7 +43,7 @@ const MobileNav = ({ close, connectWallet }: Props) => {
         <ul>
           {
             navMenu.map((menu) => <Link href={menu.url} key={menu.label}>
-            <li className='py-4 border border-t-0 border-r-0 border-l-0 text-[#686C6F] text-base font-semibold'>
+            <li className='py-4 border border-t-0 border-r-0 border-l-0 text-[#686C6F] text-base font-semibold' onClick={close}>
               {t(menu.label)}
             </li>
           </Link>)
