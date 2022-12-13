@@ -9,3 +9,4 @@ documents:
   - ./src/hooks/action/queries.graphql
   - ./src/hooks/treasury/queries.graphql
   - ./src/hooks/userstat/queries.graphql
+  - ./src/hooks/notification/queries.graphql

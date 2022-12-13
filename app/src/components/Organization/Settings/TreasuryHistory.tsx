@@ -6,6 +6,7 @@ import { DepositRecord } from 'hooks/treasury/types'
 import { useTranslation } from 'next-i18next'
 import { useMemo } from 'react'
 import CaretFilled from 'SVGs/CaretFilled'
+import isSameDay from 'utils/isSameDay'
 
 interface ITreasuryHistoryProps {
   withdrawalHistory: Action[]
@@ -15,16 +16,6 @@ interface ITreasuryHistoryProps {
 
 function instanceOfWithdrawal(object: any): object is Action {
   return 'executed' in object
-}
-
-const isSameDay = (timestampA: number, timestampB: number) => {
-  const dateA = new Date(timestampA)
-  const dateB = new Date(timestampB)
-  return (
-    dateA.getDate() === dateB.getDate() &&
-    dateA.getMonth() === dateB.getMonth() &&
-    dateA.getFullYear() === dateB.getFullYear()
-  )
 }
 
 const sortAndGroup = (unsorted: (Action | DepositRecord)[]) => {

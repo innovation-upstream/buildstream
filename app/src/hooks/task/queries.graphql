@@ -1,50 +1,63 @@
+fragment TaskFragment on Task {
+  id
+  taskId
+  orgId {
+    ...OrganizationFragment
+  }
+  title
+  description
+  assigner
+  assignee
+  taskTags
+  status
+  complexityScore
+  reputationLevel
+  requiredApprovals
+  rewardAmount
+  rewardToken
+  assignDate
+  submitDate
+  taskDuration
+  comment
+  approvedBy
+  assignmentRequest
+}
+
+fragment TaskSnapshotFragment on TaskSnapshot {
+  id
+  actor
+  block
+  timestamp
+  taskId
+  orgId {
+    ...OrganizationFragment
+  }
+  title
+  description
+  assigner
+  assignee
+  taskTags
+  status
+  complexityScore
+  reputationLevel
+  requiredApprovals
+  rewardAmount
+  rewardToken
+  assignDate
+  submitDate
+  taskDuration
+  comment
+  approvedBy
+  assignmentRequest
+}
+
 query GetTask(
   $id: ID!
   $block: Block_height
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
   task(id: $id, block: $block, subgraphError: $subgraphError) {
-    id
-    taskId
-    orgId {
-      id
-      orgId
-      name
-      description
-      approvers
-      signers
-      requiredTaskApprovals
-      requiredConfirmations
-      rewardMultiplier
-      rewardToken
-      rewardSlashMultiplier
-      slashRewardEvery
-      isInitialized
-      treasury {
-        tokens {
-          token
-          balance
-          lockedBalance
-        }
-      }
-    }
-    title
-    description
-    assigner
-    assignee
-    taskTags
-    status
-    complexityScore
-    reputationLevel
-    requiredApprovals
-    rewardAmount
-    rewardToken
-    assignDate
-    submitDate
-    taskDuration
-    comment
-    approvedBy
-    assignmentRequest
+    ...TaskFragment
   }
 }
 
@@ -66,47 +79,7 @@ query GetTasks(
     block: $block
     subgraphError: $subgraphError
   ) {
-    id
-    taskId
-    orgId {
-      id
-      orgId
-      name
-      description
-      approvers
-      signers
-      requiredTaskApprovals
-      requiredConfirmations
-      rewardMultiplier
-      rewardToken
-      rewardSlashMultiplier
-      slashRewardEvery
-      isInitialized
-      treasury {
-        tokens {
-          token
-          balance
-          lockedBalance
-        }
-      }
-    }
-    title
-    description
-    assigner
-    assignee
-    taskTags
-    status
-    complexityScore
-    reputationLevel
-    requiredApprovals
-    rewardAmount
-    rewardToken
-    assignDate
-    submitDate
-    taskDuration
-    comment
-    approvedBy
-    assignmentRequest
+    ...TaskFragment
   }
 }
 
@@ -128,50 +101,7 @@ query GetTaskSnapshots(
     block: $block
     subgraphError: $subgraphError
   ) {
-    id
-    actor
-    block
-    timestamp
-    taskId
-    orgId {
-      id
-      orgId
-      name
-      description
-      approvers
-      signers
-      requiredTaskApprovals
-      requiredConfirmations
-      rewardMultiplier
-      rewardToken
-      rewardSlashMultiplier
-      slashRewardEvery
-      isInitialized
-      treasury {
-        tokens {
-          token
-          balance
-          lockedBalance
-        }
-      }
-    }
-    title
-    description
-    assigner
-    assignee
-    taskTags
-    status
-    complexityScore
-    reputationLevel
-    requiredApprovals
-    rewardAmount
-    rewardToken
-    assignDate
-    submitDate
-    taskDuration
-    comment
-    approvedBy
-    assignmentRequest
+    ...TaskSnapshotFragment
   }
 }
 
@@ -184,7 +114,7 @@ query GetTaskRevisions(
   $subgraphError: _SubgraphErrorPolicy_! = deny
   $where: TaskRevision_filter
 ) {
-  taskRevisions (
+  taskRevisions(
     skip: $skip
     first: $first
     orderBy: $orderBy

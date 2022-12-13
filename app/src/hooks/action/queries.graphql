@@ -1,26 +1,45 @@
+fragment ActionSnapshotFragment on ActionSnapshot {
+  id
+  actionId
+  orgId
+  initiator
+  targetAddress
+  value
+  data
+  executed
+  tokenAddress
+  actionType
+  approvedBy
+  initiatedAt
+  completedAt
+  actor
+  block
+  timestamp
+}
+
+fragment ActionFragment on Action {
+  id
+  actionId
+  orgId
+  initiator
+  targetAddress
+  value
+  data
+  executed
+  tokenAddress
+  actionType
+  approvedBy
+  initiatedAt
+  completedAt
+}
+
 query GetAction(
   $id: ID!
   $block: Block_height
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  action(
-    id: $id,
-    block: $block,
-    subgraphError: $subgraphError
-  ) {
-    id
-    actionId
-    orgId
-    initiator
-    targetAddress
-    value
-    data
-    executed
-    tokenAddress
-    actionType
-    approvedBy
-    initiatedAt
-    completedAt
+  action(id: $id, block: $block, subgraphError: $subgraphError) {
+    ...ActionFragment
   }
 }
 
@@ -34,26 +53,14 @@ query GetActions(
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
   actions(
-    skip: $skip,
-    first: $first,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    where: $where,
-    block: $block,
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
     subgraphError: $subgraphError
   ) {
-    id
-    actionId
-    orgId
-    initiator
-    targetAddress
-    value
-    data
-    executed
-    tokenAddress
-    actionType
-    approvedBy
-    initiatedAt
-    completedAt
+    ...ActionFragment
   }
 }

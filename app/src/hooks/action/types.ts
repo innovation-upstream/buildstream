@@ -39,3 +39,9 @@ export type Action = {
   initiatedAt: BigNumber
   completedAt?: BigNumber
 }
+
+export type ActionSnapshot = {
+  actor: string
+  block: BigNumber
+  timestamp: BigNumber
+} & Action

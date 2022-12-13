@@ -1,42 +1,43 @@
+fragment OrganizationFragment on Organization {
+  id
+  orgId
+  name
+  description
+  approvers
+  signers
+  requiredTaskApprovals
+  requiredConfirmations
+  rewardMultiplier
+  rewardSlashMultiplier
+  slashRewardEvery
+  rewardToken
+  isInitialized
+  treasury {
+    tokens {
+      token
+      balance
+      lockedBalance
+    }
+  }
+  stat {
+    id
+    proposedTasks
+    openedTasks
+    assignedTasks
+    submittedTasks
+    closedTasks
+    archivedTasks
+    tags
+  }
+}
+
 query GetOrganization(
   $id: ID!
   $block: Block_height
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
-  organization(
-    id: $id,
-    block: $block,
-    subgraphError: $subgraphError
-  ) {
-    id
-    orgId
-    name
-    description
-    approvers
-    signers
-    requiredTaskApprovals
-    requiredConfirmations
-    rewardMultiplier
-    rewardSlashMultiplier
-    slashRewardEvery
-    rewardToken
-    isInitialized
-    treasury {
-      tokens {
-        token
-        balance
-        lockedBalance
-      }
-    }
-    stat {
-      proposedTasks
-      openedTasks
-      assignedTasks
-      submittedTasks
-      closedTasks
-      archivedTasks
-      tags
-    }
+  organization(id: $id, block: $block, subgraphError: $subgraphError) {
+    ...OrganizationFragment
   }
 }
 
@@ -50,40 +51,14 @@ query GetOrganizations(
   $subgraphError: _SubgraphErrorPolicy_! = deny
 ) {
   organizations(
-    skip: $skip,
-    first: $first,
-    orderBy: $orderBy,
-    orderDirection: $orderDirection,
-    where: $where,
-    block: $block,
+    skip: $skip
+    first: $first
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: $where
+    block: $block
     subgraphError: $subgraphError
   ) {
-    id
-    orgId
-    name
-    description
-    approvers
-    signers
-    requiredTaskApprovals
-    requiredConfirmations
-    rewardMultiplier
-    rewardToken
-    rewardSlashMultiplier
-    slashRewardEvery
-    isInitialized
-    treasury {
-      tokens {
-        token
-        balance
-        lockedBalance
-      }
-    }
-    stat {
-      proposedTasks
-      openedTasks
-      assignedTasks
-      submittedTasks
-      closedTasks
-    }
+    ...OrganizationFragment
   }
 }

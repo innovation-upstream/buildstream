@@ -13,12 +13,14 @@ const useTokenInfos = (tokenAddresses?: string[]) => {
     const filteredInfoRequests = tokenAddresses?.filter(
       (tokenAddress) => ethers.utils.isAddress(tokenAddress)
     )
+    console.log('========== usy', tokenAddresses, filteredInfoRequests)
     const duplicatesRemoved = Array.from(new Set(filteredInfoRequests))
     const infos = await Promise.all(
       duplicatesRemoved?.map(async (tokenAddress) => {
         return (await getTokenInfo(tokenAddress, library)) as TokenInfo
       })
     )
+    console.log('========== infos', infos)
     setTokenInfos(infos)
   }
 
