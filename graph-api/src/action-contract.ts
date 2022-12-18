@@ -9,7 +9,8 @@ import {
   Action,
   Organization,
   Notification,
-  ActionSnapshot
+  ActionSnapshot,
+  OrganizationSnapshot
 } from '../generated/schema'
 import { Organization as OrganizationContract } from '../generated/Organization/Organization'
 import { ACTION, TREASURY, WITHDRAWAL } from '../helpers/notification'
@@ -52,6 +53,22 @@ function createActionSnapshot(
   return actionSnapshotEntity
 }
 
+function createOrganizationSnapshot(
+  event: ethereum.Event,
+  organizationEntity: Organization
+): OrganizationSnapshot {
+  const id = event.transaction.hash.toHex() + '-' + event.logIndex.toString()
+  const organizationSnapshotEntity = new OrganizationSnapshot(id)
+  const entries = organizationEntity.entries
+  for (let i = 0; i < entries.length; i++) {
+    if (entries[i].key === 'id') continue
+    organizationSnapshotEntity.set(entries[i].key, entries[i].value)
+  }
+  organizationSnapshotEntity.id = id
+
+  return organizationSnapshotEntity
+}
+
 export function handleActionConfirmation(event: ActionConfirmationEvent): void {
   let entity = Action.load(event.params.actionId.toString())
   if (!entity) return
@@ -81,6 +98,15 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   const contract = Contract.bind(event.address)
   const action = contract.getAction(event.params.actionId)
 
+  const orgId = event.params.orgId
+  const organizationEntity = Organization.load(orgId.toString())
+  if (!organizationEntity) return
+  const organizationSnapshotEntity = createOrganizationSnapshot(
+    event,
+    organizationEntity
+  )
+  organizationSnapshotEntity.save()
+
   entity.actionId = event.params.actionId
   entity.orgId = action.orgId
   entity.initiator = action.initiator.toHexString()
@@ -91,6 +117,7 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   entity.tokenAddress = action.tokenAddress.toHexString()
   entity.actionType = action.actionType
   entity.initiatedAt = event.block.timestamp
+  entity.organizationSnapshot = organizationSnapshotEntity.id
   entity.save()
 
   const actionSnapshotEntity = createActionSnapshot(event, entity)
