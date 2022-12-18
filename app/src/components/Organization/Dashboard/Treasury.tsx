@@ -15,14 +15,18 @@ interface TreasuryProps {
   organization: Organization
 }
 
+const AddressZero = ethers.constants.AddressZero
+
 const Treasury = ({ organization }: TreasuryProps) => {
   const tokens = organization?.treasury?.tokens
   const [selected, setSelected] = useState(tokens?.[0]?.token)
   const [openDeposit, setOpenDeposit] = useState(false)
   const { t } = useTranslation('organization')
 
+  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
+  tokenList = Array.from(new Set([...tokenList, AddressZero]))
   const token = tokens?.find((t) => t.token === selected)
-  const { tokenInfos } = useTokenInfos(tokens?.map((t) => t.token))
+  const { tokenInfos } = useTokenInfos(tokenList)
   const tokenInfo = tokenInfos?.find((i) => i.address === selected)
   const balance = ethers.utils.formatUnits(
     BigNumber.from(token?.balance || 0)?.toString(),
@@ -61,9 +65,9 @@ const Treasury = ({ organization }: TreasuryProps) => {
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
       >
-        {tokens?.map((t) => (
-          <option value={t.token} key={t.token}>
-            {tokenInfos?.find((i) => i.address === t.token)?.symbol}
+        {tokenList?.map((token) => (
+          <option value={token} key={token}>
+            {tokenInfos?.find((i) => i.address === token)?.symbol}
           </option>
         ))}
       </select>

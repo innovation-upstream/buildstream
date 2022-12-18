@@ -24,8 +24,8 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
     orgHasRewardToken ? organization?.rewardToken : AddressZero
   )
 
-  const tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-  if (tokenList.indexOf(tokenAddress) === -1) tokenList.push(tokenAddress)
+  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
+  tokenList = Array.from(new Set([...tokenList, AddressZero]))
   const { tokenInfos } = useTokenInfos(tokenList)
   const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
@@ -42,10 +42,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
   const processCustom = async (token: TokenInfo) => {
     await depositToken(
       organization.id,
-      ethers.utils.parseUnits(
-        amount.toString(),
-        token.decimal
-      ),
+      ethers.utils.parseUnits(amount.toString(), token.decimal),
       token.address,
       account as string,
       library
@@ -104,7 +101,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
   const tokenBalance = organization.treasury?.tokens?.find(
     (t) => t.token === tokenAddress
   )?.balance
-  const token = tokenInfos?.find(i => i.address === tokenAddress)
+  const token = tokenInfos?.find((i) => i.address === tokenAddress)
   const balance = ethers.utils.formatUnits(
     BigNumber.from(tokenBalance || 0)?.toString(),
     token?.decimal
@@ -135,12 +132,12 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             value={customToken ? 'newToken' : tokenAddress}
             onChange={handleSelect}
           >
-            {organization?.treasury?.tokens?.map((t) => {
+            {tokenList?.map((token) => {
               const tokenSymbol = tokenInfos?.find(
-                (i) => i.address === t.token
+                (i) => i.address === token
               )?.symbol
               return (
-                <option value={t.token} key={t.token}>
+                <option value={token} key={token}>
                   {tokenSymbol}
                 </option>
               )
@@ -150,10 +147,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
 
           {customToken && (
             <div className='relative mt-4'>
-              <label
-                htmlFor='address'
-                className='font-medium'
-              >
+              <label htmlFor='address' className='font-medium'>
                 {t('token_contract_address')}
               </label>
               <div className='relative flex rounded-md bg-sky-600'>
@@ -175,12 +169,12 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
           )}
 
           <div className='flex items-center justify-between gap-20 mt-4'>
-            <label className='block font-medium'>
-              {t('enter_amount')}
-            </label>
+            <label className='block font-medium'>{t('enter_amount')}</label>
             <p className='text-sm'>
               {t('balance')}:{' '}
-              <span className='font-normal'>{balance} {token?.symbol}</span>
+              <span className='font-normal'>
+                {balance} {token?.symbol}
+              </span>
             </p>
           </div>
           <input
