@@ -11,10 +11,10 @@ import { useGetNotificationsQuery } from 'hooks/notification'
 import { Notification } from 'hooks/notification/types'
 
 const messageTemplates: Record<any, string> = {
-  1: 'You requested to be assigned <strong>{title}</strong>',
-  2: 'You have been assigned <strong>{title}</strong>',
-  3: 'You submitted your solution for <strong>{title}</strong>',
-  4: 'Your reward for the task <strong>{title}</strong> has been transfered to your account!'
+  1: 'A request for <strong>{title}</strong> has been made',
+  2: 'The request for <strong>{title}</strong> has been approved',
+  3: '<strong>{title}</strong> has been submitted',
+  4: '<strong>{title}</strong> has been completed'
 }
 
 const sortAndGroup = (unsorted: Notification[]) => {

@@ -10,12 +10,12 @@ interface TaskNotificationsProps {
 }
 
 const messageTemplates: Record<any, string> = {
-  0: 'Task:  <strong>{title}</strong> is <strong>created</strong>',
-  1: 'Task:  <strong>{title}</strong> is <strong>opened</strong>',
-  2: 'Task:  <strong>{title}</strong> is <strong>assigned</strong>',
-  3: 'Task:  <strong>{title}</strong> is <strong>submitted</strong>',
-  4: 'Task:  <strong>{title}</strong> is <strong>closed</strong>',
-  alt: 'Task:  Request to be assigned <strong>{title}</strong>'
+  0: '<strong>{title}</strong> has been created',
+  1: '<strong>{title}</strong> is <strong>opened</strong>',
+  2: 'The request for <strong>{title}</strong> has been approved',
+  3: '<strong>{title}</strong> has been submitted',
+  4: '<strong>{title}</strong> has been completed',
+  alt: 'A request for <strong>{title}</strong> has been made'
 }
 
 
@@ -54,7 +54,7 @@ const TaskNotification = ({
         />
       </div>
       {snapshot.status === TaskStatus.CLOSED && (
-        <div className='flex items-center gap-1 w-fit border border-[#6BC5A1] px-3 py-2 rounded-md'>
+        <div className='flex items-center gap-1 w-fit h-fit border border-[#6BC5A1] px-3 py-2 rounded-md'>
           +
           <TokenGeneric width={7} />
           <span className='font-semibold text-sm whitespace-nowrap'>

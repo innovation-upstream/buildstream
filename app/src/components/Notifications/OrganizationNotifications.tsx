@@ -111,26 +111,27 @@ const OrganizationNotifications = ({
                       <>
                         {notification.actionSnapshot?.actionType ===
                           ActionType.WITHDRAWAL &&
-                          notification.actionSnapshot?.executed && (
-                            <li
-                              key={`${notification.timestamp.toString()}-0`}
-                              className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
-                            >
-                              <TreasuryNotification
-                                notification={notification}
-                                tokenInfos={tokenInfos}
-                              />
-                            </li>
-                          )}
-                        <li
-                          key={notification.timestamp.toString()}
-                          className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
-                        >
-                          <ActionNotification
-                            notification={notification}
-                            tokenInfos={tokenInfos}
-                          />
-                        </li>
+                        notification.actionSnapshot?.executed ? (
+                          <li
+                            key={notification.timestamp.toString()}
+                            className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
+                          >
+                            <TreasuryNotification
+                              notification={notification}
+                              tokenInfos={tokenInfos}
+                            />
+                          </li>
+                        ) : (
+                          <li
+                            key={notification.timestamp.toString()}
+                            className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
+                          >
+                            <ActionNotification
+                              notification={notification}
+                              tokenInfos={tokenInfos}
+                            />
+                          </li>
+                        )}
                       </>
                     )
                   }
