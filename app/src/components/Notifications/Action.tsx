@@ -8,41 +8,11 @@ import { confirmAction } from 'hooks/action/functions'
 import { executeAction } from 'hooks/organization/functions'
 import injected from 'config/Walletconnectors'
 import Spinner from 'components/Spinner/Spinner'
+import { actionMessageTemplates } from './actionTemplates'
 
 interface ActionNotificationsProps {
   notification: Notification
   tokenInfos?: TokenInfo[]
-}
-
-const actionMessageTemplates: Record<ActionType, string> = {
-  [ActionType.WITHDRAWAL]:
-    'WITHDRAWAL:  {action} to withdraw <strong>{value}</strong> from the treasury',
-  [ActionType.ADD_APPROVER]:
-    'ADD_APPROVER:  {action} to add <strong>{value}</strong> to the list of approvers',
-  [ActionType.ADD_SIGNER]:
-    'ADD_ADMIN:  {action} to add <strong>{value}</strong> to the list of admins',
-  [ActionType.REMOVE_APPROVER]:
-    'REMOVE_APPROVER:  {action} to remove <strong>{value}</strong> from the list of approvers',
-  [ActionType.REMOVE_SIGNER]:
-    'REMOVE_ADMIN:  {action} to remove <strong>{value}</strong> from the list of admins',
-  [ActionType.UPDATE_NAME]:
-    'UPDATE_NAME:  {action} to change organization name <br/>Suggested name: <br/><strong>{value}</strong>',
-  [ActionType.UPDATE_DESCRIPTION]:
-    'UPDATE_DESCRIPTION:  {action} to change organization description <br/>Suggested name: <br/><strong>{value}</strong>',
-  [ActionType.UPDATE_REQUIRED_TASK_APPROVALS]:
-    'UPDATE_REQUIRED_TASK_APPROVALS:  {action} to change required task approvals to <strong>{value}</strong>',
-  [ActionType.UPDATE_REQUIRED_CONFIRMATIONS]:
-    'UPDATE_REQUIRED_CONFIRMATIONS:  {action} to change required task confirmations to <strong>{value}</strong>',
-  [ActionType.UPDATE_REWARD_MULTIPLIER]:
-    'UPDATE_REWARD_MULTIPLIER:  {action} to change reward multiplier to <strong>{value}</strong>',
-  [ActionType.UPDATE_REWARD_TOKEN]:
-    'UPDATE_REWARD_TOKEN:  {action} to change reward token to <strong>{value}</strong>',
-  [ActionType.UPDATE_REWARD_SLASH_MULTIPLIER]:
-    'UPDATE_REWARD_SLASH_MULTIPLIER:  {action} to change reward slash multiplier to <strong>{value}</strong>',
-  [ActionType.UPDATE_SLASH_REWARD_EVERY]:
-    'UPDATE_SLASH_REWARD_INTERVAL:  {action} to change reward slash interval to <strong>{value}</strong>',
-  [ActionType.UPDATE_TAG_REWARD_MULTIPLIER]:
-    'UPDATE_TAG_REWARD_MULTIPLIER:  {action} to change reward multiplier for <strong>{tag}</strong> tag to <strong>{value}</strong>'
 }
 
 const ActionNotification = ({
@@ -51,6 +21,7 @@ const ActionNotification = ({
 }: ActionNotificationsProps) => {
   const { account, library, activate } = useWeb3()
   const snapshot = notification.actionSnapshot as ActionSnapshot
+  const organization = snapshot.organizationSnapshot
   const action = notification.action as Action
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -77,61 +48,82 @@ const ActionNotification = ({
   }
 
   let tag = ''
-  let value = snapshot.targetAddress
+  let newValue = snapshot.targetAddress
+  let oldValue = ''
   if (snapshot.actionType === ActionType.WITHDRAWAL) {
     const token = tokenInfos?.find((i) => i.address === snapshot.tokenAddress)
     const amount = ethers.utils.formatUnits(
       snapshot.value?.toString(),
       token?.decimal
     )
-    value = `${amount} ${token?.symbol}`
+    newValue = `${amount} ${token?.symbol}`
   }
   if (snapshot.actionType === ActionType.UPDATE_REWARD_TOKEN) {
     const token = tokenInfos?.find((i) => i.address === snapshot.tokenAddress)
-    value = token?.symbol || ''
+    const oldToken = tokenInfos?.find(
+      (i) => i.address === organization.rewardToken
+    )
+    oldValue = oldToken?.symbol || ''
+    newValue = token?.symbol || ''
   }
-  if (
-    snapshot.actionType === ActionType.UPDATE_REQUIRED_TASK_APPROVALS ||
-    snapshot.actionType === ActionType.UPDATE_REQUIRED_CONFIRMATIONS
-  )
-    value = snapshot.value.toString()
-  if (
-    snapshot.actionType === ActionType.UPDATE_NAME ||
-    snapshot.actionType === ActionType.UPDATE_DESCRIPTION
-  )
-    value = ethers.utils.toUtf8String(snapshot.data)
+  if (snapshot.actionType === ActionType.UPDATE_REQUIRED_TASK_APPROVALS) {
+    oldValue = organization.requiredTaskApprovals?.toString()
+    newValue = snapshot.value.toString()
+  }
+  if (snapshot.actionType === ActionType.UPDATE_REQUIRED_CONFIRMATIONS) {
+    oldValue = organization.requiredConfirmations?.toString()
+    newValue = snapshot.value.toString()
+  }
+  if (snapshot.actionType === ActionType.UPDATE_NAME) {
+    oldValue = organization.name
+    newValue = ethers.utils.toUtf8String(snapshot.data)
+  }
+  if (snapshot.actionType === ActionType.UPDATE_DESCRIPTION) {
+    oldValue = organization.description
+    newValue = ethers.utils.toUtf8String(snapshot.data)
+  }
   if (
     snapshot.actionType === ActionType.UPDATE_REWARD_MULTIPLIER ||
     snapshot.actionType === ActionType.UPDATE_TAG_REWARD_MULTIPLIER
   ) {
     const token = tokenInfos?.find(
-      (i) => i.address === notification.orgId.rewardToken
+      (i) => i.address === organization.rewardToken
     )
     const amount = ethers.utils.formatUnits(
       snapshot.value?.toString(),
       token?.decimal
     )
-    value = `${amount} ${token?.symbol}`
-    tag = ethers.utils.toUtf8String(snapshot.data)
+    const oldAmount = ethers.utils.formatUnits(
+      organization.rewardMultiplier?.toString(),
+      token?.decimal
+    )
+    oldValue = `${oldAmount} ${token?.symbol}`
+    newValue = `${amount} ${token?.symbol}`
   }
-  if (snapshot.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER)
-    value = ethers.utils.formatUnits(snapshot.value?.toString(), 18)
-  if (snapshot.actionType === ActionType.UPDATE_SLASH_REWARD_EVERY)
-    value = snapshot.value?.toString()
+  if (snapshot.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER) {
+    oldValue = ethers.utils.formatUnits(
+      organization.rewardSlashMultiplier?.toString(),
+      18
+    )
+    newValue = ethers.utils.formatUnits(snapshot.value?.toString(), 18)
+  }
+  if (snapshot.actionType === ActionType.UPDATE_SLASH_REWARD_EVERY) {
+    oldValue = organization.slashRewardEvery?.toString()
+    newValue = snapshot.value?.toString()
+  }
 
   const isConfirmation = snapshot.approvedBy.includes(snapshot.actor)
 
   const message = actionMessageTemplates[snapshot.actionType]
-    ?.replace('{value}', value)
-    ?.replace('{tag}', tag)
-    ?.replace(
-      '{action}',
-      snapshot.executed
-        ? 'Executed request'
-        : isConfirmation
-        ? 'Confirmed request'
-        : 'Request'
-    )
+  let template = snapshot.executed
+    ? message.executed
+    : isConfirmation
+    ? message.confirmed
+    : message.created
+
+  template = template
+    ?.replace('{oldValue}', oldValue)
+    ?.replace('{newValue}', newValue)
 
   const isSigner = account && notification.orgId.signers?.includes(account)
   const canApprove = isSigner && !action.approvedBy.includes(account)
@@ -149,7 +141,7 @@ const ActionNotification = ({
         <p
           className='text-[#646873]'
           dangerouslySetInnerHTML={{
-            __html: message
+            __html: template
           }}
         />
         {(canApprove || canExecute) && !action.executed && (

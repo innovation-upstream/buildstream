@@ -11,9 +11,9 @@ interface TreasuryNotificationProps {
 }
 
 const treasuryMessageTemplates = {
-  deposit: 'Treasury:  Deposited <strong>{value}</strong> to treasury',
+  deposit: '<strong>{value}</strong> has been deposited to the treasury.',
   withdrawal:
-    'Treasury:  Withdrew <strong>{value}</strong> from treasury to {address}'
+    '<strong>{value}</strong> has been withdrawn from the treasury to {address}.'
 }
 
 const TreasuryNotification = ({

@@ -66,7 +66,10 @@ export class Converter {
       initiatedAt: BigNumber.from(action.initiatedAt),
       completedAt: action.completedAt
         ? BigNumber.from(action.completedAt)
-        : undefined
+        : undefined,
+      organizationSnapshot: Converter.OrganizationFromQuery(
+        action.organizationSnapshot
+      )
     }
   }
 

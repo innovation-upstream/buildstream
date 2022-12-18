@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from 'ethers'
+import { Organization } from 'hooks/organization/types'
 
 export enum ActionType {
   WITHDRAWAL,
@@ -38,6 +39,7 @@ export type Action = {
   approvedBy: string[]
   initiatedAt: BigNumber
   completedAt?: BigNumber
+  organizationSnapshot: Organization
 }
 
 export type ActionSnapshot = {

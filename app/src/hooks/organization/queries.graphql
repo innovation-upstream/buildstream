@@ -31,6 +31,39 @@ fragment OrganizationFragment on Organization {
   }
 }
 
+fragment OrganizationSnapshotFragment on OrganizationSnapshot {
+  id
+  orgId
+  name
+  description
+  approvers
+  signers
+  requiredTaskApprovals
+  requiredConfirmations
+  rewardMultiplier
+  rewardSlashMultiplier
+  slashRewardEvery
+  rewardToken
+  isInitialized
+  treasury {
+    tokens {
+      token
+      balance
+      lockedBalance
+    }
+  }
+  stat {
+    id
+    proposedTasks
+    openedTasks
+    assignedTasks
+    submittedTasks
+    closedTasks
+    archivedTasks
+    tags
+  }
+}
+
 query GetOrganization(
   $id: ID!
   $block: Block_height

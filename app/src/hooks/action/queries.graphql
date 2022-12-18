@@ -15,6 +15,9 @@ fragment ActionSnapshotFragment on ActionSnapshot {
   actor
   block
   timestamp
+  organizationSnapshot {
+    ...OrganizationSnapshotFragment
+  }
 }
 
 fragment ActionFragment on Action {
@@ -31,6 +34,9 @@ fragment ActionFragment on Action {
   approvedBy
   initiatedAt
   completedAt
+  organizationSnapshot {
+    ...OrganizationSnapshotFragment
+  }
 }
 
 query GetAction(
