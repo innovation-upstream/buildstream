@@ -54,12 +54,12 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <TaskFilterProvider>
-        <div className='grid-layout py-24'>
+        <div className='grid-layout py-10 md:py-24'>
           <div className='col-span-4 md:col-span-8 lg:col-span-12 lg:hidden z-10 md:z-[1]'>
             <Search showControls />
           </div>
           <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
-            <div className='md:sticky top-[140px] md:max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <div className='rounded-2xl'>
               <div className='mb-4 hidden lg:block 2xl:hidden'>
                 <Filter />
               </div>
@@ -73,7 +73,7 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
             <TaskView tasks={taskList.map((t) => Converter.TaskFromQuery(t))} />
           </div>
           <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
-            <div className='2xl:sticky top-[150px] 2xl:max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+            <div className='rounded-2xl'>
               <Filter />
               <div className='mt-4'>
                 <TaskStatistics stat={stats} />

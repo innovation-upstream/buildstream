@@ -99,10 +99,10 @@ const TasksOverview: NextPage<{ taskList: Task[]; address: string }> = ({
       {showModal && <WalletModal close={() => setShowModal(!showModal)} />}
 
       <TaskFilterProvider>
-        <div className='grid-layout py-24'>
+        <div className='grid-layout py-10 md:py-24'>
           <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-1 2xl:order-1'>
             {(address || account) && (
-              <div className='md:sticky top-[140px] md:max-h-[calc(100vh-170px)] overflow-auto rounded-2xl scrollbar-hide'>
+              <div className='rounded-2xl'>
                 <ProfileCard address={address} />
                 <div className='mt-4'>
                   <TaskStatistics stat={stats} />
