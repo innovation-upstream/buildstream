@@ -385,6 +385,174 @@ export class Organization extends Entity {
   }
 }
 
+export class OrganizationSnapshot extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OrganizationSnapshot entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type OrganizationSnapshot must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("OrganizationSnapshot", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OrganizationSnapshot | null {
+    return changetype<OrganizationSnapshot | null>(
+      store.get("OrganizationSnapshot", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get orgId(): BigInt {
+    let value = this.get("orgId");
+    return value!.toBigInt();
+  }
+
+  set orgId(value: BigInt) {
+    this.set("orgId", Value.fromBigInt(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value!.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get description(): string {
+    let value = this.get("description");
+    return value!.toString();
+  }
+
+  set description(value: string) {
+    this.set("description", Value.fromString(value));
+  }
+
+  get approvers(): Array<string> {
+    let value = this.get("approvers");
+    return value!.toStringArray();
+  }
+
+  set approvers(value: Array<string>) {
+    this.set("approvers", Value.fromStringArray(value));
+  }
+
+  get signers(): Array<string> {
+    let value = this.get("signers");
+    return value!.toStringArray();
+  }
+
+  set signers(value: Array<string>) {
+    this.set("signers", Value.fromStringArray(value));
+  }
+
+  get requiredTaskApprovals(): BigInt {
+    let value = this.get("requiredTaskApprovals");
+    return value!.toBigInt();
+  }
+
+  set requiredTaskApprovals(value: BigInt) {
+    this.set("requiredTaskApprovals", Value.fromBigInt(value));
+  }
+
+  get requiredConfirmations(): BigInt {
+    let value = this.get("requiredConfirmations");
+    return value!.toBigInt();
+  }
+
+  set requiredConfirmations(value: BigInt) {
+    this.set("requiredConfirmations", Value.fromBigInt(value));
+  }
+
+  get rewardMultiplier(): BigInt {
+    let value = this.get("rewardMultiplier");
+    return value!.toBigInt();
+  }
+
+  set rewardMultiplier(value: BigInt) {
+    this.set("rewardMultiplier", Value.fromBigInt(value));
+  }
+
+  get rewardSlashMultiplier(): BigInt {
+    let value = this.get("rewardSlashMultiplier");
+    return value!.toBigInt();
+  }
+
+  set rewardSlashMultiplier(value: BigInt) {
+    this.set("rewardSlashMultiplier", Value.fromBigInt(value));
+  }
+
+  get slashRewardEvery(): BigInt {
+    let value = this.get("slashRewardEvery");
+    return value!.toBigInt();
+  }
+
+  set slashRewardEvery(value: BigInt) {
+    this.set("slashRewardEvery", Value.fromBigInt(value));
+  }
+
+  get rewardToken(): Bytes {
+    let value = this.get("rewardToken");
+    return value!.toBytes();
+  }
+
+  set rewardToken(value: Bytes) {
+    this.set("rewardToken", Value.fromBytes(value));
+  }
+
+  get isInitialized(): boolean {
+    let value = this.get("isInitialized");
+    return value!.toBoolean();
+  }
+
+  set isInitialized(value: boolean) {
+    this.set("isInitialized", Value.fromBoolean(value));
+  }
+
+  get treasury(): string {
+    let value = this.get("treasury");
+    return value!.toString();
+  }
+
+  set treasury(value: string) {
+    this.set("treasury", Value.fromString(value));
+  }
+
+  get stat(): string | null {
+    let value = this.get("stat");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set stat(value: string | null) {
+    if (!value) {
+      this.unset("stat");
+    } else {
+      this.set("stat", Value.fromString(<string>value));
+    }
+  }
+}
+
 export class Task extends Entity {
   constructor(id: string) {
     super();
@@ -1543,6 +1711,15 @@ export class Action extends Entity {
     this.set("orgId", Value.fromBigInt(value));
   }
 
+  get organizationSnapshot(): string {
+    let value = this.get("organizationSnapshot");
+    return value!.toString();
+  }
+
+  set organizationSnapshot(value: string) {
+    this.set("organizationSnapshot", Value.fromString(value));
+  }
+
   get initiator(): string {
     let value = this.get("initiator");
     return value!.toString();
@@ -1680,6 +1857,23 @@ export class Action extends Entity {
       this.set("completedAt", Value.fromBigInt(<BigInt>value));
     }
   }
+
+  get oldValue(): Bytes | null {
+    let value = this.get("oldValue");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set oldValue(value: Bytes | null) {
+    if (!value) {
+      this.unset("oldValue");
+    } else {
+      this.set("oldValue", Value.fromBytes(<Bytes>value));
+    }
+  }
 }
 
 export class ActionSnapshot extends Entity {
@@ -1729,6 +1923,15 @@ export class ActionSnapshot extends Entity {
 
   set orgId(value: BigInt) {
     this.set("orgId", Value.fromBigInt(value));
+  }
+
+  get organizationSnapshot(): string {
+    let value = this.get("organizationSnapshot");
+    return value!.toString();
+  }
+
+  set organizationSnapshot(value: string) {
+    this.set("organizationSnapshot", Value.fromString(value));
   }
 
   get initiator(): string {

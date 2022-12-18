@@ -38,6 +38,24 @@ type Organization @entity {
   stat: OrganizationStat
 }
 
+type OrganizationSnapshot @entity {
+  id: ID!
+  orgId: BigInt!
+  name: String!
+  description: String!
+  approvers: [String!]!
+  signers: [String!]!
+  requiredTaskApprovals: BigInt!
+  requiredConfirmations: BigInt!
+  rewardMultiplier: BigInt!
+  rewardSlashMultiplier: BigInt!
+  slashRewardEvery: BigInt!
+  rewardToken: Bytes!
+  isInitialized: Boolean!
+  treasury: Treasury!
+  stat: OrganizationStat
+}
+
 type Task @entity {
   id: ID!
   taskId: BigInt!
@@ -137,6 +155,7 @@ type Action @entity {
   id: ID!
   actionId: BigInt!
   orgId: BigInt!
+  organizationSnapshot: OrganizationSnapshot!
   initiator: String!
   targetAddress: String
   value: BigInt
@@ -147,12 +166,14 @@ type Action @entity {
   approvedBy: [String!]
   initiatedAt: BigInt!
   completedAt: BigInt
+  oldValue: Bytes
 }
 
 type ActionSnapshot @entity {
   id: ID!
   actionId: BigInt!
   orgId: BigInt!
+  organizationSnapshot: OrganizationSnapshot!
   initiator: String!
   targetAddress: String
   value: BigInt
