@@ -52,8 +52,11 @@ const Home: NextPage = () => {
       setShowModal(true)
       return
     }
+    if (param === action.findTask) {
+      router.push('/task')
+    }
     if (param === action.createTask) {
-      router.push('organization/create')
+      router.push('/organization/create')
     }
   }
 
