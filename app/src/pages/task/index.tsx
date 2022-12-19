@@ -55,7 +55,7 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
       </Head>
       <TaskFilterProvider>
         <div className='grid-layout py-10 md:py-24'>
-          <div className='col-span-4 md:col-span-8 lg:col-span-12 lg:hidden z-10 md:z-[1]'>
+          <div className='col-span-4 md:col-span-8 lg:col-span-12 lg:hidden'>
             <Search showControls />
           </div>
           <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>

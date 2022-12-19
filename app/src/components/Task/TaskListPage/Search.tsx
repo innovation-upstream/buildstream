@@ -53,7 +53,7 @@ const Search = ({ showControls }: SearchProps) => {
       {openControls && (
         <div
           ref={controlRef}
-          className='bg-white overflow-auto md:bg-inherit p-4 pt-[107px] md:pt-0 md:p-0 fixed w-full h-[100vh] md:h-auto md:absolute md:w-3/5 top-0 md:top-full right-0 md:mt-4'
+          className='bg-white overflow-auto md:bg-inherit p-4 pt-[107px] md:pt-0 md:p-0 fixed w-full h-[100vh] md:h-auto md:absolute md:w-3/5 top-0 md:top-full right-0 md:mt-4 z-10'
         >
           <div className='relative md:hidden'>
             <button
