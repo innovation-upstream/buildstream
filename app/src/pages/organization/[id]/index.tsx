@@ -26,7 +26,10 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
-      const orgId = context.params?.id?.[0] || '0'
+      const orgId =
+        typeof context.params?.id === 'string'
+          ? context.params?.id
+          : context.params?.id?.[0] || '0'
       const locale = context.locale ?? ''
       const { data } = await client.query({
         query: GetOrganizationDocument,
