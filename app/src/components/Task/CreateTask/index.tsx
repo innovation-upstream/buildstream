@@ -23,12 +23,10 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: 0,
-  duration: 0,
-  taskDuration: 0
+  duration: 1
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
-const daysSelection = [0, 1, 3, 5, 7, 9, 11, 14]
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
 const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
@@ -65,7 +63,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
       0
     )
 
-    if (taskDuration === 0) {
+    if (taskDuration <= 0) {
       setStatus({ text: t('wrong_duration_input'), error: true })
       return
     }
@@ -73,7 +71,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
 
     setProcessing(true)
     try {
-      const response = await createNewTask(
+      await createNewTask(
         oranization.id,
         taskData.title,
         taskData.description,
@@ -150,7 +148,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   {t('general_task_settings')}
                 </span>
                 <div className='mt-3 grid-layout gap-2'>
-                  <div className='col-span-4 w-full'>
+                  <div className='col-span-4'>
                     <label
                       htmlFor='duration'
                       className='flex gap-2 items-center mb-2'
@@ -162,21 +160,17 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         {t('set_duration')}
                       </span>
                     </label>
-                    <select
-                      id='duration'
-                      name='duration'
-                      value={taskData.duration}
-                      onChange={handleChange}
-                      className='w-full border p-2 rounded-md focus:outline-none'
-                    >
-                      {daysSelection.map((value) => {
-                        return (
-                          <option key={value} value={value}>
-                            {value} Day{value > 1 && 's'}
-                          </option>
-                        )
-                      })}
-                    </select>
+                    <div className='w-full border p-2 rounded-md flex items-center'>
+                      <input
+                        type='number'
+                        id='duration'
+                        name='duration'
+                        min='1'
+                        value={taskData.duration}
+                        onChange={handleChange}
+                        className='overflow-hidden focus:outline-none'
+                      />
+                    </div>
                   </div>
                   <div className='col-span-4'>
                     <label
@@ -198,6 +192,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         type='number'
                         id='reputationLevel'
                         name='reputationLevel'
+                        min='0'
                         value={taskData.reputationLevel}
                         onChange={handleChange}
                         className='overflow-hidden focus:outline-none'
@@ -295,7 +290,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
               </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6'>
-              {!processing ? (
+              {!processing && (
                 <button
                   className='btn-primary min-w-[30%]'
                   onClick={createTask}
@@ -303,9 +298,8 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                 >
                   {t('create_task')}
                 </button>
-              ) : (
-                <Spinner width={30} />
               )}
+              {processing && <Spinner width={30} />}
               <button
                 className='btn-outline px-8 border-gray-200 hover:border-gray-300'
                 onClick={close}
