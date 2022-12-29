@@ -56,8 +56,8 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
       console.log('Deposit: invalid token')
       return
     }
-    if (amount === 0) {
-      console.error('Deposit: amount is 0')
+    if (amount <= 0) {
+      console.error('Deposit: amount is invalid')
       return
     }
     setIsTransacting(true)
@@ -181,6 +181,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             type='number'
             id='amount'
             name='amount'
+            min='0'
             required
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value))}

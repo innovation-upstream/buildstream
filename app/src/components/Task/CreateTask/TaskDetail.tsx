@@ -60,31 +60,18 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     }
   }
 
-  const TaskAction = () => {
+  const taskAction = async () => {
     if (taskStatus === 'proposed') {
-      return (
-        <button
-          className='btn-primary min-w-full md:min-w-[30%]'
-          disabled={processing}
-          onClick={openCreatedTask}
-        >
-          {t('open_task')}
-        </button>
-      )
+      await openCreatedTask()
     }
     if (taskStatus === 'open') {
-      return (
-        <button
-          className='btn-primary min-w-full md:min-w-[30%]'
-          disabled={processing}
-          onClick={requestAssignment}
-        >
-          {t('request_assignment')}
-        </button>
-      )
+      await requestAssignment()
     }
+    close()
     return null
   }
+
+  const buttonText = taskStatus === 'proposed' ? t('open_task') : t('request_assignment')
 
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -256,7 +243,15 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
               </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-              {!processing ? <TaskAction /> : <Spinner width={30} />}
+              {!processing ? (
+                <button
+                className='btn-primary min-w-full md:min-w-[30%]'
+                disabled={processing}
+                onClick={taskAction}
+              >
+                {buttonText}
+              </button>
+              ) : <Spinner width={30} />}
               <button
                 className='btn-outline px-8 w-full md:w-auto border-gray-200 hover:border-gray-300'
                 onClick={close}
