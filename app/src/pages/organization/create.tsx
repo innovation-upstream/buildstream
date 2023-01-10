@@ -41,7 +41,7 @@ const CreateOrganization: React.FC = () => {
           </p>
         </div>
 
-        <div className='paper col-span-4 md:col-span-8 lg:col-span-7 px-10 py-12 rounded-[46px] relative'>
+        <div className='paper col-span-4 md:col-span-8 lg:col-start-7 px-10 py-12 rounded-[46px] relative'>
           <CreateOrganizationForm />
         </div>
       </div>
