@@ -49,6 +49,8 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
   }
+  const preventInvalidChar = (ev: any) =>
+    ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
 
   const createTask = async (ev: any) => {
     ev.preventDefault()
@@ -166,6 +168,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         id='duration'
                         name='duration'
                         min='1'
+                        onKeyDown={preventInvalidChar}
                         value={taskData.duration}
                         onChange={handleChange}
                         className='overflow-hidden focus:outline-none'
@@ -193,6 +196,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         id='reputationLevel'
                         name='reputationLevel'
                         min='0'
+                        onKeyDown={preventInvalidChar}
                         value={taskData.reputationLevel}
                         onChange={handleChange}
                         className='overflow-hidden focus:outline-none'
