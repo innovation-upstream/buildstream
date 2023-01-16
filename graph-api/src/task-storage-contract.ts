@@ -65,7 +65,9 @@ export function createTaskNotificationEntity(
 ): Notification {
   const notificationEntity = new Notification(taskSnapshotEntity.id.toString())
   if (taskSnapshotEntity.status >= TaskStatus.ASSIGNED) {
-    const users = [taskSnapshotEntity.assignee as string]
+    const users = [] as string[]
+    if (taskSnapshotEntity.assignee)
+      users.push(taskSnapshotEntity.assignee as string)
     if (taskSnapshotEntity.teamAssignee)
       users.push(taskSnapshotEntity.teamAssignee as string)
     notificationEntity.users = users

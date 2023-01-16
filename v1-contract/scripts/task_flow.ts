@@ -14,6 +14,12 @@ const dueDate = 10
 async function main() {
   await waitForInput('Contracts: initialize contracts')
 
+  const taskLib = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskLibrary.json')
+  )
+  const taskLogicLib = readJson(
+    path.join(__dirname, '../../app/src/contracts/TaskControlLogicLibrary.json')
+  )
   const OrgContract = readJson(
     path.join(__dirname, '../../app/src/contracts/Org.json')
   )
@@ -37,10 +43,18 @@ async function main() {
   const token = await ethers.getContractFactory('SBTToken')
   const tokenContract = await token.attach(SBTToken.address)
 
-  const taskStorage = await ethers.getContractFactory('TaskStorageContract')
+  const taskStorage = await ethers.getContractFactory('TaskStorageContract', {
+    libraries: {
+      TaskLibrary: taskLib.address
+    }
+  })
   const taskStorageContract = await taskStorage.attach(TaskStorage.address)
 
-  const task = await ethers.getContractFactory('TaskContract')
+  const task = await ethers.getContractFactory('TaskContract', {
+    libraries: {
+      TaskControlLogicLibrary: taskLogicLib.address
+    }
+  })
   const taskContract = await task.attach(Task.address)
 
   const treasury = await ethers.getContractFactory('Treasury')
