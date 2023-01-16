@@ -72,5 +72,6 @@
   "completed_tasks": "Completed tasks",
   "without_request": "Without request",
   "with_request": "With requests",
-  "closed_tasks": "Closed tasks"
+  "closed_tasks": "Closed tasks",
+  "archive_task": "Archive Task"
 }

@@ -2,7 +2,7 @@ import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
-import { assignToSelf, openTask } from 'hooks/task/functions'
+import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,6 +22,7 @@ const taskComplexities = Object.entries(ComplexityScoreMap)
 const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
+  const [processArchive, setProcessArchive] = useState(false)
   const { account, library } = useWeb3()
   const taskStatus = Object.entries(TaskStatusMap)[task?.status ?? 0]?.[1]
   const { t } = useTranslation('tasks')
@@ -60,6 +61,22 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     }
   }
 
+  const archiveCurrentTask = async () => {
+    if (!account) {
+      setStatus({ text: t('wallet_not_connected'), error: true })
+      return
+    }
+    setProcessArchive(true)
+    try {
+      const tx = await archiveTask(task.id, library.getSigner())
+      setProcessArchive(false)
+      if (tx) close()
+    } catch (e) {
+      setProcessArchive(false)
+      console.error(e)
+    }
+  }
+
   const taskAction = async () => {
     if (taskStatus === 'proposed') {
       await openCreatedTask()
@@ -71,7 +88,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     return null
   }
 
-  const buttonText = taskStatus === 'proposed' ? t('open_task') : t('request_assignment')
+  const buttonText =
+    taskStatus === 'proposed' ? t('open_task') : t('request_assignment')
 
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -245,13 +263,27 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
             <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
               {!processing ? (
                 <button
-                className='btn-primary min-w-full md:min-w-[30%]'
-                disabled={processing}
-                onClick={taskAction}
-              >
-                {buttonText}
-              </button>
-              ) : <Spinner width={30} />}
+                  className='btn-primary min-w-full md:min-w-[30%]'
+                  disabled={processing}
+                  onClick={taskAction}
+                >
+                  {buttonText}
+                </button>
+              ) : (
+                <Spinner width={30} />
+              )}
+              {taskStatus === 'open' && (
+                <button
+                  className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
+                  onClick={archiveCurrentTask}
+                >
+                  {processArchive ? (
+                    <Spinner className='text-white' />
+                  ) : (
+                    t('archive_task')
+                  )}
+                </button>
+              )}
               <button
                 className='btn-outline px-8 w-full md:w-auto border-gray-200 hover:border-gray-300'
                 onClick={close}
