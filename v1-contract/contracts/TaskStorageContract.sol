@@ -54,6 +54,7 @@ library TaskLib {
         uint256 submitDate;
         bool staked;
         TaskRevision[] revisions;
+        uint256 revisionCount;
         address[] assignmentRequests;
         address[] approvers;
         uint256 totalWaitTime;
@@ -337,10 +338,11 @@ contract TaskStorageContract {
             durationExtension,
             approver
         );
-        uint256 revisionsLength = taskMetadata[taskId].revisions.length;
         emit TaskRevisionRequested(
             taskId,
-            taskMetadata[taskId].revisions[revisionsLength - 1]
+            taskMetadata[taskId].revisions[
+                taskMetadata[taskId].revisionCount - 1
+            ]
         );
     }
 
