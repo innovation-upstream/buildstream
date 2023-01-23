@@ -133,6 +133,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -142,7 +143,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -156,9 +158,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -228,6 +231,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -237,7 +241,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -251,9 +256,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -333,6 +339,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -342,7 +349,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -355,9 +363,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -437,6 +446,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -446,7 +456,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -459,9 +470,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -557,6 +569,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -566,7 +579,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -580,9 +594,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -678,6 +693,7 @@ describe('Integration test: Task flow', function () {
     })
 
     // Create task using org id created earlier
+    const requestAssignment = false
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
@@ -687,7 +703,8 @@ describe('Integration test: Task flow', function () {
         ['golang'],
         complexityScore,
         reputationLevel,
-        taskDuration
+        taskDuration,
+        requestAssignment
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -701,9 +718,10 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
+    const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(taskId, ethers.constants.AddressZero)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -740,6 +758,112 @@ describe('Integration test: Task flow', function () {
       )
     await storageContract.connect(assignee).acceptTaskRevision(taskId, 1)
 
+    await taskContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
+    const initialBalance = await ethers.provider.getBalance(assignee.address)
+
+    // Approvers can confirm task
+    await taskContract.connect(approver1).approveTask(taskId)
+    await taskContract.connect(approver2).approveTask(taskId)
+
+    // Assignee should receive reward
+
+    const reward = ethers.utils
+      .parseUnits(multiplier.toString())
+      .mul(1 + complexityScore)
+    const newBalance = await ethers.provider.getBalance(assignee.address)
+    const expectedBalance = reward.add(initialBalance)
+    const isEqual = expectedBalance.eq(newBalance)
+
+    expect(
+      await tokenContract['balanceOf(address,uint256,uint256)'](
+        assignee.address,
+        complexityScore,
+        orgId
+      )
+    ).to.be.equal(1)
+    expect(isEqual).to.be.equal(true)
+  })
+
+  it('Should successfully assign task to task creator and complete task flow', async function () {
+    const [owner, approver1, approver2, assignee] = await ethers.getSigners()
+    const {
+      orgContract,
+      taskContract,
+      tokenContract,
+      treasuryContract,
+      storageContract
+    } = await getContractInstances()
+
+    // Create organization
+    const createOrgTx = await orgContract.createOrg(
+      'Buildstream',
+      'Decentralized task managers',
+      [approver1.address, approver2.address],
+      [owner.address],
+      false
+    )
+
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'OrganizationCreation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract['deposit(uint256)'](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther('0.001')
+    })
+
+    // Create task using org id created earlier
+    const requestAssignment = true
+    const createTaskTx = await taskContract
+      .connect(assignee)
+      .createTask(
+        orgId,
+        'update ethers version',
+        'update ethers version to v2',
+        ['golang'],
+        complexityScore,
+        reputationLevel,
+        taskDuration,
+        requestAssignment
+      )
+
+    const taskCreateReceipt = await createTaskTx.wait()
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
+    )
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
+
+    // Open and assign task
+    const assignCreator = true
+    await taskContract
+      .connect(approver1)
+      .openTask(taskId, ethers.constants.AddressZero, assignCreator)
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address)
+
+    // Submit task
     await taskContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')

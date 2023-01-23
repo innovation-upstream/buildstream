@@ -72,7 +72,8 @@ contract TaskContract {
         string[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration
+        uint256 taskDuration,
+        bool requestAssignment
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
@@ -91,6 +92,9 @@ contract TaskContract {
             requiredTaskApprovals,
             taskDuration
         );
+
+        if (requestAssignment)
+            taskStorage.makeAssignmentRequest(taskId, msg.sender);
     }
 
     /// @dev Allows an approver to update a task.
@@ -117,10 +121,11 @@ contract TaskContract {
 
     /// @dev Allows an approver to move a task to open.
     /// @param taskId Task ID.
-    function openTask(uint256 taskId, address rewardToken)
-        external
-        onlyApprover(taskId)
-    {
+    function openTask(
+        uint256 taskId,
+        address rewardToken,
+        bool assignCreator
+    ) external onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
             taskId,
@@ -129,18 +134,24 @@ contract TaskContract {
         );
         treasury.lockBalance(task.orgId, rewardToken, rewardAmount);
         taskStorage.openTask(taskId, rewardAmount, rewardToken);
+
+        if (!assignCreator) return;
+
+        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
+            taskId
+        );
+        if (
+            taskMetadata.assignmentRequests.length > 0 &&
+            taskMetadata.assignmentRequests[0] != address(0)
+        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender);
     }
 
     /// @dev Allows a approver to approve a task.
     /// @param taskId Task ID.
     function approveTask(uint256 taskId) external onlyApprover(taskId) {
         taskStorage.approveTask(taskId, msg.sender);
-        if (
-            TaskControlLogicLibrary.canCloseTask(
-                taskId,
-                taskStorage
-            )
-        ) closeTask(taskId);
+        if (TaskControlLogicLibrary.canCloseTask(taskId, taskStorage))
+            closeTask(taskId);
     }
 
     /// @dev Allows a approver to revoke approval for a task.
@@ -198,23 +209,33 @@ contract TaskContract {
 
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
-    function assignSelf(uint256 taskId) external {
+    function assign(
+        uint256 taskId,
+        address assignee,
+        address assigner
+    ) internal {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         if (
-            sbtToken.balanceOf(msg.sender, task.complexityScore, task.orgId) <
+            sbtToken.balanceOf(assignee, task.complexityScore, task.orgId) <
             task.reputationLevel
         ) {
-            taskStorage.makeAssignmentRequest(taskId, msg.sender);
+            taskStorage.makeAssignmentRequest(taskId, assignee);
             return;
         }
 
-        taskStorage.assign(taskId, msg.sender, msg.sender, true);
+        taskStorage.assign(taskId, assignee, assigner, true);
         sbtToken.stake(
-            msg.sender,
+            assignee,
             task.complexityScore,
             task.reputationLevel,
             task.orgId
         );
+    }
+
+    /// @dev Allows assignees assign task to themselves.
+    /// @param taskId Task ID.
+    function assignSelf(uint256 taskId) external {
+        assign(taskId, msg.sender, msg.sender);
     }
 
     function approveAssignRequest(uint256 taskId, address assignee)
@@ -243,7 +264,7 @@ contract TaskContract {
 
     /// @dev Allows approver to unassign assignee.
     /// @param taskId Task ID.
-    function unassign(uint256 taskId) onlyApprover(taskId) external {
+    function unassign(uint256 taskId) external onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorage.getTask(taskId);
         TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
             taskId
