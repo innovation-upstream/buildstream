@@ -105,11 +105,11 @@ const CreateTaskPage = ({ orgs }: { orgs: Organization[] }) => {
       setStatus({ text: 'Wallet Not Connected', error: true })
       return
     }
-    const taskDuration = TaskDurationCalc.getDurationInSeconds(
-      taskData.weeks,
-      taskData.days,
-      taskData.hours
-    )
+    const taskDuration = TaskDurationCalc.getDurationInSeconds({
+      weeks: taskData.weeks,
+      days: taskData.days,
+      hours: taskData.hours
+    })
     if (taskDuration === 0) {
       setStatus({ text: 'Wrong Task Duration Input', error: true })
       return

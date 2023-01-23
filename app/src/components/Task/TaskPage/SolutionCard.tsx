@@ -1,11 +1,13 @@
 import { useWeb3 } from 'hooks'
-import { approveTask } from 'hooks/task/functions'
+import { approveTask, disputeAssignedTask } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
 import FileSvg from 'SVGs/File'
 import Warning from 'SVGs/Warning'
 import RequestChangeModal from './RequestChangeModal'
+import ChangeTaskDurationModal from './ChangeTaskDurationModal'
+import Spinner from 'components/Spinner/Spinner'
 
 interface TaskStatusCardProps {
   task: Task
@@ -13,6 +15,9 @@ interface TaskStatusCardProps {
   isUpdatedSolution?: boolean
   showControls?: boolean
 }
+
+const requestMessage =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis sem erat, at bibendum ante porta at. Pellentesque condimentum ex eu malesuada iaculis. Sed varius vulputate rutrum. Pellentesque non diam consequat, faucibus velit vitae, dapibus erat. Nunc maximus mauris magna, sed aliquet nibh faucibus at. Ut id justo elit. Etiam nunc eros, lacinia nec consectetur sed, sollicitudin in arcu.'
 
 const SolutionCard = ({
   task,
@@ -22,6 +27,8 @@ const SolutionCard = ({
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [requestChangeModal, setShowRequestChangeModal] = useState(false)
+  const [durationExtention, setDurationExtention] = useState(false)
+  const [processDispute, setProcessDispute] = useState(false)
 
   const approve = async () => {
     if (!account) return
@@ -29,6 +36,18 @@ const SolutionCard = ({
       await approveTask(task.id, library.getSigner())
     } catch (e) {
       console.error(e)
+    }
+  }
+
+  const disputeTask = async () => {
+    if (!account) return
+    setProcessDispute(true)
+    try {
+      await disputeAssignedTask(task.id, 0, library.getSigner())
+      setProcessDispute(false)
+    } catch (e) {
+      console.error(e)
+      setProcessDispute(false)
     }
   }
 
@@ -65,10 +84,17 @@ const SolutionCard = ({
             >
               {t('request_changes')}
             </button>
-            <button className='btn-outline border-[#EFF0F1] text-sm flex justify-center gap-2.5 items-center'>
-              <Warning />
-              {t('dispute_task')}
-            </button>
+            {processDispute ? (
+              <Spinner />
+            ) : (
+              <button
+                className='btn-outline border-[#EFF0F1] text-sm flex justify-center gap-2.5 items-center'
+                onClick={disputeTask}
+              >
+                <Warning />
+                {t('dispute_task')}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -76,6 +102,12 @@ const SolutionCard = ({
         <RequestChangeModal
           taskId={task.id}
           onClose={() => setShowRequestChangeModal(false)}
+        />
+      )}
+      {durationExtention && (
+        <ChangeTaskDurationModal
+          taskId={task.id}
+          onClose={() => setDurationExtention(false)}
         />
       )}
     </>

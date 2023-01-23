@@ -41,7 +41,7 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
       orderBy: 'revisionId',
       orderDirection: 'asc',
       where: {
-        task: task.id as any
+        task: task.id.toString()
       }
     }
   })
@@ -76,6 +76,7 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
             <ChangeRequest
               revision={revision}
               isAssignee={task.assigneeAddress === account}
+              taskId={task.id}
             />
           </React.Fragment>
         )

@@ -19,12 +19,12 @@ export class TaskDurationCalc {
     `
   }
 
-  public static getDurationInSeconds(
-    weeks: number,
-    days: number,
+  public static getDurationInSeconds(params: {
+    weeks: number
+    days: number
     hours: number
-  ): number {
-    return weeks * 604800 + days * 86400 + hours * 3600
+  }): number {
+    return params.weeks * 604800 + params.days * 86400 + params.hours * 3600
   }
 
   public static getDurationInDays(seconds: number): number {
