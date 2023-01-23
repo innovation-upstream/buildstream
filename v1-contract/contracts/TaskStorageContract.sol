@@ -278,7 +278,7 @@ contract TaskStorageContract {
         onlyTaskContract
         taskExists(taskId)
     {
-        require(!assignmentRequests[taskId][assignee], "Already assigned");
+        if (assignmentRequests[taskId][assignee]) return
         taskMetadata[taskId].makeAssignmentRequest(assignee);
         emit TaskAssignmentRequested(assignee, taskId);
     }
