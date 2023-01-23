@@ -179,16 +179,16 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        if (taskMetadata.revisions.length > 0) {
+        if (taskMetadata.revisionCount > 0) {
             require(
-                taskMetadata.revisions[taskMetadata.revisions.length - 1].status !=
+                taskMetadata.revisions[taskMetadata.revisionCount - 1].status !=
                     TaskLib.TaskRevisionStatus.PROPOSED,
                 "decide on last revision"
             );
         }
         taskMetadata.revisions.push(
             TaskLib.TaskRevision({
-                id: taskMetadata.revisions.length,
+                id: taskMetadata.revisionCount,
                 requester: approver,
                 revisionId: revisionId,
                 revisionHash: revisionHash,
@@ -197,6 +197,7 @@ library TaskLibrary {
                 status: TaskLib.TaskRevisionStatus.PROPOSED
             })
         );
+        taskMetadata.revisionCount++;
     }
 
     function acceptTaskRevision(
@@ -210,7 +211,7 @@ library TaskLibrary {
             "Task not submitted"
         );
         require(
-            taskMetadata.revisions.length > revisionIndex,
+            taskMetadata.revisionCount > revisionIndex,
             "revision invalid"
         );
         require(
@@ -243,7 +244,7 @@ library TaskLibrary {
             "Task not submitted"
         );
         require(
-            taskMetadata.revisions.length > revisionIndex,
+            taskMetadata.revisionCount > revisionIndex,
             "revision invalid"
         );
         require(
@@ -270,7 +271,7 @@ library TaskLibrary {
             "Task not submitted"
         );
         require(
-            taskMetadata.revisions.length > revisionIndex,
+            taskMetadata.revisionCount > revisionIndex,
             "revision invalid"
         );
         require(
