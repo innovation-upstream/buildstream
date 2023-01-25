@@ -174,3 +174,72 @@ export const editTask = async (
 
   return true
 }
+
+export const requestTaskReview = async (
+  taskId: number,
+  reviewId: string,
+  revisionHash: string,
+  durationExtension: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+  const response = await contract.requestForTaskRevision(
+    taskId,
+    reviewId,
+    revisionHash,
+    durationExtension
+  )
+  await response.wait()
+
+  return true
+}
+
+export const changeTaskDuration = async (
+  taskId: number,
+  revisionIndex: number,
+  durationExtension: number,
+  provider?: any
+): Promise<boolean> => {
+  const taskStorageContract = getContract(
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
+    provider
+  )
+
+  const response =
+    await taskStorageContract.requestForTaskRevisionDurationExtension(
+      taskId,
+      revisionIndex,
+      durationExtension
+    )
+  await response.wait()
+  return true
+}
+
+export const acceptRevision = async (taskId: number, revisionIndex: number, provider?: any): Promise<boolean> => {
+  const taskStorageContract = getContract(
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
+    provider
+  )
+
+  const response = await taskStorageContract.acceptTaskRevision(taskId, revisionIndex)
+  await response.wait()
+  return true
+}
+
+export const disputeAssignedTask = async (taskId: number, revisionIndex: number, provider?: any): Promise<boolean> => {
+  const taskStorageContract = getContract(
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
+    provider
+  )
+
+  const response = await taskStorageContract.rejectTaskRevision(taskId, revisionIndex)
+  await response.wait()
+  return true
+}

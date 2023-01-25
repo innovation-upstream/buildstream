@@ -73,5 +73,10 @@
   "without_request": "Without request",
   "with_request": "With requests",
   "closed_tasks": "Closed tasks",
-  "archive_task": "Archive Task"
+  "change_task_duration": "Change task duration",
+  "archive_task": "Archive Task",
+  "duration_extension": "Duration extension",
+  "duration_extension_request": "Duration extension request",
+  "change": "Change",
+  "day": "Day",
 }

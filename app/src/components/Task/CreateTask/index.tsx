@@ -59,11 +59,11 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
       return
     }
 
-    const taskDuration = TaskDurationCalc.getDurationInSeconds(
-      0,
-      taskData.duration,
-      0
-    )
+    const taskDuration = TaskDurationCalc.getDurationInSeconds({
+      weeks: 0,
+      days: taskData.duration,
+      hours: 0
+    })
 
     if (taskDuration <= 0) {
       setStatus({ text: t('wrong_duration_input'), error: true })
