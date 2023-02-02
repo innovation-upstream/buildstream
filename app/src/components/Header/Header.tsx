@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
 import { useWeb3 } from 'hooks'
@@ -11,22 +12,37 @@ import MobileNav from './MobileNav'
 import { ConnectWalletButton, Navbar } from './styled'
 import { useRouter } from 'next/router'
 import { activeMenuItems } from './menuItems'
+import { setCookies, getCookie } from 'cookies-next'
+import injected from 'config/Walletconnectors'
 
 const Header = () => {
-  const { account: address, deactivate } = useWeb3()
+  const { account: address, deactivate, activate } = useWeb3()
   const { t } = useTranslation('header')
   const [showWalletModal, setWalletModal] = useState(false)
   const [showMobileNav, setModalNav] = useState(false)
   const { pathname } = useRouter()
   const navMenu = activeMenuItems(pathname)
 
+  const ACCOUNT = 'account'
+
   async function disconnect() {
     try {
       deactivate()
+      setCookies(ACCOUNT, '')
     } catch (ex) {
       console.log(ex)
     }
   }
+
+  useEffect(() => {
+    if (getCookie(ACCOUNT)) {
+      try {
+        activate(injected)
+      } catch (ex) {
+        console.log(ex)
+      }
+    }
+  })
 
   return (
     <Navbar>
