@@ -137,6 +137,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -235,6 +236,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -343,6 +345,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -450,6 +453,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -573,6 +577,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -697,6 +702,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(approver1)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',
@@ -833,6 +839,7 @@ describe('Integration test: Task flow', function () {
     const createTaskTx = await taskContract
       .connect(assignee)
       .createTask(
+        '',
         orgId,
         'update ethers version',
         'update ethers version to v2',

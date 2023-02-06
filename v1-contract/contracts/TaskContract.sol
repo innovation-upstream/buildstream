@@ -66,6 +66,7 @@ contract TaskContract {
     /// @param reputationLevel Number of tokens.
     /// @return taskId task ID.
     function createTask(
+        string memory externalId,
         uint256 orgId,
         string memory title,
         string memory description,
@@ -84,6 +85,7 @@ contract TaskContract {
         uint256 requiredTaskApprovals = organization.getTaskApprovals(orgId);
         taskId = taskStorage.createTask(
             orgId,
+            externalId,
             title,
             description,
             taskTags,
@@ -101,6 +103,7 @@ contract TaskContract {
     /// @param taskId Task ID.
     function updateTask(
         uint256 taskId,
+        string memory externalId,
         string memory title,
         string memory description,
         string[] memory taskTags,
@@ -110,6 +113,7 @@ contract TaskContract {
     ) external onlyApprover(taskId) {
         taskStorage.updateTask(
             taskId,
+            externalId,
             title,
             description,
             taskTags,

@@ -32,6 +32,7 @@ library TaskLib {
 
     struct Task {
         uint256 id;
+        string externalId;
         uint256 orgId;
         string title;
         string description;
@@ -146,6 +147,7 @@ contract TaskStorageContract {
     }
 
     /// @dev Allows a user to create a task.
+    /// @param externalId Id from other task manager.
     /// @param orgId Id of organization.
     /// @param title Task title.
     /// @param description Task description.
@@ -157,6 +159,7 @@ contract TaskStorageContract {
     /// @return taskId task ID.
     function createTask(
         uint256 orgId,
+        string memory externalId,
         string memory title,
         string memory description,
         string[] memory taskTags,
@@ -168,6 +171,7 @@ contract TaskStorageContract {
         taskId = taskCount;
         tasks[taskId].createTask(
             taskId,
+            externalId,
             orgId,
             title,
             description,
@@ -187,6 +191,7 @@ contract TaskStorageContract {
     /// @param taskId Task ID.
     function updateTask(
         uint256 taskId,
+        string memory externalId,
         string memory title,
         string memory description,
         string[] memory taskTags,
@@ -196,6 +201,7 @@ contract TaskStorageContract {
     ) external onlyTaskContract {
         require(msg.sender == taskContractAddress, "Permission denied");
         tasks[taskId].updateTask(
+            externalId,
             title,
             description,
             taskTags,
