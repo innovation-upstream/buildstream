@@ -12,6 +12,7 @@ library TaskLibrary {
     function createTask(
         TaskLib.Task storage self,
         uint256 taskId,
+        string memory externalId,
         uint256 orgId,
         string memory title,
         string memory description,
@@ -21,6 +22,7 @@ library TaskLibrary {
         uint256 taskDuration
     ) external {
         self.id = taskId;
+        self.externalId = externalId;
         self.orgId = orgId;
         self.title = title;
         self.description = description;
@@ -42,6 +44,7 @@ library TaskLibrary {
     /// @dev Allows an approver to update a task.
     function updateTask(
         TaskLib.Task storage self,
+        string memory externalId,
         string memory title,
         string memory description,
         string[] memory taskTags,
@@ -49,6 +52,7 @@ library TaskLibrary {
         uint256 reputationLevel,
         uint256 taskDuration
     ) external {
+        self.externalId = externalId;
         self.title = title;
         self.description = description;
         self.taskDuration = taskDuration;
