@@ -182,6 +182,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             id='amount'
             name='amount'
             min='0'
+            step='0.000001'
             required
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value))}
