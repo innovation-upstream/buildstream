@@ -101,7 +101,10 @@ const getAssigneeData = async (assignee: string, tags: string[][]) => {
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(() => async (context) => {
-    const taskId = context.params?.id?.[0] || '0'
+    const taskId =
+      typeof context.params?.id === 'string'
+        ? context.params?.id
+        : context.params?.id?.[0] || '0'
     const { data } = await client.query({
       query: GetTaskDocument,
       variables: {
