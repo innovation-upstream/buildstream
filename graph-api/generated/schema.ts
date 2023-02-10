@@ -593,6 +593,23 @@ export class Task extends Entity {
     this.set("taskId", Value.fromBigInt(value));
   }
 
+  get externalId(): string | null {
+    let value = this.get("externalId");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set externalId(value: string | null) {
+    if (!value) {
+      this.unset("externalId");
+    } else {
+      this.set("externalId", Value.fromString(<string>value));
+    }
+  }
+
   get orgId(): string {
     let value = this.get("orgId");
     return value!.toString();
