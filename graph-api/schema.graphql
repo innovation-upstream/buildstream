@@ -59,6 +59,7 @@ type OrganizationSnapshot @entity {
 type Task @entity {
   id: ID!
   taskId: BigInt!
+  externalId: String
   orgId: Organization!
   title: String
   description: String
