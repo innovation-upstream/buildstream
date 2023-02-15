@@ -3,4 +3,5 @@ export class ClickupRoutes {
   public static getToken = '/get_token'
   public static spaces = '/spaces'
   public static tasks = '/tasks'
+  public static task = '/task'
 }
