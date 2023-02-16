@@ -1,5 +1,6 @@
 fragment TaskFragment on Task {
   id
+  externalId
   taskId
   orgId {
     ...OrganizationFragment

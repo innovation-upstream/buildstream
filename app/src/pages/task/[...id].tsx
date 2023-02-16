@@ -26,6 +26,8 @@ import SubmitCard from 'components/Task/TaskPage/SubmitCard'
 import SolutionTime from 'components/Task/TaskPage/SolutionTime'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { getCookie } from 'cookies-next'
+import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 
 type AssigneeData = {
   tags: string[]
@@ -146,9 +148,21 @@ export const getServerSideProps: GetServerSideProps =
       assigneeData = await getAssigneeData(data.task?.assignee as string, tags)
     }
 
+    let clickupTask
+    if (data.task.externalId) {
+      clickupTask = await fetchClickupTask(
+        data.task.externalId,
+        getCookie(TOKEN_KEY, context) as string
+      )
+    }
+
     return {
       props: {
-        task: data.task,
+        task: {
+          ...data.task,
+          title: clickupTask?.name || data.task.title,
+          description: clickupTask?.description || data.task.description
+        },
         snapshots: snapshots.taskSnapshots,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
@@ -184,9 +198,27 @@ const TaskPage: NextPage<PageProps> = ({
   usePolling(startPolling, stopPolling)
 
   useEffect(() => {
-    if (data?.task) {
-      setCurrentTask(Converter.TaskFromQuery(data.task as any))
+    if (!data?.task) return
+    const retrievedTask = Converter.TaskFromQuery(data.task as any)
+
+    if (!data?.task?.externalId) {
+      setCurrentTask(retrievedTask)
+      return
     }
+
+    fetchClickupTask(data.task.externalId, getCookie(TOKEN_KEY) as string)
+      .then((clickupTask) => {
+        if (clickupTask) {
+          setCurrentTask({
+            ...retrievedTask,
+            title: clickupTask?.name || retrievedTask.title,
+            description: clickupTask?.description || retrievedTask.description
+          })
+        }
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }, [data])
 
   if (!currentTask) {

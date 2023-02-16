@@ -146,6 +146,10 @@ input ActionSnapshot_filter {
   value_not_in: [BigInt!]
   data: Bytes
   data_not: Bytes
+  data_gt: Bytes
+  data_lt: Bytes
+  data_gte: Bytes
+  data_lte: Bytes
   data_in: [Bytes!]
   data_not_in: [Bytes!]
   data_contains: Bytes
@@ -242,6 +246,8 @@ input ActionSnapshot_filter {
   timestamp_not_in: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [ActionSnapshot_filter]
+  or: [ActionSnapshot_filter]
 }
 
 enum ActionSnapshot_orderBy {
@@ -360,6 +366,10 @@ input Action_filter {
   value_not_in: [BigInt!]
   data: Bytes
   data_not: Bytes
+  data_gt: Bytes
+  data_lt: Bytes
+  data_gte: Bytes
+  data_lte: Bytes
   data_in: [Bytes!]
   data_not_in: [Bytes!]
   data_contains: Bytes
@@ -420,12 +430,18 @@ input Action_filter {
   completedAt_not_in: [BigInt!]
   oldValue: Bytes
   oldValue_not: Bytes
+  oldValue_gt: Bytes
+  oldValue_lt: Bytes
+  oldValue_gte: Bytes
+  oldValue_lte: Bytes
   oldValue_in: [Bytes!]
   oldValue_not_in: [Bytes!]
   oldValue_contains: Bytes
   oldValue_not_contains: Bytes
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Action_filter]
+  or: [Action_filter]
 }
 
 enum Action_orderBy {
@@ -546,6 +562,8 @@ input Deposit_filter {
   completedAt_not_in: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Deposit_filter]
+  or: [Deposit_filter]
 }
 
 enum Deposit_orderBy {
@@ -727,6 +745,8 @@ input Notification_filter {
   timestamp_not_in: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Notification_filter]
+  or: [Notification_filter]
 }
 
 enum Notification_orderBy {
@@ -895,6 +915,10 @@ input OrganizationSnapshot_filter {
   slashRewardEvery_not_in: [BigInt!]
   rewardToken: Bytes
   rewardToken_not: Bytes
+  rewardToken_gt: Bytes
+  rewardToken_lt: Bytes
+  rewardToken_gte: Bytes
+  rewardToken_lte: Bytes
   rewardToken_in: [Bytes!]
   rewardToken_not_in: [Bytes!]
   rewardToken_contains: Bytes
@@ -947,6 +971,8 @@ input OrganizationSnapshot_filter {
   stat_: OrganizationStat_filter
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [OrganizationSnapshot_filter]
+  or: [OrganizationSnapshot_filter]
 }
 
 enum OrganizationSnapshot_orderBy {
@@ -1043,6 +1069,8 @@ input OrganizationStat_filter {
   tags_not_contains_nocase: [String!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [OrganizationStat_filter]
+  or: [OrganizationStat_filter]
 }
 
 enum OrganizationStat_orderBy {
@@ -1167,6 +1195,10 @@ input Organization_filter {
   slashRewardEvery_not_in: [BigInt!]
   rewardToken: Bytes
   rewardToken_not: Bytes
+  rewardToken_gt: Bytes
+  rewardToken_lt: Bytes
+  rewardToken_gte: Bytes
+  rewardToken_lte: Bytes
   rewardToken_in: [Bytes!]
   rewardToken_not_in: [Bytes!]
   rewardToken_contains: Bytes
@@ -1219,6 +1251,8 @@ input Organization_filter {
   stat_: OrganizationStat_filter
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Organization_filter]
+  or: [Organization_filter]
 }
 
 enum Organization_orderBy {
@@ -1980,6 +2014,7 @@ type Subscription {
 type Task {
   id: ID!
   taskId: BigInt!
+  externalId: String
   orgId: Organization!
   title: String
   description: String
@@ -2100,12 +2135,20 @@ input TaskRevision_filter {
   requester_not_ends_with_nocase: String
   externalRevisionId: Bytes
   externalRevisionId_not: Bytes
+  externalRevisionId_gt: Bytes
+  externalRevisionId_lt: Bytes
+  externalRevisionId_gte: Bytes
+  externalRevisionId_lte: Bytes
   externalRevisionId_in: [Bytes!]
   externalRevisionId_not_in: [Bytes!]
   externalRevisionId_contains: Bytes
   externalRevisionId_not_contains: Bytes
   revisionHash: Bytes
   revisionHash_not: Bytes
+  revisionHash_gt: Bytes
+  revisionHash_lt: Bytes
+  revisionHash_gte: Bytes
+  revisionHash_lte: Bytes
   revisionHash_in: [Bytes!]
   revisionHash_not_in: [Bytes!]
   revisionHash_contains: Bytes
@@ -2136,6 +2179,8 @@ input TaskRevision_filter {
   status_not_in: [Int!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [TaskRevision_filter]
+  or: [TaskRevision_filter]
 }
 
 enum TaskRevision_orderBy {
@@ -2424,6 +2469,10 @@ input TaskSnapshot_filter {
   rewardAmount_not_in: [BigInt!]
   rewardToken: Bytes
   rewardToken_not: Bytes
+  rewardToken_gt: Bytes
+  rewardToken_lt: Bytes
+  rewardToken_gte: Bytes
+  rewardToken_lte: Bytes
   rewardToken_in: [Bytes!]
   rewardToken_not_in: [Bytes!]
   rewardToken_contains: Bytes
@@ -2498,6 +2547,8 @@ input TaskSnapshot_filter {
   staked_not_in: [Boolean!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [TaskSnapshot_filter]
+  or: [TaskSnapshot_filter]
 }
 
 enum TaskSnapshot_orderBy {
@@ -2547,6 +2598,26 @@ input Task_filter {
   taskId_lte: BigInt
   taskId_in: [BigInt!]
   taskId_not_in: [BigInt!]
+  externalId: String
+  externalId_not: String
+  externalId_gt: String
+  externalId_lt: String
+  externalId_gte: String
+  externalId_lte: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_contains: String
+  externalId_contains_nocase: String
+  externalId_not_contains: String
+  externalId_not_contains_nocase: String
+  externalId_starts_with: String
+  externalId_starts_with_nocase: String
+  externalId_not_starts_with: String
+  externalId_not_starts_with_nocase: String
+  externalId_ends_with: String
+  externalId_ends_with_nocase: String
+  externalId_not_ends_with: String
+  externalId_not_ends_with_nocase: String
   orgId: String
   orgId_not: String
   orgId_gt: String
@@ -2737,6 +2808,10 @@ input Task_filter {
   rewardAmount_not_in: [BigInt!]
   rewardToken: Bytes
   rewardToken_not: Bytes
+  rewardToken_gt: Bytes
+  rewardToken_lt: Bytes
+  rewardToken_gte: Bytes
+  rewardToken_lte: Bytes
   rewardToken_in: [Bytes!]
   rewardToken_not_in: [Bytes!]
   rewardToken_contains: Bytes
@@ -2832,11 +2907,14 @@ input Task_filter {
   raw_not_ends_with_nocase: String
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Task_filter]
+  or: [Task_filter]
 }
 
 enum Task_orderBy {
   id
   taskId
+  externalId
   orgId
   title
   description
@@ -2971,6 +3049,8 @@ input Team_filter {
   teamRewardMultiplier_not_in: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Team_filter]
+  or: [Team_filter]
 }
 
 enum Team_orderBy {
@@ -3066,6 +3146,8 @@ input TreasuryToken_filter {
   lockedBalance_not_in: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [TreasuryToken_filter]
+  or: [TreasuryToken_filter]
 }
 
 enum TreasuryToken_orderBy {
@@ -3096,6 +3178,8 @@ input Treasury_filter {
   tokens_: TreasuryToken_filter
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [Treasury_filter]
+  or: [Treasury_filter]
 }
 
 enum Treasury_orderBy {
@@ -3180,6 +3264,8 @@ input UserStat_filter {
   tags_not_contains_nocase: [String!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
+  and: [UserStat_filter]
+  or: [UserStat_filter]
 }
 
 enum UserStat_orderBy {

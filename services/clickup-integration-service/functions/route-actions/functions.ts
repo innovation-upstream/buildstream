@@ -146,3 +146,22 @@ export const getFolderTasks = async (req: Request, res: Response): Promise<any[]
     })
     .catch((err) => {throw(err)})
 }
+
+export const getTask = async (req: Request, res: Response) => {
+  const { task_id, token } = req.body
+
+  try {
+    const task = await axios({
+      method: 'get',
+      url: `${ClickupRoutes.baseApiUrl}task/${task_id}`,
+      headers: {
+        'Content-Type': 'application-json',
+        Authorization: token
+      }
+    })
+    res.json(task.data)
+  } catch (err: any) {
+    console.error(err)
+    res.status(401).send({code: err.status, message: err.message})
+  }
+}

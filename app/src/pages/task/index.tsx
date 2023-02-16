@@ -16,6 +16,8 @@ import { useUserStat } from 'hooks/userstat'
 import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
 import Filter from 'components/Task/TaskListPage/Filter'
 import Search from 'components/Task/TaskListPage/Search'
+import { getCookie } from 'cookies-next'
+import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -29,9 +31,26 @@ export const getServerSideProps: GetServerSideProps =
       })
       const locale = context.locale ?? ''
 
+      const tasksWithClickupData = await Promise.all(
+        data.tasks.map(async (t) => {
+          if (!t.externalId) {
+            return t
+          }
+          const clickupTask = await fetchClickupTask(
+            t.externalId as string,
+            getCookie(TOKEN_KEY, context) as string
+          )
+          return {
+            ...t,
+            title: clickupTask?.name || t.title,
+            description: clickupTask?.description || t.description
+          }
+        })
+      )
+
       return {
         props: {
-          taskList: data.tasks,
+          taskList: tasksWithClickupData,
           ...(await serverSideTranslations(locale, [
             'common',
             'tasks',
