@@ -42,6 +42,7 @@ export const ComplexityScoreMap: Record<ComplexityScore, string> = {
 
 export type Task = {
   id: number
+  externalId: string
   orgId: number
   organization: Organization
   title: string

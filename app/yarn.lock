@@ -7040,6 +7040,11 @@ react-native-path@0.0.5:
   resolved "https://registry.yarnpkg.com/react-native-path/-/react-native-path-0.0.5.tgz#a04e4b73a535a8a7cf15c6e760e27db7789afb13"
   integrity sha512-WJr256xBquk7X2O83QYWKqgLg43Zg3SrgjPc/kr0gCD2LoXA+2L72BW4cmstH12GbGeutqs/eXk3jgDQ2iCSvQ==
 
+react-oauth-popup@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-oauth-popup/-/react-oauth-popup-1.0.5.tgz#e84f33995840ab66143b3d5e6f0e70f571e957a8"
+  integrity sha512-UyJ3ohmpaXReUeir7mUZaADmUtpATEmJ9EBwGO/CfDQAGFsHZ+W1MrSVy2t0Hl8v+mgN6Ts/cnRhftSccGK3sg==
+
 react-redux@^8.0.2:
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.0.2.tgz#bc2a304bb21e79c6808e3e47c50fe1caf62f7aad"

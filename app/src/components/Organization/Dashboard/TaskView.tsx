@@ -11,11 +11,20 @@ import Plus from 'SVGs/Plus'
 import { Converter } from 'utils/converter'
 import TaskFilterTabs from './TaskFilterTabs'
 import { TaskFilters } from './types'
+import OauthPopup from 'react-oauth-popup'
+import ClickupImport from 'components/Task/ImportTask/ClickupImport'
+import ClickupLogo from 'SVGs/ClickupLogo'
+import { getCookie } from 'cookies-next'
+import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 
 interface TaskViewProps {
   organization: Organization
   tasks?: Task[]
 }
+
+const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
+const redirect_uri = process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL
+const clickupUrl = `https://app.clickup.com/api?client_id=${client_id}&redirect_uri=${redirect_uri}`
 
 const EmptyTaskView = ({ organization }: TaskViewProps) => {
   const { t } = useTranslation('organization')
@@ -52,6 +61,13 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [tasks, setTasks] = useState(taskList)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [currentTab, setCurrentTab] = useState(TaskFilters.WITHOUT_REQUEST)
+  const [importClickup, setImportClickup] = useState(false)
+  const [clickupCode, setClickupCode] = useState('')
+
+  const onCode = async (code: any, params?: any) => {
+    setClickupCode(code)
+    setImportClickup(true)
+  }
 
   const queryParams = () => {
     if (currentTab === TaskFilters.WITHOUT_REQUEST) {
@@ -90,9 +106,25 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [selected, setSelected] = useState<number>()
 
   useEffect(() => {
-    if (data?.tasks) {
-      setTasks(data.tasks.map((t) => Converter.TaskFromQuery(t)))
-    }
+    if (!data?.tasks) return
+    Promise.all(
+      data.tasks.map(async (t) => {
+        if (!t.externalId) {
+          return t
+        }
+        const clickupTask = await fetchClickupTask(
+          t.externalId as string,
+          getCookie(TOKEN_KEY) as string
+        )
+        return {
+          ...t,
+          title: clickupTask?.name || t.title,
+          description: clickupTask?.description || t.description
+        }
+      })
+    ).then((tasksWithClickupData) =>
+      setTasks(tasksWithClickupData.map((t) => Converter.TaskFromQuery(t)))
+    )
   }, [data])
 
   const selectedTask = tasks?.find((t) => t.id === selected)
@@ -103,6 +135,13 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         <CreateTask
           oranization={organization}
           close={() => setShowCreateModal(false)}
+        />
+      )}
+      {importClickup && (
+        <ClickupImport
+          organizationId={organization.id}
+          clickup_code={clickupCode}
+          close={() => setImportClickup(false)}
         />
       )}
       {selectedTask && (
@@ -121,9 +160,18 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
             >
               <Plus className='fill-[#3667EA]' /> {tr('add_task')}
             </button>
-            <button className='btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>
-              {tr('import_from')} <JiraLogo /> Jira
-            </button>
+            <OauthPopup
+              url={clickupUrl}
+              onCode={onCode}
+              onClose={() => {}}
+              title={`Import Task from Clickup`}
+              height={600}
+              width={700}
+            >
+              <button className='btn-primary flex justify-center gap-2 items-center text-[#17191A] bg-[#3667EA]/80'>
+                {tr('import_from')} <ClickupLogo />
+              </button>
+            </OauthPopup>
           </div>
         </div>
       )}

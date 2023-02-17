@@ -6,6 +6,8 @@ import { Converter } from 'utils/converter'
 import { useTaskFilter } from './FilterContext'
 import Search from './Search'
 import TaskDetail from '../CreateTask/TaskDetail'
+import { getCookie } from 'cookies-next'
+import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 
 interface TaskViewProps {
   tasks?: Task[]
@@ -32,7 +34,23 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
     const sortedTasks = filteredTasks.sort(
       (a, b) => Number(b.id) - Number(a.id)
     )
-    setTasks(sortedTasks.map((task) => Converter.TaskFromQuery(task)))
+    const tasksWithClickupData = await Promise.all(
+      sortedTasks.map(async (t) => {
+        if (!t.externalId) {
+          return t
+        }
+        const clickupTask = await fetchClickupTask(
+          t.externalId as string,
+          getCookie(TOKEN_KEY) as string
+        )
+        return {
+          ...t,
+          title: clickupTask?.name || t.title,
+          description: clickupTask?.description || t.description
+        }
+      })
+    )
+    setTasks(tasksWithClickupData.map((task) => Converter.TaskFromQuery(task)))
   }
 
   const loadMore = async () => {

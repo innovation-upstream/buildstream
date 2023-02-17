@@ -99,6 +99,7 @@ export class Converter {
   public static TaskFromQuery = (task: TaskType): Task => {
     return {
       id: Number(task.taskId),
+      externalId: task.externalId || '',
       orgId: Number(task.orgId.id),
       organization: Converter.OrganizationFromQuery(task.orgId),
       title: task.title || '',

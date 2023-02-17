@@ -2250,6 +2250,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "data_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "data_in"
           },
           "type": {
@@ -3816,6 +3876,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "ActionSnapshot_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "ActionSnapshot_filter"
+              }
             }
           },
           "directives": []
@@ -5489,6 +5585,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "data_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "data_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "data_in"
           },
           "type": {
@@ -6497,6 +6653,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "oldValue_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "oldValue_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "oldValue_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "oldValue_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "oldValue_in"
           },
           "type": {
@@ -6581,6 +6797,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Action_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Action_filter"
+              }
             }
           },
           "directives": []
@@ -8125,6 +8377,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Deposit_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Deposit_filter"
+              }
             }
           },
           "directives": []
@@ -10889,6 +11177,42 @@ const schemaAST = {
             }
           },
           "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Notification_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Notification_filter"
+              }
+            }
+          },
+          "directives": []
         }
       ],
       "directives": []
@@ -13465,6 +13789,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "rewardToken_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "rewardToken_in"
           },
           "type": {
@@ -14275,6 +14659,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "OrganizationSnapshot_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "OrganizationSnapshot_filter"
+              }
             }
           },
           "directives": []
@@ -15651,6 +16071,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "OrganizationStat_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "OrganizationStat_filter"
+              }
             }
           },
           "directives": []
@@ -17573,6 +18029,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "rewardToken_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "rewardToken_in"
           },
           "type": {
@@ -18383,6 +18899,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Organization_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Organization_filter"
+              }
             }
           },
           "directives": []
@@ -25329,6 +25881,22 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
+            "value": "externalId"
+          },
+          "arguments": [],
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "FieldDefinition",
+          "name": {
+            "kind": "Name",
             "value": "orgId"
           },
           "arguments": [],
@@ -27323,6 +27891,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "externalRevisionId_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalRevisionId_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalRevisionId_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalRevisionId_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "externalRevisionId_in"
           },
           "type": {
@@ -27411,6 +28039,66 @@ const schemaAST = {
           "name": {
             "kind": "Name",
             "value": "revisionHash_not"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "revisionHash_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "revisionHash_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "revisionHash_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "revisionHash_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -27905,6 +28593,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TaskRevision_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TaskRevision_filter"
+              }
             }
           },
           "directives": []
@@ -32371,6 +33095,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "rewardToken_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "rewardToken_in"
           },
           "type": {
@@ -33622,6 +34406,42 @@ const schemaAST = {
             }
           },
           "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TaskSnapshot_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TaskSnapshot_filter"
+              }
+            }
+          },
+          "directives": []
         }
       ],
       "directives": []
@@ -34119,6 +34939,318 @@ const schemaAST = {
                   "value": "BigInt"
                 }
               }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_in"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "String"
+                }
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_in"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NonNullType",
+              "type": {
+                "kind": "NamedType",
+                "name": {
+                  "kind": "Name",
+                  "value": "String"
+                }
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_contains"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_contains_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_contains"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_contains_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_starts_with"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_starts_with_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_starts_with"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_starts_with_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_ends_with"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_ends_with_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_ends_with"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId_not_ends_with_nocase"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "String"
             }
           },
           "directives": []
@@ -37157,6 +38289,66 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
+            "value": "rewardToken_gt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lt"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_gte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "rewardToken_lte"
+          },
+          "type": {
+            "kind": "NamedType",
+            "name": {
+              "kind": "Name",
+              "value": "Bytes"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
             "value": "rewardToken_in"
           },
           "type": {
@@ -38735,6 +39927,42 @@ const schemaAST = {
             }
           },
           "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Task_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Task_filter"
+              }
+            }
+          },
+          "directives": []
         }
       ],
       "directives": []
@@ -38759,6 +39987,14 @@ const schemaAST = {
           "name": {
             "kind": "Name",
             "value": "taskId"
+          },
+          "directives": []
+        },
+        {
+          "kind": "EnumValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "externalId"
           },
           "directives": []
         },
@@ -40682,6 +41918,42 @@ const schemaAST = {
             }
           },
           "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Team_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Team_filter"
+              }
+            }
+          },
+          "directives": []
         }
       ],
       "directives": []
@@ -42079,6 +43351,42 @@ const schemaAST = {
             }
           },
           "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TreasuryToken_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "TreasuryToken_filter"
+              }
+            }
+          },
+          "directives": []
         }
       ],
       "directives": []
@@ -42435,6 +43743,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Treasury_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "Treasury_filter"
+              }
             }
           },
           "directives": []
@@ -43715,6 +45059,42 @@ const schemaAST = {
             "name": {
               "kind": "Name",
               "value": "BlockChangedFilter"
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "and"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "UserStat_filter"
+              }
+            }
+          },
+          "directives": []
+        },
+        {
+          "kind": "InputValueDefinition",
+          "name": {
+            "kind": "Name",
+            "value": "or"
+          },
+          "type": {
+            "kind": "ListType",
+            "type": {
+              "kind": "NamedType",
+              "name": {
+                "kind": "Name",
+                "value": "UserStat_filter"
+              }
             }
           },
           "directives": []

@@ -22,6 +22,8 @@ import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
 import TaskView from 'components/Organization/Dashboard/TaskView'
 import ActivityView from 'components/Organization/Dashboard/ActivityView'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { getCookie } from 'cookies-next'
+import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -63,10 +65,27 @@ export const getServerSideProps: GetServerSideProps =
         }
       })
 
+      const tasksWithClickupData = await Promise.all(
+        tasks.tasks.map(async (t) => {
+          if (!t.externalId) {
+            return t
+          }
+          const clickupTask = await fetchClickupTask(
+            t.externalId as string,
+            getCookie(TOKEN_KEY, context) as string
+          )
+          return {
+            ...t,
+            title: clickupTask?.name || t.title,
+            description: clickupTask?.description || t.description
+          }
+        })
+      )
+
       return {
         props: {
           org: data?.organization,
-          taskList: tasks.tasks,
+          taskList: tasksWithClickupData,
           snapshots: snapshots.taskSnapshots,
           ...(await serverSideTranslations(locale, [
             'common',

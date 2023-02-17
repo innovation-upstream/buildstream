@@ -28,9 +28,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
 
   const onSuggestionClick = (id: string) => {
     if (!inputRef.current) return
-    const suggestion = suggestions.find(
-      (suggestion) => suggestion.id === id
-    )
+    const suggestion = suggestions.find((suggestion) => suggestion.id === id)
     if (!suggestion) return
     var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
@@ -63,6 +61,20 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  useEffect(() => {
+    if (inputRef.current && !suggestions.length) {
+      var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      )?.set
+      nativeInputValueSetter?.call(inputRef.current, '')
+
+      var event = new Event('input', { bubbles: true })
+      inputRef.current.dispatchEvent(event)
+      setShowSuggestions(false)
+    }
+  }, [suggestions.length])
 
   return (
     <div className='relative'>

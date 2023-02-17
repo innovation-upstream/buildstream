@@ -173,6 +173,10 @@ export type ActionSnapshot_filter = {
   value_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   data?: InputMaybe<Scalars['Bytes']>;
   data_not?: InputMaybe<Scalars['Bytes']>;
+  data_gt?: InputMaybe<Scalars['Bytes']>;
+  data_lt?: InputMaybe<Scalars['Bytes']>;
+  data_gte?: InputMaybe<Scalars['Bytes']>;
+  data_lte?: InputMaybe<Scalars['Bytes']>;
   data_in?: InputMaybe<Array<Scalars['Bytes']>>;
   data_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   data_contains?: InputMaybe<Scalars['Bytes']>;
@@ -269,6 +273,8 @@ export type ActionSnapshot_filter = {
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ActionSnapshot_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<ActionSnapshot_filter>>>;
 };
 
 export type ActionSnapshot_orderBy =
@@ -386,6 +392,10 @@ export type Action_filter = {
   value_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   data?: InputMaybe<Scalars['Bytes']>;
   data_not?: InputMaybe<Scalars['Bytes']>;
+  data_gt?: InputMaybe<Scalars['Bytes']>;
+  data_lt?: InputMaybe<Scalars['Bytes']>;
+  data_gte?: InputMaybe<Scalars['Bytes']>;
+  data_lte?: InputMaybe<Scalars['Bytes']>;
   data_in?: InputMaybe<Array<Scalars['Bytes']>>;
   data_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   data_contains?: InputMaybe<Scalars['Bytes']>;
@@ -446,12 +456,18 @@ export type Action_filter = {
   completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   oldValue?: InputMaybe<Scalars['Bytes']>;
   oldValue_not?: InputMaybe<Scalars['Bytes']>;
+  oldValue_gt?: InputMaybe<Scalars['Bytes']>;
+  oldValue_lt?: InputMaybe<Scalars['Bytes']>;
+  oldValue_gte?: InputMaybe<Scalars['Bytes']>;
+  oldValue_lte?: InputMaybe<Scalars['Bytes']>;
   oldValue_in?: InputMaybe<Array<Scalars['Bytes']>>;
   oldValue_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   oldValue_contains?: InputMaybe<Scalars['Bytes']>;
   oldValue_not_contains?: InputMaybe<Scalars['Bytes']>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Action_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Action_filter>>>;
 };
 
 export type Action_orderBy =
@@ -565,6 +581,8 @@ export type Deposit_filter = {
   completedAt_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Deposit_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Deposit_filter>>>;
 };
 
 export type Deposit_orderBy =
@@ -745,6 +763,8 @@ export type Notification_filter = {
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Notification_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Notification_filter>>>;
 };
 
 export type Notification_orderBy =
@@ -911,6 +931,10 @@ export type OrganizationSnapshot_filter = {
   slashRewardEvery_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardToken?: InputMaybe<Scalars['Bytes']>;
   rewardToken_not?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gte?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lte?: InputMaybe<Scalars['Bytes']>;
   rewardToken_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_contains?: InputMaybe<Scalars['Bytes']>;
@@ -963,6 +987,8 @@ export type OrganizationSnapshot_filter = {
   stat_?: InputMaybe<OrganizationStat_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<OrganizationSnapshot_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<OrganizationSnapshot_filter>>>;
 };
 
 export type OrganizationSnapshot_orderBy =
@@ -1058,6 +1084,8 @@ export type OrganizationStat_filter = {
   tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<OrganizationStat_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<OrganizationStat_filter>>>;
 };
 
 export type OrganizationStat_orderBy =
@@ -1181,6 +1209,10 @@ export type Organization_filter = {
   slashRewardEvery_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardToken?: InputMaybe<Scalars['Bytes']>;
   rewardToken_not?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gte?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lte?: InputMaybe<Scalars['Bytes']>;
   rewardToken_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_contains?: InputMaybe<Scalars['Bytes']>;
@@ -1233,6 +1265,8 @@ export type Organization_filter = {
   stat_?: InputMaybe<OrganizationStat_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Organization_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Organization_filter>>>;
 };
 
 export type Organization_orderBy =
@@ -1835,6 +1869,7 @@ export type Subscription_metaArgs = {
 export type Task = {
   id: Scalars['ID'];
   taskId: Scalars['BigInt'];
+  externalId?: Maybe<Scalars['String']>;
   orgId: Organization;
   title?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1964,12 +1999,20 @@ export type TaskRevision_filter = {
   requester_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   externalRevisionId?: InputMaybe<Scalars['Bytes']>;
   externalRevisionId_not?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_gt?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_lt?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_gte?: InputMaybe<Scalars['Bytes']>;
+  externalRevisionId_lte?: InputMaybe<Scalars['Bytes']>;
   externalRevisionId_in?: InputMaybe<Array<Scalars['Bytes']>>;
   externalRevisionId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   externalRevisionId_contains?: InputMaybe<Scalars['Bytes']>;
   externalRevisionId_not_contains?: InputMaybe<Scalars['Bytes']>;
   revisionHash?: InputMaybe<Scalars['Bytes']>;
   revisionHash_not?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_gt?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_lt?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_gte?: InputMaybe<Scalars['Bytes']>;
+  revisionHash_lte?: InputMaybe<Scalars['Bytes']>;
   revisionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
   revisionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   revisionHash_contains?: InputMaybe<Scalars['Bytes']>;
@@ -2000,6 +2043,8 @@ export type TaskRevision_filter = {
   status_not_in?: InputMaybe<Array<Scalars['Int']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<TaskRevision_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<TaskRevision_filter>>>;
 };
 
 export type TaskRevision_orderBy =
@@ -2287,6 +2332,10 @@ export type TaskSnapshot_filter = {
   rewardAmount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardToken?: InputMaybe<Scalars['Bytes']>;
   rewardToken_not?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gte?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lte?: InputMaybe<Scalars['Bytes']>;
   rewardToken_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_contains?: InputMaybe<Scalars['Bytes']>;
@@ -2361,6 +2410,8 @@ export type TaskSnapshot_filter = {
   staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<TaskSnapshot_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<TaskSnapshot_filter>>>;
 };
 
 export type TaskSnapshot_orderBy =
@@ -2409,6 +2460,26 @@ export type Task_filter = {
   taskId_lte?: InputMaybe<Scalars['BigInt']>;
   taskId_in?: InputMaybe<Array<Scalars['BigInt']>>;
   taskId_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  externalId?: InputMaybe<Scalars['String']>;
+  externalId_not?: InputMaybe<Scalars['String']>;
+  externalId_gt?: InputMaybe<Scalars['String']>;
+  externalId_lt?: InputMaybe<Scalars['String']>;
+  externalId_gte?: InputMaybe<Scalars['String']>;
+  externalId_lte?: InputMaybe<Scalars['String']>;
+  externalId_in?: InputMaybe<Array<Scalars['String']>>;
+  externalId_not_in?: InputMaybe<Array<Scalars['String']>>;
+  externalId_contains?: InputMaybe<Scalars['String']>;
+  externalId_contains_nocase?: InputMaybe<Scalars['String']>;
+  externalId_not_contains?: InputMaybe<Scalars['String']>;
+  externalId_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  externalId_starts_with?: InputMaybe<Scalars['String']>;
+  externalId_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  externalId_not_starts_with?: InputMaybe<Scalars['String']>;
+  externalId_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  externalId_ends_with?: InputMaybe<Scalars['String']>;
+  externalId_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  externalId_not_ends_with?: InputMaybe<Scalars['String']>;
+  externalId_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   orgId?: InputMaybe<Scalars['String']>;
   orgId_not?: InputMaybe<Scalars['String']>;
   orgId_gt?: InputMaybe<Scalars['String']>;
@@ -2599,6 +2670,10 @@ export type Task_filter = {
   rewardAmount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   rewardToken?: InputMaybe<Scalars['Bytes']>;
   rewardToken_not?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lt?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_gte?: InputMaybe<Scalars['Bytes']>;
+  rewardToken_lte?: InputMaybe<Scalars['Bytes']>;
   rewardToken_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   rewardToken_contains?: InputMaybe<Scalars['Bytes']>;
@@ -2694,11 +2769,14 @@ export type Task_filter = {
   raw_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Task_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Task_filter>>>;
 };
 
 export type Task_orderBy =
   | 'id'
   | 'taskId'
+  | 'externalId'
   | 'orgId'
   | 'title'
   | 'description'
@@ -2832,6 +2910,8 @@ export type Team_filter = {
   teamRewardMultiplier_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Team_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Team_filter>>>;
 };
 
 export type Team_orderBy =
@@ -2935,6 +3015,8 @@ export type TreasuryToken_filter = {
   lockedBalance_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<TreasuryToken_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<TreasuryToken_filter>>>;
 };
 
 export type TreasuryToken_orderBy =
@@ -2964,6 +3046,8 @@ export type Treasury_filter = {
   tokens_?: InputMaybe<TreasuryToken_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Treasury_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<Treasury_filter>>>;
 };
 
 export type Treasury_orderBy =
@@ -3047,6 +3131,8 @@ export type UserStat_filter = {
   tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<UserStat_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<UserStat_filter>>>;
 };
 
 export type UserStat_orderBy =
@@ -3475,6 +3561,7 @@ export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends 
 export type TaskResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   taskId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  externalId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   orgId?: Resolver<ResolversTypes['Organization'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3899,7 +3986,7 @@ export type GetNotificationsQuery = { notifications: Array<(
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
     ), task?: Maybe<(
-      Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+      Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
       & { orgId: (
         Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -3964,7 +4051,7 @@ export type GetOrganizationsQuery = { organizations: Array<(
   )> };
 
 export type TaskFragmentFragment = (
-  Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+  Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
   & { orgId: (
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -3987,7 +4074,7 @@ export type GetTaskQueryVariables = Exact<{
 
 
 export type GetTaskQuery = { task?: Maybe<(
-    Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4006,7 +4093,7 @@ export type GetTasksQueryVariables = Exact<{
 
 
 export type GetTasksQuery = { tasks: Array<(
-    Pick<Task, 'id' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4229,6 +4316,7 @@ export const OrganizationFragmentFragmentDoc = gql`
 export const TaskFragmentFragmentDoc = gql`
     fragment TaskFragment on Task {
   id
+  externalId
   taskId
   orgId {
     ...OrganizationFragment
