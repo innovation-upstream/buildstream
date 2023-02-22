@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps =
           }
           const clickupTask = await fetchClickupTask(
             t.externalId as string,
-            getCookie(TOKEN_KEY, context) as string
+            orgId
           )
           return {
             ...t,

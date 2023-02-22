@@ -1,4 +1,4 @@
-import { ISpaces } from "components/Task/ImportTask/types"
+import { ISpaces } from 'components/Task/ImportTask/types'
 import { setCookies } from 'cookies-next'
 import { TOKEN_KEY } from './'
 
@@ -7,13 +7,16 @@ const client_secret = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_SECRET
 const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
 const CLIENT_CODE = 'clickupClientCode'
 
-export const fetchClickupTask = async (clickupTaskId: string, token: string) => {
+export const fetchClickupTask = async (
+  clickupTaskId: string,
+  organizationId: string
+) => {
   try {
     const response = await fetch(`${serverUrl}/task`, {
       method: 'POST',
       body: JSON.stringify({
         task_id: clickupTaskId,
-        token: token
+        organizationId
       }),
       headers: new Headers({ 'Content-Type': 'application/json' })
     })
@@ -42,7 +45,10 @@ export const fetchSpaces = async (token: string): Promise<ISpaces[]> => {
   return spaces
 }
 
-export const fetchTasks = async (spaceId: number, token: string): Promise<any[]> => {
+export const fetchTasks = async (
+  spaceId: number,
+  token: string
+): Promise<any[]> => {
   let tasks
   try {
     const resp = await fetch(`${serverUrl}/tasks`, {
@@ -61,14 +67,15 @@ export const fetchTasks = async (spaceId: number, token: string): Promise<any[]>
   return tasks
 }
 
-export const fetchToken = async (code: string) => {
+export const fetchToken = async (code: string, organizationId: string) => {
   try {
     const res = await fetch(`${serverUrl}/get_token`, {
       method: 'POST',
       body: JSON.stringify({
         client_id,
         client_secret,
-        code: code
+        code: code,
+        organizationId
       }),
       headers: new Headers({ 'Content-Type': 'application/json' })
     })
