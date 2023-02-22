@@ -33,6 +33,7 @@ import TreasuryHistory from 'components/Organization/Settings/TreasuryHistory'
 import Wallet from 'components/Organization/Settings/Wallet'
 import Reward from 'components/Organization/Settings/Reward'
 import Administrators from 'components/Organization/Settings/Administrators'
+import TaskManager from 'components/Organization/Settings/TaskManager'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -157,7 +158,7 @@ const OrganizationPage: NextPage<PageProps> = ({
               [Tab.ADMINISTRATORS]: (
                 <Administrators organization={organization} />
               ),
-              [Tab.TASK_MANAGER_API]: null
+              [Tab.TASK_MANAGER_API]: <TaskManager organization={organization} />
             }}
           />
         </div>

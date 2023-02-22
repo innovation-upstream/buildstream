@@ -1,9 +1,10 @@
 import axios from 'axios'
 import { Request, Response } from 'express'
 import { ClickupRoutes } from '../../routes/routes'
+import FirestoreClient from '../../clients/firestore'
 
 export const getToken = async (req: Request, res: Response) => {
-  const { client_id, client_secret, code } = req.body
+  const { client_id, client_secret, code, organizationId } = req.body
   const query = new URLSearchParams({
     client_id: client_id,
     client_secret: client_secret,
@@ -15,6 +16,13 @@ export const getToken = async (req: Request, res: Response) => {
       url: `${ClickupRoutes.baseApiUrl}oauth/token?${query}`,
       method: 'post'
     })
+
+    const docRef =
+      FirestoreClient.collection('organizations').doc(organizationId)
+
+    await docRef.set({
+      clickup_token: data.access_token
+    }, { merge: true })
 
     res.json(data)
   } catch (err) {
@@ -51,15 +59,19 @@ export const getSpaces = async (req: Request, res: Response) => {
 }
 
 export const getTasks = async (req: Request, res: Response) => {
-
   const folderlessTasks = await getFolderlessTasks(req, res)
   const folderTasks = await getFolderTasks(req, res)
 
-  const data = await Promise.all([folderlessTasks, folderTasks]).catch(e => {throw(e)})
+  const data = await Promise.all([folderlessTasks, folderTasks]).catch((e) => {
+    throw e
+  })
   return res.json(data.flat())
 }
 
-export const getFolderlessTasks = async (req: Request, res: Response): Promise<any[]> => {
+export const getFolderlessTasks = async (
+  req: Request,
+  res: Response
+): Promise<any[]> => {
   const query = new URLSearchParams({ archived: 'false' }).toString()
   const { space_id, token } = req.body
 
@@ -96,13 +108,18 @@ export const getFolderlessTasks = async (req: Request, res: Response): Promise<a
 
         return data.flat()
       } catch (err) {
-        throw(err)
+        throw err
       }
     })
-    .catch((err) => {throw(err)})
+    .catch((err) => {
+      throw err
+    })
 }
 
-export const getFolderTasks = async (req: Request, res: Response): Promise<any[]> => {
+export const getFolderTasks = async (
+  req: Request,
+  res: Response
+): Promise<any[]> => {
   const query = new URLSearchParams({ archived: 'false' }).toString()
   const { space_id, token } = req.body
 
@@ -138,17 +155,26 @@ export const getFolderTasks = async (req: Request, res: Response): Promise<any[]
         const data = await Promise.all(
           resData.map(async (r) => await r.data.tasks)
         )
-       
+
         return data.flat()
       } catch (err) {
-        throw(err)
+        throw err
       }
     })
-    .catch((err) => {throw(err)})
+    .catch((err) => {
+      throw err
+    })
 }
 
 export const getTask = async (req: Request, res: Response) => {
-  const { task_id, token } = req.body
+  const { task_id, organizationId } = req.body
+  const snapshot = await FirestoreClient.collection('organizations')
+    .doc(organizationId)
+    .get()
+  const token = snapshot.data()?.clickup_token
+
+  if (!token)
+    return res.status(401).send({ code: 401, message: 'Unauthorized' })
 
   try {
     const task = await axios({
@@ -162,6 +188,6 @@ export const getTask = async (req: Request, res: Response) => {
     res.json(task.data)
   } catch (err: any) {
     console.error(err)
-    res.status(401).send({code: err.status, message: err.message})
+    res.status(401).send({ code: err.status, message: err.message })
   }
 }

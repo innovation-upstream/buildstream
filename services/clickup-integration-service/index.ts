@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
 import { json } from 'body-parser'
 import cors from 'cors'
 import express, { Express, NextFunction, Request, Response } from 'express'

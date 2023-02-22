@@ -114,7 +114,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         }
         const clickupTask = await fetchClickupTask(
           t.externalId as string,
-          getCookie(TOKEN_KEY) as string
+          t.orgId.id
         )
         return {
           ...t,

@@ -108,7 +108,7 @@ const ClickupImport: React.FC<TImport> = ({
   }
 
   const getSpaces = async () => {
-    const token = await fetchToken(clickup_code)
+    const token = await fetchToken(clickup_code, organizationId.toString())
     const spaces: ISpaces[] = await fetchSpaces(token)
     const spaceSuggestion = spaces?.map((space: any) => ({
       id: space.id,

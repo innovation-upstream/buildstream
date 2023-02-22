@@ -152,7 +152,7 @@ export const getServerSideProps: GetServerSideProps =
     if (data.task.externalId) {
       clickupTask = await fetchClickupTask(
         data.task.externalId,
-        getCookie(TOKEN_KEY, context) as string
+        data.task.orgId.id
       )
     }
 
@@ -206,7 +206,7 @@ const TaskPage: NextPage<PageProps> = ({
       return
     }
 
-    fetchClickupTask(data.task.externalId, getCookie(TOKEN_KEY) as string)
+    fetchClickupTask(data.task.externalId, data.task.orgId.id)
       .then((clickupTask) => {
         if (clickupTask) {
           setCurrentTask({
