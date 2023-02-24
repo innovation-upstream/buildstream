@@ -22,11 +22,16 @@ interface TaskViewProps {
   tasks?: Task[]
 }
 
+interface IEmptyTaskViewProps {
+  organization: Organization
+  onCode: (code: any, params?: any) => void
+}
+
 const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
 const redirect_uri = process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL
 const clickupUrl = `https://app.clickup.com/api?client_id=${client_id}&redirect_uri=${redirect_uri}`
 
-const EmptyTaskView = ({ organization }: TaskViewProps) => {
+const EmptyTaskView = ({ organization, onCode }: IEmptyTaskViewProps) => {
   const { t } = useTranslation('organization')
   const [showModal, toggleModal] = useState(false)
   return (
@@ -48,9 +53,20 @@ const EmptyTaskView = ({ organization }: TaskViewProps) => {
           >
             <Plus className='fill-[#3667EA]' /> {t('add_task')}
           </button>
-          <button className='w-full btn-primary flex justify-center gap-1 items-center text-[#17191A] bg-[#3667EA]/10'>
-            {t('import_from')} <JiraLogo /> Jira
-          </button>
+          <div className='w-full text-[#17191A] bg-[#3667EA]/10'>
+            <OauthPopup
+              url={clickupUrl}
+              onCode={onCode}
+              onClose={() => {}}
+              title={`Import Task from Clickup`}
+              height={600}
+              width={700}
+            >
+              <button className='w-full btn-primary flex justify-center gap-1 items-center'>
+                {t('import_from')} <ClickupLogo />
+              </button>
+            </OauthPopup>
+          </div>
         </div>
       </div>
     </div>
@@ -149,7 +165,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       )}
 
       {!tasks?.length ? (
-        <EmptyTaskView organization={organization} />
+        <EmptyTaskView organization={organization} onCode={onCode} />
       ) : (
         <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
           <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
