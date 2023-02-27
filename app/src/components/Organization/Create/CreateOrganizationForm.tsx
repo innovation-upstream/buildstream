@@ -4,8 +4,6 @@ import { createOrganization } from 'hooks/organization/functions'
 import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 import MainInformation from 'components/Organization/Create/MainInformation'
-import TaskConnect from 'components/Organization/Create/TaskConnect'
-import Slider from 'components/Slider/Slider'
 import { useTranslation } from 'react-i18next'
 
 const sliderTitles = [
@@ -58,14 +56,12 @@ const CreateOrgForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Slider
-          titles={sliderTitles}
-          onCancel={() => null}
-          onComplete={() => null}
-        >
-          <MainInformation />
-          <TaskConnect />
-        </Slider>
+        <MainInformation />
+        <section className='mt-6'>
+          <button type='submit' className='btn-primary lg:px-20'>
+            {t('create')}
+          </button>
+        </section>
       </form>
       {processing && (
         <div className='absolute inset-0 z-10 w-full h-full rounded-[46px] flex items-center justify-center bg-zinc-500/30'>
