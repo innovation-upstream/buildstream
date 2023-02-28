@@ -42,7 +42,7 @@ const Header = () => {
         console.log(ex)
       }
     }
-  })
+  }, [activate])
 
   return (
     <Navbar>
