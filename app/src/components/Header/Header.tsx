@@ -1,19 +1,19 @@
-import { useEffect } from 'react'
+import Hamburger from 'SVGs/Hamburger'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
+import injected from 'config/Walletconnectors'
+import { getCookie, setCookies } from 'cookies-next'
 import { useWeb3 } from 'hooks'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Hamburger from 'SVGs/Hamburger'
+import { checkNetwork } from 'utils/checkNetwork'
 import ChevronDown from '../IconSvg/ChevronDown'
 import Logo from '../IconSvg/Logo'
 import MobileNav from './MobileNav'
-import { ConnectWalletButton, Navbar } from './styled'
-import { useRouter } from 'next/router'
 import { activeMenuItems } from './menuItems'
-import { setCookies, getCookie } from 'cookies-next'
-import injected from 'config/Walletconnectors'
+import { ConnectWalletButton, Navbar } from './styled'
 
 const Header = () => {
   const { account: address, deactivate, activate } = useWeb3()
@@ -34,14 +34,19 @@ const Header = () => {
     }
   }
 
-  useEffect(() => {
+  async function detectNetwork() {
     if (getCookie(ACCOUNT)) {
       try {
+        await checkNetwork()
         activate(injected)
       } catch (ex) {
         console.log(ex)
       }
     }
+  }
+
+  useEffect(() => {
+    detectNetwork()
   }, [activate])
 
   return (

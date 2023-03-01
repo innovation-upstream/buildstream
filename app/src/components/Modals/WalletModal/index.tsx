@@ -1,17 +1,18 @@
-import React, { useEffect } from 'react'
-import WalletsInfo from './wallets_info'
-import CloseIcon from '../../IconSvg/CloseIcon'
 import injected from 'config/Walletconnectors'
+import { setCookies } from 'cookies-next'
 import { useWeb3 } from 'hooks'
 import { useTranslation } from 'next-i18next'
+import React, { useEffect } from 'react'
+import { checkNetwork } from 'utils/checkNetwork'
+import CloseIcon from '../../IconSvg/CloseIcon'
 import { IModalProps } from './interface'
 import {
-  ModalContent,
+  ModalBackDrop,
   ModalBody,
-  ModalItemWrapper,
-  ModalBackDrop
+  ModalContent,
+  ModalItemWrapper
 } from './styled'
-import { setCookies } from 'cookies-next'
+import WalletsInfo from './wallets_info'
 
 const ACCOUNT = 'account'
 
@@ -21,6 +22,7 @@ const WalletModal: React.FC<IModalProps> = ({ close }) => {
 
   async function connect() {
     try {
+      await checkNetwork()
       await activate(injected)
     } catch (ex) {
       console.log(ex)
