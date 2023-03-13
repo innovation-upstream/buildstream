@@ -1,6 +1,16 @@
 import React, { useEffect } from 'react'
 import { TextInputWithAutoCompleteProps } from './types'
 
+const ListLoading = () => {
+  return (
+    <>
+      <li className='bg-gray-300 animate-pulse h-8 mx-2 my-2 w-auto mb-2 rounded-md'></li>
+      <li className='bg-gray-300 animate-pulse h-8 mx-2 w-1/3 mb-2 rounded-md'></li>
+      <li className='bg-gray-300 animate-pulse h-8 mx-2 w-1/2 mb-2 rounded-md'></li>
+    </>
+  )
+}
+
 const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
   children,
   suggestions = [],
@@ -87,17 +97,21 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
       {showSuggestions && (
         <ul
           ref={suggestionsRef}
-          className='shadow-md absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'
+          className='shadow-md py-2 absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'
         >
-          {filteredSuggestions.map((suggestion) => (
-            <li
-              key={suggestion.value}
-              onClick={() => onSuggestionClick(suggestion.id)}
-              className='p-2 cursor-pointer hover:bg-gray-300 rounded-md'
-            >
-              {suggestion.value}
-            </li>
-          ))}
+          {filteredSuggestions.length > 0 ? (
+            filteredSuggestions.map((suggestion) => (
+              <li
+                key={suggestion.value}
+                onClick={() => onSuggestionClick(suggestion.id)}
+                className='p-2 mx-2 cursor-pointer hover:bg-gray-300 rounded-md'
+              >
+                {suggestion.value}
+              </li>
+            ))
+          ) : (
+            <ListLoading />
+          )}
         </ul>
       )}
     </div>
