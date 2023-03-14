@@ -151,48 +151,52 @@ export class TaskCreationTaskStruct extends ethereum.Tuple {
     return this[0].toBigInt();
   }
 
+  get externalId(): string {
+    return this[1].toString();
+  }
+
   get orgId(): BigInt {
-    return this[1].toBigInt();
+    return this[2].toBigInt();
   }
 
   get title(): string {
-    return this[2].toString();
-  }
-
-  get description(): string {
     return this[3].toString();
   }
 
-  get assigner(): Address {
-    return this[4].toAddress();
+  get description(): string {
+    return this[4].toString();
   }
 
-  get assigneeAddress(): Address {
+  get assigner(): Address {
     return this[5].toAddress();
   }
 
-  get taskTags(): Array<string> {
-    return this[6].toStringArray();
+  get assigneeAddress(): Address {
+    return this[6].toAddress();
+  }
+
+  get taskTags(): Array<BigInt> {
+    return this[7].toBigIntArray();
   }
 
   get complexityScore(): BigInt {
-    return this[7].toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
     return this[8].toBigInt();
   }
 
+  get reputationLevel(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get status(): i32 {
-    return this[9].toI32();
+    return this[10].toI32();
   }
 
   get comment(): string {
-    return this[10].toString();
+    return this[11].toString();
   }
 
   get taskDuration(): BigInt {
-    return this[11].toBigInt();
+    return this[12].toBigInt();
   }
 }
 
@@ -229,16 +233,20 @@ export class TaskCreationTaskMetadataStruct extends ethereum.Tuple {
     return this[7].toTupleArray<TaskCreationTaskMetadataRevisionsStruct>();
   }
 
-  get assignmentRequests(): Array<Address> {
-    return this[8].toAddressArray();
+  get revisionCount(): BigInt {
+    return this[8].toBigInt();
   }
 
-  get approvers(): Array<Address> {
+  get assignmentRequests(): Array<Address> {
     return this[9].toAddressArray();
   }
 
+  get approvers(): Array<Address> {
+    return this[10].toAddressArray();
+  }
+
   get totalWaitTime(): BigInt {
-    return this[10].toBigInt();
+    return this[11].toBigInt();
   }
 }
 
@@ -559,48 +567,52 @@ export class TaskUpdatedTaskStruct extends ethereum.Tuple {
     return this[0].toBigInt();
   }
 
+  get externalId(): string {
+    return this[1].toString();
+  }
+
   get orgId(): BigInt {
-    return this[1].toBigInt();
+    return this[2].toBigInt();
   }
 
   get title(): string {
-    return this[2].toString();
-  }
-
-  get description(): string {
     return this[3].toString();
   }
 
-  get assigner(): Address {
-    return this[4].toAddress();
+  get description(): string {
+    return this[4].toString();
   }
 
-  get assigneeAddress(): Address {
+  get assigner(): Address {
     return this[5].toAddress();
   }
 
-  get taskTags(): Array<string> {
-    return this[6].toStringArray();
+  get assigneeAddress(): Address {
+    return this[6].toAddress();
+  }
+
+  get taskTags(): Array<BigInt> {
+    return this[7].toBigIntArray();
   }
 
   get complexityScore(): BigInt {
-    return this[7].toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
     return this[8].toBigInt();
   }
 
+  get reputationLevel(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get status(): i32 {
-    return this[9].toI32();
+    return this[10].toI32();
   }
 
   get comment(): string {
-    return this[10].toString();
+    return this[11].toString();
   }
 
   get taskDuration(): BigInt {
-    return this[11].toBigInt();
+    return this[12].toBigInt();
   }
 }
 
@@ -609,48 +621,52 @@ export class TaskStorageContract__getTaskResultValue0Struct extends ethereum.Tup
     return this[0].toBigInt();
   }
 
+  get externalId(): string {
+    return this[1].toString();
+  }
+
   get orgId(): BigInt {
-    return this[1].toBigInt();
+    return this[2].toBigInt();
   }
 
   get title(): string {
-    return this[2].toString();
-  }
-
-  get description(): string {
     return this[3].toString();
   }
 
-  get assigner(): Address {
-    return this[4].toAddress();
+  get description(): string {
+    return this[4].toString();
   }
 
-  get assigneeAddress(): Address {
+  get assigner(): Address {
     return this[5].toAddress();
   }
 
-  get taskTags(): Array<string> {
-    return this[6].toStringArray();
+  get assigneeAddress(): Address {
+    return this[6].toAddress();
+  }
+
+  get taskTags(): Array<BigInt> {
+    return this[7].toBigIntArray();
   }
 
   get complexityScore(): BigInt {
-    return this[7].toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
     return this[8].toBigInt();
   }
 
+  get reputationLevel(): BigInt {
+    return this[9].toBigInt();
+  }
+
   get status(): i32 {
-    return this[9].toI32();
+    return this[10].toI32();
   }
 
   get comment(): string {
-    return this[10].toString();
+    return this[11].toString();
   }
 
   get taskDuration(): BigInt {
-    return this[11].toBigInt();
+    return this[12].toBigInt();
   }
 }
 
@@ -691,16 +707,20 @@ export class TaskStorageContract__getTaskMetadataResultValue0Struct extends ethe
     >();
   }
 
-  get assignmentRequests(): Array<Address> {
-    return this[8].toAddressArray();
+  get revisionCount(): BigInt {
+    return this[8].toBigInt();
   }
 
-  get approvers(): Array<Address> {
+  get assignmentRequests(): Array<Address> {
     return this[9].toAddressArray();
   }
 
+  get approvers(): Array<Address> {
+    return this[10].toAddressArray();
+  }
+
   get totalWaitTime(): BigInt {
-    return this[10].toBigInt();
+    return this[11].toBigInt();
   }
 }
 
@@ -741,9 +761,10 @@ export class TaskStorageContract extends ethereum.SmartContract {
 
   createTask(
     orgId: BigInt,
+    externalId: string,
     title: string,
     description: string,
-    taskTags: Array<string>,
+    taskTags: Array<BigInt>,
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
@@ -751,12 +772,13 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): BigInt {
     let result = super.call(
       "createTask",
-      "createTask(uint256,string,string,string[],uint256,uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
+        ethereum.Value.fromString(externalId),
         ethereum.Value.fromString(title),
         ethereum.Value.fromString(description),
-        ethereum.Value.fromStringArray(taskTags),
+        ethereum.Value.fromUnsignedBigIntArray(taskTags),
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
@@ -769,9 +791,10 @@ export class TaskStorageContract extends ethereum.SmartContract {
 
   try_createTask(
     orgId: BigInt,
+    externalId: string,
     title: string,
     description: string,
-    taskTags: Array<string>,
+    taskTags: Array<BigInt>,
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
@@ -779,12 +802,13 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createTask",
-      "createTask(uint256,string,string,string[],uint256,uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
+        ethereum.Value.fromString(externalId),
         ethereum.Value.fromString(title),
         ethereum.Value.fromString(description),
-        ethereum.Value.fromStringArray(taskTags),
+        ethereum.Value.fromUnsignedBigIntArray(taskTags),
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
@@ -833,7 +857,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   getTask(taskId: BigInt): TaskStorageContract__getTaskResultValue0Struct {
     let result = super.call(
       "getTask",
-      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256))",
+      "getTask(uint256):((uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -847,7 +871,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): ethereum.CallResult<TaskStorageContract__getTaskResultValue0Struct> {
     let result = super.tryCall(
       "getTask",
-      "getTask(uint256):((uint256,uint256,string,string,address,address,string[],uint256,uint256,uint8,string,uint256))",
+      "getTask(uint256):((uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -866,7 +890,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): TaskStorageContract__getTaskMetadataResultValue0Struct {
     let result = super.call(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[],address[],uint256))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -882,7 +906,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   > {
     let result = super.tryCall(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],address[],address[],uint256))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -1114,32 +1138,36 @@ export class CreateTaskCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get title(): string {
+  get externalId(): string {
     return this._call.inputValues[1].value.toString();
   }
 
-  get description(): string {
+  get title(): string {
     return this._call.inputValues[2].value.toString();
   }
 
-  get taskTags(): Array<string> {
-    return this._call.inputValues[3].value.toStringArray();
+  get description(): string {
+    return this._call.inputValues[3].value.toString();
+  }
+
+  get taskTags(): Array<BigInt> {
+    return this._call.inputValues[4].value.toBigIntArray();
   }
 
   get complexityScore(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
 
-  get requiredApprovals(): BigInt {
+  get reputationLevel(): BigInt {
     return this._call.inputValues[6].value.toBigInt();
   }
 
-  get taskDuration(): BigInt {
+  get requiredApprovals(): BigInt {
     return this._call.inputValues[7].value.toBigInt();
+  }
+
+  get taskDuration(): BigInt {
+    return this._call.inputValues[8].value.toBigInt();
   }
 }
 
@@ -1472,28 +1500,32 @@ export class UpdateTaskCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get title(): string {
+  get externalId(): string {
     return this._call.inputValues[1].value.toString();
   }
 
-  get description(): string {
+  get title(): string {
     return this._call.inputValues[2].value.toString();
   }
 
-  get taskTags(): Array<string> {
-    return this._call.inputValues[3].value.toStringArray();
+  get description(): string {
+    return this._call.inputValues[3].value.toString();
+  }
+
+  get taskTags(): Array<BigInt> {
+    return this._call.inputValues[4].value.toBigIntArray();
   }
 
   get complexityScore(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get reputationLevel(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
   }
 
-  get taskDuration(): BigInt {
+  get reputationLevel(): BigInt {
     return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get taskDuration(): BigInt {
+    return this._call.inputValues[7].value.toBigInt();
   }
 }
 

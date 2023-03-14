@@ -398,13 +398,13 @@ export class Organization extends ethereum.SmartContract {
     );
   }
 
-  getRewardMultiplier(orgId: BigInt, tags: Array<string>): BigInt {
+  getRewardMultiplier(orgId: BigInt, tags: Array<BigInt>): BigInt {
     let result = super.call(
       "getRewardMultiplier",
-      "getRewardMultiplier(uint256,string[]):(uint256)",
+      "getRewardMultiplier(uint256,uint256[]):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
-        ethereum.Value.fromStringArray(tags)
+        ethereum.Value.fromUnsignedBigIntArray(tags)
       ]
     );
 
@@ -413,14 +413,14 @@ export class Organization extends ethereum.SmartContract {
 
   try_getRewardMultiplier(
     orgId: BigInt,
-    tags: Array<string>
+    tags: Array<BigInt>
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "getRewardMultiplier",
-      "getRewardMultiplier(uint256,string[]):(uint256)",
+      "getRewardMultiplier(uint256,uint256[]):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
-        ethereum.Value.fromStringArray(tags)
+        ethereum.Value.fromUnsignedBigIntArray(tags)
       ]
     );
     if (result.reverted) {

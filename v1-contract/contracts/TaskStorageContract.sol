@@ -38,7 +38,7 @@ library TaskLib {
         string description;
         address assigner;
         address assigneeAddress;
-        string[] taskTags;
+        uint256[] taskTags;
         uint256 complexityScore;
         uint256 reputationLevel;
         TaskStatus status;
@@ -162,7 +162,7 @@ contract TaskStorageContract {
         string memory externalId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 requiredApprovals,
@@ -194,7 +194,7 @@ contract TaskStorageContract {
         string memory externalId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration

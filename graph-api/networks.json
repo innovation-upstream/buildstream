@@ -1,19 +1,25 @@
 {
   "mainnet": {
     "Organization": {
-      "address": "0xD555B907e473F8ff9DC688dD613bd4275500F3f1"
+      "address": "0xf4B3a89809056e88e63818ED767034b66B701DB7"
     },
     "Treasury": {
-      "address": "0x39e3a335502caBefC850ADDa416a7f3CFA149C95"
+      "address": "0x3566A9D4041977cb90D9e30629725bB1BDC0B342"
     },
     "ActionContract": {
-      "address": "0xCc5c02Fd24e259a63C8795EBc94176b149309114"
+      "address": "0x2EaAf5996B704eCE24E58A4F4c8EB8312B5b56Da"
     },
     "TaskStorageContract": {
-      "address": "0x313798c7Fd2639CB7e137b9c40fD79EE65A96206"
+      "address": "0x14D5a4dc641d6178B8F1Da77296e881a0AcB1296"
     },
     "TeamContract": {
-      "address": "0x0F3b1f3B81C385c9481A1ec9AaD59CB2760727Ea"
+      "address": "0x359A0691FAfDf2816eB1e5f6ebB6855fD1678f40"
+    },
+    "TokenContract": {
+      "address": "0x3B32B67FBf6172bdabA9769F3EB5069522e3dD28"
+    },
+    "TaskContract": {
+      "address": "0x40C554c40D89928D2AA4b07FAcE7dF62aB941043"
     }
   },
   "goerli": {
@@ -31,6 +37,9 @@
     },
     "TeamContract": {
       "address": "0xDEC2e6eF0355d089561d56F90b8029Cb06255F63"
+    },
+    "TokenContract": {
+      "address": "0xA9f815CF6AD899B7E56F55798697d05aFBF47E9a"
     }
   }
 }

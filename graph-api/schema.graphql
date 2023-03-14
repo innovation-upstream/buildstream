@@ -67,7 +67,7 @@ type Task @entity {
   assignee: String
   teamAssignee: String
   team: Team
-  taskTags: [String!]!
+  taskTags: [BigInt!]!
   status: Int!
   complexityScore: BigInt!
   reputationLevel: BigInt!
@@ -112,7 +112,7 @@ type TaskSnapshot @entity {
   assignee: String
   teamAssignee: String
   team: Team
-  taskTags: [String!]!
+  taskTags: [BigInt!]!
   status: Int!
   complexityScore: BigInt
   reputationLevel: BigInt

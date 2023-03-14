@@ -110,6 +110,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "string",
+            "name": "externalId",
+            "type": "string"
+          },
+          {
             "internalType": "uint256",
             "name": "orgId",
             "type": "uint256"
@@ -135,9 +140,9 @@
             "type": "address"
           },
           {
-            "internalType": "string[]",
+            "internalType": "uint256[]",
             "name": "taskTags",
-            "type": "string[]"
+            "type": "uint256[]"
           },
           {
             "internalType": "uint256",
@@ -248,6 +253,11 @@
             "internalType": "struct TaskLib.TaskRevision[]",
             "name": "revisions",
             "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "revisionCount",
+            "type": "uint256"
           },
           {
             "internalType": "address[]",
@@ -541,6 +551,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "string",
+            "name": "externalId",
+            "type": "string"
+          },
+          {
             "internalType": "uint256",
             "name": "orgId",
             "type": "uint256"
@@ -566,9 +581,9 @@
             "type": "address"
           },
           {
-            "internalType": "string[]",
+            "internalType": "uint256[]",
             "name": "taskTags",
-            "type": "string[]"
+            "type": "uint256[]"
           },
           {
             "internalType": "uint256",
@@ -704,6 +719,11 @@
       },
       {
         "internalType": "string",
+        "name": "externalId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "title",
         "type": "string"
       },
@@ -713,9 +733,9 @@
         "type": "string"
       },
       {
-        "internalType": "string[]",
+        "internalType": "uint256[]",
         "name": "taskTags",
-        "type": "string[]"
+        "type": "uint256[]"
       },
       {
         "internalType": "uint256",
@@ -791,6 +811,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "string",
+            "name": "externalId",
+            "type": "string"
+          },
+          {
             "internalType": "uint256",
             "name": "orgId",
             "type": "uint256"
@@ -816,9 +841,9 @@
             "type": "address"
           },
           {
-            "internalType": "string[]",
+            "internalType": "uint256[]",
             "name": "taskTags",
-            "type": "string[]"
+            "type": "uint256[]"
           },
           {
             "internalType": "uint256",
@@ -942,6 +967,11 @@
             "internalType": "struct TaskLib.TaskRevision[]",
             "name": "revisions",
             "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "revisionCount",
+            "type": "uint256"
           },
           {
             "internalType": "address[]",
@@ -1150,6 +1180,11 @@
       },
       {
         "internalType": "string",
+        "name": "externalId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "title",
         "type": "string"
       },
@@ -1159,9 +1194,9 @@
         "type": "string"
       },
       {
-        "internalType": "string[]",
+        "internalType": "uint256[]",
         "name": "taskTags",
-        "type": "string[]"
+        "type": "uint256[]"
       },
       {
         "internalType": "uint256",

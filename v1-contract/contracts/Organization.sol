@@ -54,7 +54,7 @@ contract Organization {
     mapping(uint256 => OrgLib.Org) private orgs;
     mapping(uint256 => OrgLib.OrgConfig) private orgConfigs;
     mapping(uint256 => bool) private _orgExists;
-    mapping(uint256 => mapping(bytes32 => uint256)) private multipliers;
+    mapping(uint256 => mapping(uint256 => uint256)) private multipliers;
     uint256 private orgCount;
 
     modifier onlyOwner() {
@@ -203,15 +203,14 @@ contract Organization {
         return orgConfigs[_orgId];
     }
 
-    function getRewardMultiplier(uint256 orgId, string[] calldata tags)
+    function getRewardMultiplier(uint256 orgId, uint256[] calldata tags)
         external
         view
         returns (uint256 mul)
     {
         mul = orgConfigs[orgId].rewardMultiplier;
         for (uint256 i = 0; i < tags.length; i++) {
-            bytes32 key = keccak256(bytes(tags[i]));
-            uint256 m = multipliers[orgId][key];
+            uint256 m = multipliers[orgId][tags[i]];
             if (m > mul) mul = m;
         }
     }
@@ -312,7 +311,12 @@ contract Organization {
             orgConfigs[action.orgId].slashRewardEvery = action.value;
         
         if (action.actionType == ActionLib.ActionType.UPDATE_TAG_REWARD_MULTIPLIER) {
-            bytes32 key = keccak256(action.data);
+            require(action.data.length >= 32, "slicing out of range");
+            bytes memory data = action.data;
+            uint key;
+            assembly {
+                key := mload(add(data, add(0x20, 32)))
+            }
             multipliers[action.orgId][key] = action.value;
         }
 

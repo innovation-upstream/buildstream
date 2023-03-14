@@ -391,9 +391,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "string[]",
+        "internalType": "uint256[]",
         "name": "tags",
-        "type": "string[]"
+        "type": "uint256[]"
       }
     ],
     "name": "getRewardMultiplier",

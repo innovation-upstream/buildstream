@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
+const SOLIDITY_TAG = 0
+
 const getContractInstance = async () => {
   const reputationToken = await ethers.getContractFactory('SBTToken')
   const contractInstance = await reputationToken.deploy()
   await contractInstance.deployed()
+  await contractInstance.createToken(SOLIDITY_TAG)
 
   return { contractInstance }
 }
@@ -14,7 +17,7 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr2] = await ethers.getSigners()
     await expect(
-      contractInstance.reward(addr2.address, 0, 0)
+      contractInstance.reward(addr2.address, SOLIDITY_TAG, 0, 0)
     ).to.be.revertedWith('Permission denied')
   })
 
@@ -22,10 +25,13 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr1, addr2] = await ethers.getSigners()
     await contractInstance.updateTaskContractAddress(addr1.address)
-    await contractInstance.connect(addr1).reward(addr2.address, 0, 0)
+    await contractInstance
+      .connect(addr1)
+      .reward(addr2.address, SOLIDITY_TAG, 0, 0)
     await expect(
-      await contractInstance['balanceOf(address,uint256,uint256)'](
+      await contractInstance['balanceOf(address,uint256,uint256,uint256)'](
         addr2.address,
+        SOLIDITY_TAG,
         0,
         0
       )
@@ -36,7 +42,9 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr1, addr2, addr3] = await ethers.getSigners()
     await contractInstance.updateTaskContractAddress(addr1.address)
-    await contractInstance.connect(addr1).reward(addr2.address, 0, 0)
+    await contractInstance
+      .connect(addr1)
+      .reward(addr2.address, SOLIDITY_TAG, 0, 0)
     await expect(
       contractInstance
         .connect(addr2)

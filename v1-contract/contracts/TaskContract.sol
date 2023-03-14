@@ -10,10 +10,10 @@ import "../libraries/TaskControlLogicLibrary.sol";
 
 contract TaskContract {
     address private owner;
-    TaskStorageContract private taskStorage;
-    SBTToken private sbtToken;
-    Organization private organization;
-    Treasury private treasury;
+    TaskStorageContract private taskStorageContract;
+    SBTToken private tokenContract;
+    Organization private organizationContract;
+    Treasury private treasuryContract;
     TeamContract private teamContract;
 
     modifier onlyOwner() {
@@ -22,9 +22,9 @@ contract TaskContract {
     }
 
     modifier onlyApprover(uint256 taskId) {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         require(
-            organization.isApproverAddress(task.orgId, msg.sender),
+            organizationContract.isApproverAddress(task.orgId, msg.sender),
             "Permission denied"
         );
         _;
@@ -35,22 +35,22 @@ contract TaskContract {
         _;
     }
 
-    /// @dev constructor sets reputation token address and organization contract address.
+    /// @dev constructor sets reputation token address and organizationContract contract address.
     /// @param tokenAddress Reputation token address.
-    /// @param organizationAddress Reputation token address.
+    /// @param organizationContractAddress Reputation token address.
     constructor(
         address tokenAddress,
-        address organizationAddress,
+        address organizationContractAddress,
         address taskStorageAddress
     ) {
         owner = msg.sender;
-        sbtToken = SBTToken(tokenAddress);
-        organization = Organization(organizationAddress);
-        taskStorage = TaskStorageContract(taskStorageAddress);
+        tokenContract = SBTToken(tokenAddress);
+        organizationContract = Organization(organizationContractAddress);
+        taskStorageContract = TaskStorageContract(taskStorageAddress);
     }
 
     function updateTreasuryContract(address _address) external onlyOwner {
-        treasury = Treasury(_address);
+        treasuryContract = Treasury(_address);
     }
 
     function updateTeamContract(address _address) external onlyOwner {
@@ -58,7 +58,7 @@ contract TaskContract {
     }
 
     /// @dev Allows a user to create a task.
-    /// @param orgId Id of organization.
+    /// @param orgId Id of organizationContract.
     /// @param title Task title.
     /// @param description Task description.
     /// @param taskTags Token id.
@@ -70,7 +70,7 @@ contract TaskContract {
         uint256 orgId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
@@ -78,12 +78,15 @@ contract TaskContract {
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
+            taskTags,
             complexityScore,
-            organization,
-            sbtToken
+            organizationContract,
+            tokenContract
         );
-        uint256 requiredTaskApprovals = organization.getTaskApprovals(orgId);
-        taskId = taskStorage.createTask(
+        uint256 requiredTaskApprovals = organizationContract.getTaskApprovals(
+            orgId
+        );
+        taskId = taskStorageContract.createTask(
             orgId,
             externalId,
             title,
@@ -96,7 +99,7 @@ contract TaskContract {
         );
 
         if (requestAssignment)
-            taskStorage.makeAssignmentRequest(taskId, msg.sender);
+            taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
     }
 
     /// @dev Allows an approver to update a task.
@@ -106,12 +109,17 @@ contract TaskContract {
         string memory externalId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration
     ) external onlyApprover(taskId) {
-        taskStorage.updateTask(
+        TaskControlLogicLibrary.ensureCanUpdateTask(
+            taskTags,
+            complexityScore,
+            tokenContract
+        );
+        taskStorageContract.updateTask(
             taskId,
             externalId,
             title,
@@ -130,20 +138,19 @@ contract TaskContract {
         address rewardToken,
         bool assignCreator
     ) external onlyApprover(taskId) {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
             taskId,
-            taskStorage,
-            organization
+            taskStorageContract,
+            organizationContract
         );
-        treasury.lockBalance(task.orgId, rewardToken, rewardAmount);
-        taskStorage.openTask(taskId, rewardAmount, rewardToken);
+        treasuryContract.lockBalance(task.orgId, rewardToken, rewardAmount);
+        taskStorageContract.openTask(taskId, rewardAmount, rewardToken);
 
         if (!assignCreator) return;
 
-        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
-            taskId
-        );
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
         if (
             taskMetadata.assignmentRequests.length > 0 &&
             taskMetadata.assignmentRequests[0] != address(0)
@@ -153,37 +160,46 @@ contract TaskContract {
     /// @dev Allows a approver to approve a task.
     /// @param taskId Task ID.
     function approveTask(uint256 taskId) external onlyApprover(taskId) {
-        taskStorage.approveTask(taskId, msg.sender);
-        if (TaskControlLogicLibrary.canCloseTask(taskId, taskStorage))
+        taskStorageContract.approveTask(taskId, msg.sender);
+        if (TaskControlLogicLibrary.canCloseTask(taskId, taskStorageContract))
             closeTask(taskId);
     }
 
     /// @dev Allows a approver to revoke approval for a task.
     /// @param taskId Task ID.
     function revokeApproval(uint256 taskId) external onlyApprover(taskId) {
-        taskStorage.revokeApproval(taskId, msg.sender);
+        taskStorageContract.revokeApproval(taskId, msg.sender);
     }
 
     /// @dev Allows closing an approved task.
     /// @param taskId Task ID.
     function closeTask(uint256 taskId) internal {
-        taskStorage.closeTask(taskId);
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
-            taskId
-        );
+        taskStorageContract.closeTask(taskId);
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
         (uint256 rewardAmount, uint256 slashAmount) = TaskControlLogicLibrary
-            .getRewardAndSlash(taskId, taskStorage, organization);
-        sbtToken.reward(task.assigneeAddress, task.complexityScore, task.orgId);
-        if (taskMetadata.staked)
-            sbtToken.unStake(
-                task.assigneeAddress,
-                task.complexityScore,
-                task.reputationLevel,
-                task.orgId
+            .getRewardAndSlash(
+                taskId,
+                taskStorageContract,
+                organizationContract
             );
+        for (uint256 i = 0; i < task.taskTags.length; i++) {
+            tokenContract.reward(task.assigneeAddress, task.taskTags[i], task.complexityScore, task.orgId);
+        }
+
+        if (taskMetadata.staked)
+            for (uint256 i = 0; i < task.taskTags.length; i++) {
+                tokenContract.unStake(
+                    task.assigneeAddress,
+                    task.taskTags[i],
+                    task.complexityScore,
+                    task.reputationLevel,
+                    task.orgId
+                );
+            }
         if (slashAmount > 0)
-            treasury.unlockBalance(
+            treasuryContract.unlockBalance(
                 task.orgId,
                 taskMetadata.rewardToken,
                 slashAmount
@@ -192,12 +208,12 @@ contract TaskContract {
         Payee[] memory payees = TaskControlLogicLibrary.getPayees(
             taskId,
             rewardAmount,
-            taskStorage,
+            taskStorageContract,
             teamContract
         );
         for (uint256 i = 0; i < payees.length; i++)
             if (payees[i].walletAddress != address(0) && payees[i].amount > 0)
-                treasury.reward(
+                treasuryContract.reward(
                     task.orgId,
                     payees[i].walletAddress,
                     taskMetadata.rewardToken,
@@ -208,7 +224,7 @@ contract TaskContract {
     /// @dev Allows assignee to submit task for approval.
     /// @param taskId Task ID.
     function submitTask(uint256 taskId, string memory comment) external {
-        taskStorage.submitTask(taskId, msg.sender, comment);
+        taskStorageContract.submitTask(taskId, msg.sender, comment);
     }
 
     /// @dev Allows assignees assign task to themselves.
@@ -218,22 +234,31 @@ contract TaskContract {
         address assignee,
         address assigner
     ) internal {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        if (
-            sbtToken.balanceOf(assignee, task.complexityScore, task.orgId) <
-            task.reputationLevel
-        ) {
-            taskStorage.makeAssignmentRequest(taskId, assignee);
-            return;
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        for (uint256 i = 0; i < task.taskTags.length; i++) {
+            if (
+                tokenContract.balanceOf(
+                    assignee,
+                    task.taskTags[i],
+                    task.complexityScore,
+                    task.orgId
+                ) < task.reputationLevel
+            ) {
+                taskStorageContract.makeAssignmentRequest(taskId, assignee);
+                return;
+            }
         }
 
-        taskStorage.assign(taskId, assignee, assigner, true);
-        sbtToken.stake(
-            assignee,
-            task.complexityScore,
-            task.reputationLevel,
-            task.orgId
-        );
+        taskStorageContract.assign(taskId, assignee, assigner, true);
+        for (uint256 i = 0; i < task.taskTags.length; i++) {
+            tokenContract.stake(
+                assignee,
+                task.taskTags[i],
+                task.complexityScore,
+                task.reputationLevel,
+                task.orgId
+            );
+        }
     }
 
     /// @dev Allows assignees assign task to themselves.
@@ -242,45 +267,49 @@ contract TaskContract {
         assign(taskId, msg.sender, msg.sender);
     }
 
-    function approveAssignRequest(uint256 taskId, address assignee)
-        external
-        onlyApprover(taskId)
-    {
-        taskStorage.assign(taskId, assignee, msg.sender, false);
+    function approveAssignRequest(
+        uint256 taskId,
+        address assignee
+    ) external onlyApprover(taskId) {
+        taskStorageContract.assign(taskId, assignee, msg.sender, false);
     }
 
     /// @dev Allows assignees to drop tasks.
     /// @param taskId Task ID.
     function unassignSelf(uint256 taskId) external {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
-            taskId
-        );
-        taskStorage.unassign(taskId, msg.sender);
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
+        taskStorageContract.unassign(taskId, msg.sender);
         if (taskMetadata.staked)
-            sbtToken.unStake(
+        for (uint256 i = 0; i < task.taskTags.length; i++) {
+            tokenContract.unStake(
                 msg.sender,
+                task.taskTags[i],
                 task.complexityScore,
                 task.reputationLevel,
                 task.orgId
             );
+        }
     }
 
     /// @dev Allows approver to unassign assignee.
     /// @param taskId Task ID.
     function unassign(uint256 taskId) external onlyApprover(taskId) {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
-            taskId
-        );
-        taskStorage.unassign(taskId, task.assigneeAddress);
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
+        taskStorageContract.unassign(taskId, task.assigneeAddress);
         if (taskMetadata.staked)
-            sbtToken.unStake(
-                msg.sender,
+        for (uint256 i = 0; i < task.taskTags.length; i++) {
+            tokenContract.unStake(
+                task.assigneeAddress,
+                task.taskTags[i],
                 task.complexityScore,
                 task.reputationLevel,
                 task.orgId
             );
+        }
     }
 
     function requestForTaskRevision(
@@ -289,7 +318,7 @@ contract TaskContract {
         bytes32 revisionHash,
         uint256 durationExtension
     ) external onlyApprover(taskId) {
-        taskStorage.requestForTaskRevision(
+        taskStorageContract.requestForTaskRevision(
             taskId,
             reviewId,
             revisionHash,
@@ -301,15 +330,14 @@ contract TaskContract {
     /// @dev Allows approvers to archive open tasks.
     /// @param taskId Task ID.
     function archive(uint256 taskId) external onlyApprover(taskId) {
-        TaskLib.Task memory task = taskStorage.getTask(taskId);
-        TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
-            taskId
-        );
-        treasury.unlockBalance(
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
+        treasuryContract.unlockBalance(
             task.orgId,
             taskMetadata.rewardToken,
             taskMetadata.rewardAmount
         );
-        taskStorage.archive(taskId);
+        taskStorageContract.archive(taskId);
     }
 }
