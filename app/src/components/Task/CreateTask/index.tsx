@@ -1,4 +1,3 @@
-import ChevronDown from 'components/IconSvg/ChevronDown'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
@@ -11,7 +10,6 @@ import ComplexityScore from 'SVGs/ComplexityScore'
 import Duration from 'SVGs/Duration'
 import Link from 'SVGs/Link'
 import Reputation from 'SVGs/Reputation'
-import Settings from 'SVGs/Settings'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { ICreateTask } from './types'
 import { StyledScrollableContainer } from './styled'
@@ -30,7 +28,6 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
 const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
-  const [showAdvanced, toggleShowAdvanced] = useState(false)
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
@@ -145,7 +142,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   ></textarea>
                 </div>
               </section>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
+              <section className='py-4'>
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
@@ -239,52 +236,25 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                       setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
                     }
                   />
-
-                  <button
-                    className='p-4 flex justify-between items-center border bg-gray-50 w-full rounded-lg mt-4'
-                    onClick={() => toggleShowAdvanced(!showAdvanced)}
-                  >
-                    <div className='flex items-center gap-2'>
-                      <span className='block'>
-                        <Settings />
-                      </span>
-                      <span className='text-bold'>
-                        {t('advanced_settings')}
-                      </span>
-                    </div>
-                    <span
-                      className={`block ${
-                        showAdvanced &&
-                        'rotate-180 transition delay-150 duration-300 ease-in-out'
-                      }`}
-                    >
-                      <ChevronDown />
-                    </span>
-                  </button>
                 </div>
               </section>
-              {showAdvanced && (
-                <section className='mt-2'>
-                  <span className='block text-xl font-medium'>
-                    {t('set_up_communication_channel')}
+              <section className='mt-2'>
+                <div className='block text-base font-normal text-gray-600'>
+                  <span>{t('provide_instructions_for_contributors')}</span>
+                  <span className='text-sm text-gray-500'>
+                    {t('contribution_information_hint')}
                   </span>
-                  <div className='mt-3'>
-                    <span className='block mb-2'>
-                      {t('enter_slack_channel_link')}
-                    </span>
-                    <div className='w-full px-4 py-2 border rounded-md flex items-center mt-2'>
-                      <span className='block mr-2'>
-                        <Link />
-                      </span>
-                      <input
-                        type='text'
-                        className='w-full focus:outline-none'
-                        placeholder={t('leave_figma_link')}
-                      />
-                    </div>
+                  <span>{t('for_contributor')} </span>
+                </div>
+                <div className='mt-3'>
+                  <span className='block mb-2'>
+                    {t('enter_slack_channel_link')}
+                  </span>
+                  <div className='w-full px-4 py-2 border rounded-md flex items-center mt-2'>
+                    <input type='text' className='w-full focus:outline-none' />
                   </div>
-                </section>
-              )}
+                </div>
+              </section>
               <div
                 className={`w-full mx-auto leading-relaxed text-base mt-4 ${
                   status.error ? 'text-red-500' : 'text-green-500'
