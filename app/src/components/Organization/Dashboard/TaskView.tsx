@@ -6,7 +6,6 @@ import { Organization } from 'hooks/organization/types'
 import { Task, TaskStatus } from 'hooks/task/types'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import JiraLogo from 'SVGs/JiraLogo'
 import Plus from 'SVGs/Plus'
 import { Converter } from 'utils/converter'
 import TaskFilterTabs from './TaskFilterTabs'
@@ -25,15 +24,21 @@ interface TaskViewProps {
 interface IEmptyTaskViewProps {
   organization: Organization
   onCode: (code: any, params?: any) => void
+  clickupToken?: string
 }
 
 const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
 const redirect_uri = process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL
 const clickupUrl = `https://app.clickup.com/api?client_id=${client_id}&redirect_uri=${redirect_uri}`
 
-const EmptyTaskView = ({ organization, onCode }: IEmptyTaskViewProps) => {
+const EmptyTaskView = ({
+  organization,
+  onCode,
+  clickupToken
+}: IEmptyTaskViewProps) => {
   const { t } = useTranslation('organization')
   const [showModal, toggleModal] = useState(false)
+
   return (
     <div className='mt-6'>
       {showModal && (
@@ -54,18 +59,27 @@ const EmptyTaskView = ({ organization, onCode }: IEmptyTaskViewProps) => {
             <Plus className='fill-[#3667EA]' /> {t('add_task')}
           </button>
           <div className='w-full text-[#17191A] bg-[#3667EA]/10'>
-            <OauthPopup
-              url={clickupUrl}
-              onCode={onCode}
-              onClose={() => {}}
-              title={`Import Task from Clickup`}
-              height={600}
-              width={700}
-            >
-              <button className='w-full btn-primary flex justify-center gap-1 items-center'>
+            {!clickupToken ? (
+              <OauthPopup
+                url={clickupUrl}
+                onCode={onCode}
+                onClose={() => {}}
+                title={`Import Task from Clickup`}
+                height={600}
+                width={700}
+              >
+                <button className='w-full btn-primary flex justify-center gap-1 items-center'>
+                  {t('import_from')} <ClickupLogo />
+                </button>
+              </OauthPopup>
+            ) : (
+              <button
+                className='w-full btn-primary flex justify-center gap-1 items-center'
+                onClick={() => onCode('')}
+              >
                 {t('import_from')} <ClickupLogo />
               </button>
-            </OauthPopup>
+            )}
           </div>
         </div>
       </div>
@@ -77,12 +91,13 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [tasks, setTasks] = useState(taskList)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [currentTab, setCurrentTab] = useState(TaskFilters.WITHOUT_REQUEST)
-  const [importClickup, setImportClickup] = useState(false)
+  const [showClickupModal, setShowClickupModal] = useState(false)
   const [clickupCode, setClickupCode] = useState('')
+  const [clickupToken, setClickupToken] = useState()
 
   const onCode = async (code: any, params?: any) => {
     setClickupCode(code)
-    setImportClickup(true)
+    setShowClickupModal(true)
   }
 
   const queryParams = () => {
@@ -122,6 +137,11 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [selected, setSelected] = useState<number>()
 
   useEffect(() => {
+    const token: any = getCookie(TOKEN_KEY)
+    if (token) {
+      setClickupToken(token)
+    }
+
     if (!data?.tasks) return
     Promise.all(
       data.tasks.map(async (t) => {
@@ -153,11 +173,12 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
           close={() => setShowCreateModal(false)}
         />
       )}
-      {importClickup && (
+      {showClickupModal && (
         <ClickupImport
           organizationId={organization.id}
-          clickup_code={clickupCode}
-          close={() => setImportClickup(false)}
+          clickupCode={clickupCode}
+          clickupToken={clickupToken}
+          close={() => setShowClickupModal(false)}
         />
       )}
       {selectedTask && (
@@ -165,7 +186,11 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       )}
 
       {!tasks?.length ? (
-        <EmptyTaskView organization={organization} onCode={onCode} />
+        <EmptyTaskView
+          organization={organization}
+          onCode={onCode}
+          clickupToken={clickupToken}
+        />
       ) : (
         <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
           <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
@@ -176,18 +201,27 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
             >
               <Plus className='fill-[#3667EA]' /> {tr('add_task')}
             </button>
-            <OauthPopup
-              url={clickupUrl}
-              onCode={onCode}
-              onClose={() => {}}
-              title={`Import Task from Clickup`}
-              height={600}
-              width={700}
-            >
-              <button className='btn-primary flex justify-center gap-2 items-center text-[#17191A] bg-[#3667EA]/80'>
+            {!clickupToken ? (
+              <OauthPopup
+                url={clickupUrl}
+                onCode={onCode}
+                onClose={() => {}}
+                title={`Import Task from Clickup`}
+                height={600}
+                width={700}
+              >
+                <button className='btn-primary flex justify-center gap-2 items-center text-[#17191A] bg-[#3667EA]/80'>
+                  {tr('import_from')} <ClickupLogo />
+                </button>
+              </OauthPopup>
+            ) : (
+              <button
+                className='btn-primary flex justify-center gap-2 items-center text-[#17191A] bg-[#3667EA]/80'
+                onClick={() => setShowClickupModal(true)}
+              >
                 {tr('import_from')} <ClickupLogo />
               </button>
-            </OauthPopup>
+            )}
           </div>
         </div>
       )}

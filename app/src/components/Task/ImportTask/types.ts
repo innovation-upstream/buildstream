@@ -1,6 +1,7 @@
 export interface TImport {
   organizationId: number
-  clickup_code: string
+  clickupCode: string
+  clickupToken?: string
   close: () => any
 }
 

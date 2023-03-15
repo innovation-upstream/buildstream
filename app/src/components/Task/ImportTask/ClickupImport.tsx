@@ -38,7 +38,8 @@ const taskComplexities = Object.entries(ComplexityScoreMap)
 
 const ClickupImport: React.FC<TImport> = ({
   organizationId,
-  clickup_code,
+  clickupCode,
+  clickupToken,
   close
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
@@ -85,8 +86,6 @@ const ClickupImport: React.FC<TImport> = ({
     setStatus({ text: '', error: false })
 
     setProcessing(true)
-    console.log('ADDED TASK DATA ======', `clickup-${taskData.id}`)
-    console.log(taskData)
     try {
       await createNewTask(
         organizationId,
@@ -108,7 +107,12 @@ const ClickupImport: React.FC<TImport> = ({
   }
 
   const getSpaces = async () => {
-    const token = await fetchToken(clickup_code, organizationId.toString())
+    let token: any = clickupToken
+
+    if (!token) {
+      token = await fetchToken(clickupCode, organizationId.toString())
+    }
+
     const spaces: ISpaces[] = await fetchSpaces(token)
     const spaceSuggestion = spaces?.map((space: any) => ({
       id: space.id,
@@ -210,7 +214,7 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
+              <section className='py-4'>
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
@@ -304,28 +308,6 @@ const ClickupImport: React.FC<TImport> = ({
                       setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
                     }
                   />
-
-                  <button
-                    className='p-4 flex justify-between items-center border bg-gray-50 w-full rounded-lg mt-4'
-                    onClick={() => toggleShowAdvanced(!showAdvanced)}
-                  >
-                    <div className='flex items-center gap-2'>
-                      <span className='block'>
-                        <Settings />
-                      </span>
-                      <span className='text-bold'>
-                        {t('advanced_settings')}
-                      </span>
-                    </div>
-                    <span
-                      className={`block ${
-                        showAdvanced &&
-                        'rotate-180 transition delay-150 duration-300 ease-in-out'
-                      }`}
-                    >
-                      <ChevronDown />
-                    </span>
-                  </button>
                 </div>
               </section>
               <div
@@ -336,7 +318,7 @@ const ClickupImport: React.FC<TImport> = ({
                 {status.text}
               </div>
             </StyledScrollableContainer>
-            <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6'>
+            <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6 border-t pt-4'>
               {!processing && (
                 <button
                   className='btn-primary min-w-[30%]'
