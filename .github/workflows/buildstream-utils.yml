@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - Create-npm-package-project
+    paths:
+      - services/buildstream-schema/public/tokens/**
+
+jobs:
+  release:
+    name: Publish buildstream-utils
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./buildstream-utils
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: 14.x
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: ${{env.working-directory}}
+
+      - name: Build
+        run: yarn build
+        working-directory: ${{env.working-directory}}
+      
+      - name: Add auth token
+        run: |
+          cat <<EOT >> .npmrc
+          //registry.npmjs.org/:_authToken=\${NPM_PUBLISH_TOKEN}
+          always-auth=true
+          EOT
+        working-directory: ${{env.working-directory}}
+      
+      - name: Release
+        run: yarn release
+        working-directory: ${{env.working-directory}}
+        env: 
+          NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

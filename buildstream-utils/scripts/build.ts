@@ -62,7 +62,14 @@ const printer = ts.createPrinter({
 })
 const result = printer.printNode(ts.EmitHint.Unspecified, tokensVar, resultFile)
 
-console.log(result)
+try {
+  fs.mkdirSync(path.join(__dirname, '../src/hooks/useTokens/generated'))
+} catch (err) {
+  if (err.code !== 'EEXIST') {
+    // curDir already exists!
+    throw err
+  }
+}
 
 fs.writeFileSync(
   path.join(__dirname, '../src/hooks/useTokens/generated/tokens.ts'),
