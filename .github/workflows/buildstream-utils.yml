@@ -36,6 +36,9 @@ jobs:
           always-auth=true
           EOT
       
+      - name: Build
+        run: yarn build
+      
       - name: Release
         run: yarn release
         env: 

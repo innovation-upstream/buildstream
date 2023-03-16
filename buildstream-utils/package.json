@@ -10,12 +10,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf ./dist && rollup -c && tsc -d --emitDeclarationOnly --declarationDir dist",
-    "release": "yarn build && npm publish --access public",
+    "release": "np --branch master patch",
     "prepare": "ts-node -P tsconfig.node.json scripts/build.ts"
   },
   "author": "Innovation upstream",
   "repository": "innovation-upstream/buildstream-utils",
   "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
@@ -32,6 +37,7 @@
     "@types/node": "^18.15.3",
     "@types/react": "^18.0.28",
     "@types/react-router-dom": "^5.3.3",
+    "np": "^7.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rollup": "^2.79.1",
