@@ -62,8 +62,6 @@ const printer = ts.createPrinter({
 })
 const result = printer.printNode(ts.EmitHint.Unspecified, tokensVar, resultFile)
 
-console.log(result)
-
 fs.writeFileSync(
   path.join(__dirname, '../src/hooks/useTokens/generated/tokens.ts'),
   result
