@@ -9,3 +9,4 @@ scripts
 # Files
 .gitignore
 rollup.config.js
+.npmrc

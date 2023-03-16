@@ -7,3 +7,4 @@ dist
 
 generated
 .DS_Store
+.npmrc
