@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf ./dist && rollup -c && tsc -d --emitDeclarationOnly --declarationDir dist",
-    "release": "np --branch master patch",
+    "release": "np --branch master --any-branch patch",
     "prepare": "ts-node -P tsconfig.node.json scripts/build.ts"
   },
   "author": "Innovation upstream",
