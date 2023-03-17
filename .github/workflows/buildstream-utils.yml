@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - services/buildstream-schema/public/tokens/**
+      - services/buildstream-docs/public/tokens/**
 
 jobs:
   release:
@@ -30,10 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-        working-directory: ${{env.working-directory}}
-
-      - name: Build
-        run: yarn build
         working-directory: ${{env.working-directory}}
       
       - name: Add auth token
