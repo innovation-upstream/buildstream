@@ -4,7 +4,7 @@ const ts = require('typescript')
 
 const tokensPath = path.join(
   __dirname,
-  '../../services/buildstream-schema/public/tokens'
+  '../../services/buildstream-docs/public/tokens'
 )
 
 const tokens = fs.readdirSync(tokensPath)
