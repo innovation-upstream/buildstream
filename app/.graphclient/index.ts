@@ -282,6 +282,17 @@ export type ActionSnapshot_orderBy =
   | 'actionId'
   | 'orgId'
   | 'organizationSnapshot'
+  | 'organizationSnapshot__id'
+  | 'organizationSnapshot__orgId'
+  | 'organizationSnapshot__name'
+  | 'organizationSnapshot__description'
+  | 'organizationSnapshot__requiredTaskApprovals'
+  | 'organizationSnapshot__requiredConfirmations'
+  | 'organizationSnapshot__rewardMultiplier'
+  | 'organizationSnapshot__rewardSlashMultiplier'
+  | 'organizationSnapshot__slashRewardEvery'
+  | 'organizationSnapshot__rewardToken'
+  | 'organizationSnapshot__isInitialized'
   | 'initiator'
   | 'targetAddress'
   | 'value'
@@ -475,6 +486,17 @@ export type Action_orderBy =
   | 'actionId'
   | 'orgId'
   | 'organizationSnapshot'
+  | 'organizationSnapshot__id'
+  | 'organizationSnapshot__orgId'
+  | 'organizationSnapshot__name'
+  | 'organizationSnapshot__description'
+  | 'organizationSnapshot__requiredTaskApprovals'
+  | 'organizationSnapshot__requiredConfirmations'
+  | 'organizationSnapshot__rewardMultiplier'
+  | 'organizationSnapshot__rewardSlashMultiplier'
+  | 'organizationSnapshot__slashRewardEvery'
+  | 'organizationSnapshot__rewardToken'
+  | 'organizationSnapshot__isInitialized'
   | 'initiator'
   | 'targetAddress'
   | 'value'
@@ -772,11 +794,99 @@ export type Notification_orderBy =
   | 'tags'
   | 'users'
   | 'orgId'
+  | 'orgId__id'
+  | 'orgId__orgId'
+  | 'orgId__name'
+  | 'orgId__description'
+  | 'orgId__requiredTaskApprovals'
+  | 'orgId__requiredConfirmations'
+  | 'orgId__rewardMultiplier'
+  | 'orgId__rewardSlashMultiplier'
+  | 'orgId__slashRewardEvery'
+  | 'orgId__rewardToken'
+  | 'orgId__isInitialized'
   | 'task'
+  | 'task__id'
+  | 'task__taskId'
+  | 'task__externalId'
+  | 'task__title'
+  | 'task__description'
+  | 'task__assigner'
+  | 'task__assignee'
+  | 'task__teamAssignee'
+  | 'task__status'
+  | 'task__complexityScore'
+  | 'task__reputationLevel'
+  | 'task__requiredApprovals'
+  | 'task__rewardAmount'
+  | 'task__rewardToken'
+  | 'task__assignDate'
+  | 'task__submitDate'
+  | 'task__taskDuration'
+  | 'task__totalWaitTime'
+  | 'task__comment'
+  | 'task__staked'
+  | 'task__raw'
   | 'action'
+  | 'action__id'
+  | 'action__actionId'
+  | 'action__orgId'
+  | 'action__initiator'
+  | 'action__targetAddress'
+  | 'action__value'
+  | 'action__data'
+  | 'action__executed'
+  | 'action__tokenAddress'
+  | 'action__actionType'
+  | 'action__initiatedAt'
+  | 'action__completedAt'
+  | 'action__oldValue'
   | 'deposit'
+  | 'deposit__id'
+  | 'deposit__orgId'
+  | 'deposit__token'
+  | 'deposit__amount'
+  | 'deposit__initiator'
+  | 'deposit__completedAt'
   | 'taskSnapshot'
+  | 'taskSnapshot__id'
+  | 'taskSnapshot__actor'
+  | 'taskSnapshot__block'
+  | 'taskSnapshot__timestamp'
+  | 'taskSnapshot__taskId'
+  | 'taskSnapshot__title'
+  | 'taskSnapshot__description'
+  | 'taskSnapshot__assigner'
+  | 'taskSnapshot__assignee'
+  | 'taskSnapshot__teamAssignee'
+  | 'taskSnapshot__status'
+  | 'taskSnapshot__complexityScore'
+  | 'taskSnapshot__reputationLevel'
+  | 'taskSnapshot__requiredApprovals'
+  | 'taskSnapshot__rewardAmount'
+  | 'taskSnapshot__rewardToken'
+  | 'taskSnapshot__assignDate'
+  | 'taskSnapshot__submitDate'
+  | 'taskSnapshot__taskDuration'
+  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__comment'
+  | 'taskSnapshot__staked'
   | 'actionSnapshot'
+  | 'actionSnapshot__id'
+  | 'actionSnapshot__actionId'
+  | 'actionSnapshot__orgId'
+  | 'actionSnapshot__initiator'
+  | 'actionSnapshot__targetAddress'
+  | 'actionSnapshot__value'
+  | 'actionSnapshot__data'
+  | 'actionSnapshot__executed'
+  | 'actionSnapshot__tokenAddress'
+  | 'actionSnapshot__actionType'
+  | 'actionSnapshot__initiatedAt'
+  | 'actionSnapshot__completedAt'
+  | 'actionSnapshot__actor'
+  | 'actionSnapshot__block'
+  | 'actionSnapshot__timestamp'
   | 'timestamp';
 
 /** Defines the order direction, either ascending or descending */
@@ -1006,7 +1116,16 @@ export type OrganizationSnapshot_orderBy =
   | 'rewardToken'
   | 'isInitialized'
   | 'treasury'
-  | 'stat';
+  | 'treasury__id'
+  | 'treasury__orgId'
+  | 'stat'
+  | 'stat__id'
+  | 'stat__proposedTasks'
+  | 'stat__openedTasks'
+  | 'stat__assignedTasks'
+  | 'stat__submittedTasks'
+  | 'stat__closedTasks'
+  | 'stat__archivedTasks';
 
 export type OrganizationStat = {
   id: Scalars['ID'];
@@ -1284,7 +1403,16 @@ export type Organization_orderBy =
   | 'rewardToken'
   | 'isInitialized'
   | 'treasury'
-  | 'stat';
+  | 'treasury__id'
+  | 'treasury__orgId'
+  | 'stat'
+  | 'stat__id'
+  | 'stat__proposedTasks'
+  | 'stat__openedTasks'
+  | 'stat__assignedTasks'
+  | 'stat__submittedTasks'
+  | 'stat__closedTasks'
+  | 'stat__archivedTasks';
 
 export type Query = {
   userStat?: Maybe<UserStat>;
@@ -1877,7 +2005,7 @@ export type Task = {
   assignee?: Maybe<Scalars['String']>;
   teamAssignee?: Maybe<Scalars['String']>;
   team?: Maybe<Team>;
-  taskTags: Array<Scalars['String']>;
+  taskTags: Array<Scalars['BigInt']>;
   status: Scalars['Int'];
   complexityScore: Scalars['BigInt'];
   reputationLevel: Scalars['BigInt'];
@@ -2050,7 +2178,50 @@ export type TaskRevision_filter = {
 export type TaskRevision_orderBy =
   | 'id'
   | 'task'
+  | 'task__id'
+  | 'task__taskId'
+  | 'task__externalId'
+  | 'task__title'
+  | 'task__description'
+  | 'task__assigner'
+  | 'task__assignee'
+  | 'task__teamAssignee'
+  | 'task__status'
+  | 'task__complexityScore'
+  | 'task__reputationLevel'
+  | 'task__requiredApprovals'
+  | 'task__rewardAmount'
+  | 'task__rewardToken'
+  | 'task__assignDate'
+  | 'task__submitDate'
+  | 'task__taskDuration'
+  | 'task__totalWaitTime'
+  | 'task__comment'
+  | 'task__staked'
+  | 'task__raw'
   | 'taskSnapshot'
+  | 'taskSnapshot__id'
+  | 'taskSnapshot__actor'
+  | 'taskSnapshot__block'
+  | 'taskSnapshot__timestamp'
+  | 'taskSnapshot__taskId'
+  | 'taskSnapshot__title'
+  | 'taskSnapshot__description'
+  | 'taskSnapshot__assigner'
+  | 'taskSnapshot__assignee'
+  | 'taskSnapshot__teamAssignee'
+  | 'taskSnapshot__status'
+  | 'taskSnapshot__complexityScore'
+  | 'taskSnapshot__reputationLevel'
+  | 'taskSnapshot__requiredApprovals'
+  | 'taskSnapshot__rewardAmount'
+  | 'taskSnapshot__rewardToken'
+  | 'taskSnapshot__assignDate'
+  | 'taskSnapshot__submitDate'
+  | 'taskSnapshot__taskDuration'
+  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__comment'
+  | 'taskSnapshot__staked'
   | 'revisionId'
   | 'requester'
   | 'externalRevisionId'
@@ -2072,7 +2243,7 @@ export type TaskSnapshot = {
   assignee?: Maybe<Scalars['String']>;
   teamAssignee?: Maybe<Scalars['String']>;
   team?: Maybe<Team>;
-  taskTags: Array<Scalars['String']>;
+  taskTags: Array<Scalars['BigInt']>;
   status: Scalars['Int'];
   complexityScore?: Maybe<Scalars['BigInt']>;
   reputationLevel?: Maybe<Scalars['BigInt']>;
@@ -2284,12 +2455,12 @@ export type TaskSnapshot_filter = {
   team_not_ends_with?: InputMaybe<Scalars['String']>;
   team_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   team_?: InputMaybe<Team_filter>;
-  taskTags?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_contains?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  taskTags?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
   status?: InputMaybe<Scalars['Int']>;
   status_not?: InputMaybe<Scalars['Int']>;
   status_gt?: InputMaybe<Scalars['Int']>;
@@ -2421,12 +2592,30 @@ export type TaskSnapshot_orderBy =
   | 'timestamp'
   | 'taskId'
   | 'orgId'
+  | 'orgId__id'
+  | 'orgId__orgId'
+  | 'orgId__name'
+  | 'orgId__description'
+  | 'orgId__requiredTaskApprovals'
+  | 'orgId__requiredConfirmations'
+  | 'orgId__rewardMultiplier'
+  | 'orgId__rewardSlashMultiplier'
+  | 'orgId__slashRewardEvery'
+  | 'orgId__rewardToken'
+  | 'orgId__isInitialized'
   | 'title'
   | 'description'
   | 'assigner'
   | 'assignee'
   | 'teamAssignee'
   | 'team'
+  | 'team__id'
+  | 'team__teamId'
+  | 'team__name'
+  | 'team__description'
+  | 'team__walletAddress'
+  | 'team__archived'
+  | 'team__teamRewardMultiplier'
   | 'taskTags'
   | 'status'
   | 'complexityScore'
@@ -2622,12 +2811,12 @@ export type Task_filter = {
   team_not_ends_with?: InputMaybe<Scalars['String']>;
   team_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   team_?: InputMaybe<Team_filter>;
-  taskTags?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_contains?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  taskTags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  taskTags?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  taskTags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
   status?: InputMaybe<Scalars['Int']>;
   status_not?: InputMaybe<Scalars['Int']>;
   status_gt?: InputMaybe<Scalars['Int']>;
@@ -2778,12 +2967,30 @@ export type Task_orderBy =
   | 'taskId'
   | 'externalId'
   | 'orgId'
+  | 'orgId__id'
+  | 'orgId__orgId'
+  | 'orgId__name'
+  | 'orgId__description'
+  | 'orgId__requiredTaskApprovals'
+  | 'orgId__requiredConfirmations'
+  | 'orgId__rewardMultiplier'
+  | 'orgId__rewardSlashMultiplier'
+  | 'orgId__slashRewardEvery'
+  | 'orgId__rewardToken'
+  | 'orgId__isInitialized'
   | 'title'
   | 'description'
   | 'assigner'
   | 'assignee'
   | 'teamAssignee'
   | 'team'
+  | 'team__id'
+  | 'team__teamId'
+  | 'team__name'
+  | 'team__description'
+  | 'team__walletAddress'
+  | 'team__archived'
+  | 'team__teamRewardMultiplier'
   | 'taskTags'
   | 'status'
   | 'complexityScore'
@@ -3022,6 +3229,8 @@ export type TreasuryToken_filter = {
 export type TreasuryToken_orderBy =
   | 'id'
   | 'orgId'
+  | 'orgId__id'
+  | 'orgId__orgId'
   | 'token'
   | 'balance'
   | 'lockedBalance';
@@ -3569,7 +3778,7 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   assignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   teamAssignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
-  taskTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  taskTags?: Resolver<Array<ResolversTypes['BigInt']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   complexityScore?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   reputationLevel?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
@@ -3616,7 +3825,7 @@ export type TaskSnapshotResolvers<ContextType = MeshContext, ParentType extends 
   assignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   teamAssignee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType>;
-  taskTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  taskTags?: Resolver<Array<ResolversTypes['BigInt']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   complexityScore?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   reputationLevel?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
@@ -3764,7 +3973,7 @@ const buildstreamV1TestTransforms = [];
 const additionalTypeDefs = [] as any[];
 const buildstreamV1TestHandler = new GraphqlHandler({
               name: "buildstream_v1_test",
-              config: {"endpoint":"https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v1-test"},
+              config: {"endpoint":"https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v2"},
               baseDir,
               cache,
               pubsub,

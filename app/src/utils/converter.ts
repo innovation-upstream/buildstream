@@ -105,7 +105,7 @@ export class Converter {
       title: task.title || '',
       description: task.description || '',
       assigneeAddress: task.assignee || ethers.constants.AddressZero,
-      taskTags: task.taskTags,
+      taskTags: task.taskTags.map((t) => Number(t)),
       status: task.status,
       complexityScore: Number(task.complexityScore),
       reputationLevel: Number(task.reputationLevel),

@@ -48,7 +48,7 @@ export type Task = {
   title: string
   description: string
   assigneeAddress: string
-  taskTags: string[]
+  taskTags: number[]
   status: TaskStatus
   complexityScore: ComplexityScore
   reputationLevel: number
