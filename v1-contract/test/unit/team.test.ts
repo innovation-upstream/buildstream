@@ -14,7 +14,7 @@ const mockTask = {
   description: 'update ethers version to v2',
   assigner: ethers.constants.AddressZero,
   assigneeAddress: ethers.constants.AddressZero,
-  taskTags: ['golang'],
+  taskTags: [0],
   status: 2,
   complexityScore: 0,
   reputationLevel: 0,

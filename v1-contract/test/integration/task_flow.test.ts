@@ -10,6 +10,7 @@ const requiredApprovals = 2
 const reputationLevel = 1
 const taskDuration = 86400
 const teamRewardMultiplier = 0.1
+const SOLIDITY_TAG = 0
 
 const contractDefaults = {
   multiplier: 0.0001,
@@ -74,6 +75,7 @@ const getContractInstances = async () => {
   await treasuryContract.deployed()
 
   await tokenContract.updateTaskContractAddress(taskContract.address)
+  await tokenContract.createToken(SOLIDITY_TAG)
   await storageContract.updateTaskContractAddress(taskContract.address)
   await taskContract.updateTreasuryContract(treasuryContract.address)
   await taskContract.updateTeamContract(teamContract.address)
@@ -141,7 +143,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -191,8 +193,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -240,7 +243,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -289,8 +292,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -349,7 +353,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -408,8 +412,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -457,7 +462,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -519,8 +524,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -581,7 +587,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -646,8 +652,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -706,7 +713,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -783,8 +790,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
@@ -843,7 +851,7 @@ describe('Integration test: Task flow', function () {
         orgId,
         'update ethers version',
         'update ethers version to v2',
-        ['golang'],
+        [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
         taskDuration,
@@ -890,8 +898,9 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256)'](
+      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
         assignee.address,
+        SOLIDITY_TAG,
         complexityScore,
         orgId
       )
