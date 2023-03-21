@@ -1,5 +1,5 @@
 {
-  "address": "0x8878CF9CCB4EE9754cC49DbCf2Dc06A342CFBF7F",
+  "address": "0x48485B1d277f9F5A52271D04664143868416BB53",
   "abi": [
     {
       "type": "constructor",
@@ -11,7 +11,7 @@
         },
         {
           "type": "address",
-          "name": "organizationAddress"
+          "name": "organizationContractAddress"
         },
         {
           "type": "address",
@@ -87,6 +87,10 @@
       "gas": 1100000,
       "inputs": [
         {
+          "type": "string",
+          "name": "externalId"
+        },
+        {
           "type": "uint256",
           "name": "orgId"
         },
@@ -99,7 +103,7 @@
           "name": "description"
         },
         {
-          "type": "string[]",
+          "type": "uint256[]",
           "name": "taskTags"
         },
         {
@@ -113,6 +117,10 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        },
+        {
+          "type": "bool",
+          "name": "requestAssignment"
         }
       ],
       "outputs": [
@@ -136,6 +144,10 @@
         {
           "type": "address",
           "name": "rewardToken"
+        },
+        {
+          "type": "bool",
+          "name": "assignCreator"
         }
       ],
       "outputs": []
@@ -239,6 +251,10 @@
         },
         {
           "type": "string",
+          "name": "externalId"
+        },
+        {
+          "type": "string",
           "name": "title"
         },
         {
@@ -246,7 +262,7 @@
           "name": "description"
         },
         {
-          "type": "string[]",
+          "type": "uint256[]",
           "name": "taskTags"
         },
         {

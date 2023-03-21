@@ -1,5 +1,5 @@
 {
-  "address": "0x255F951bF825BdDC4fA27dEd704C6423c35A8Ff3",
+  "address": "0x0090eaa22c071aF8966d1164A38E058d6B5DE4F6",
   "abi": [
     {
       "type": "constructor",
@@ -106,6 +106,10 @@
               "name": "id"
             },
             {
+              "type": "string",
+              "name": "externalId"
+            },
+            {
               "type": "uint256",
               "name": "orgId"
             },
@@ -126,7 +130,7 @@
               "name": "assigneeAddress"
             },
             {
-              "type": "string[]",
+              "type": "uint256[]",
               "name": "taskTags"
             },
             {
@@ -217,6 +221,10 @@
                   "name": "status"
                 }
               ]
+            },
+            {
+              "type": "uint256",
+              "name": "revisionCount"
             },
             {
               "type": "address[]",
@@ -472,6 +480,10 @@
               "name": "id"
             },
             {
+              "type": "string",
+              "name": "externalId"
+            },
+            {
               "type": "uint256",
               "name": "orgId"
             },
@@ -492,7 +504,7 @@
               "name": "assigneeAddress"
             },
             {
-              "type": "string[]",
+              "type": "uint256[]",
               "name": "taskTags"
             },
             {
@@ -622,6 +634,10 @@
         },
         {
           "type": "string",
+          "name": "externalId"
+        },
+        {
+          "type": "string",
           "name": "title"
         },
         {
@@ -629,7 +645,7 @@
           "name": "description"
         },
         {
-          "type": "string[]",
+          "type": "uint256[]",
           "name": "taskTags"
         },
         {
@@ -701,6 +717,10 @@
               "name": "id"
             },
             {
+              "type": "string",
+              "name": "externalId"
+            },
+            {
               "type": "uint256",
               "name": "orgId"
             },
@@ -721,7 +741,7 @@
               "name": "assigneeAddress"
             },
             {
-              "type": "string[]",
+              "type": "uint256[]",
               "name": "taskTags"
             },
             {
@@ -826,6 +846,10 @@
                   "name": "status"
                 }
               ]
+            },
+            {
+              "type": "uint256",
+              "name": "revisionCount"
             },
             {
               "type": "address[]",
@@ -1024,6 +1048,10 @@
         },
         {
           "type": "string",
+          "name": "externalId"
+        },
+        {
+          "type": "string",
           "name": "title"
         },
         {
@@ -1031,7 +1059,7 @@
           "name": "description"
         },
         {
-          "type": "string[]",
+          "type": "uint256[]",
           "name": "taskTags"
         },
         {

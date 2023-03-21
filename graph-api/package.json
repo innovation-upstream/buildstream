@@ -4,13 +4,15 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --product hosted-service kil-san/buildstream-v1-test",
+    "deploy:goerli": "graph deploy --product hosted-service kil-san/buildstream-v1-test --network goerli",
+    "deploy:mumbai": "graph deploy --product hosted-service kil-san/buildstream-v2 --network mumbai",
     "create-local": "graph create --node http://localhost:8020/ kil-san/buildstream-v1-test",
     "remove-local": "graph remove --node http://localhost:8020/ kil-san/buildstream-v1-test",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 kil-san/buildstream-v1-test",
     "test": "graph test",
     "update-addresses:local": "ts-node -P tsconfig.node.json scripts/update_local_addresses.ts",
-    "update-addresses:goerli": "ts-node -P tsconfig.node.json scripts/update_goerli_addresses.ts"
+    "update-addresses:goerli": "ts-node -P tsconfig.node.json scripts/update_goerli_addresses.ts",
+    "update-addresses:mumbai": "ts-node -P tsconfig.node.json scripts/update_mumbai_addresses.ts"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.33.0",
