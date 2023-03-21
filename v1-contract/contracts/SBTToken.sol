@@ -55,7 +55,7 @@ contract SBTToken is ERC1155 {
 
     /// @dev constructor.
     constructor()
-        ERC1155("https://buildstream-schema.vercel.app/tokens/{id}.json")
+        ERC1155("https://buildstream-docs.vercel.app/tokens/{id}.json")
     {
         owner = msg.sender;
     }
