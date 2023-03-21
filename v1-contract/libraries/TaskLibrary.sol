@@ -16,7 +16,7 @@ library TaskLibrary {
         uint256 orgId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration
@@ -47,7 +47,7 @@ library TaskLibrary {
         string memory externalId,
         string memory title,
         string memory description,
-        string[] memory taskTags,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration

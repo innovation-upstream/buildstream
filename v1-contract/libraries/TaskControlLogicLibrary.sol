@@ -14,14 +14,33 @@ struct Payee {
 library TaskControlLogicLibrary {
     function ensureCanCreateTask(
         uint256 orgId,
+        uint256[] memory taskTags,
         uint256 complexityScore,
         Organization organization,
         SBTToken sbtToken
     ) external view {
         require(organization.doesOrgExists(orgId), "Org not exist");
-        require(sbtToken.doesTokenExist(complexityScore), "Token not exist");
+        for (uint256 i = 0; i < taskTags.length; i++) {
+            require(
+                sbtToken.doesTokenExist(taskTags[i]),
+                "Invalid tag"
+            );
+        }
         OrgLib.Org memory org = organization.getOrganization(orgId);
         require(org.isInitialized, "Organization not initialized");
+    }
+
+    function ensureCanUpdateTask(
+        uint256[] memory taskTags,
+        uint256 complexityScore,
+        SBTToken sbtToken
+    ) external view {
+        for (uint256 i = 0; i < taskTags.length; i++) {
+            require(
+                sbtToken.doesTokenExist(taskTags[i]),
+                "Invalid tag"
+            );
+        }
     }
 
     function getTaskReward(
