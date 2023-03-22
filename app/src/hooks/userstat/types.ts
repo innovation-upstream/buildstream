@@ -8,5 +8,5 @@ export type Stat = {
   submittedTasks: BigNumber
   closedTasks: BigNumber
   archivedTasks: BigNumber
-  tags: string[]
+  tags: number[]
 }

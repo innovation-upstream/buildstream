@@ -6,6 +6,7 @@ import ChevronDown from 'components/IconSvg/ChevronDown'
 import { useState } from 'react'
 import { FilterUpdate, useTaskFilter } from './FilterContext'
 import { StyledContainer } from './styled'
+import { useTokens } from '@innovationupstream/buildstream-utils'
 
 interface FilterProps {
   expand?: boolean
@@ -18,6 +19,7 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
   const { tags, updateFilters: applyFilters } = useTaskFilter()
   const [openSkills, setOpenSkills] = useState(expand || !!tags?.length)
   const [filters, setFilters] = useState<FilterUpdate>({})
+  const tokens = useTokens()
 
   const updateFilters = (key: string, value: any) => {
     setFilters((prev: any) => ({
@@ -26,7 +28,7 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
     }))
   }
 
-  const handleCheckbox = (list: string[], item: string, key: string) => {
+  const handleCheckbox = (list: number[], item: number, key: string) => {
     const newList = list
     const index = newList.indexOf(item)
     if (index !== -1) newList.splice(index, 1)
@@ -98,19 +100,22 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
               hideTitle
             />
             <div className='mt-4'>
-              {stats.tags.map((tag) => (
-                <label key={tag} className='flex gap-x-3 mb-2.5 items-center'>
-                  <input
-                    type='checkbox'
-                    className='w-5 h-5'
-                    checked={!!filters?.tags?.includes(tag)}
-                    onChange={() =>
-                      handleCheckbox(filters?.tags || [], tag, 'tags')
-                    }
-                  />
-                  <span className='text-[#646873] capitalize'>{tag}</span>
-                </label>
-              ))}
+              {stats.tags.map((tag) => {
+                const token = tokens.find((t) => t.id === tag.toString())
+                return (
+                  <label key={tag} className='flex gap-x-3 mb-2.5 items-center'>
+                    <input
+                      type='checkbox'
+                      className='w-5 h-5'
+                      checked={!!filters?.tags?.includes(tag)}
+                      onChange={() =>
+                        handleCheckbox(filters?.tags || [], tag, 'tags')
+                      }
+                    />
+                    <span className='text-[#646873] capitalize'>{token?.name}</span>
+                  </label>
+                )
+              })}
             </div>
           </div>
         )}

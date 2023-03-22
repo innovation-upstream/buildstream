@@ -175,11 +175,11 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
       userStatsEntity.proposedTasks = ONE
       organizationStatsEntity.proposedTasks = ONE
       const taskTags = taskEntity.taskTags
-      const organizationTags = (organizationStatsEntity.tags || []) as string[]
+      const organizationTags = (organizationStatsEntity.tags || []) as BigInt[]
       for (let i = 0; i < taskTags.length; i++) {
-        const index = organizationTags.indexOf(taskTags[i].toString() as string)
+        const index = organizationTags.indexOf(taskTags[i] as BigInt)
         if (index === -1)
-          organizationTags.push(taskTags[i].toString() as string)
+          organizationTags.push(taskTags[i] as BigInt)
       }
       if (!!organizationTags.length)
         organizationStatsEntity.tags = organizationTags
@@ -212,10 +212,10 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
         ONE
       )
       const taskTags = taskEntity.taskTags
-      const userTags = (userStatsEntity.tags || []) as string[]
+      const userTags = (userStatsEntity.tags || []) as BigInt[]
       for (let i = 0; i < taskTags.length; i++) {
-        const index = userTags.indexOf(taskTags[i].toString() as string)
-        if (index === -1) userTags.push(taskTags[i].toString() as string)
+        const index = userTags.indexOf(taskTags[i] as BigInt)
+        if (index === -1) userTags.push(taskTags[i] as BigInt)
       }
       if (!!userTags.length) userStatsEntity.tags = userTags
       break

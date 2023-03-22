@@ -1120,7 +1120,7 @@ type OrganizationStat {
   submittedTasks: BigInt!
   closedTasks: BigInt!
   archivedTasks: BigInt!
-  tags: [String!]
+  tags: [BigInt!]
 }
 
 input OrganizationStat_filter {
@@ -1180,12 +1180,12 @@ input OrganizationStat_filter {
   archivedTasks_lte: BigInt
   archivedTasks_in: [BigInt!]
   archivedTasks_not_in: [BigInt!]
-  tags: [String!]
-  tags_not: [String!]
-  tags_contains: [String!]
-  tags_contains_nocase: [String!]
-  tags_not_contains: [String!]
-  tags_not_contains_nocase: [String!]
+  tags: [BigInt!]
+  tags_not: [BigInt!]
+  tags_contains: [BigInt!]
+  tags_contains_nocase: [BigInt!]
+  tags_not_contains: [BigInt!]
+  tags_not_contains_nocase: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
   and: [OrganizationStat_filter]
@@ -3405,7 +3405,7 @@ type UserStat {
   submittedTasks: BigInt!
   closedTasks: BigInt!
   archivedTasks: BigInt!
-  tags: [String!]
+  tags: [BigInt!]
 }
 
 input UserStat_filter {
@@ -3465,12 +3465,12 @@ input UserStat_filter {
   archivedTasks_lte: BigInt
   archivedTasks_in: [BigInt!]
   archivedTasks_not_in: [BigInt!]
-  tags: [String!]
-  tags_not: [String!]
-  tags_contains: [String!]
-  tags_contains_nocase: [String!]
-  tags_not_contains: [String!]
-  tags_not_contains_nocase: [String!]
+  tags: [BigInt!]
+  tags_not: [BigInt!]
+  tags_contains: [BigInt!]
+  tags_contains_nocase: [BigInt!]
+  tags_not_contains: [BigInt!]
+  tags_not_contains_nocase: [BigInt!]
   """Filter for the block changed event."""
   _change_block: BlockChangedFilter
   and: [UserStat_filter]
