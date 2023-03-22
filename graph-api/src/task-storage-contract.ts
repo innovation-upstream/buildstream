@@ -388,14 +388,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.comment = task.comment
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
-  if (taskEntity.taskTags.some((tag) => tag.toString().startsWith('clickup'))) {
-    const externalIdIndex = taskEntity.taskTags.findIndex((tag) =>
-      tag.toString().startsWith('clickup')
-    )
-    const splitStr = taskEntity.taskTags[externalIdIndex].toString().split('-')
-    const externalId = splitStr.length > 1 ? splitStr[1] : ''
-    taskEntity.externalId = externalId
-  }
+  taskEntity.externalId = task.externalId
 
   taskEntity.raw = `${task.title} ~ ${
     task.description

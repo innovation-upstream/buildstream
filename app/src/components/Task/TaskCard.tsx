@@ -95,8 +95,8 @@ const TaskCard = ({
       )}
       <div className={`flex flex-wrap gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}>
         {task.taskTags?.map((tag) => (
-          <div key={tag} className='btn-tag'>
-            {tag}
+          <div key={tag.id} className='btn-tag'>
+            {tag.name}
           </div>
         ))}
       </div>

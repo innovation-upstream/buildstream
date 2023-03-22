@@ -27,7 +27,7 @@ import {
 const initialTaskData = {
   title: '',
   description: '',
-  taskTags: [] as string[],
+  taskTags: [] as number[],
   complexityScore: 0,
   reputationLevel: 0,
   duration: 1
@@ -88,10 +88,11 @@ const ClickupImport: React.FC<TImport> = ({
     setProcessing(true)
     try {
       await createNewTask(
+        taskData.id,
         organizationId,
         '',
         '',
-        [...taskData.taskTags, `clickup-${taskData.id}`],
+        taskData.taskTags,
         taskData.complexityScore,
         taskData.reputationLevel,
         taskDuration,

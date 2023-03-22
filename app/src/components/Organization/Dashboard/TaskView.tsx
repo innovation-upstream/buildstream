@@ -103,25 +103,24 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const queryParams = () => {
     if (currentTab === TaskFilters.WITHOUT_REQUEST) {
       return {
-        status_lte: currentTab + 1,
+        status_lte: TaskStatus.OPEN,
         assignmentRequest: null
       }
     }
     if (currentTab === TaskFilters.WITH_REQUEST) {
       return {
-        status: currentTab,
+        status_lte: TaskStatus.OPEN,
         assignmentRequest_not: null
       }
     }
     if (currentTab === TaskFilters.IN_PROGRESS) {
       return {
-        status_gte: currentTab,
-        status_lte: currentTab + 1,
-        assignmentRequest_not: null
+        status_gte: TaskStatus.ASSIGNED,
+        status_lte: TaskStatus.CLOSED
       }
     }
     return {
-      status_gt: TaskFilters.CLOSED
+      status: TaskFilters.CLOSED
     }
   }
 

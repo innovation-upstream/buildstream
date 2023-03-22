@@ -87,10 +87,11 @@ export const approveTask = async (
 }
 
 export const createNewTask = async (
+  externalId: string,
   orgId: number,
   title: string,
   description: string,
-  taskTags: string[],
+  taskTags: number[],
   complexityScore: number,
   reputationLevel: number,
   taskDuration: number,
@@ -108,6 +109,7 @@ export const createNewTask = async (
   )
 
   const tx = await contract.createTask(
+    externalId,
     orgId,
     title,
     description,

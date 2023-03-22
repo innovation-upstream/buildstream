@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { TextInputWithAutoCompleteProps } from './types'
 
 const ListLoading = () => {
@@ -15,16 +15,17 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
   children,
   suggestions = [],
   filterSuggestions,
+  clearOnSelect,
   ...props
 }) => {
   const [tempInput, setTempInput] = React.useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
   const suggestionsRef = React.useRef<HTMLUListElement>(null)
-  const [showSuggestions, setShowSuggestions] = React.useState(
-    suggestions.length > 0
-  )
+  const [showSuggestions, setShowSuggestions] = React.useState(false)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (suggestions.length)
+      setShowSuggestions(true)
     const value = e.target.value
     setTempInput(value)
     const suggestion = suggestions.find(
@@ -32,11 +33,16 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
     )
     if (suggestion) {
       props.onChange?.(suggestion)
-      return
+      if (clearOnSelect && inputRef.current) {
+        inputRef.current.value = ''
+        setTempInput('')
+        inputRef.current.focus()
+      }
+      setShowSuggestions(false)
     }
   }
 
-  const onSuggestionClick = (id: string) => {
+  const onSuggestionClick = useCallback((id: string) => {
     if (!inputRef.current) return
     const suggestion = suggestions.find((suggestion) => suggestion.id === id)
     if (!suggestion) return
@@ -48,8 +54,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
 
     var event = new Event('input', { bubbles: true })
     inputRef.current.dispatchEvent(event)
-    setShowSuggestions(false)
-  }
+  }, [suggestions])
 
   const filteredSuggestions = filterSuggestions
     ? filterSuggestions(suggestions, tempInput)
@@ -73,6 +78,68 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
   }, [])
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const ulElement = suggestionsRef.current
+      if (!ulElement) return
+
+      const handleDownNavigation = () => {
+        event.preventDefault()
+        const activeElement = document.activeElement
+        if (!activeElement?.classList.contains('autocomplete-input')) {
+          const firstElement = ulElement.firstChild as HTMLElement
+          firstElement?.focus()
+          return
+        }
+        if (activeElement?.classList.contains('autocomplete-input')) {
+          const nextElement = activeElement.nextElementSibling as HTMLElement
+          nextElement?.focus()
+        }
+      }
+
+      const handleUpNavigation = () => {
+        event.preventDefault()
+        const activeElement = document.activeElement
+        if (activeElement?.classList.contains('autocomplete-input')) {
+          const previousElement =
+            activeElement.previousElementSibling as HTMLElement
+          previousElement?.focus()
+        }
+      }
+
+      const handleEnter = () => {
+        const activeElement = document.activeElement
+        if (activeElement?.classList.contains('autocomplete-input')) {
+          const id = activeElement.getAttribute('data-id') as string
+          onSuggestionClick(id)
+        }
+      }
+
+      switch (event.key) {
+        case 'Escape':
+          setShowSuggestions(false)
+          break
+        case 'Down':
+        case 'ArrowDown':
+          handleDownNavigation()
+          break
+        case 'Up':
+        case 'ArrowUp':
+          handleUpNavigation()
+          break
+        case 'Enter':
+          handleEnter()
+          break
+        default:
+          break
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onSuggestionClick])
+
+  useEffect(() => {
     if (inputRef.current && !suggestions.length) {
       var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
@@ -82,17 +149,17 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
 
       var event = new Event('input', { bubbles: true })
       inputRef.current.dispatchEvent(event)
-      setShowSuggestions(false)
     }
   }, [suggestions.length])
 
   return (
-    <div className='relative'>
+    <div className='relative w-full'>
       <input
         ref={inputRef}
         {...props}
         onFocus={() => setShowSuggestions(true)}
         onChange={onChange}
+        onClick={() => setShowSuggestions(true)}
       />
       {showSuggestions && (
         <ul
@@ -102,9 +169,11 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
           {filteredSuggestions.length > 0 ? (
             filteredSuggestions.map((suggestion) => (
               <li
+                tabIndex={-1}
+                data-id={suggestion.id}
                 key={suggestion.value}
                 onClick={() => onSuggestionClick(suggestion.id)}
-                className='p-2 mx-2 cursor-pointer hover:bg-gray-300 rounded-md'
+                className='autocomplete-input p-2 mx-2 cursor-pointer hover:bg-gray-300 focus:bg-gray-300 focus-within:bg-gray-300 focus-visible:outline-none rounded-md'
               >
                 {suggestion.value}
               </li>
