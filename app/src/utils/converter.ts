@@ -17,6 +17,7 @@ import { Organization } from 'hooks/organization/types'
 import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
 import { DepositRecord, Treasury } from 'hooks/treasury/types'
 import { Stat } from 'hooks/userstat/types'
+import { useTokens, Token } from '@innovationupstream/buildstream-utils'
 
 export class Converter {
   public static OrganizationFromQuery = (org: Org): Organization => {
@@ -47,7 +48,7 @@ export class Converter {
       submittedTasks: BigNumber.from(stat?.submittedTasks || 0),
       closedTasks: BigNumber.from(stat?.closedTasks || 0),
       archivedTasks: BigNumber.from(stat?.archivedTasks || 0),
-      tags: stat?.tags || []
+      tags: stat?.tags?.map(t => Number(t)) || []
     }
   }
 
@@ -97,6 +98,7 @@ export class Converter {
   }
 
   public static TaskFromQuery = (task: TaskType): Task => {
+    const tokens = useTokens()
     return {
       id: Number(task.taskId),
       externalId: task.externalId || '',
@@ -105,7 +107,9 @@ export class Converter {
       title: task.title || '',
       description: task.description || '',
       assigneeAddress: task.assignee || ethers.constants.AddressZero,
-      taskTags: task.taskTags.map((t) => Number(t)),
+      taskTags: task.taskTags.map(
+        (t) => tokens.find((token) => token.id === t.toString()) as Token
+      ),
       status: task.status,
       complexityScore: Number(task.complexityScore),
       reputationLevel: Number(task.reputationLevel),

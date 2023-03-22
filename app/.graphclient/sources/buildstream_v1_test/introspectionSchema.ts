@@ -15939,7 +15939,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -16895,7 +16895,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -16916,7 +16916,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -16937,7 +16937,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -16958,7 +16958,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -16979,7 +16979,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -17000,7 +17000,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -45647,7 +45647,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46603,7 +46603,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46624,7 +46624,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46645,7 +46645,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46666,7 +46666,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46687,7 +46687,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }
@@ -46708,7 +46708,7 @@ const schemaAST = {
                 "kind": "NamedType",
                 "name": {
                   "kind": "Name",
-                  "value": "String"
+                  "value": "BigInt"
                 }
               }
             }

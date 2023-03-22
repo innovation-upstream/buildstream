@@ -54,7 +54,7 @@ for the creation of the web presence of a new start-up from scratch.
 The website  needs to be integrated into an overall.
 `
 
-const getAssigneeData = async (assignee: string, tags: string[][]) => {
+const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
   // Tagless query
   tags.push([])
   const allTasks = await Promise.all(

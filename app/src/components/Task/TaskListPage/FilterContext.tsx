@@ -5,7 +5,7 @@ import { createContext, ReactNode, useContext, useState } from 'react'
 interface IFilterContext {
   text?: string
   complexity?: ComplexityScore
-  tags?: string[]
+  tags?: number[]
   filterQueryVariables?: GetTasksQueryVariables[]
   updateFilters?: (filter: FilterUpdate) => void
 }
@@ -13,7 +13,7 @@ interface IFilterContext {
 export interface FilterUpdate {
   text?: string
   complexity?: ComplexityScore
-  tags?: string[]
+  tags?: number[]
 }
 
 export const FilterContext = createContext<IFilterContext>({})
@@ -48,15 +48,15 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
     }
   ])
 
-  const updateFilters = (filter: FilterUpdate) => {
+  const updateFilters = (newFilter: FilterUpdate) => {
     setFilters((prev: any) => ({
       ...prev,
-      ...filter
+      ...newFilter
     }))
 
-    const text = (filter.text || filters.text)?.trim()
-    const complexity = filter.complexity
-    const tags = filter.tags || filters.tags
+    const text = (newFilter.text || filters.text)?.trim()
+    const complexity = newFilter.complexity
+    const tags = newFilter.tags || filters.tags
 
     let payload: GetTasksQueryVariables[] = [
       {
@@ -78,7 +78,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
             where: {
               raw_contains_nocase: text,
               complexityScore: complexity,
-              taskTags_contains_nocase: [tag]
+              taskTags_contains: [tag.toString() as any]
             }
           } as GetTasksQueryVariables)
       )

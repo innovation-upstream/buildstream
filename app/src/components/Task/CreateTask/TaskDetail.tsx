@@ -199,10 +199,10 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                       {task?.taskTags.map((t) => {
                         return (
                           <div
-                            key={t}
+                            key={t.id}
                             className='rounded-md py-1 px-2 bg-[#F4F5F8] flex gap-3 items-center flex-wrap'
                           >
-                            {t}
+                            {t.name}
                           </div>
                         )
                       })}

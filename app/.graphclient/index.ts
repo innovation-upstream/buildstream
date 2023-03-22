@@ -1135,7 +1135,7 @@ export type OrganizationStat = {
   submittedTasks: Scalars['BigInt'];
   closedTasks: Scalars['BigInt'];
   archivedTasks: Scalars['BigInt'];
-  tags?: Maybe<Array<Scalars['String']>>;
+  tags?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export type OrganizationStat_filter = {
@@ -1195,12 +1195,12 @@ export type OrganizationStat_filter = {
   archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
   archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
   archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
-  tags_not?: InputMaybe<Array<Scalars['String']>>;
-  tags_contains?: InputMaybe<Array<Scalars['String']>>;
-  tags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  tags_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  tags?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<OrganizationStat_filter>>>;
@@ -3272,7 +3272,7 @@ export type UserStat = {
   submittedTasks: Scalars['BigInt'];
   closedTasks: Scalars['BigInt'];
   archivedTasks: Scalars['BigInt'];
-  tags?: Maybe<Array<Scalars['String']>>;
+  tags?: Maybe<Array<Scalars['BigInt']>>;
 };
 
 export type UserStat_filter = {
@@ -3332,12 +3332,12 @@ export type UserStat_filter = {
   archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
   archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
   archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
-  tags_not?: InputMaybe<Array<Scalars['String']>>;
-  tags_contains?: InputMaybe<Array<Scalars['String']>>;
-  tags_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  tags_not_contains?: InputMaybe<Array<Scalars['String']>>;
-  tags_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  tags?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
+  tags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<UserStat_filter>>>;
@@ -3699,7 +3699,7 @@ export type OrganizationStatResolvers<ContextType = MeshContext, ParentType exte
   submittedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   closedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   archivedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['BigInt']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3879,7 +3879,7 @@ export type UserStatResolvers<ContextType = MeshContext, ParentType extends Reso
   submittedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   closedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   archivedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  tags?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['BigInt']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

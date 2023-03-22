@@ -9,4 +9,5 @@ export interface TextInputWithAutoCompleteProps
   suggestions: suggestion[]
   filterSuggestions?: (suggestions: suggestion[], value: string) => suggestion[]
   onChange?: (suggestion: suggestion) => void
+  clearOnSelect?: boolean
 }

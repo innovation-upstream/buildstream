@@ -71,6 +71,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
     setProcessing(true)
     try {
       await createNewTask(
+        '',
         oranization.id,
         taskData.title,
         taskData.description,
