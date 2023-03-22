@@ -63,7 +63,6 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
           name='taskTags'
           className='w-full border rounded-md focus:outline-none p-2 pl-[2.2rem]'
           placeholder={t('enter_skills')}
-          autoComplete='off'
           clearOnSelect
         />
       </div>

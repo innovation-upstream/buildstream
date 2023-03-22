@@ -160,6 +160,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
         onFocus={() => setShowSuggestions(true)}
         onChange={onChange}
         onClick={() => setShowSuggestions(true)}
+        autoComplete='off'
       />
       {showSuggestions && (
         <ul
