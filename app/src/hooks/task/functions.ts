@@ -116,7 +116,8 @@ export const createNewTask = async (
     taskTags,
     complexityScore,
     reputationLevel,
-    taskDuration
+    taskDuration,
+    false
   )
 
   const taskCreateReceipt = await tx.wait()
@@ -151,12 +152,13 @@ export const editTask = async (
   taskId: number,
   title: string,
   description: string,
-  taskTags: string[],
+  taskTags: number[],
   complexityScore: ComplexityScore,
   reputationLevel: number,
   taskDuration: number,
   provider?: any
 ): Promise<boolean> => {
+  const externalId = ''
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
@@ -165,6 +167,7 @@ export const editTask = async (
 
   const response = await contract.updateTask(
     taskId,
+    externalId,
     title,
     description,
     taskTags,
