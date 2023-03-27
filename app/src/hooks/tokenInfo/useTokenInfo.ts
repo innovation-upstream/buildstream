@@ -4,15 +4,12 @@ import { useEffect, useState } from 'react'
 import { getTokenInfo } from './functions'
 import { TokenInfo } from './types'
 
-const useTokenInfo = (tokenAddress: string) => {
+const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
   const { library } = useWeb3()
 
   const refetchTokenInfo = async () => {
-    if (
-      !ethers.utils.isAddress(tokenAddress) ||
-      tokenAddress === ethers.constants.AddressZero
-    ) {
+    if (!ethers.utils.isAddress(tokenAddress)) {
       setTokenInfo(undefined)
       return
     }
