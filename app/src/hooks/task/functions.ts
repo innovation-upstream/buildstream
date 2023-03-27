@@ -14,7 +14,7 @@ export const openTask = async (
     TaskContractInterface.abi,
     provider
   )
-  const tx = await contract.openTask(taskId, rewardToken)
+  const tx = await contract.openTask(taskId, rewardToken, true)
   await tx.wait()
 
   return true
