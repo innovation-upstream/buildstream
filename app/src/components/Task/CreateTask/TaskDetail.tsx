@@ -3,7 +3,7 @@ import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
-import { ComplexityScoreMap, TaskStatusMap } from 'hooks/task/types'
+import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
@@ -260,37 +260,39 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                 {status.text}
               </div>
             </StyledScrollableContainer>
-            <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-              {!processing ? (
+            {task.status < TaskStatus.CLOSED && (
+              <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
+                {!processing ? (
+                  <button
+                    className='btn-primary min-w-full md:min-w-[30%]'
+                    disabled={processing}
+                    onClick={taskAction}
+                  >
+                    {buttonText}
+                  </button>
+                ) : (
+                  <Spinner width={30} />
+                )}
+                {taskStatus === 'open' && (
+                  <button
+                    className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
+                    onClick={archiveCurrentTask}
+                  >
+                    {processArchive ? (
+                      <Spinner className='text-white' />
+                    ) : (
+                      t('archive_task')
+                    )}
+                  </button>
+                )}
                 <button
-                  className='btn-primary min-w-full md:min-w-[30%]'
-                  disabled={processing}
-                  onClick={taskAction}
+                  className='btn-outline px-8 w-full md:w-auto border-gray-200 hover:border-gray-300'
+                  onClick={close}
                 >
-                  {buttonText}
+                  {t('close')}
                 </button>
-              ) : (
-                <Spinner width={30} />
-              )}
-              {taskStatus === 'open' && (
-                <button
-                  className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
-                  onClick={archiveCurrentTask}
-                >
-                  {processArchive ? (
-                    <Spinner className='text-white' />
-                  ) : (
-                    t('archive_task')
-                  )}
-                </button>
-              )}
-              <button
-                className='btn-outline px-8 w-full md:w-auto border-gray-200 hover:border-gray-300'
-                onClick={close}
-              >
-                {t('close')}
-              </button>
-            </section>
+              </section>
+            )}
           </div>
         </div>
       </div>

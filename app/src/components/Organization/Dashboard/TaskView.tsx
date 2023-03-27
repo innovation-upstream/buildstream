@@ -115,12 +115,11 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
     }
     if (currentTab === TaskFilters.IN_PROGRESS) {
       return {
-        status_gte: TaskStatus.ASSIGNED,
-        status_lte: TaskStatus.CLOSED
+        status: TaskStatus.ASSIGNED
       }
     }
     return {
-      status: TaskFilters.CLOSED
+      status: TaskStatus.CLOSED
     }
   }
 
