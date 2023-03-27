@@ -1,4 +1,4 @@
-import { useWeb3 } from 'hooks'
+import { useWalletBalance, useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
 import { Organization } from 'hooks/organization/types'
@@ -29,6 +29,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
   const { tokenInfos } = useTokenInfos(tokenList)
   const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
+  const walletBalance = useWalletBalance(tokenAddress)
 
   const processNative = async () => {
     await depositNative(
@@ -98,13 +99,9 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
 
   const { t } = useTranslation('organization')
 
-  const tokenBalance = organization.treasury?.tokens?.find(
-    (t) => t.token === tokenAddress
-  )?.balance
   const token = tokenInfos?.find((i) => i.address === tokenAddress)
-  const balance = ethers.utils.formatUnits(
-    BigNumber.from(tokenBalance || 0)?.toString(),
-    token?.decimal
+  const balance = ethers.utils.formatEther(
+    BigNumber.from(walletBalance || 0)?.toString()
   )
 
   return (
@@ -173,7 +170,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             <p className='text-sm'>
               {t('balance')}:{' '}
               <span className='font-normal'>
-                {balance} {token?.symbol}
+                {parseFloat(balance).toFixed(4)} {token?.symbol}
               </span>
             </p>
           </div>
