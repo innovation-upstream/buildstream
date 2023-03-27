@@ -6,21 +6,19 @@ import { TokenInfo } from './types'
 
 const useTokenInfos = (tokenAddresses?: string[]) => {
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>()
-  const { library } = useWeb3()
+  const { chainId = 80001, library } = useWeb3()
 
   const refetchTokenInfos = async () => {
     if (!tokenAddresses) return
-    const filteredInfoRequests = tokenAddresses?.filter(
-      (tokenAddress) => ethers.utils.isAddress(tokenAddress)
+    const filteredInfoRequests = tokenAddresses?.filter((tokenAddress) =>
+      ethers.utils.isAddress(tokenAddress)
     )
-    console.log('========== usy', tokenAddresses, filteredInfoRequests)
     const duplicatesRemoved = Array.from(new Set(filteredInfoRequests))
     const infos = await Promise.all(
       duplicatesRemoved?.map(async (tokenAddress) => {
-        return (await getTokenInfo(tokenAddress, library)) as TokenInfo
+        return (await getTokenInfo(tokenAddress, chainId, library)) as TokenInfo
       })
     )
-    console.log('========== infos', infos)
     setTokenInfos(infos)
   }
 

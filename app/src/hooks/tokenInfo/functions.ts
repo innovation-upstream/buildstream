@@ -5,13 +5,14 @@ import { TokenInfo } from './types'
 
 export const getTokenInfo = async (
   address: string,
+  chainId: number,
   provider?: any
 ): Promise<TokenInfo | undefined> => {
   try {
     if (address === ethers.constants.AddressZero)
       return {
         address,
-        symbol: 'ETH',
+        symbol: chainId === 80001 ? 'MATIC' : 'ETH',
         isNative: true,
         decimal: 18
       }
