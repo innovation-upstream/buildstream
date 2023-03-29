@@ -7,7 +7,7 @@
     @apply 2xl:max-w-[1368px] px-4 sm:px-8 2xl:px-0 mx-auto;
   }
   .btn-primary {
-    @apply py-3 px-4 font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-500 focus:outline-none focus:bg-blue-700;
+    @apply py-3 px-4 font-semibold rounded-lg bg-blue-700 text-white hover:bg-blue-500 focus:outline-none focus:bg-blue-700 disabled:opacity-50 cursor-pointer;
   }
   .btn-outline {
     @apply py-3 px-4 font-semibold rounded-lg border border-solid border-blue-500 hover:border-blue-700 focus:outline-none focus:border-blue-700;
@@ -48,5 +48,8 @@
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgba(26, 43, 93, 0.26);
+  }
+  .markdown > * {
+    all: revert;
   }
 }

@@ -20,9 +20,12 @@ export const getToken = async (req: Request, res: Response) => {
     const docRef =
       FirestoreClient.collection('organizations').doc(organizationId)
 
-    await docRef.set({
-      clickup_token: data.access_token
-    }, { merge: true })
+    await docRef.set(
+      {
+        clickup_token: data.access_token
+      },
+      { merge: true }
+    )
 
     res.json(data)
   } catch (err) {
