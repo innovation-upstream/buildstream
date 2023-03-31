@@ -70,6 +70,11 @@ library TaskLibrary {
         uint256 rewardAmount,
         address rewardToken
     ) external {
+        require(
+            self.status == TaskLib.TaskStatus.PROPOSED ||
+                self.status == TaskLib.TaskStatus.ARCHIVED,
+            "Task already opened"
+        );
         self.status = TaskLib.TaskStatus.OPEN;
         taskMetadata.rewardAmount = rewardAmount;
         taskMetadata.rewardToken = rewardToken;
@@ -214,14 +219,11 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(
-            taskMetadata.revisionCount > revisionIndex,
-            "revision invalid"
-        );
+        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
-            "decide made already"
+            "decision made already"
         );
         self.status = TaskLib.TaskStatus.ASSIGNED;
         taskMetadata.revisions[revisionIndex].status = TaskLib
@@ -247,14 +249,11 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(
-            taskMetadata.revisionCount > revisionIndex,
-            "revision invalid"
-        );
+        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
-            "decide made already"
+            "decision made already"
         );
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
@@ -274,10 +273,7 @@ library TaskLibrary {
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(
-            taskMetadata.revisionCount > revisionIndex,
-            "revision invalid"
-        );
+        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
@@ -293,7 +289,7 @@ library TaskLibrary {
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata
     ) external {
-        require(self.status == TaskLib.TaskStatus.OPEN, "Task is not opened");
+        require(self.status <= TaskLib.TaskStatus.OPEN, "Task is assigned");
         taskMetadata.staked = false;
         self.status = TaskLib.TaskStatus.ARCHIVED;
     }
