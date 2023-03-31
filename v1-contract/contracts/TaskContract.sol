@@ -327,17 +327,18 @@ contract TaskContract {
         );
     }
 
-    /// @dev Allows approvers to archive open tasks.
+    /// @dev Allows approvers to archive unassigned tasks.
     /// @param taskId Task ID.
     function archive(uint256 taskId) external onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
             .getTaskMetadata(taskId);
-        treasuryContract.unlockBalance(
-            task.orgId,
-            taskMetadata.rewardToken,
-            taskMetadata.rewardAmount
-        );
+        if (task.status == TaskLib.TaskStatus.OPEN)
+            treasuryContract.unlockBalance(
+                task.orgId,
+                taskMetadata.rewardToken,
+                taskMetadata.rewardAmount
+            );
         taskStorageContract.archive(taskId);
     }
 }
