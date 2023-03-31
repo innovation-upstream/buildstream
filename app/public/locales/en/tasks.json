@@ -83,5 +83,6 @@
   "day": "Day",
   "spaces": "Spaces",
   "import_new_task": "Import New Task",
-  "import_task": "Import Task"
+  "import_task": "Import Task",
+  "invalid_input": "Invalid Input"
 }
