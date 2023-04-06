@@ -7,7 +7,7 @@ dataSources:
     network: mumbai
     source:
       abi: Organization
-      address: "0x4fd302349e36BabC6b8abb0572313bAEE71206EA"
+      address: "0x9e6E7e140979fcC27C0b9B821aD5ff2C43cca387"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -36,7 +36,7 @@ dataSources:
     network: mumbai
     source:
       abi: Treasury
-      address: "0x8281940caF11a172a019545AD81cb7005cbF88Be"
+      address: "0xdCAa9572e461D1d4119cd01288150893048BB079"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -63,7 +63,7 @@ dataSources:
     network: mumbai
     source:
       abi: ActionContract
-      address: "0xaF5ea8C3f02B6d177aB56523af8Fb9c9e9f65746"
+      address: "0x56c3231eAd31843096B64052320d2CF55Afaa83a"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -88,7 +88,7 @@ dataSources:
     network: mumbai
     source:
       abi: TaskStorageContract
-      address: "0x63574Bd30065765aC990979977086F5eB586a1cC"
+      address: "0x0e8d4B4543C12dBec0Bda6bc1804D7c5486Ea3E2"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -140,7 +140,7 @@ dataSources:
     network: mumbai
     source:
       abi: TeamContract
-      address: "0xa67F998621848C86Fd125D289EE747764196d394"
+      address: "0xC0840b1De8DCe7828686300EB1a3a5083D664943"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

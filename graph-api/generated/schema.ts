@@ -295,6 +295,23 @@ export class Organization extends Entity {
     this.set("signers", Value.fromStringArray(value));
   }
 
+  get members(): Array<string> | null {
+    let value = this.get("members");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set members(value: Array<string> | null) {
+    if (!value) {
+      this.unset("members");
+    } else {
+      this.set("members", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
   get requiredTaskApprovals(): BigInt {
     let value = this.get("requiredTaskApprovals");
     return value!.toBigInt();

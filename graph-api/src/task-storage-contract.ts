@@ -264,6 +264,16 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.raw = getRawData(taskEntity)
 
   taskEntity.save()
+
+  const organizationEntity = Organization.load(taskEntity.orgId) as Organization
+  let members = organizationEntity.members
+  if (!members) members = []
+  if (members.indexOf(event.params.assignee.toHexString()) === -1) {
+    members.push(event.params.assignee.toHexString())
+    organizationEntity.members = members
+    organizationEntity.save()
+  }
+
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
