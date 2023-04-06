@@ -22,7 +22,8 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: 0,
-  duration: 1
+  duration: 1,
+  shouldOpenTask: false
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
@@ -80,6 +81,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
         taskData.complexityScore,
         taskData.reputationLevel,
         taskDuration,
+        taskData.shouldOpenTask,
         library.getSigner()
       )
       setProcessing(false)
@@ -265,6 +267,16 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   <div className='w-full px-4 py-2 border rounded-md flex items-center mt-2'>
                     <input type='text' className='w-full focus:outline-none' />
                   </div>
+                </div>
+                <div className='mt-3 flex items-center'>
+                  <p className=''>{t('open_after_creation')}</p>
+                  <input
+                    type='checkbox'
+                    name='shouldOpenTask'
+                    className='ml-2 focus:outline-none'
+                    checked={taskData.shouldOpenTask}
+                    onChange={handleChange}
+                  />
                 </div>
               </section>
               <div
