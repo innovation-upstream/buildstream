@@ -1,5 +1,5 @@
 {
-  "address": "0x658F9c0aC2E7Bc9Db7A52C3C53bE3DeD83Fa10D3",
+  "address": "0xD3E4eA2Aebd89Af2983a825b0b1D5E5c2eab2AC7",
   "abi": [
     {
       "type": "constructor",
@@ -121,6 +121,10 @@
         {
           "type": "bool",
           "name": "requestAssignment"
+        },
+        {
+          "type": "bool",
+          "name": "shouldOpenTask"
         }
       ],
       "outputs": [

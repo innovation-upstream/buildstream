@@ -882,6 +882,7 @@ export type Organization = {
   description: Scalars['String'];
   approvers: Array<Scalars['String']>;
   signers: Array<Scalars['String']>;
+  members?: Maybe<Array<Scalars['String']>>;
   requiredTaskApprovals: Scalars['BigInt'];
   requiredConfirmations: Scalars['BigInt'];
   rewardMultiplier: Scalars['BigInt'];
@@ -1267,6 +1268,12 @@ export type Organization_filter = {
   signers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   signers_not_contains?: InputMaybe<Array<Scalars['String']>>;
   signers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  members?: InputMaybe<Array<Scalars['String']>>;
+  members_not?: InputMaybe<Array<Scalars['String']>>;
+  members_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  members_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
   requiredTaskApprovals?: InputMaybe<Scalars['BigInt']>;
   requiredTaskApprovals_not?: InputMaybe<Scalars['BigInt']>;
   requiredTaskApprovals_gt?: InputMaybe<Scalars['BigInt']>;
@@ -1376,6 +1383,7 @@ export type Organization_orderBy =
   | 'description'
   | 'approvers'
   | 'signers'
+  | 'members'
   | 'requiredTaskApprovals'
   | 'requiredConfirmations'
   | 'rewardMultiplier'

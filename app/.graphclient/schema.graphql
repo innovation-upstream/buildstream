@@ -885,6 +885,7 @@ type Organization {
   description: String!
   approvers: [String!]!
   signers: [String!]!
+  members: [String!]
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
@@ -1272,6 +1273,12 @@ input Organization_filter {
   signers_contains_nocase: [String!]
   signers_not_contains: [String!]
   signers_not_contains_nocase: [String!]
+  members: [String!]
+  members_not: [String!]
+  members_contains: [String!]
+  members_contains_nocase: [String!]
+  members_not_contains: [String!]
+  members_not_contains_nocase: [String!]
   requiredTaskApprovals: BigInt
   requiredTaskApprovals_not: BigInt
   requiredTaskApprovals_gt: BigInt
@@ -1381,6 +1388,7 @@ enum Organization_orderBy {
   description
   approvers
   signers
+  members
   requiredTaskApprovals
   requiredConfirmations
   rewardMultiplier

@@ -27,6 +27,7 @@ type Organization @entity {
   description: String!
   approvers: [String!]!
   signers: [String!]!
+  members: [String!]
   requiredTaskApprovals: BigInt!
   requiredConfirmations: BigInt!
   rewardMultiplier: BigInt!
