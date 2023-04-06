@@ -7,7 +7,7 @@ const getContractInstance = async () => {
   const reputationToken = await ethers.getContractFactory('SBTToken')
   const contractInstance = await reputationToken.deploy()
   await contractInstance.deployed()
-  await contractInstance.createToken(SOLIDITY_TAG)
+  await contractInstance.createTokens(1)
 
   return { contractInstance }
 }

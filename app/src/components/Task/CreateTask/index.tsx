@@ -10,11 +10,11 @@ import ComplexityScore from 'SVGs/ComplexityScore'
 import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
 import { TaskDurationCalc } from 'utils/task_duration'
-import { ICreateTask } from './types'
 import { StyledScrollableContainer } from './styled'
 import TaskTagInput from './TaskTagInput'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
+import { ICreateTask } from './types'
 
 const initialTaskData = {
   title: '',
@@ -63,8 +63,8 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
       hours: 0
     })
 
-    if (taskDuration <= 0) {
-      setStatus({ text: t('wrong_duration_input'), error: true })
+    if (taskDuration <= 0 || !taskData.title || !taskData.description) {
+      setStatus({ text: t('invalid_input'), error: true })
       return
     }
     setStatus({ text: '', error: false })
@@ -72,6 +72,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
     setProcessing(true)
     try {
       await createNewTask(
+        '',
         oranization.id,
         taskData.title,
         taskData.description,

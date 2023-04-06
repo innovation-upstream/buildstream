@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 
-const defaultProvider = ethers.getDefaultProvider('goerli')
+const defaultProvider = ethers.getDefaultProvider()
 
 const getContract = (
   address: string,

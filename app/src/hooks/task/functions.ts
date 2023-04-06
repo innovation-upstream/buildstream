@@ -14,7 +14,7 @@ export const openTask = async (
     TaskContractInterface.abi,
     provider
   )
-  const tx = await contract.openTask(taskId, rewardToken)
+  const tx = await contract.openTask(taskId, rewardToken, true)
   await tx.wait()
 
   return true
@@ -87,10 +87,11 @@ export const approveTask = async (
 }
 
 export const createNewTask = async (
+  externalId: string,
   orgId: number,
   title: string,
   description: string,
-  taskTags: string[],
+  taskTags: number[],
   complexityScore: number,
   reputationLevel: number,
   taskDuration: number,
@@ -108,13 +109,15 @@ export const createNewTask = async (
   )
 
   const tx = await contract.createTask(
+    externalId,
     orgId,
     title,
     description,
     taskTags,
     complexityScore,
     reputationLevel,
-    taskDuration
+    taskDuration,
+    false
   )
 
   const taskCreateReceipt = await tx.wait()
@@ -149,12 +152,13 @@ export const editTask = async (
   taskId: number,
   title: string,
   description: string,
-  taskTags: string[],
+  taskTags: number[],
   complexityScore: ComplexityScore,
   reputationLevel: number,
   taskDuration: number,
   provider?: any
 ): Promise<boolean> => {
+  const externalId = ''
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
@@ -163,6 +167,7 @@ export const editTask = async (
 
   const response = await contract.updateTask(
     taskId,
+    externalId,
     title,
     description,
     taskTags,

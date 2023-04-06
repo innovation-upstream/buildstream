@@ -22,12 +22,16 @@ contract TaskContract {
     }
 
     modifier onlyApprover(uint256 taskId) {
-        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
-        require(
-            organizationContract.isApproverAddress(task.orgId, msg.sender),
-            "Permission denied"
-        );
+        require(isApprover(taskId, msg.sender), "Permission denied");
         _;
+    }
+
+    function isApprover(
+        uint256 taskId,
+        address _address
+    ) internal view returns (bool) {
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        return organizationContract.isApproverAddress(task.orgId, _address);
     }
 
     modifier notNull(address _address) {
@@ -74,7 +78,8 @@ contract TaskContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
-        bool requestAssignment
+        bool requestAssignment,
+        bool shouldOpenTask
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
@@ -100,6 +105,9 @@ contract TaskContract {
 
         if (requestAssignment)
             taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
+
+        if (shouldOpenTask && isApprover(taskId, msg.sender))
+            openTask(taskId, address(0), false);
     }
 
     /// @dev Allows an approver to update a task.
@@ -137,7 +145,7 @@ contract TaskContract {
         uint256 taskId,
         address rewardToken,
         bool assignCreator
-    ) external onlyApprover(taskId) {
+    ) public onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
             taskId,
@@ -185,7 +193,12 @@ contract TaskContract {
                 organizationContract
             );
         for (uint256 i = 0; i < task.taskTags.length; i++) {
-            tokenContract.reward(task.assigneeAddress, task.taskTags[i], task.complexityScore, task.orgId);
+            tokenContract.reward(
+                task.assigneeAddress,
+                task.taskTags[i],
+                task.complexityScore,
+                task.orgId
+            );
         }
 
         if (taskMetadata.staked)
@@ -282,15 +295,15 @@ contract TaskContract {
             .getTaskMetadata(taskId);
         taskStorageContract.unassign(taskId, msg.sender);
         if (taskMetadata.staked)
-        for (uint256 i = 0; i < task.taskTags.length; i++) {
-            tokenContract.unStake(
-                msg.sender,
-                task.taskTags[i],
-                task.complexityScore,
-                task.reputationLevel,
-                task.orgId
-            );
-        }
+            for (uint256 i = 0; i < task.taskTags.length; i++) {
+                tokenContract.unStake(
+                    msg.sender,
+                    task.taskTags[i],
+                    task.complexityScore,
+                    task.reputationLevel,
+                    task.orgId
+                );
+            }
     }
 
     /// @dev Allows approver to unassign assignee.
@@ -301,15 +314,15 @@ contract TaskContract {
             .getTaskMetadata(taskId);
         taskStorageContract.unassign(taskId, task.assigneeAddress);
         if (taskMetadata.staked)
-        for (uint256 i = 0; i < task.taskTags.length; i++) {
-            tokenContract.unStake(
-                task.assigneeAddress,
-                task.taskTags[i],
-                task.complexityScore,
-                task.reputationLevel,
-                task.orgId
-            );
-        }
+            for (uint256 i = 0; i < task.taskTags.length; i++) {
+                tokenContract.unStake(
+                    task.assigneeAddress,
+                    task.taskTags[i],
+                    task.complexityScore,
+                    task.reputationLevel,
+                    task.orgId
+                );
+            }
     }
 
     function requestForTaskRevision(
@@ -327,17 +340,18 @@ contract TaskContract {
         );
     }
 
-    /// @dev Allows approvers to archive open tasks.
+    /// @dev Allows approvers to archive unassigned tasks.
     /// @param taskId Task ID.
     function archive(uint256 taskId) external onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
             .getTaskMetadata(taskId);
-        treasuryContract.unlockBalance(
-            task.orgId,
-            taskMetadata.rewardToken,
-            taskMetadata.rewardAmount
-        );
+        if (task.status == TaskLib.TaskStatus.OPEN)
+            treasuryContract.unlockBalance(
+                task.orgId,
+                taskMetadata.rewardToken,
+                taskMetadata.rewardAmount
+            );
         taskStorageContract.archive(taskId);
     }
 }

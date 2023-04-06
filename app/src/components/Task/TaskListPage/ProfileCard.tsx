@@ -1,3 +1,4 @@
+import { useTokens } from '@innovationupstream/buildstream-utils'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import { BigNumber } from 'ethers'
 import { useWeb3 } from 'hooks'
@@ -15,6 +16,7 @@ const ProfileCard = ({ address }: Props) => {
   const { account } = useWeb3()
   const { balance } = useBalance(address)
   const stat = useUserStat(address)
+  const tokens = useTokens()
 
   const totalTokens = balance?.reduce(
     (aggregator, curr) => aggregator.add(curr.balance),
@@ -45,7 +47,7 @@ const ProfileCard = ({ address }: Props) => {
         <div className='flex flex-wrap gap-1 mt-3'>
           {stat.tags?.map((tag) => (
             <div key={tag} className='btn-tag'>
-              {tag}
+              {tokens?.find(t => t.id === tag.toString())?.name || tag}
             </div>
           ))}
         </div>

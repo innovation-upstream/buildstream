@@ -1,5 +1,5 @@
 {
-  "address": "0xbE4929ae823B0b5E796b27C9567A6098B6173780",
+  "address": "0x9e6E7e140979fcC27C0b9B821aD5ff2C43cca387",
   "abi": [
     {
       "type": "constructor",
@@ -368,7 +368,7 @@
           "name": "orgId"
         },
         {
-          "type": "string[]",
+          "type": "uint256[]",
           "name": "tags"
         }
       ],

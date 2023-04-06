@@ -61,13 +61,18 @@ contract SBTToken is ERC1155 {
     }
 
     /// @dev Create a token.
-    /// @param tokenId Id of tokens mapped to a tag.
+    /// @param count number of tokens to create.
     /// @return bool
-    function createToken(uint256 tokenId) public onlyOwner returns (bool) {
-        require(!doesTokenExist(tokenId), "Token already exists");
-        tokenExists[tokenId] = true;
-        tokenCount += 1;
-        emit SBTCreateToken(tokenId);
+    function createTokens(uint256 count) public onlyOwner returns (bool) {
+        for (
+            uint256 tokenId = tokenCount;
+            tokenId < tokenCount + count;
+            tokenId++
+        ) {
+            tokenExists[tokenId] = true;
+            emit SBTCreateToken(tokenId);
+        }
+        tokenCount += count;
         return true;
     }
 

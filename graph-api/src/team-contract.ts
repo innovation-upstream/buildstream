@@ -1,3 +1,4 @@
+import { Task, Team } from '../generated/schema'
 import {
   TaskAssignment as TaskAssignmentEvent,
   TeamArchived as TeamArchivedEvent,
@@ -7,10 +8,10 @@ import {
   TeamUnArchived as TeamUnArchivedEvent,
   TeamUpdated as TeamUpdatedEvent
 } from '../generated/TeamContract/TeamContract'
-import { Organization, Task, Team } from '../generated/schema'
 import {
   createTaskNotificationEntity,
-  createTaskSnapshot
+  createTaskSnapshot,
+  getRawData
 } from './task-storage-contract'
 
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
@@ -21,11 +22,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   if (!taskEntity) return
   taskEntity.teamAssignee = event.params.assignee.toHexString()
 
-  const organizationEntity = Organization.load(taskEntity.orgId)
-
-  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
-    organizationEntity ? (organizationEntity.name as string) : ''
-  } ~ ${taskEntity.assignee as string} ~ ${entity.name as string} ~ ${taskEntity.teamAssignee as string}`
+  taskEntity.raw = getRawData(taskEntity)
 
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)

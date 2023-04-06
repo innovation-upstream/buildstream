@@ -1,12 +1,12 @@
 import {
-  Task,
-  TaskSnapshot,
-  TaskRevision,
-  UserStat,
-  OrganizationStat,
+  Notification,
   Organization,
+  OrganizationStat,
+  Task,
+  TaskRevision,
+  TaskSnapshot,
   Team,
-  Notification
+  UserStat
 } from '../generated/schema'
 
 import {
@@ -17,14 +17,14 @@ import {
   TaskConfirmation as TaskConfirmationEvent,
   TaskCreation as TaskCreationEvent,
   TaskOpened as TaskOpenedEvent,
+  TaskRevisionAccepted as TaskRevisionAcceptedEvent,
+  TaskRevisionChangesRequested as TaskRevisionChangesRequestedEvent,
+  TaskRevisionRejected as TaskRevisionRejectedEvent,
+  TaskRevisionRequested as TaskRevisionRequestedEvent,
   TaskRevocation as TaskRevocationEvent,
   TaskSubmission as TaskSubmissionEvent,
   TaskUnassignment as TaskUnassignmentEvent,
-  TaskUpdated as TaskUpdatedEvent,
-  TaskRevisionRequested as TaskRevisionRequestedEvent,
-  TaskRevisionAccepted as TaskRevisionAcceptedEvent,
-  TaskRevisionRejected as TaskRevisionRejectedEvent,
-  TaskRevisionChangesRequested as TaskRevisionChangesRequestedEvent
+  TaskUpdated as TaskUpdatedEvent
 } from '../generated/TaskStorageContract/TaskStorageContract'
 
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
@@ -175,11 +175,10 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
       userStatsEntity.proposedTasks = ONE
       organizationStatsEntity.proposedTasks = ONE
       const taskTags = taskEntity.taskTags
-      const organizationTags = (organizationStatsEntity.tags || []) as string[]
+      const organizationTags = (organizationStatsEntity.tags || []) as BigInt[]
       for (let i = 0; i < taskTags.length; i++) {
-        const index = organizationTags.indexOf(taskTags[i].toString() as string)
-        if (index === -1)
-          organizationTags.push(taskTags[i].toString() as string)
+        const index = organizationTags.indexOf(taskTags[i] as BigInt)
+        if (index === -1) organizationTags.push(taskTags[i] as BigInt)
       }
       if (!!organizationTags.length)
         organizationStatsEntity.tags = organizationTags
@@ -212,10 +211,10 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
         ONE
       )
       const taskTags = taskEntity.taskTags
-      const userTags = (userStatsEntity.tags || []) as string[]
+      const userTags = (userStatsEntity.tags || []) as BigInt[]
       for (let i = 0; i < taskTags.length; i++) {
-        const index = userTags.indexOf(taskTags[i].toString() as string)
-        if (index === -1) userTags.push(taskTags[i].toString() as string)
+        const index = userTags.indexOf(taskTags[i] as BigInt)
+        if (index === -1) userTags.push(taskTags[i] as BigInt)
       }
       if (!!userTags.length) userStatsEntity.tags = userTags
       break
@@ -233,6 +232,23 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
   organizationStatsEntity.save()
 }
 
+export function getRawData(taskEntity: Task): string {
+  const organizationEntity = Organization.load(taskEntity.orgId) as Organization
+  const teamEntity = taskEntity.team
+    ? Team.load(taskEntity.team as string)
+    : null
+
+  return `${taskEntity.title ? (taskEntity.title as string) : ''} ~ ${
+    taskEntity.description ? (taskEntity.description as string) : ''
+  } ~ ${organizationEntity.name.toString()} ~ ${
+    taskEntity.assignee !== null &&
+    taskEntity.assignee !== Address.zero().toHexString()
+      ? (taskEntity.assignee as string)
+      : ''
+  } ~ ${teamEntity ? teamEntity.name.toString() : ''}
+  ~ ${teamEntity ? (taskEntity.teamAssignee as string) : ''}`
+}
+
 export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const taskId = event.params.taskId.toString()
   const prevTEntity = Task.load(taskId)
@@ -245,18 +261,19 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   taskEntity.assignDate = event.block.timestamp
   taskEntity.staked = event.params.staked
 
-  const organizationEntity = Organization.load(taskEntity.orgId)
-  const teamEntity = taskEntity.team
-    ? Team.load(taskEntity.team as string)
-    : null
-
-  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
-    organizationEntity ? organizationEntity.name.toString() : ''
-  } ~ ${taskEntity.assignee as string} ~ ${
-    teamEntity ? teamEntity.name.toString() : ''
-  }`
+  taskEntity.raw = getRawData(taskEntity)
 
   taskEntity.save()
+
+  const organizationEntity = Organization.load(taskEntity.orgId) as Organization
+  let members = organizationEntity.members
+  if (!members) members = []
+  if (members.indexOf(event.params.assignee.toHexString()) === -1) {
+    members.push(event.params.assignee.toHexString())
+    organizationEntity.members = members
+    organizationEntity.save()
+  }
+
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
   updateStats(taskEntity, prevTEntity)
@@ -322,16 +339,7 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
 
-  const organizationEntity = Organization.load(taskEntity.orgId)
-  const teamEntity = taskEntity.team
-    ? Team.load(taskEntity.team as string)
-    : null
-
-  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
-    organizationEntity ? (organizationEntity.name as string) : ''
-  } ~ ${taskEntity.assignee as string} ~ ${
-    teamEntity ? (teamEntity.name as string) : ''
-  }`
+  taskEntity.raw = getRawData(taskEntity)
 
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -369,7 +377,6 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   const task = event.params.task
   const taskMetadata = event.params.taskMetadata
   const taskEntity = new Task(taskId)
-  const organizationEntity = Organization.load(task.orgId.toString())
 
   taskEntity.taskId = event.params.taskId
   taskEntity.orgId = task.orgId.toString()
@@ -388,20 +395,9 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.comment = task.comment
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
-  if (taskEntity.taskTags.some((tag) => tag.toString().startsWith('clickup'))) {
-    const externalIdIndex = taskEntity.taskTags.findIndex((tag) =>
-      tag.toString().startsWith('clickup')
-    )
-    const splitStr = taskEntity.taskTags[externalIdIndex].toString().split('-')
-    const externalId = splitStr.length > 1 ? splitStr[1] : ''
-    taskEntity.externalId = externalId
-  }
+  taskEntity.externalId = task.externalId
 
-  taskEntity.raw = `${task.title} ~ ${
-    task.description
-  } ~ ${task.taskTags.toString()} ~ ${
-    organizationEntity ? (organizationEntity.name as string) : ''
-  }`
+  taskEntity.raw = getRawData(taskEntity)
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -493,11 +489,7 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   taskEntity.team = Address.zero().toHexString()
   taskEntity.teamAssignee = Address.zero().toHexString()
 
-  const organizationEntity = Organization.load(taskEntity.orgId)
-
-  taskEntity.raw = `${taskEntity.title as string} ~ ${taskEntity.description as string} ~ ${taskEntity.taskTags.toString()} ~ ${
-    organizationEntity ? (organizationEntity.name as string) : ''
-  }`
+  taskEntity.raw = getRawData(taskEntity)
 
   taskEntity.save()
 

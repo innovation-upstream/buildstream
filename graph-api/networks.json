@@ -40,6 +40,32 @@
     },
     "TokenContract": {
       "address": "0xA9f815CF6AD899B7E56F55798697d05aFBF47E9a"
+    },
+    "TaskContract": {
+      "address": ""
+    }
+  },
+  "mumbai": {
+    "Organization": {
+      "address": "0x9e6E7e140979fcC27C0b9B821aD5ff2C43cca387"
+    },
+    "TaskStorageContract": {
+      "address": "0x0e8d4B4543C12dBec0Bda6bc1804D7c5486Ea3E2"
+    },
+    "Treasury": {
+      "address": "0xdCAa9572e461D1d4119cd01288150893048BB079"
+    },
+    "ActionContract": {
+      "address": "0x56c3231eAd31843096B64052320d2CF55Afaa83a"
+    },
+    "TeamContract": {
+      "address": "0xC0840b1De8DCe7828686300EB1a3a5083D664943"
+    },
+    "TokenContract": {
+      "address": "0x275E6636C3b00c413c76F67CC5ED54bDb7b6DD07"
+    },
+    "TaskContract": {
+      "address": "0xD3E4eA2Aebd89Af2983a825b0b1D5E5c2eab2AC7"
     }
   }
 }

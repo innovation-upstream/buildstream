@@ -1,11 +1,10 @@
-
 export const checkNetwork = async () => {
   if (window.ethereum) {
     try {
       // check if the chain to connect to is installed
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x5' }]
+        params: [{ chainId: '0x13881' }]
       })
     } catch (error: any) {
       // This error code indicates that the chain has not been added to MetaMask
@@ -16,8 +15,17 @@ export const checkNetwork = async () => {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainId: '0x5',
-                rpcUrl: 'https://goerli.blockpi.network/v1/rpc/public'
+                chainId: '0x13881',
+                chainName: 'Polygon Mumbai Testnet',
+                nativeCurrency: {
+                  name: 'MATIC',
+                  symbol: 'MATIC',
+                  decimals: 18
+                },
+                blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
+                rpcUrls: [
+                  'https://polygon-mumbai.g.alchemy.com/v2/mZqUnRHVVkvkjfkwvl8_X6POrNVV0HpX'
+                ]
               }
             ]
           })

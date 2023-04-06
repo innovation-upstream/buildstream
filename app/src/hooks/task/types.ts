@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers'
 import { Organization } from 'hooks/organization/types'
+import { Token } from '@innovationupstream/buildstream-utils'
 
 export enum TaskStatus {
   PROPOSED,
@@ -48,7 +49,7 @@ export type Task = {
   title: string
   description: string
   assigneeAddress: string
-  taskTags: string[]
+  taskTags: Token[]
   status: TaskStatus
   complexityScore: ComplexityScore
   reputationLevel: number

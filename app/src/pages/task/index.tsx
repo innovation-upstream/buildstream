@@ -18,6 +18,7 @@ import Filter from 'components/Task/TaskListPage/Filter'
 import Search from 'components/Task/TaskListPage/Search'
 import { getCookie } from 'cookies-next'
 import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
+import { TaskStatus } from 'hooks/task/types'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -26,7 +27,10 @@ export const getServerSideProps: GetServerSideProps =
         query: GetTasksDocument,
         variables: {
           orderBy: 'taskId',
-          orderDirection: 'desc'
+          orderDirection: 'desc',
+          where: {
+            status_lt: TaskStatus.CLOSED
+          }
         }
       })
       const locale = context.locale ?? ''
