@@ -39,3 +39,7 @@ app.post(`${ClickupRoutes.tasks}`, async (req: Request, res: Response) => {
 app.post(`${ClickupRoutes.task}`, async (req: Request, res: Response) => {
   await getTask(req, res)
 })
+
+app.listen(3300, () => {
+  console.log(`App listening on port 3300`)
+})
