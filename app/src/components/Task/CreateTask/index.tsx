@@ -12,6 +12,8 @@ import Reputation from 'SVGs/Reputation'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { StyledScrollableContainer } from './styled'
 import TaskTagInput from './TaskTagInput'
+import 'react-tooltip/dist/react-tooltip.css'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ICreateTask } from './types'
 
 const initialTaskData = {
@@ -150,8 +152,11 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   <div className='col-span-4'>
                     <label
                       htmlFor='duration'
-                      className='flex gap-2 items-center mb-2'
+                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      data-tooltip-id='durationTip'
+                      data-tooltip-content={t('expected_duration')}
                     >
+                      <ReactTooltip id='durationTip' />
                       <span className='block'>
                         <Duration />
                       </span>
@@ -175,8 +180,12 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   <div className='col-span-4'>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2'
+                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      data-tooltip-id='reputationTip'
                     >
+                      <ReactTooltip id='reputationTip' className='max-w-xs'>
+                        <div>{t('expected_reputation')}</div>
+                      </ReactTooltip>
                       <span className='block'>
                         <Reputation />
                       </span>
@@ -203,8 +212,11 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                   <div className='col-span-4'>
                     <label
                       htmlFor='complexityScore'
-                      className='flex gap-2 items-center mb-2'
+                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      data-tooltip-id='complexityScoreTip'
+                      data-tooltip-content={t('expected_complexity_level')}
                     >
+                      <ReactTooltip id='complexityScoreTip' />
                       <span className='block'>
                         <ComplexityScore />
                       </span>

@@ -65,7 +65,7 @@ const Header = () => {
           </a>
         </Link>
         <button
-          className='lg:hidden px-2 py-3 border-gray-100 border-2 rounded-lg'
+          className='md:hidden px-2 py-3 border-gray-100 border-2 rounded-lg'
           onClick={() => setModalNav(!showMobileNav)}
         >
           <Hamburger />

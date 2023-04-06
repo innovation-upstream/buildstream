@@ -3,7 +3,12 @@ dotenv.config()
 import { json } from 'body-parser'
 import cors from 'cors'
 import express, { Express, NextFunction, Request, Response } from 'express'
-import { getSpaces, getToken, getTasks, getTask } from './functions/route-actions/functions'
+import {
+  getSpaces,
+  getToken,
+  getTasks,
+  getTask
+} from './functions/route-actions/functions'
 import { ClickupRoutes } from './routes/routes'
 
 const app: Express = express()
@@ -33,8 +38,4 @@ app.post(`${ClickupRoutes.tasks}`, async (req: Request, res: Response) => {
 
 app.post(`${ClickupRoutes.task}`, async (req: Request, res: Response) => {
   await getTask(req, res)
-})
-
-app.listen(3300, () => {
-  console.log(`App listening on port 3300`)
 })

@@ -101,6 +101,9 @@ const MainInformation = ({ organization }: { organization: Organization }) => {
           <option value='saas'>SaaS</option>
         </select>
       </div>
+      <div className='mt-3 underline text-blue-600'>
+        <a href={`onboarding`}>{t('view_edit_onboarding')}</a>
+      </div>
       <button
         type='submit'
         disabled={

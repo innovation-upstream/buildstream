@@ -100,7 +100,7 @@ const TaskCard = ({
           </div>
         ))}
       </div>
-      {showDescription && <p className='mt-3 mb-6'>{task.description}</p>}
+      {showDescription && <p className='mt-3 mb-6 break-all'>{task.description}</p>}
       <div className='divider' />
       <section className='flex justify-between items-center mt-6'>
         <div className='flex gap-5'>

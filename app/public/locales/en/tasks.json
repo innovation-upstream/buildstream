@@ -84,5 +84,8 @@
   "spaces": "Spaces",
   "import_new_task": "Import New Task",
   "import_task": "Import Task",
+  "expected_duration": "Specify the expected duration for this task",
+  "expected_reputation": "Specify the minimum reputation required for a contributor to self-assign to this task.",
+  "expected_complexity_level": "Indicate the complexity level of this task",
   "invalid_input": "Invalid Input"
 }
