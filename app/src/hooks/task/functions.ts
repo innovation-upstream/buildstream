@@ -95,6 +95,7 @@ export const createNewTask = async (
   complexityScore: number,
   reputationLevel: number,
   taskDuration: number,
+  shouldOpenTask: boolean,
   provider?: any
 ): Promise<number> => {
   const contract = getContract(
@@ -117,7 +118,8 @@ export const createNewTask = async (
     complexityScore,
     reputationLevel,
     taskDuration,
-    false
+    false,
+    shouldOpenTask
   )
 
   const taskCreateReceipt = await tx.wait()
