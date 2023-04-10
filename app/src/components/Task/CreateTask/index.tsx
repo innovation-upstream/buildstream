@@ -73,15 +73,17 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
     setProcessing(true)
     try {
       await createNewTask(
-        '',
-        oranization.id,
-        taskData.title,
-        taskData.description,
-        taskData.taskTags,
-        taskData.complexityScore,
-        taskData.reputationLevel,
-        taskDuration,
-        taskData.shouldOpenTask,
+        {
+          externalId: '',
+          orgId: oranization.id,
+          title: taskData.title,
+          description: taskData.description,
+          taskTags: taskData.taskTags,
+          complexityScore: taskData.complexityScore,
+          reputationLevel: taskData.reputationLevel,
+          taskDuration,
+          shouldOpenTask: taskData.shouldOpenTask
+        },
         library.getSigner()
       )
       setProcessing(false)

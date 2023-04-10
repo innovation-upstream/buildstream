@@ -1,8 +1,7 @@
 import TaskContractInterface from 'contracts/Task.json'
 import TaskStorageContractInterface from 'contracts/TaskStorage.json'
-import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
-import { Task, ComplexityScore } from './types'
+import { ComplexityScore } from './types'
 
 export const openTask = async (
   taskId: number,
@@ -87,15 +86,17 @@ export const approveTask = async (
 }
 
 export const createNewTask = async (
-  externalId: string,
-  orgId: number,
-  title: string,
-  description: string,
-  taskTags: number[],
-  complexityScore: number,
-  reputationLevel: number,
-  taskDuration: number,
-  shouldOpenTask: boolean,
+  task: {
+    externalId: string
+    orgId: number
+    title: string
+    description: string
+    taskTags: number[]
+    complexityScore: number
+    reputationLevel: number
+    taskDuration: number
+    shouldOpenTask: boolean
+  },
   provider?: any
 ): Promise<number> => {
   const contract = getContract(
@@ -110,16 +111,16 @@ export const createNewTask = async (
   )
 
   const tx = await contract.createTask(
-    externalId,
-    orgId,
-    title,
-    description,
-    taskTags,
-    complexityScore,
-    reputationLevel,
-    taskDuration,
+    task.externalId,
+    task.orgId,
+    task.title,
+    task.description,
+    task.taskTags,
+    task.complexityScore,
+    task.reputationLevel,
+    task.taskDuration,
     false,
-    shouldOpenTask
+    task.shouldOpenTask
   )
 
   const taskCreateReceipt = await tx.wait()
@@ -227,26 +228,40 @@ export const changeTaskDuration = async (
   return true
 }
 
-export const acceptRevision = async (taskId: number, revisionIndex: number, provider?: any): Promise<boolean> => {
+export const acceptRevision = async (
+  taskId: number,
+  revisionIndex: number,
+  provider?: any
+): Promise<boolean> => {
   const taskStorageContract = getContract(
     TaskStorageContractInterface.address,
     TaskStorageContractInterface.abi,
     provider
   )
 
-  const response = await taskStorageContract.acceptTaskRevision(taskId, revisionIndex)
+  const response = await taskStorageContract.acceptTaskRevision(
+    taskId,
+    revisionIndex
+  )
   await response.wait()
   return true
 }
 
-export const disputeAssignedTask = async (taskId: number, revisionIndex: number, provider?: any): Promise<boolean> => {
+export const disputeAssignedTask = async (
+  taskId: number,
+  revisionIndex: number,
+  provider?: any
+): Promise<boolean> => {
   const taskStorageContract = getContract(
     TaskStorageContractInterface.address,
     TaskStorageContractInterface.abi,
     provider
   )
 
-  const response = await taskStorageContract.rejectTaskRevision(taskId, revisionIndex)
+  const response = await taskStorageContract.rejectTaskRevision(
+    taskId,
+    revisionIndex
+  )
   await response.wait()
   return true
 }
