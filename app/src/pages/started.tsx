@@ -1,4 +1,6 @@
 import WalletModal from 'components/Modals/WalletModal'
+import { GetOrganizationsDocument, Organization } from 'graphclient'
+import client from 'graphclient/client'
 import { useWeb3 } from 'hooks'
 import type {
   GetServerSideProps,
@@ -15,14 +17,58 @@ import { wrapper } from 'state/store'
 import Find from 'SVGs/Find'
 import Team from 'SVGs/Team'
 import Write from 'SVGs/Write'
+import { getCookie, setCookies } from 'cookies-next'
+
+const ACCOUNT = 'account'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
       const locale = context.locale ?? ''
+      const account = getCookie(ACCOUNT, context)
+      let memberOrganizationIds: string[] = []
+      let approverOrganizationIds: string[] = []
+      let signerOrganizationIds: string[] = []
 
+      if (account) {
+        const { data: memberOrgs } = await client.query({
+          query: GetOrganizationsDocument,
+          variables: {
+            where: {
+              members_contains_nocase: [account?.toString()]
+            }
+          }
+        })
+        const { data: approverOrgs } = await client.query({
+          query: GetOrganizationsDocument,
+          variables: {
+            where: {
+              approvers_contains_nocase: [account?.toString()]
+            }
+          }
+        })
+        const { data: signerOrgs } = await client.query({
+          query: GetOrganizationsDocument,
+          variables: {
+            where: {
+              signers_contains_nocase: [account?.toString()]
+            }
+          }
+        })
+        memberOrganizationIds =
+          memberOrgs?.organizations?.map((o) => o.id) || []
+        approverOrganizationIds =
+          approverOrgs?.organizations?.map((o) => o.id) || []
+        signerOrganizationIds =
+          signerOrgs?.organizations?.map((o) => o.id) || []
+      }
       return {
         props: {
+          orgs: {
+            memberOrganizationIds,
+            approverOrganizationIds,
+            signerOrganizationIds
+          },
           ...(await serverSideTranslations(locale, [
             'common',
             'home',
@@ -39,7 +85,15 @@ enum action {
   findTeam
 }
 
-const Home: NextPage = () => {
+interface IGetStarted {
+  orgs: {
+    memberOrganizationIds: string[]
+    approverOrganizationIds: string[]
+    signerOrganizationIds: string[]
+  }
+}
+
+const Home: NextPage<IGetStarted> = ({ orgs }) => {
   const { account } = useWeb3()
   const [showModal, setShowModal] = useState(false)
   const [actionValue, setActionValue] = useState<typeof action | undefined>()
@@ -52,11 +106,21 @@ const Home: NextPage = () => {
       setShowModal(true)
       return
     }
+    if (param === action.findTeam) {
+      router.push('/organization')
+    }
     if (param === action.findTask) {
       router.push('/task')
     }
     if (param === action.createTask) {
-      router.push('/organization/create')
+      let orgId
+      if (orgs.signerOrganizationIds.length > 0)
+        orgId = orgs.signerOrganizationIds[0]
+      else if (orgs.approverOrganizationIds.length > 0)
+        orgId = orgs.approverOrganizationIds[0]
+      else if (orgs.memberOrganizationIds.length > 0)
+        orgId = orgs.memberOrganizationIds[0]
+      router.push(`/organization/${orgId ?? ''}`)
     }
   }
 
