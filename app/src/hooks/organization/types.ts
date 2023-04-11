@@ -17,6 +17,7 @@ export interface Organization {
   description: string
   approvers: string[]
   signers: string[]
+  members: string[]
   requiredTaskApprovals: number
   requiredConfirmations: number
   rewardMultiplier: BigNumber

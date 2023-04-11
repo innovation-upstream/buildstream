@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import { GetOrganizationsDocument, Organization } from 'graphclient'
 import client from 'graphclient/client'
-import { useGetOrganizationsQuery, usePolling } from 'hooks'
+import { useGetOrganizationsQuery, usePolling, useWeb3 } from 'hooks'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -35,6 +35,7 @@ export const getServerSideProps: GetServerSideProps =
   )
 
 const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
+  const { account } = useWeb3()
   const [organizations, setOrganizations] = useState(
     orgs.map((o) => Converter.OrganizationFromQuery(o))
   )
@@ -57,6 +58,13 @@ const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
     }
   }, [data])
 
+  const myOrganizations = organizations?.filter(
+    (o) => account && o.members.includes(account)
+  )
+  const otherOrganizations = organizations?.filter(
+    (o) => !account || !o.members.includes(account)
+  )
+
   return (
     <div>
       <Head>
@@ -74,18 +82,39 @@ const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
         </Link>
       </div>
       <div className='container justify-between mx-auto flex flex-wrap p-5 flex-col md:flex-row'>
-        <ul className='w-full md:basis-6/12 divide-y divide-gray-100'>
-          {organizations?.map((org, index) => (
-            <li
-              key={`${org.id}-${index}`}
-              className='p-3 hover:bg-blue-600 hover:text-blue-200'
-              onClick={() => onSelect(org.id)}
-            >
-              <h3 className='font-bold text-xl'>{org.name}</h3>
-              <p className='mt-3'>{org.description}</p>
-            </li>
-          ))}
-        </ul>
+        <div className='w-full md:basis-6/12 divide-y divide-gray-100'>
+          <div className='mb-24'>
+            <h1 className='sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900'>
+              My Organizations
+            </h1>
+            <ul className='w-full'>
+              {myOrganizations?.map((org, index) => (
+                <li
+                  key={`${org.id}-${index}`}
+                  className='p-3 hover:bg-blue-600 hover:text-blue-200'
+                  onClick={() => onSelect(org.id)}
+                >
+                  <h3 className='font-bold text-xl'>{org.name}</h3>
+                  <p className='mt-3'>{org.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <ul className='w-full'>
+              {otherOrganizations?.map((org, index) => (
+                <li
+                  key={`${org.id}-${index}`}
+                  className='p-3 hover:bg-blue-600 hover:text-blue-200'
+                  onClick={() => onSelect(org.id)}
+                >
+                  <h3 className='font-bold text-xl'>{org.name}</h3>
+                  <p className='mt-3'>{org.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
         <div className='w-full h-full top-20 sticky px-5 py-10 bg-white md:basis-4/12 rounded-sm shadow'>
           <h1 className='sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900'>
             {selected?.name}

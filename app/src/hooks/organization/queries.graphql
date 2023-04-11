@@ -5,6 +5,7 @@ fragment OrganizationFragment on Organization {
   description
   approvers
   signers
+  members
   requiredTaskApprovals
   requiredConfirmations
   rewardMultiplier

@@ -27,6 +27,7 @@ export class Converter {
       description: org.description,
       approvers: org.approvers,
       signers: org.signers,
+      members: org.members || [],
       requiredTaskApprovals: Number(org.requiredTaskApprovals),
       requiredConfirmations: Number(org.requiredTaskApprovals),
       rewardMultiplier: BigNumber.from(org.rewardMultiplier),
