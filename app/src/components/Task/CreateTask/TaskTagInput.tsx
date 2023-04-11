@@ -29,6 +29,10 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
   }
 
   const handleChange = (ev: any) => {
+    if (ev.key == "Enter") {
+      ev.preventDefault();
+  }
+
     let targetValue: any = ev.target.value
 
     if (ev.target.name === 'taskTags') {

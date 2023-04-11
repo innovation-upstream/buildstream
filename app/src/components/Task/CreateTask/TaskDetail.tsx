@@ -1,10 +1,10 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { ethers } from 'ethers'
-import { useWeb3 } from 'hooks'
+import { useGetTaskQuery, useGetTasksQuery, useWeb3 } from 'hooks'
 import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import Bag from 'SVGs/Bag'
@@ -29,6 +29,12 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const reward = ethers.utils
     .formatEther(task.rewardAmount.toString())
     .toString()
+
+  const { data } = useGetTaskQuery({
+    variables: {
+      id: task.id.toString()
+    }
+  })
 
   const openCreatedTask = async () => {
     if (!account) {
@@ -91,6 +97,15 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const buttonText =
     taskStatus === 'proposed' ? t('open_task') : t('request_assignment')
 
+  useEffect(() => {
+    const body = document.body
+    body.style.overflow = 'hidden'
+
+    return () => {
+      body.style.overflow = 'auto'
+    }
+  }, [])
+
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
@@ -113,7 +128,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                 </span>
                 <div className='text-2xl font-semibold'>{task?.title}</div>
               </section>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
+              <section className='py-4 border-t'>
                 <ul className='list-none flex flex-col gap-6 pb-2'>
                   <li className='flex gap-8 items-center'>
                     <div className='flex items-center w-28 md:w-32 gap-2'>
@@ -210,48 +225,6 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                   </li>
                 </ul>
               </section>
-              {taskStatus === 'open' ? (
-                <div className='w-full mt-5 rounded-xl'>
-                  <label
-                    htmlFor='description'
-                    className='block text-gray-800 mb-2 font-bold'
-                  >
-                    {t('cover_letter')}
-                  </label>
-                  <textarea
-                    id='description'
-                    name='description'
-                    rows={5}
-                    placeholder='Write Cover '
-                    className='rounded-md p-2 border border-gray-200 w-full focus:outline-none resize-none'
-                  ></textarea>
-                  <div className='mt-3'>
-                    <label
-                      htmlFor='description'
-                      className='block text-gray-800 mb-2 text-sm'
-                    >
-                      {t('submit_duration_of_task')}
-                    </label>
-                    <input
-                      type='number'
-                      className='w-full focus:outline-none p-2 border rounded-md'
-                      placeholder=''
-                      id='description'
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <section className='py-3'>
-                    <span className='block text-xl font-semibold mt-3'>
-                      {t('task_description')}
-                    </span>
-                    <span className='block mt-3 font-normal text-sm	md:text-base text-[#646873]'>
-                      {task?.description}
-                    </span>
-                  </section>
-                </div>
-              )}
               <div
                 className={`w-full mx-auto leading-relaxed text-base mt-4 ${
                   status.error ? 'text-red-500' : 'text-green-500'
@@ -262,16 +235,20 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-                {!processing ? (
-                  <button
-                    className='btn-primary min-w-full md:min-w-[30%]'
-                    disabled={processing}
-                    onClick={taskAction}
-                  >
-                    {buttonText}
-                  </button>
-                ) : (
-                  <Spinner width={30} />
+                {task.assignmentRequests.length === 0 && (
+                  <>
+                    {!processing ? (
+                      <button
+                        className='btn-primary min-w-full md:min-w-[30%]'
+                        disabled={processing}
+                        onClick={taskAction}
+                      >
+                        {buttonText}
+                      </button>
+                    ) : (
+                      <Spinner width={30} />
+                    )}
+                  </>
                 )}
                 {taskStatus === 'open' && (
                   <button

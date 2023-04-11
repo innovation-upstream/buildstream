@@ -25,9 +25,8 @@ import ClosedCard from 'components/Task/TaskPage/ClosedCard'
 import SubmitCard from 'components/Task/TaskPage/SubmitCard'
 import SolutionTime from 'components/Task/TaskPage/SolutionTime'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
-import { getCookie } from 'cookies-next'
-import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
+import { fetchClickupTask } from 'integrations/clickup/api'
+import TaskActions from 'components/Task/TaskActions/TaskActions'
 
 type AssigneeData = {
   tags: string[]
@@ -255,12 +254,18 @@ const TaskPage: NextPage<PageProps> = ({
           </button>
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
-          <TaskCard
-            task={currentTask}
-            showDescription
-            hideViewButton
-            taskRequirementLocation='footer'
-          />
+          <>
+            <TaskCard
+              task={currentTask}
+              showDescription
+              hideViewButton
+              taskRequirementLocation='footer'
+            />
+            {(task?.assignmentRequest?.length === undefined ||
+              task?.assignmentRequest?.length === 0) && (
+              <TaskActions task={task} />
+            )}
+          </>
           <div className='mt-7 md:hidden'>
             <TaskStatusCard
               taskId={currentTask.id}
