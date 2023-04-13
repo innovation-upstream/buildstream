@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin')
 const { i18n } = require('./next-i18next.config');
+const withPWA = require('next-pwa')({
+  dest: 'public'
+})
 
 const nextConfig = {
   reactStrictMode: true,
@@ -24,4 +27,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withPWA({ nextConfig })
