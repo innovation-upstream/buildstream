@@ -140,8 +140,8 @@ const OrganizationPage: NextPage<PageProps> = ({
           {organization.name}
         </p>
         <Link href={`/organization/${organization.id}/notifications`}>
-          <button>
-            <Bell width={40} />
+          <button className='bg-neutral-200 p-2 rounded-full'>
+            <Bell className='fill-blue-500' />
           </button>
         </Link>
       </div>
