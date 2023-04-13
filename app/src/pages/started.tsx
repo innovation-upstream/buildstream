@@ -114,13 +114,22 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
     }
     if (param === action.createTask) {
       let orgId
-      if (orgs.signerOrganizationIds.length > 0)
+      if (
+        orgs.signerOrganizationIds.length > 1 ||
+        orgs.approverOrganizationIds.length > 1 ||
+        orgs.memberOrganizationIds.length > 1
+      )
+        return router.push('/organization')
+
+      if (orgs.signerOrganizationIds.length === 1)
         orgId = orgs.signerOrganizationIds[0]
-      else if (orgs.approverOrganizationIds.length > 0)
+      else if (orgs.approverOrganizationIds.length === 1)
         orgId = orgs.approverOrganizationIds[0]
-      else if (orgs.memberOrganizationIds.length > 0)
+      else if (orgs.memberOrganizationIds.length === 1)
         orgId = orgs.memberOrganizationIds[0]
-      router.push(`/organization/${orgId ?? ''}`)
+      else return router.push(`/organization/create`)
+
+      router.push(`/organization/${orgId}`)
     }
   }
 
