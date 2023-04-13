@@ -84,9 +84,14 @@ const ClickupImport: React.FC<TImport> = ({
       setStatus({ text: t('wrong_duration_input'), error: true })
       return
     }
-    setStatus({ text: '', error: false })
+    if (taskData.taskTags.length < 1) {
+      setStatus({ text: t('task_tags_not_add'), error: true })
+      return
+    }
 
+    setStatus({ text: '', error: false })
     setProcessing(true)
+
     try {
       await createNewTask(
         {
@@ -151,6 +156,13 @@ const ClickupImport: React.FC<TImport> = ({
 
   useEffect(() => {
     getSpaces()
+
+    const body = document.body
+    body.style.overflow = 'hidden'
+
+    return () => {
+      body.style.overflow = 'auto'
+    }
   }, [])
 
   return (
@@ -167,7 +179,7 @@ const ClickupImport: React.FC<TImport> = ({
               </button>
             </section>
           </div>
-          <div className=' h-full w-full flex flex-col'>
+          <form onSubmit={createTask} className=' h-full w-full flex flex-col'>
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
@@ -199,6 +211,7 @@ const ClickupImport: React.FC<TImport> = ({
                     onChange={(val: any) => updateTaskFields(val)}
                     id='title'
                     className='w-full border p-2 rounded-md focus:outline-none'
+                    required
                   />
                 </div>
                 <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
@@ -347,7 +360,7 @@ const ClickupImport: React.FC<TImport> = ({
               {!processing && (
                 <button
                   className='btn-primary min-w-[30%]'
-                  onClick={createTask}
+                  type='submit'
                   disabled={processing}
                 >
                   {t('import_task')}
@@ -361,7 +374,7 @@ const ClickupImport: React.FC<TImport> = ({
                 {t('close')}
               </button>
             </section>
-          </div>
+          </form>
         </div>
       </div>
       <div className='fixed bg-black opacity-50 inset-0'></div>

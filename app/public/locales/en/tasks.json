@@ -37,6 +37,8 @@
   "close": "Close",
   "wallet_not_connected": "Wallet Not Connected",
   "wrong_duration_input": "Wrong Task Duration Input",
+  "task_tags_not_add": "Add Requested Skills",
+  "insufficient_treasury_balance": "Insufficient Treasury Balance",
   "task_not_created": "Error! Task Not created",
   "enter_skills": "Enter Skills...",
   "solution": "Solution",
@@ -67,7 +69,7 @@
   "task_comment": "Task Comment",
   "comment": "Comment",
   "add_comment_to_submit": "Add Comment to Submit",
-  "open_task": "Open Task",
+  "open_task": "Publish",
   "request_assignment": "Request Assignment",
   "submit_task": "Submit Task",
   "account_overview": "Account Overview",
@@ -88,5 +90,7 @@
   "expected_reputation": "Specify the minimum reputation required for a contributor to self-assign to this task.",
   "expected_complexity_level": "Indicate the complexity level of this task",
   "invalid_input": "Invalid Input",
-  "open_after_creation": "Open after creation"
+  "open_after_creation": "Open after creation",
+  "error_opening_task": "Error Opening Task",
+  "error_requesting_assignment": "Error Requesting Assignment"
 }

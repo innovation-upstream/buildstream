@@ -43,7 +43,7 @@ const EmptyTaskView = ({
     <div className='mt-6'>
       {showModal && (
         <CreateTask
-          oranization={organization}
+          organization={organization}
           close={() => toggleModal(!showModal)}
         />
       )}
@@ -99,6 +99,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
     setClickupCode(code)
     setShowClickupModal(true)
   }
+  console.log(tasks)
 
   const queryParams = () => {
     if (currentTab === TaskFilters.WITHOUT_REQUEST) {
@@ -167,7 +168,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
     <div className='mt-6'>
       {showCreateModal && (
         <CreateTask
-          oranization={organization}
+          organization={organization}
           close={() => setShowCreateModal(false)}
         />
       )}

@@ -1,9 +1,9 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import { useWeb3 } from 'hooks'
+import { useGetTasksQuery, useWeb3 } from 'hooks'
 import { createNewTask } from 'hooks/task/functions'
 import { ComplexityScoreMap } from 'hooks/task/types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import ComplexityScore from 'SVGs/ComplexityScore'
@@ -15,6 +15,9 @@ import TaskTagInput from './TaskTagInput'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ICreateTask } from './types'
+import { BigNumber, ethers } from 'ethers'
+import useBalance from 'hooks/balance/useBalance'
+import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 
 const initialTaskData = {
   title: '',
@@ -29,7 +32,7 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
-const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
+const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
@@ -51,6 +54,22 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
 
+    let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
+    const { tokenInfos } = useTokenInfos(tokenList)
+
+  const checkBalance = ():string => {
+    const tokens = organization?.treasury?.tokens
+    const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
+    const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
+
+    const balance = ethers.utils.formatUnits(
+      BigNumber.from(token?.balance || 0)?.toString(),
+      tokenInfo?.decimal
+    )
+
+    return balance;
+  }
+
   const createTask = async (ev: any) => {
     ev.preventDefault()
     if (!account) {
@@ -64,8 +83,17 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
       hours: 0
     })
 
+    if(parseFloat(checkBalance()) < 0) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
+
     if (taskDuration <= 0 || !taskData.title || !taskData.description) {
       setStatus({ text: t('invalid_input'), error: true })
+      return
+    }
+    if (taskData.taskTags.length < 1) {
+      setStatus({ text: t('task_tags_not_add'), error: true })
       return
     }
     setStatus({ text: '', error: false })
@@ -75,7 +103,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
       await createNewTask(
         {
           externalId: '',
-          orgId: oranization.id,
+          orgId: organization.id,
           title: taskData.title,
           description: taskData.description,
           taskTags: taskData.taskTags,
@@ -95,6 +123,15 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
     }
   }
 
+  useEffect(() => {
+    const body = document.body
+    body.style.overflow = 'hidden'
+
+    return () => {
+      body.style.overflow = 'auto'
+    }
+  }, [])
+
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
@@ -109,7 +146,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
               </button>
             </section>
           </div>
-          <div className=' h-full w-full flex flex-col'>
+          <form onSubmit={createTask} className=' h-full w-full flex flex-col'>
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
@@ -129,6 +166,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                     value={taskData.title}
                     onChange={handleChange}
                     className='w-full border p-2 rounded-md focus:outline-none'
+                    required
                   />
                 </div>
                 <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
@@ -145,6 +183,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                     onChange={handleChange}
                     rows={5}
                     className='rounded-md p-2 border border-gray-200 w-full focus:outline-none resize-none'
+                    required
                   ></textarea>
                 </div>
               </section>
@@ -178,6 +217,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         value={taskData.duration}
                         onChange={handleChange}
                         className='overflow-hidden focus:outline-none'
+                        required
                       />
                     </div>
                   </div>
@@ -210,6 +250,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                         value={taskData.reputationLevel}
                         onChange={handleChange}
                         className='overflow-hidden focus:outline-none'
+                        required
                       />
                     </div>
                   </div>
@@ -293,7 +334,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
               {!processing && (
                 <button
                   className='btn-primary min-w-[30%]'
-                  onClick={createTask}
+                  type='submit'
                   disabled={processing}
                 >
                   {t('create_task')}
@@ -307,7 +348,7 @@ const CreateTask: React.FC<ICreateTask> = ({ oranization, close }) => {
                 {t('close')}
               </button>
             </section>
-          </div>
+          </form>
         </div>
       </div>
       <div className='fixed bg-black opacity-50 inset-0'></div>

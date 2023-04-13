@@ -2,7 +2,7 @@ import { Organization } from 'hooks/organization/types'
 import { Task } from 'hooks/task/types'
 
 export interface ICreateTask {
-  oranization: Organization
+  organization: Organization
   close: () => any
 }
 

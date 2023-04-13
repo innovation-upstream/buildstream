@@ -81,11 +81,19 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
     ])
   }
 
+  const selectedTask = tasks.find((t) => t.id === selected)
+
   useEffect(() => {
     filterTasks()
-  }, [filterQueryVariables])
 
-  const selectedTask = tasks.find((t) => t.id === selected)
+    const body = document.body
+    if (selected) {
+      body.style.overflow = 'hidden'
+    }
+    return () => {
+      body.style.overflow = 'auto'
+    }
+  }, [filterQueryVariables, selected])
 
   return (
     <div>
