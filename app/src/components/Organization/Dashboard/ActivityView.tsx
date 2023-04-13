@@ -80,7 +80,7 @@ const ActivityView = ({
           )
           return (
             <li
-              key={snapshot.timestamp.toString()}
+              key={snapshot.id}
               className='p-4 bg-[#F8F9FA] rounded-md mb-2'
             >
               <p className='text-lg font-semibold mb-2'>

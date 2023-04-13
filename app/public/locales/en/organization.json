@@ -14,6 +14,7 @@
   "next": "Next",
   "cancel": "Cancel",
   "back": "Back",
+  "back_to_organization": "Back to organization",
   "complete": "Complete",
   "not_connected_wallet": "Wallet Not Connected",
   "upload_logo": "Upload logo",
@@ -66,5 +67,6 @@
   "onboarding_explainer": "Explain any contextual information and provide additional documentation to contributors needed to work on tasks in this organization.",
   "onboarding_note": "Note: Input should be in Markdown format.",
   "onboarding_sub_note": "Note: Input should be in Markdown format.",
-  "view_edit_onboarding": "View/Edit Onboarding Instructions"
+  "view_edit_onboarding": "View/Edit Onboarding Instructions",
+  "notification": "Notification"
 }

@@ -11,6 +11,8 @@ import client from 'graphclient/client'
 import { GetOrganizationDocument, Organization } from '../../../../.graphclient'
 import { Converter } from 'utils/converter'
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import Back from 'SVGs/Back'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -46,7 +48,7 @@ interface PageProps {
 }
 
 const NotificationPage: NextPage<PageProps> = ({ organization }) => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation('organization')
 
   return (
     <div className='layout-container pb-20'>
@@ -56,6 +58,14 @@ const NotificationPage: NextPage<PageProps> = ({ organization }) => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='grid-layout py-24'>
+        <div className='w-fit col-span-4 md:col-span-8 lg:col-span-12 2xl:col-span-3'>
+          <Link href={`/organization/${organization.id}`}>
+            <button className='flex items-center text-lg justify-center gap-x-3 lg:w-full btn-outline border-[#EFF0F1] hover:border-gray-500 bg-white focus:border-gray-500'>
+              <Back />
+              {t('back_to_organization')}
+            </button>
+          </Link>
+        </div>
         <div className='col-span-4 md:col-span-8 lg:col-start-3 lg:col-span-8 2xl:col-start-4 2xl:col-span-6'>
           <h1 className='font-bold text-[40px] mb-6'>{t('notification')}</h1>
           <OrganizationNotifications

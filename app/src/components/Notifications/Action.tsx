@@ -126,10 +126,10 @@ const ActionNotification = ({
     ?.replace('{newValue}', newValue)
 
   const isSigner = account && notification.orgId.signers?.includes(account)
-  const canApprove = isSigner && !action.approvedBy.includes(account)
+  const canApprove = isSigner && !snapshot.approvedBy.includes(account)
   const canExecute =
     isSigner &&
-    action.approvedBy.length >= notification.orgId.requiredConfirmations
+    snapshot.approvedBy.length >= notification.orgId.requiredConfirmations
 
   return (
     <>
@@ -144,24 +144,26 @@ const ActionNotification = ({
             __html: template
           }}
         />
-        {(canApprove || canExecute) && !action.executed && (
-          <div className='flex justify-between items-center mt-5 gap-3'>
-            <div className='flex gap-3 flex-wrap'>
-              <button
-                onClick={canExecute ? onExecuteAction : onConfirmAction}
-                className='btn-primary text-sm rounded-full'
-              >
-                {isProcessing ? (
-                  <Spinner />
-                ) : canExecute ? (
-                  'Execute'
-                ) : (
-                  'Confirm'
-                )}
-              </button>
+        {action.updateCount === snapshot.updateCount &&
+          (canApprove || canExecute) &&
+          !action.executed && (
+            <div className='flex justify-between items-center mt-5 gap-3'>
+              <div className='flex gap-3 flex-wrap'>
+                <button
+                  onClick={canExecute ? onExecuteAction : onConfirmAction}
+                  className='btn-primary text-sm rounded-full'
+                >
+                  {isProcessing ? (
+                    <Spinner />
+                  ) : canExecute ? (
+                    'Execute'
+                  ) : (
+                    'Confirm'
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </>
   )

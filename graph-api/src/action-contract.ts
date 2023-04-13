@@ -1,21 +1,21 @@
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 import {
   ActionConfirmation as ActionConfirmationEvent,
-  ActionContract as Contract,
   ActionCreation as ActionCreationEvent,
-  ActionExecution as ActionExecutionEvent
+  ActionExecution as ActionExecutionEvent,
+  ActionContract as Contract
 } from '../generated/ActionContract/ActionContract'
+import { Organization as OrganizationContract } from '../generated/Organization/Organization'
 import {
   Action,
-  Organization,
-  Notification,
   ActionSnapshot,
+  Notification,
+  Organization,
   OrganizationSnapshot
 } from '../generated/schema'
-import { Organization as OrganizationContract } from '../generated/Organization/Organization'
 import { ACTION, TREASURY, WITHDRAWAL } from '../helpers/notification'
 
-const organizationAddress = '0xbE4929ae823B0b5E796b27C9567A6098B6173780'
+const organizationAddress = '0x9e6E7e140979fcC27C0b9B821aD5ff2C43cca387'
 
 enum ActionType {
   WITHDRAWAL,
@@ -76,6 +76,7 @@ export function handleActionConfirmation(event: ActionConfirmationEvent): void {
   if (approvers == null) approvers = []
   approvers.push(event.params.sender.toHexString())
   entity.approvedBy = approvers
+  entity.updateCount = entity.updateCount.plus(BigInt.fromI32(1))
   entity.save()
 
   const actionSnapshotEntity = createActionSnapshot(event, entity)
@@ -118,6 +119,7 @@ export function handleActionCreation(event: ActionCreationEvent): void {
   entity.actionType = action.actionType
   entity.initiatedAt = event.block.timestamp
   entity.organizationSnapshot = organizationSnapshotEntity.id
+  entity.updateCount = BigInt.fromI32(0)
   entity.save()
 
   const actionSnapshotEntity = createActionSnapshot(event, entity)
@@ -140,6 +142,7 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
   if (!entity) return
   entity.executed = true
   entity.completedAt = event.block.timestamp
+  entity.updateCount = entity.updateCount.plus(BigInt.fromI32(1))
   entity.save()
 
   const actionSnapshotEntity = createActionSnapshot(event, entity)

@@ -12,6 +12,7 @@ fragment ActionSnapshotFragment on ActionSnapshot {
   approvedBy
   initiatedAt
   completedAt
+  updateCount
   actor
   block
   timestamp
@@ -34,6 +35,7 @@ fragment ActionFragment on Action {
   approvedBy
   initiatedAt
   completedAt
+  updateCount
   organizationSnapshot {
     ...OrganizationSnapshotFragment
   }

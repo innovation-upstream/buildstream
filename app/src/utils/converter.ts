@@ -69,6 +69,7 @@ export class Converter {
       completedAt: action.completedAt
         ? BigNumber.from(action.completedAt)
         : undefined,
+      updateCount: Number(action.updateCount),
       organizationSnapshot: Converter.OrganizationFromQuery(
         action.organizationSnapshot
       )
