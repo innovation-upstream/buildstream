@@ -16,8 +16,7 @@ import { useUserStat } from 'hooks/userstat'
 import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
 import Filter from 'components/Task/TaskListPage/Filter'
 import Search from 'components/Task/TaskListPage/Search'
-import { getCookie } from 'cookies-next'
-import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import { TaskStatus } from 'hooks/task/types'
 
 export const getServerSideProps: GetServerSideProps =

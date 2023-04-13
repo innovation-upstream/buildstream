@@ -68,7 +68,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change required task approvals <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change required task approvals <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change required task approvals <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Required task approvals has been changed to <strong>{newValue}</strong>'
   },
@@ -76,7 +76,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change required task confirmations <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change required task confirmations <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change required task confirmations <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Required task confirmations has been changed to <strong>{newValue}</strong>'
   },
@@ -84,7 +84,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Reward multiplier has been changed to <strong>{newValue}</strong>'
   },
@@ -92,7 +92,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change reward token <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward token <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change reward token <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Reward token has been changed to <strong>{newValue}</strong>'
   },
@@ -100,7 +100,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change reward slash multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward slash multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change reward slash multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Reward slash multiplier has been changed to <strong>{newValue}</strong>'
   },
@@ -108,7 +108,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change reward slash interval <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward slash interval <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change reward slash interval <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Reward slash interval has been changed to <strong>{newValue}</strong>'
   },
@@ -116,7 +116,7 @@ export const actionMessageTemplates: Record<
     created:
       'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
       'Reward multiplier has been changed to <strong>{newValue}</strong>'
   }

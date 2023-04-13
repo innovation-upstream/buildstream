@@ -39,6 +39,7 @@ export type Action = {
   approvedBy: string[]
   initiatedAt: BigNumber
   completedAt?: BigNumber
+  updateCount: number
   organizationSnapshot: Organization
 }
 

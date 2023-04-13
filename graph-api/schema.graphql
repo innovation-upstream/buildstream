@@ -169,6 +169,7 @@ type Action @entity {
   initiatedAt: BigInt!
   completedAt: BigInt
   oldValue: Bytes
+  updateCount: BigInt!
 }
 
 type ActionSnapshot @entity {
@@ -189,6 +190,7 @@ type ActionSnapshot @entity {
   actor: String!
   block: BigInt!
   timestamp: BigInt!
+  updateCount: BigInt!
 }
 
 type Team @entity {

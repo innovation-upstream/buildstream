@@ -47,7 +47,7 @@ const OrganizationNotifications = ({
 }: OrganizationNotificationsProps) => {
   const [notifications, setNotifications] = useState<Notification[][]>([])
   const { data, startPolling, stopPolling } = useGetNotificationsQuery({
-    skip: !organization.id,
+    skip: organization.id === undefined || organization.id === null,
     variables: {
       orderDirection: 'desc',
       where: {
@@ -85,7 +85,11 @@ const OrganizationNotifications = ({
           const [, month, day, year] = dateStringArray
           const isToday = isSameDay(new Date().getTime(), date.getTime())
           return (
-            <li key={notificationGroup[0].id}>
+            <li
+              key={`${
+                notificationGroup[0].id
+              }-${notificationGroup[0].timestamp.toString()}`}
+            >
               <div className={`flex mb-2.5 ${index !== 0 ? 'mt-4' : ''}`}>
                 <p className='text-xl font-semibold'>
                   {isToday ? t('Today') : `${month} ${day}, ${year}`}
@@ -96,7 +100,7 @@ const OrganizationNotifications = ({
                   if (notification.tags.includes('task')) {
                     return (
                       <li
-                        key={notification.timestamp.toString()}
+                        key={notification.id}
                         className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
                       >
                         <TaskNotification
@@ -113,7 +117,7 @@ const OrganizationNotifications = ({
                           ActionType.WITHDRAWAL &&
                         notification.actionSnapshot?.executed ? (
                           <li
-                            key={notification.timestamp.toString()}
+                            key={notification.id}
                             className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
                           >
                             <TreasuryNotification
@@ -123,7 +127,7 @@ const OrganizationNotifications = ({
                           </li>
                         ) : (
                           <li
-                            key={notification.timestamp.toString()}
+                            key={notification.id}
                             className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
                           >
                             <ActionNotification
@@ -138,7 +142,7 @@ const OrganizationNotifications = ({
                   if (notification.tags.includes('deposit')) {
                     return (
                       <li
-                        key={notification.timestamp.toString()}
+                        key={notification.id}
                         className='flex gap-4 flex-col lg:flex-row justify-between p-4 bg-[#F8F9FA] rounded-md mb-2'
                       >
                         <TreasuryNotification

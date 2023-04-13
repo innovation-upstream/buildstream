@@ -55,6 +55,7 @@ export type Action = {
   initiatedAt: Scalars['BigInt'];
   completedAt?: Maybe<Scalars['BigInt']>;
   oldValue?: Maybe<Scalars['Bytes']>;
+  updateCount: Scalars['BigInt'];
 };
 
 export type ActionSnapshot = {
@@ -75,6 +76,7 @@ export type ActionSnapshot = {
   actor: Scalars['String'];
   block: Scalars['BigInt'];
   timestamp: Scalars['BigInt'];
+  updateCount: Scalars['BigInt'];
 };
 
 export type ActionSnapshot_filter = {
@@ -271,6 +273,14 @@ export type ActionSnapshot_filter = {
   timestamp_lte?: InputMaybe<Scalars['BigInt']>;
   timestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount?: InputMaybe<Scalars['BigInt']>;
+  updateCount_not?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<ActionSnapshot_filter>>>;
@@ -305,7 +315,8 @@ export type ActionSnapshot_orderBy =
   | 'completedAt'
   | 'actor'
   | 'block'
-  | 'timestamp';
+  | 'timestamp'
+  | 'updateCount';
 
 export type Action_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -475,6 +486,14 @@ export type Action_filter = {
   oldValue_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   oldValue_contains?: InputMaybe<Scalars['Bytes']>;
   oldValue_not_contains?: InputMaybe<Scalars['Bytes']>;
+  updateCount?: InputMaybe<Scalars['BigInt']>;
+  updateCount_not?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Action_filter>>>;
@@ -507,7 +526,8 @@ export type Action_orderBy =
   | 'approvedBy'
   | 'initiatedAt'
   | 'completedAt'
-  | 'oldValue';
+  | 'oldValue'
+  | 'updateCount';
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int'];
@@ -841,6 +861,7 @@ export type Notification_orderBy =
   | 'action__initiatedAt'
   | 'action__completedAt'
   | 'action__oldValue'
+  | 'action__updateCount'
   | 'deposit'
   | 'deposit__id'
   | 'deposit__orgId'
@@ -887,6 +908,7 @@ export type Notification_orderBy =
   | 'actionSnapshot__actor'
   | 'actionSnapshot__block'
   | 'actionSnapshot__timestamp'
+  | 'actionSnapshot__updateCount'
   | 'timestamp';
 
 /** Defines the order direction, either ascending or descending */
@@ -3601,6 +3623,7 @@ export type ActionResolvers<ContextType = MeshContext, ParentType extends Resolv
   initiatedAt?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   completedAt?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   oldValue?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
+  updateCount?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3622,6 +3645,7 @@ export type ActionSnapshotResolvers<ContextType = MeshContext, ParentType extend
   actor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   block?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  updateCount?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -4138,7 +4162,7 @@ export function getBuiltGraphSDK<TGlobalContext = any, TOperationContext = any>(
   return getSdk<TOperationContext>((...args) => sdkRequester$.then(sdkRequester => sdkRequester(...args)));
 }
 export type ActionSnapshotFragmentFragment = (
-  Pick<ActionSnapshot, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'actor' | 'block' | 'timestamp'>
+  Pick<ActionSnapshot, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount' | 'actor' | 'block' | 'timestamp'>
   & { organizationSnapshot: (
     Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4146,7 +4170,7 @@ export type ActionSnapshotFragmentFragment = (
 );
 
 export type ActionFragmentFragment = (
-  Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>
+  Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount'>
   & { organizationSnapshot: (
     Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4161,7 +4185,7 @@ export type GetActionQueryVariables = Exact<{
 
 
 export type GetActionQuery = { action?: Maybe<(
-    Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>
+    Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount'>
     & { organizationSnapshot: (
       Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4180,7 +4204,7 @@ export type GetActionsQueryVariables = Exact<{
 
 
 export type GetActionsQuery = { actions: Array<(
-    Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>
+    Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount'>
     & { organizationSnapshot: (
       Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4210,7 +4234,7 @@ export type GetNotificationsQuery = { notifications: Array<(
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
       ) }
     )>, action?: Maybe<(
-      Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt'>
+      Pick<Action, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount'>
       & { organizationSnapshot: (
         Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4222,7 +4246,7 @@ export type GetNotificationsQuery = { notifications: Array<(
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
       ) }
     )>, actionSnapshot?: Maybe<(
-      Pick<ActionSnapshot, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'actor' | 'block' | 'timestamp'>
+      Pick<ActionSnapshot, 'id' | 'actionId' | 'orgId' | 'initiator' | 'targetAddress' | 'value' | 'data' | 'executed' | 'tokenAddress' | 'actionType' | 'approvedBy' | 'initiatedAt' | 'completedAt' | 'updateCount' | 'actor' | 'block' | 'timestamp'>
       & { organizationSnapshot: (
         Pick<OrganizationSnapshot, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4469,6 +4493,7 @@ export const ActionSnapshotFragmentFragmentDoc = gql`
   approvedBy
   initiatedAt
   completedAt
+  updateCount
   actor
   block
   timestamp
@@ -4492,6 +4517,7 @@ export const ActionFragmentFragmentDoc = gql`
   approvedBy
   initiatedAt
   completedAt
+  updateCount
   organizationSnapshot {
     ...OrganizationSnapshotFragment
   }

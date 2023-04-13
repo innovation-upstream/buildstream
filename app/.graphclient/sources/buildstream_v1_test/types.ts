@@ -36,6 +36,7 @@ export type Action = {
   initiatedAt: Scalars['BigInt'];
   completedAt?: Maybe<Scalars['BigInt']>;
   oldValue?: Maybe<Scalars['Bytes']>;
+  updateCount: Scalars['BigInt'];
 };
 
 export type ActionSnapshot = {
@@ -56,6 +57,7 @@ export type ActionSnapshot = {
   actor: Scalars['String'];
   block: Scalars['BigInt'];
   timestamp: Scalars['BigInt'];
+  updateCount: Scalars['BigInt'];
 };
 
 export type ActionSnapshot_filter = {
@@ -252,6 +254,14 @@ export type ActionSnapshot_filter = {
   timestamp_lte?: InputMaybe<Scalars['BigInt']>;
   timestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
   timestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount?: InputMaybe<Scalars['BigInt']>;
+  updateCount_not?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<ActionSnapshot_filter>>>;
@@ -286,7 +296,8 @@ export type ActionSnapshot_orderBy =
   | 'completedAt'
   | 'actor'
   | 'block'
-  | 'timestamp';
+  | 'timestamp'
+  | 'updateCount';
 
 export type Action_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -456,6 +467,14 @@ export type Action_filter = {
   oldValue_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   oldValue_contains?: InputMaybe<Scalars['Bytes']>;
   oldValue_not_contains?: InputMaybe<Scalars['Bytes']>;
+  updateCount?: InputMaybe<Scalars['BigInt']>;
+  updateCount_not?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lt?: InputMaybe<Scalars['BigInt']>;
+  updateCount_gte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_lte?: InputMaybe<Scalars['BigInt']>;
+  updateCount_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  updateCount_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Action_filter>>>;
@@ -488,7 +507,8 @@ export type Action_orderBy =
   | 'approvedBy'
   | 'initiatedAt'
   | 'completedAt'
-  | 'oldValue';
+  | 'oldValue'
+  | 'updateCount';
 
 export type BlockChangedFilter = {
   number_gte: Scalars['Int'];
@@ -822,6 +842,7 @@ export type Notification_orderBy =
   | 'action__initiatedAt'
   | 'action__completedAt'
   | 'action__oldValue'
+  | 'action__updateCount'
   | 'deposit'
   | 'deposit__id'
   | 'deposit__orgId'
@@ -868,6 +889,7 @@ export type Notification_orderBy =
   | 'actionSnapshot__actor'
   | 'actionSnapshot__block'
   | 'actionSnapshot__timestamp'
+  | 'actionSnapshot__updateCount'
   | 'timestamp';
 
 /** Defines the order direction, either ascending or descending */

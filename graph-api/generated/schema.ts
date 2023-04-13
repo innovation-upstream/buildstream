@@ -1908,6 +1908,15 @@ export class Action extends Entity {
       this.set("oldValue", Value.fromBytes(<Bytes>value));
     }
   }
+
+  get updateCount(): BigInt {
+    let value = this.get("updateCount");
+    return value!.toBigInt();
+  }
+
+  set updateCount(value: BigInt) {
+    this.set("updateCount", Value.fromBigInt(value));
+  }
 }
 
 export class ActionSnapshot extends Entity {
@@ -2131,6 +2140,15 @@ export class ActionSnapshot extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get updateCount(): BigInt {
+    let value = this.get("updateCount");
+    return value!.toBigInt();
+  }
+
+  set updateCount(value: BigInt) {
+    this.set("updateCount", Value.fromBigInt(value));
   }
 }
 
