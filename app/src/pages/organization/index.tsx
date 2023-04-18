@@ -59,10 +59,14 @@ const OrganizationPage: NextPage<{ orgs: Organization[] }> = ({ orgs }) => {
   }, [data])
 
   const myOrganizations = organizations?.filter(
-    (o) => account && o.members.includes(account)
+    (o) =>
+      account &&
+      (o.members.includes(account) ||
+        o.approvers.includes(account) ||
+        o.signers.includes(account))
   )
   const otherOrganizations = organizations?.filter(
-    (o) => !account || !o.members.includes(account)
+    (o) => !myOrganizations?.some((mo) => mo.id == o.id)
   )
 
   return (

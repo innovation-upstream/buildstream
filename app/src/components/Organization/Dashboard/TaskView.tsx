@@ -1,7 +1,7 @@
 import CreateTask from 'components/Task/CreateTask'
 import TaskDetail from 'components/Task/CreateTask/TaskDetail'
 import TaskCard from 'components/Task/TaskCard'
-import { useGetTasksQuery } from 'hooks'
+import { useGetTasksQuery, usePolling } from 'hooks'
 import { Organization } from 'hooks/organization/types'
 import { Task, TaskStatus } from 'hooks/task/types'
 import { useEffect, useState } from 'react'
@@ -15,6 +15,7 @@ import ClickupImport from 'components/Task/ImportTask/ClickupImport'
 import ClickupLogo from 'SVGs/ClickupLogo'
 import { getCookie } from 'cookies-next'
 import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
+import ShareTask from '../../Task/ShareTask'
 
 interface TaskViewProps {
   organization: Organization
@@ -30,6 +31,8 @@ interface IEmptyTaskViewProps {
 const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
 const redirect_uri = process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL
 const clickupUrl = `https://app.clickup.com/api?client_id=${client_id}&redirect_uri=${redirect_uri}`
+
+const isBrowser = typeof window !== 'undefined'
 
 const EmptyTaskView = ({
   organization,
@@ -94,12 +97,14 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [showClickupModal, setShowClickupModal] = useState(false)
   const [clickupCode, setClickupCode] = useState('')
   const [clickupToken, setClickupToken] = useState()
+  const [shareLink, setShareLink] = useState<string>()
+
+  const share = (url: string) => setShareLink(url)
 
   const onCode = async (code: any, params?: any) => {
     setClickupCode(code)
     setShowClickupModal(true)
   }
-  console.log(tasks)
 
   const queryParams = () => {
     if (currentTab === TaskFilters.WITHOUT_REQUEST) {
@@ -124,7 +129,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
     }
   }
 
-  const { data } = useGetTasksQuery({
+  const { data, startPolling, stopPolling } = useGetTasksQuery({
     variables: {
       where: {
         orgId: organization.id.toString(),
@@ -132,6 +137,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       }
     }
   })
+  usePolling(startPolling, stopPolling)
   const { t: tr } = useTranslation('organization')
   const [selected, setSelected] = useState<number>()
 
@@ -164,12 +170,18 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
 
   const selectedTask = tasks?.find((t) => t.id === selected)
 
+  const onCreated = (taskId: number) => {
+    setShowCreateModal(false)
+    share(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
+  }
+
   return (
     <div className='mt-6'>
       {showCreateModal && (
         <CreateTask
           organization={organization}
           close={() => setShowCreateModal(false)}
+          onCreated={onCreated}
         />
       )}
       {showClickupModal && (
@@ -178,10 +190,14 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
           clickupCode={clickupCode}
           clickupToken={clickupToken}
           close={() => setShowClickupModal(false)}
+          onCreated={onCreated}
         />
       )}
       {selectedTask && (
         <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
+      )}
+      {shareLink && (
+        <ShareTask url={shareLink} onClose={() => setShareLink(undefined)} />
       )}
 
       {!tasks?.length ? (
