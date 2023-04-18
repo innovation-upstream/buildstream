@@ -3,5 +3,9 @@
   "coming_soon": "Coming soon",
   "ready_to_use": "Ready to use",
   "recent_activity": "Recent Activity",
-  "notification": "Notification"
+  "notification": "Notification",
+  "copy_link": "Copy Link",
+  "link_copied": "Link Copied",
+  "share_on_reddit": "Share on Reddit",
+  "share_task": "Share this task to find contributors faster!"
 }

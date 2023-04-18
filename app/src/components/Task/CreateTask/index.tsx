@@ -32,7 +32,7 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
-const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
+const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
@@ -103,7 +103,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
 
     setProcessing(true)
     try {
-      await createNewTask(
+      const taskId = await createNewTask(
         {
           externalId: '',
           orgId: organization.id,
@@ -118,7 +118,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
         library.getSigner()
       )
       setProcessing(false)
-      close()
+      onCreated?.(taskId)
     } catch (error) {
       setProcessing(false)
       setStatus({ text: t('task_not_created'), error: true })
