@@ -16,7 +16,7 @@ import WalletsInfo from './wallets_info'
 
 const ACCOUNT = 'account'
 
-const WalletModal: React.FC<IModalProps> = ({ close }) => {
+const WalletModal: React.FC<IModalProps> = ({ close, onConnect }) => {
   const { account: address, activate } = useWeb3()
   const { t } = useTranslation()
 
@@ -24,6 +24,8 @@ const WalletModal: React.FC<IModalProps> = ({ close }) => {
     try {
       await checkNetwork()
       await activate(injected)
+      onConnect?.()
+      close()
     } catch (ex) {
       console.log(ex)
     }
