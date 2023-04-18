@@ -3,6 +3,7 @@ export interface TImport {
   clickupCode: string
   clickupToken?: string
   close: () => any
+  onCreated?: (taskId: number) => void
 }
 
 export type ISpaces = {

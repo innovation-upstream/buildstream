@@ -190,6 +190,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
           clickupCode={clickupCode}
           clickupToken={clickupToken}
           close={() => setShowClickupModal(false)}
+          onCreated={onCreated}
         />
       )}
       {selectedTask && (

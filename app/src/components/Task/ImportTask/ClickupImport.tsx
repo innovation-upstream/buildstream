@@ -41,7 +41,8 @@ const ClickupImport: React.FC<TImport> = ({
   organizationId,
   clickupCode,
   clickupToken,
-  close
+  close,
+  onCreated
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [showAdvanced, toggleShowAdvanced] = useState(false)
@@ -96,7 +97,7 @@ const ClickupImport: React.FC<TImport> = ({
     setProcessing(true)
 
     try {
-      await createNewTask(
+      const taskId = await createNewTask(
         {
           externalId: taskData.id,
           orgId: organizationId,
@@ -111,7 +112,7 @@ const ClickupImport: React.FC<TImport> = ({
         library.getSigner()
       )
       setProcessing(false)
-      close()
+      onCreated?.(taskId)
     } catch (error) {
       setProcessing(false)
       setStatus({ text: t('task_not_created'), error: true })
