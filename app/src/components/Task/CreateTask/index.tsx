@@ -43,7 +43,10 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
     const targetName = ev.target.name
     let targetValue: string | number = ev.target.value
 
-    if (ev.target.type === 'number' || targetName === 'orgId') {
+    if (
+      ev.target.type === 'number' ||
+      ['orgId', 'complexityScore'].includes(targetName)
+    ) {
       if (targetValue) {
         targetValue = Number(targetValue)
       }
@@ -54,10 +57,10 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
 
-    let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-    const { tokenInfos } = useTokenInfos(tokenList)
+  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
+  const { tokenInfos } = useTokenInfos(tokenList)
 
-  const checkBalance = ():string => {
+  const checkBalance = (): string => {
     const tokens = organization?.treasury?.tokens
     const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
     const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
@@ -67,7 +70,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
       tokenInfo?.decimal
     )
 
-    return balance;
+    return balance
   }
 
   const createTask = async (ev: any) => {
@@ -83,7 +86,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
       hours: 0
     })
 
-    if(parseFloat(checkBalance()) < 0) {
+    if (parseFloat(checkBalance()) < 0) {
       setStatus({ text: t('insufficient_treasury_balance'), error: true })
       return
     }
@@ -191,11 +194,11 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
-                <div className='mt-3 grid-layout gap-2'>
-                  <div className='col-span-4'>
+                <div className='mt-3 flex flex-col gap-6'>
+                  <div className=''>
                     <label
                       htmlFor='duration'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
                       data-tooltip-id='durationTip'
                       data-tooltip-content={t('expected_duration')}
                     >
@@ -216,18 +219,22 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
                         onKeyDown={preventInvalidChar}
                         value={taskData.duration}
                         onChange={handleChange}
-                        className='overflow-hidden focus:outline-none'
+                        className='overflow-hidden focus:outline-none w-full'
                         required
                       />
                     </div>
                   </div>
-                  <div className='col-span-4'>
+                  <div className=''>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
                       data-tooltip-id='reputationTip'
                     >
-                      <ReactTooltip id='reputationTip' className='max-w-xs'>
+                      <ReactTooltip
+                        place='top'
+                        id='reputationTip'
+                        className='max-w-xs'
+                      >
                         <div>{t('expected_reputation')}</div>
                       </ReactTooltip>
                       <span className='block'>
@@ -249,15 +256,15 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
                         onKeyDown={preventInvalidChar}
                         value={taskData.reputationLevel}
                         onChange={handleChange}
-                        className='overflow-hidden focus:outline-none'
+                        className='overflow-hidden focus:outline-none w-full'
                         required
                       />
                     </div>
                   </div>
-                  <div className='col-span-4'>
+                  <div className=''>
                     <label
                       htmlFor='complexityScore'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='complexityScoreTip'
                       data-tooltip-content={t('expected_complexity_level')}
                     >
@@ -269,21 +276,31 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
                         {t('complexity_score')}
                       </span>
                     </label>
-                    <select
-                      id='complexityScore'
-                      value={taskData.complexityScore}
-                      name='complexityScore'
-                      onChange={handleChange}
-                      className='w-full border p-2 rounded-md focus:outline-none'
-                    >
-                      {taskComplexities.map(([key, value]) => {
+                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                      {taskComplexities.slice(0, 4).map(([key, value]) => {
                         return (
-                          <option key={key} value={key}>
-                            {value.toLocaleUpperCase()}
-                          </option>
+                          <span key={value}>
+                            <input
+                              type='radio'
+                              id={value}
+                              value={parseInt(key)}
+                              name='complexityScore'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={
+                                taskData.complexityScore === parseInt(key)
+                              }
+                            />
+                            <label
+                              htmlFor={value}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{value.toUpperCase()}</span>
+                            </label>
+                          </span>
                         )
                       })}
-                    </select>
+                    </div>
                   </div>
                 </div>
                 <div className='mt-3'>
@@ -330,10 +347,10 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
                 {status.text}
               </div>
             </StyledScrollableContainer>
-            <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6'>
+            <section className='mt-4 flex flex-col md:flex-row items-center gap-4 flex-0 pb-10 px-6'>
               {!processing && (
                 <button
-                  className='btn-primary min-w-[30%]'
+                  className='btn-primary w-full md:w-auto md:min-w-[30%]'
                   type='submit'
                   disabled={processing}
                 >
@@ -342,7 +359,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close }) => {
               )}
               {processing && <Spinner width={30} />}
               <button
-                className='btn-outline px-8 border-gray-200 hover:border-gray-300'
+                className='btn-outline w-full md:w-auto px-8 border-gray-200 hover:border-gray-300'
                 onClick={close}
               >
                 {t('close')}
