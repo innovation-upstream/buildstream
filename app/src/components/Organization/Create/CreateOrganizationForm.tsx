@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React, { FormEvent, useState } from 'react'
 import MainInformation from 'components/Organization/Create/MainInformation'
 import { useTranslation } from 'react-i18next'
+import toast, { Toaster } from 'react-hot-toast'
 
 const sliderTitles = [
   {
@@ -27,8 +28,7 @@ const CreateOrgForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!account) {
-      console.error('Wallet Not Connected')
-      alert(t('not_connected_wallet'))
+      toast.success(t('not_connected_wallet'), { icon: '⚠️' })
       return
     }
     const formData = new FormData(e.target as any)
@@ -48,6 +48,7 @@ const CreateOrgForm = () => {
       router.push('/organization')
     } catch (e) {
       console.log(e)
+      toast.error('Error Creating Organization', { icon: '❌' })
     } finally {
       setProcessing(false)
     }
@@ -56,6 +57,9 @@ const CreateOrgForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
+        <div>
+          <Toaster position='bottom-left' />
+        </div>
         <MainInformation />
         <section className='mt-6'>
           <button type='submit' className='btn-primary lg:px-20'>
