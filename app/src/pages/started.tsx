@@ -101,11 +101,6 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
   const { t } = useTranslation('home')
 
   const handleAction = (param?: any) => {
-    setActionValue(param)
-    if (!account && param !== undefined) {
-      setShowModal(true)
-      return
-    }
     if (param === action.findTeam) {
       router.push('/organization')
     }
@@ -133,9 +128,14 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
     }
   }
 
-  useEffect(() => {
-    if (account) handleAction(actionValue)
-  }, [account])
+  const handleClick = (param?: any) => {
+    setActionValue(param)
+    if (!account && param !== undefined) {
+      setShowModal(true)
+      return
+    }
+    handleAction(param)
+  }
 
   return (
     <div className='layout-container'>
@@ -146,7 +146,12 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
           content='Buildstream for Freelancers and Companies'
         />
       </Head>
-      {showModal && <WalletModal close={() => setShowModal(!showModal)} />}
+      {showModal && (
+        <WalletModal
+          close={() => setShowModal(!showModal)}
+          onConnect={() => handleAction(actionValue)}
+        />
+      )}
       <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
         <section className='grid-layout mt-0 md:mt-28 gap-0'>
           <span className='col-span-12 md:col-span-8 block text-[#17191A] tracking-[-4px] text-4xl md:text-[112px] leading-normal md:leading-[111px] font-bold'>
@@ -173,7 +178,7 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
             </div>
             <button
               className='btn-primary'
-              onClick={() => handleAction(action.findTask)}
+              onClick={() => handleClick(action.findTask)}
             >
               {t('get_started')}
             </button>
@@ -193,7 +198,7 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
             </div>
             <button
               className='btn-primary'
-              onClick={() => handleAction(action.createTask)}
+              onClick={() => handleClick(action.createTask)}
             >
               {t('get_started')}
             </button>
@@ -211,7 +216,7 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
             </div>
             <button
               className='btn-primary'
-              onClick={() => handleAction(action.findTeam)}
+              onClick={() => handleClick(action.findTeam)}
             >
               {t('get_started')}
             </button>
