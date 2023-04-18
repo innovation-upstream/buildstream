@@ -58,7 +58,10 @@ const ClickupImport: React.FC<TImport> = ({
     const targetName = ev.target.name
     let targetValue: string | number = ev.target.value
 
-    if (ev.target.type === 'number' || targetName === 'orgId') {
+    if (
+      ev.target.type === 'number' ||
+      ['orgId', 'complexityScore'].includes(targetName)
+    ) {
       if (targetValue) {
         targetValue = Number(targetValue)
       }
@@ -236,11 +239,11 @@ const ClickupImport: React.FC<TImport> = ({
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
-                <div className='mt-3 grid-layout gap-2'>
-                  <div className='col-span-4'>
+                <div className='mt-3 flex flex-col gap-6'>
+                  <div className=''>
                     <label
                       htmlFor='duration'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
                       data-tooltip-id='durationTip'
                       data-tooltip-content={t('expected_duration')}
                     >
@@ -261,17 +264,22 @@ const ClickupImport: React.FC<TImport> = ({
                         onKeyDown={preventInvalidChar}
                         value={taskData.duration}
                         onChange={handleChange}
-                        className='overflow-hidden focus:outline-none'
+                        className='overflow-hidden focus:outline-none w-full'
+                        required
                       />
                     </div>
                   </div>
-                  <div className='col-span-4'>
+                  <div className=''>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
                       data-tooltip-id='reputationTip'
                     >
-                      <ReactTooltip id='reputationTip' className='max-w-xs'>
+                      <ReactTooltip
+                        place='top'
+                        id='reputationTip'
+                        className='max-w-xs'
+                      >
                         <div>{t('expected_reputation')}</div>
                       </ReactTooltip>
                       <span className='block'>
@@ -293,14 +301,15 @@ const ClickupImport: React.FC<TImport> = ({
                         onKeyDown={preventInvalidChar}
                         value={taskData.reputationLevel}
                         onChange={handleChange}
-                        className='overflow-hidden focus:outline-none'
+                        className='overflow-hidden focus:outline-none w-full'
+                        required
                       />
                     </div>
                   </div>
-                  <div className='col-span-4'>
+                  <div className=''>
                     <label
                       htmlFor='complexityScore'
-                      className='flex gap-2 items-center mb-2 cursor-pointer'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='complexityScoreTip'
                       data-tooltip-content={t('expected_complexity_level')}
                     >
@@ -312,21 +321,31 @@ const ClickupImport: React.FC<TImport> = ({
                         {t('complexity_score')}
                       </span>
                     </label>
-                    <select
-                      id='complexityScore'
-                      value={taskData.complexityScore}
-                      name='complexityScore'
-                      onChange={handleChange}
-                      className='w-full border p-2 rounded-md focus:outline-none'
-                    >
-                      {taskComplexities.map(([key, value]) => {
+                    <div className='flex gap-3 py-4 gap-y-4 py-4 flex-wrap'>
+                      {taskComplexities.slice(0, 4).map(([key, value]) => {
                         return (
-                          <option key={key} value={key}>
-                            {value.toLocaleUpperCase()}
-                          </option>
+                          <span key={value}>
+                            <input
+                              type='radio'
+                              id={value}
+                              value={parseInt(key)}
+                              name='complexityScore'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={
+                                taskData.complexityScore === parseInt(key)
+                              }
+                            />
+                            <label
+                              htmlFor={value}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{value.toUpperCase()}</span>
+                            </label>
+                          </span>
                         )
                       })}
-                    </select>
+                    </div>
                   </div>
                 </div>
                 <div className='mt-3'>
@@ -335,16 +354,6 @@ const ClickupImport: React.FC<TImport> = ({
                     updateTags={(tags) =>
                       setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
                     }
-                  />
-                </div>
-                <div className='mt-3 flex items-center'>
-                  <p className=''>{t('open_after_creation')}</p>
-                  <input
-                    type='checkbox'
-                    name='shouldOpenTask'
-                    className='ml-2 focus:outline-none'
-                    checked={taskData.shouldOpenTask}
-                    onChange={handleChange}
                   />
                 </div>
               </section>
