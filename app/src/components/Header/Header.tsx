@@ -49,6 +49,12 @@ const Header = () => {
     detectNetwork()
   }, [activate])
 
+  useEffect(() => {
+    if (address) {
+      setCookies(ACCOUNT, address)
+    }
+  }, [address])
+
   return (
     <Navbar>
       {showWalletModal && <WalletModal close={() => setWalletModal(false)} />}
