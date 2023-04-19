@@ -27,6 +27,7 @@ import SolutionTime from 'components/Task/TaskPage/SolutionTime'
 import { useRouter } from 'next/router'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
+import ShareTask from 'components/Task/ShareTask'
 
 type AssigneeData = {
   tags: string[]
@@ -52,6 +53,8 @@ Looking for an experienced web designer and WordPress developer
 for the creation of the web presence of a new start-up from scratch.
 The website  needs to be integrated into an overall.
 `
+
+const isBrowser = typeof window !== 'undefined'
 
 const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
   // Tagless query
@@ -185,6 +188,7 @@ const TaskPage: NextPage<PageProps> = ({
   const { account } = useWeb3()
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
   const router = useRouter()
+  const [shareLink, setShareLink] = useState<string>()
 
   const { t } = useTranslation('tasks')
 
@@ -236,6 +240,10 @@ const TaskPage: NextPage<PageProps> = ({
     }))
   })
 
+  const onShare = (taskId: number) => {
+    setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
+  }
+
   return (
     <div className='layout-container pb-20'>
       <Head>
@@ -255,11 +263,18 @@ const TaskPage: NextPage<PageProps> = ({
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
           <>
+            {shareLink && (
+              <ShareTask
+                url={shareLink}
+                onClose={() => setShareLink(undefined)}
+              />
+            )}
             <TaskCard
               task={currentTask}
               showDescription
               hideViewButton
               taskRequirementLocation='footer'
+              onShare={onShare}
             />
             {(task?.assignmentRequest?.length === undefined ||
               task?.assignmentRequest?.length === 0) && (

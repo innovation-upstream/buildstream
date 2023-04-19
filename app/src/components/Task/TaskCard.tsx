@@ -5,7 +5,8 @@ import TokenGeneric from 'SVGs/TokenGeneric'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
+import Share from 'SVGs/Share'
 
 interface TaskCardProps {
   task: Task
@@ -16,6 +17,7 @@ interface TaskCardProps {
   taskRequirementLocationTablet?: 'inline' | 'footer'
   children?: ReactNode
   onClick?: (id: number) => void
+  onShare?: (id: number) => void
 }
 
 const TaskRequirement = ({
@@ -52,6 +54,7 @@ const TaskCard = ({
   taskRequirementLocation = 'inline',
   taskRequirementLocationTablet = 'inline',
   onClick,
+  onShare,
   children
 }: TaskCardProps) => {
   const reward = ethers.utils
@@ -60,24 +63,36 @@ const TaskCard = ({
   const { t } = useTranslation('tasks')
   const { pathname } = useRouter()
 
+  const handleShare = (e: any) => {
+    e.stopPropagation()
+    onShare?.(task.id)
+  }
+
   return (
-    <div className='paper cursor-pointer hover:drop-shadow-xl hover:brightness-[0.98]' onClick={() => onClick?.(task.id)}>
+    <div
+      className='paper cursor-pointer hover:drop-shadow-xl hover:brightness-[0.98]'
+      onClick={() => onClick?.(task.id)}
+    >
       <div className='flex mb-2'>
-        {
-          pathname.includes('organization') ?  <span>{task.organization.name}</span> :
-        <div className='flex'>
-          <Link href={`/organization/${task.orgId}`}>
-            <a className='hover:text-blue-700 hover:underline'>{task.organization.name}</a>
-          </Link>
-        </div>
-        }
-      </div> 
+        {pathname.includes('organization') ? (
+          <span>{task.organization.name}</span>
+        ) : (
+          <div className='flex'>
+            <Link href={`/organization/${task.orgId}`}>
+              <a className='hover:text-blue-700 hover:underline'>
+                {task.organization.name}
+              </a>
+            </Link>
+          </div>
+        )}
+      </div>
       <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
         {task.title}
-        <span className='text-base whitespace-pre font-medium text-[#70C550]'>
-          {'  '}
-          {t('id')}: {task.id}
-        </span>
+        {onShare && (
+          <button className='ml-3 relative' onClick={handleShare}>
+            <Share className='fill-[#70C550]' />
+          </button>
+        )}
       </p>
       {taskRequirementLocation === 'inline' && (
         <TaskRequirement
@@ -93,14 +108,18 @@ const TaskCard = ({
           className='flex lg:hidden'
         />
       )}
-      <div className={`flex flex-wrap gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}>
+      <div
+        className={`flex flex-wrap gap-1 mt-3 ${showDescription ? '' : 'mb-6'}`}
+      >
         {task.taskTags?.map((tag) => (
           <div key={tag.id} className='btn-tag'>
             {tag.name}
           </div>
         ))}
       </div>
-      {showDescription && <p className='mt-3 mb-6 break-all'>{task.description}</p>}
+      {showDescription && (
+        <p className='mt-3 mb-6 break-all'>{task.description}</p>
+      )}
       <div className='divider' />
       <section className='flex justify-between items-center mt-6'>
         <div className='flex gap-5'>
