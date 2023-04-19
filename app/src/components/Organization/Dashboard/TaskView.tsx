@@ -99,8 +99,6 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const [clickupToken, setClickupToken] = useState()
   const [shareLink, setShareLink] = useState<string>()
 
-  const share = (url: string) => setShareLink(url)
-
   const onCode = async (code: any, params?: any) => {
     setClickupCode(code)
     setShowClickupModal(true)
@@ -173,7 +171,11 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const onCreated = (taskId: number) => {
     setShowCreateModal(false)
     setShowClickupModal(false)
-    share(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
+    onShare(taskId)
+  }
+
+  const onShare = (taskId: number) => {
+    setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
   }
 
   return (
@@ -254,16 +256,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       <ul>
         {tasks?.map((t) => (
           <li key={t.id} className='mb-4'>
-            <TaskCard task={t} onClick={(id) => setSelected(id)}>
-              {t.status < TaskStatus.ASSIGNED && (
-                <button
-                  type='button'
-                  className='hidden xl:block flex items-center gap-x-3 btn-outline border-[#EFF0F1] hover:border-gray-500 focus:border-gray-500'
-                >
-                  {tr('recommended_contributors')}
-                </button>
-              )}
-            </TaskCard>
+            <TaskCard task={t} onClick={(id) => setSelected(id)} onShare={onShare} />
           </li>
         ))}
       </ul>

@@ -8,6 +8,9 @@ import Search from './Search'
 import TaskDetail from '../CreateTask/TaskDetail'
 import { getCookie } from 'cookies-next'
 import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
+import ShareTask from '../ShareTask'
+
+const isBrowser = typeof window !== 'undefined'
 
 interface TaskViewProps {
   tasks?: Task[]
@@ -18,6 +21,7 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
   const { refetch } = useGetTasksQuery()
   const { filterQueryVariables } = useTaskFilter()
   const [selected, setSelected] = useState<number>()
+  const [shareLink, setShareLink] = useState<string>()
 
   const filterTasks = async () => {
     const result = await Promise.all(
@@ -83,6 +87,10 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
 
   const selectedTask = tasks.find((t) => t.id === selected)
 
+  const onShare = (taskId: number) => {
+    setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
+  }
+
   useEffect(() => {
     filterTasks()
 
@@ -103,6 +111,9 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
       {selectedTask && (
         <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
       )}
+      {shareLink && (
+        <ShareTask url={shareLink} onClose={() => setShareLink(undefined)} />
+      )}
       <ul>
         {tasks?.map((t) => (
           <li key={t.id} className='mb-4'>
@@ -110,6 +121,7 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
               showDescription
               task={t}
               onClick={(id) => setSelected(id)}
+              onShare={onShare}
             />
           </li>
         ))}
