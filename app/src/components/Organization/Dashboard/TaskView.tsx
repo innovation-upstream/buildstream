@@ -172,6 +172,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
 
   const onCreated = (taskId: number) => {
     setShowCreateModal(false)
+    setShowClickupModal(false)
     share(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
   }
 
