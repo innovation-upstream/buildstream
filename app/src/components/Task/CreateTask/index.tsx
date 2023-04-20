@@ -1,6 +1,6 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import { useGetTasksQuery, useWeb3 } from 'hooks'
+import { useWeb3 } from 'hooks'
 import { createNewTask } from 'hooks/task/functions'
 import { ComplexityScoreMap } from 'hooks/task/types'
 import React, { useEffect, useState } from 'react'
@@ -16,8 +16,8 @@ import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ICreateTask } from './types'
 import { BigNumber, ethers } from 'ethers'
-import useBalance from 'hooks/balance/useBalance'
 import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import toast, { Toaster } from 'react-hot-toast'
 
 const initialTaskData = {
   title: '',
@@ -32,9 +32,12 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
-const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) => {
+const CreateTask: React.FC<ICreateTask> = ({
+  organization,
+  close,
+  onCreated
+}) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
-  const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
@@ -76,7 +79,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
   const createTask = async (ev: any) => {
     ev.preventDefault()
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
 
@@ -87,19 +90,14 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
     })
 
     if (parseFloat(checkBalance()) < 0) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
       return
     }
 
-    if (taskDuration <= 0 || !taskData.title || !taskData.description) {
-      setStatus({ text: t('invalid_input'), error: true })
-      return
-    }
     if (taskData.taskTags.length < 1) {
-      setStatus({ text: t('task_tags_not_add'), error: true })
+      toast.error(t('task_tags_not_add'), { icon: '⚠️' })
       return
     }
-    setStatus({ text: '', error: false })
 
     setProcessing(true)
     try {
@@ -121,7 +119,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
       onCreated?.(taskId)
     } catch (error) {
       setProcessing(false)
-      setStatus({ text: t('task_not_created'), error: true })
+      toast.error(t('task_not_created'), { icon: '❌' })
       console.error(error)
     }
   }
@@ -137,6 +135,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
+      <Toaster position='bottom-left' />
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[95vh] px-2 py-5 absolute right-0 top-0 rounded-xl my-5 overflow-hidden'>
           <div className='px-6 w-full'>
@@ -339,13 +338,6 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
                   />
                 </div>
               </section>
-              <div
-                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
-                  status.error ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                {status.text}
-              </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex flex-col md:flex-row items-center gap-4 flex-0 pb-10 px-6'>
               {!processing && (

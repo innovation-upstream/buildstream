@@ -28,7 +28,7 @@ const CreateOrgForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!account) {
-      toast.success(t('not_connected_wallet'), { icon: '⚠️' })
+      toast.error(t('not_connected_wallet'), { icon: '⚠️' })
       return
     }
     const formData = new FormData(e.target as any)
@@ -48,7 +48,7 @@ const CreateOrgForm = () => {
       router.push('/organization')
     } catch (e) {
       console.log(e)
-      toast.error('Error Creating Organization', { icon: '❌' })
+      toast.error(t('error_creating_organization'), { icon: '❌' })
     } finally {
       setProcessing(false)
     }

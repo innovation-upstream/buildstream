@@ -15,6 +15,7 @@ import { createNewTask } from 'hooks/task/functions'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { getCookie } from 'cookies-next'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
+import toast, { Toaster } from 'react-hot-toast'
 import {
   TOKEN_KEY,
   fetchTasks,
@@ -23,6 +24,8 @@ import {
 } from 'integrations/clickup/api'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
+import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import { BigNumber, ethers } from 'ethers'
 
 const initialTaskData = {
   title: '',
@@ -38,15 +41,13 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
 const ClickupImport: React.FC<TImport> = ({
-  organizationId,
+  organization,
   clickupCode,
   clickupToken,
   close,
   onCreated
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
-  const [showAdvanced, toggleShowAdvanced] = useState(false)
-  const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
   const [spaces, setSpaces] = useState<any[]>([])
   const [tasks, setTasks] = useState<any[]>([])
@@ -54,6 +55,21 @@ const ClickupImport: React.FC<TImport> = ({
   const { account, library } = useWeb3()
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
+
+  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
+  const { tokenInfos } = useTokenInfos(tokenList)
+  const checkBalance = (): string => {
+    const tokens = organization?.treasury?.tokens
+    const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
+    const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
+
+    const balance = ethers.utils.formatUnits(
+      BigNumber.from(token?.balance || 0)?.toString(),
+      tokenInfo?.decimal
+    )
+
+    return balance
+  }
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
@@ -74,7 +90,7 @@ const ClickupImport: React.FC<TImport> = ({
   const createTask = async (ev: any) => {
     ev.preventDefault()
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
 
@@ -84,23 +100,23 @@ const ClickupImport: React.FC<TImport> = ({
       hours: 0
     })
 
-    if (taskDuration <= 0) {
-      setStatus({ text: t('wrong_duration_input'), error: true })
-      return
-    }
-    if (taskData.taskTags.length < 1) {
-      setStatus({ text: t('task_tags_not_add'), error: true })
+    if (parseFloat(checkBalance()) < 0) {
+      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
       return
     }
 
-    setStatus({ text: '', error: false })
+    if (taskData.taskTags.length < 1) {
+      toast.error(t('task_tags_not_add'), { icon: '⚠️' })
+      return
+    }
+
     setProcessing(true)
 
     try {
       const taskId = await createNewTask(
         {
           externalId: taskData.id,
-          orgId: organizationId,
+          orgId: organization.id,
           title: '',
           description: '',
           taskTags: taskData.taskTags,
@@ -115,7 +131,7 @@ const ClickupImport: React.FC<TImport> = ({
       onCreated?.(taskId)
     } catch (error) {
       setProcessing(false)
-      setStatus({ text: t('task_not_created'), error: true })
+      toast.error(t('task_not_created'), { icon: '❌' })
       console.error(error)
     }
   }
@@ -124,7 +140,7 @@ const ClickupImport: React.FC<TImport> = ({
     let token: any = clickupToken
 
     if (!token) {
-      token = await fetchToken(clickupCode, organizationId.toString())
+      token = await fetchToken(clickupCode, organization.id.toString())
     }
 
     const spaces: ISpaces[] = await fetchSpaces(token)
@@ -171,6 +187,7 @@ const ClickupImport: React.FC<TImport> = ({
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
+      <Toaster position='bottom-left' />
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[95vh] px-2 py-5 absolute right-0 top-0 rounded-xl my-5 overflow-hidden'>
           <div className='px-6 w-full'>
@@ -358,13 +375,6 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
-              <div
-                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
-                  status.error ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                {status.text}
-              </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6 border-t pt-4'>
               {!processing && (

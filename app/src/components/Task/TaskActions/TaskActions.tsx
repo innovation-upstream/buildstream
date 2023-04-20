@@ -5,6 +5,7 @@ import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
 import { TaskStatusMap } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface IProps {
   task: Task
@@ -14,14 +15,13 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
   const taskStatus = Object.entries(TaskStatusMap)[task?.status ?? 0]?.[1]
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
-  const [status, setStatus] = useState({ text: '', error: false })
   const { account, library } = useWeb3()
   const [tempTaskStatus, setTempTaskStatus] = useState(taskStatus)
   const { t } = useTranslation('tasks')
 
   const openCreatedTask = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     setProcessing(true)
@@ -30,7 +30,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
       setProcessing(false)
       setTempTaskStatus('open')
     } catch (e) {
-      setStatus({ text: t('error_opening_task'), error: true })
+      toast.error(t('error_opening_task'), { icon: '❌' })
       setProcessing(false)
       console.error('ERROR===', e)
     }
@@ -38,7 +38,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
 
   const requestAssignment = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     setProcessing(true)
@@ -48,7 +48,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
       setProcessing(false)
       setTempTaskStatus('assigned')
     } catch (e) {
-      setStatus({ text: t('error_requesting_assignment'), error: true })
+      toast.error(t('error_requesting_assignment'), { icon: '❌' })
       setProcessing(false)
       console.error('ERROR===', e)
     }
@@ -56,7 +56,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
 
   const archiveCurrentTask = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     setProcessArchive(true)
@@ -65,6 +65,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
       setProcessArchive(false)
       if (tx) close()
     } catch (e) {
+      toast.error(t('error_archiving_task'), { icon: '❌' })
       setProcessArchive(false)
       console.error(e)
     }
@@ -90,15 +91,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
         tempTaskStatus === 'assigned' ? 'hidden' : 'block'
       }`}
     >
-      {status.error && (
-        <div
-          className={`w-full mx-auto leading-relaxed text-base my-4 ${
-            status.error ? 'text-red-500' : 'text-green-500'
-          }`}
-        >
-          {status.text}
-        </div>
-      )}
+      <Toaster position='bottom-left' />
 
       <div className='flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0'>
         {!processing ? (

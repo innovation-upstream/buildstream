@@ -277,7 +277,8 @@ const TaskPage: NextPage<PageProps> = ({
               onShare={onShare}
             />
             {(task?.assignmentRequest?.length === undefined ||
-              task?.assignmentRequest?.length === 0) && (
+              (task?.assignmentRequest?.length === 0 &&
+                parseInt(task.status.toString()) < 2)) && (
               <TaskActions task={task} />
             )}
           </>

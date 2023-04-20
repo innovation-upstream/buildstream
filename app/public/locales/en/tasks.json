@@ -91,6 +91,9 @@
   "expected_complexity_level": "Indicate the complexity level of this task",
   "invalid_input": "Invalid Input",
   "open_after_creation": "Open after creation",
-  "error_opening_task": "Error Opening Task",
-  "error_requesting_assignment": "Error Requesting Assignment"
+  "error_opening_task": "Error Publishing Task",
+  "error_requesting_assignment": "Error Requesting Assignment",
+  "task_duration_error": "Task Duration must be greater than 0",
+  "error_archiving_task": "Error Archiving Task",
+  "error_submitting_task": "Error Submitting Task"
 }
