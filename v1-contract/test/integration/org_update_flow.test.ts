@@ -8,6 +8,7 @@ const requiredConfirmations = 2
 const requiredApprovals = 1
 const rewardSlashMultiplier = 0.01
 const slashRewardEvery = 86400
+const autoExecute = true
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -57,13 +58,14 @@ describe('Integration test: Organization update flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_NAME,
       ethers.utils.toUtf8Bytes('Builder stream'),
-      0
+      0,
+      autoExecute
     )
 
     const receipt0 = await tx0.wait()
@@ -74,8 +76,6 @@ describe('Integration test: Organization update flow', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     expect(await (await orgContract.getOrganization(orgId)).name).to.be.equal(
       'Builder stream'
@@ -113,13 +113,14 @@ describe('Integration test: Organization update flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       ethers.constants.AddressZero,
       actionType.UPDATE_DESCRIPTION,
       ethers.utils.toUtf8Bytes('Decentralized task managers app'),
-      0
+      0,
+      autoExecute
     )
 
     const receipt0 = await tx0.wait()
@@ -130,8 +131,6 @@ describe('Integration test: Organization update flow', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     expect(
       await (

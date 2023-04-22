@@ -27,6 +27,7 @@ library OrgLib {
 
 contract Organization {
     address private owner;
+    address private actionContractAddress;
     ActionContract private actionContract;
     Treasury private treasury;
 
@@ -72,22 +73,6 @@ contract Organization {
         _;
     }
 
-    modifier actionExists(uint256 _actionId) {
-        require(
-            actionContract.doesActionExist(_actionId),
-            "Action does not exist"
-        );
-        _;
-    }
-
-    modifier notExecuted(uint256 _actionId) {
-        require(
-            !actionContract.isActionExecuted(_actionId),
-            "Action is executed"
-        );
-        _;
-    }
-
     modifier notNull(address _address) {
         require(_address != address(0), "Value should not be null");
         _;
@@ -100,6 +85,7 @@ contract Organization {
 
     function updateActionContract(address _address) external onlyOwner {
         actionContract = ActionContract(_address);
+        actionContractAddress = _address;
     }
 
     function updateTreasuryContract(address _address) external onlyOwner {
@@ -138,19 +124,18 @@ contract Organization {
         uint256 i;
         for (i = 0; i < approvers.length; i++)
             isApprover[orgId][approvers[i]] = true;
-        for (i = 0; i < signers.length; i++)
-            isSigner[orgId][signers[i]] = true;
+        for (i = 0; i < signers.length; i++) isSigner[orgId][signers[i]] = true;
         emit OrganizationCreation(orgId);
 
         if (initializeConfig)
             addOrgConfig(
-                orgId,          // orgId
-                10 ** 14,       // rewardMultiplier (0.0001)
-                address(0),     // rewardToken
-                1,              // requiredConfirmations
-                1,              // requiredTaskApprovals
-                10 ** 16,       // rewardSlashMultiplier (0.01)
-                86400           // slashRewardEvery (1 day)
+                orgId, // orgId
+                10 ** 14, // rewardMultiplier (0.0001)
+                address(0), // rewardToken
+                1, // requiredConfirmations
+                1, // requiredTaskApprovals
+                10 ** 16, // rewardSlashMultiplier (0.01)
+                86400 // slashRewardEvery (1 day)
             );
     }
 
@@ -167,7 +152,10 @@ contract Organization {
         uint256 slashRewardEvery
     ) public onlySigner(orgId) {
         require(!orgs[orgId].isInitialized, "org is initialized");
-        require(rewardSlashMultiplier <= (10 ** 18), "invalid slash multiplier");
+        require(
+            rewardSlashMultiplier <= (10 ** 18),
+            "invalid slash multiplier"
+        );
         orgs[orgId].isInitialized = true;
         orgConfigs[orgId] = OrgLib.OrgConfig({
             orgId: orgId,
@@ -183,31 +171,24 @@ contract Organization {
 
     /// @dev Get organization.
     /// @param _orgId Id of organization.
-    function getOrganization(uint256 _orgId)
-        external
-        view
-        orgExists(_orgId)
-        returns (OrgLib.Org memory)
-    {
+    function getOrganization(
+        uint256 _orgId
+    ) external view orgExists(_orgId) returns (OrgLib.Org memory) {
         return orgs[_orgId];
     }
 
     /// @dev Get organization config.
     /// @param _orgId Id of organization.
-    function getOrganizationConfig(uint256 _orgId)
-        external
-        view
-        orgExists(_orgId)
-        returns (OrgLib.OrgConfig memory)
-    {
+    function getOrganizationConfig(
+        uint256 _orgId
+    ) external view orgExists(_orgId) returns (OrgLib.OrgConfig memory) {
         return orgConfigs[_orgId];
     }
 
-    function getRewardMultiplier(uint256 orgId, uint256[] calldata tags)
-        external
-        view
-        returns (uint256 mul)
-    {
+    function getRewardMultiplier(
+        uint256 orgId,
+        uint256[] calldata tags
+    ) external view returns (uint256 mul) {
         mul = orgConfigs[orgId].rewardMultiplier;
         for (uint256 i = 0; i < tags.length; i++) {
             uint256 m = multipliers[orgId][tags[i]];
@@ -225,11 +206,10 @@ contract Organization {
     /// @param from Index start position of task array.
     /// @param to Index end position of task array.
     /// @return _orgIds array of organization IDs.
-    function getOrgIds(uint256 from, uint256 to)
-        external
-        view
-        returns (uint256[] memory _orgIds)
-    {
+    function getOrgIds(
+        uint256 from,
+        uint256 to
+    ) external view returns (uint256[] memory _orgIds) {
         uint256[] memory orgIdsTemp = new uint256[](orgCount);
         uint256 count = 0;
         uint256 i;
@@ -249,18 +229,10 @@ contract Organization {
 
     /// @dev Check if an organization exists.
     /// @param _actionId Id of organization.
-    function executeAction(uint256 _actionId)
-        external
-        actionExists(_actionId)
-        notExecuted(_actionId)
-    {
-        require(
-            actionContract.isActionConfirmed(_actionId),
-            "Insufficient confirmations"
-        );
+    function executeAction(uint256 _actionId) external {
+        require(msg.sender == actionContractAddress, "Permission denied");
         ActionLib.Action memory action = actionContract.getAction(_actionId);
-        require(isSigner[action.orgId][msg.sender], "Permission denied");
-        actionContract.executeAction(_actionId);
+        require(action.executed, "Action is not executed");
 
         if (action.actionType == ActionLib.ActionType.ADD_APPROVER)
             addApprover(action.orgId, action.targetAddress);
@@ -309,8 +281,12 @@ contract Organization {
 
         if (action.actionType == ActionLib.ActionType.UPDATE_SLASH_REWARD_EVERY)
             orgConfigs[action.orgId].slashRewardEvery = action.value;
-        
-        if (action.actionType == ActionLib.ActionType.UPDATE_TAG_REWARD_MULTIPLIER) {
+
+        if (
+            action.actionType ==
+            ActionLib.ActionType.UPDATE_TAG_REWARD_MULTIPLIER
+        ) {
+            // Get tag key from data
             require(action.data.length >= 32, "slicing out of range");
             bytes memory data = action.data;
             uint key;
@@ -381,12 +357,9 @@ contract Organization {
     /// @dev Returns list of approvers.
     /// @param _orgId Id of organization.
     /// @return List of approver addresses.
-    function getApprovers(uint256 _orgId)
-        external
-        view
-        orgExists(_orgId)
-        returns (address[] memory)
-    {
+    function getApprovers(
+        uint256 _orgId
+    ) external view orgExists(_orgId) returns (address[] memory) {
         return orgs[_orgId].approvers;
     }
 
@@ -394,12 +367,10 @@ contract Organization {
     /// @param _orgId Id of organization.
     /// @param _address Address of approver.
     /// @return if is approver address.
-    function isApproverAddress(uint256 _orgId, address _address)
-        external
-        view
-        orgExists(_orgId)
-        returns (bool)
-    {
+    function isApproverAddress(
+        uint256 _orgId,
+        address _address
+    ) external view orgExists(_orgId) returns (bool) {
         return isApprover[_orgId][_address];
     }
 
@@ -434,12 +405,9 @@ contract Organization {
     /// @dev Returns list of signers.
     /// @param _orgId Id of organization.
     /// @return List of signer addresses.
-    function getSigners(uint256 _orgId)
-        external
-        view
-        orgExists(_orgId)
-        returns (address[] memory)
-    {
+    function getSigners(
+        uint256 _orgId
+    ) external view orgExists(_orgId) returns (address[] memory) {
         return orgs[_orgId].signers;
     }
 
@@ -447,21 +415,16 @@ contract Organization {
     /// @param _orgId Id of organization.
     /// @param _address Address of signer.
     /// @return if is signer address.
-    function isSignerAddress(uint256 _orgId, address _address)
-        external
-        view
-        orgExists(_orgId)
-        returns (bool)
-    {
+    function isSignerAddress(
+        uint256 _orgId,
+        address _address
+    ) external view orgExists(_orgId) returns (bool) {
         return isSigner[_orgId][_address];
     }
 
-    function getTaskApprovals(uint256 _orgId)
-        external
-        view
-        orgExists(_orgId)
-        returns (uint256)
-    {
+    function getTaskApprovals(
+        uint256 _orgId
+    ) external view orgExists(_orgId) returns (uint256) {
         return orgConfigs[_orgId].requiredTaskApprovals;
     }
 }

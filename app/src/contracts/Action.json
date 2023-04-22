@@ -1,5 +1,5 @@
 {
-  "address": "0x56c3231eAd31843096B64052320d2CF55Afaa83a",
+  "address": "0x42AF93f1F684f5b00234F5CC41a2281Adb37f259",
   "abi": [
     {
       "type": "constructor",
@@ -97,6 +97,14 @@
           "name": "targetAddress"
         },
         {
+          "type": "uint256",
+          "name": "value"
+        },
+        {
+          "type": "address",
+          "name": "tokenAddress"
+        },
+        {
           "type": "uint8",
           "name": "actionType"
         },
@@ -105,8 +113,8 @@
           "name": "data"
         },
         {
-          "type": "uint256",
-          "name": "value"
+          "type": "bool",
+          "name": "autoExecute"
         }
       ],
       "outputs": [
@@ -132,20 +140,20 @@
           "name": "targetAddress"
         },
         {
-          "type": "uint256",
-          "name": "value"
-        },
-        {
-          "type": "address",
-          "name": "tokenAddress"
-        },
-        {
           "type": "uint8",
           "name": "actionType"
         },
         {
           "type": "bytes",
           "name": "data"
+        },
+        {
+          "type": "uint256",
+          "name": "value"
+        },
+        {
+          "type": "bool",
+          "name": "autoExecute"
         }
       ],
       "outputs": [
@@ -240,6 +248,10 @@
             {
               "type": "uint8",
               "name": "actionType"
+            },
+            {
+              "type": "bool",
+              "name": "autoExecute"
             }
           ]
         }
