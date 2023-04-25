@@ -5,7 +5,8 @@ import { createNewTask } from 'hooks/task/functions'
 import {
   ComplexityScoreMap,
   TaskReputationMap,
-  TaskReputation
+  TaskReputation,
+  ComplexityScore as ComplexityScores
 } from 'hooks/task/types'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +35,10 @@ const initialTaskData = {
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
-const taskComplexities = Object.entries(ComplexityScoreMap)
+const taskComplexities = Object.entries(ComplexityScoreMap).filter(
+  ([key]) =>
+    parseInt(key) !== ComplexityScores.BEGINNER && parseInt(key) != ComplexityScores.ADVANCED
+)
 const taskReputation = Object.entries(TaskReputationMap)
 
 const CreateTask: React.FC<ICreateTask> = ({
