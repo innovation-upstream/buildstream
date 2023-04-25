@@ -92,5 +92,10 @@
   "invalid_input": "Invalid Input",
   "open_after_creation": "Open after creation",
   "error_opening_task": "Error Opening Task",
-  "error_requesting_assignment": "Error Requesting Assignment"
+  "error_requesting_assignment": "Error Requesting Assignment",
+  "publish_task": "Publish Task",
+  "save_draft": "Save Draft",
+  "task_reward": "Task Reward",
+  "token": "Token",
+  "amount": "Amount"
 }

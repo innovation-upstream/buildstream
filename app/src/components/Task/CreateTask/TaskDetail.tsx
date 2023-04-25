@@ -106,6 +106,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     }
   }, [])
 
+  const isApprover = account && task?.organization?.approvers?.includes(account)
+
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
@@ -250,7 +252,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                     )}
                   </>
                 )}
-                {taskStatus === 'open' && (
+                {isApprover && taskStatus === 'open' && (
                   <button
                     className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
                     onClick={archiveCurrentTask}
