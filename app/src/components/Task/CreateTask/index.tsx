@@ -2,7 +2,11 @@ import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { useGetTasksQuery, useWeb3 } from 'hooks'
 import { createNewTask } from 'hooks/task/functions'
-import { ComplexityScoreMap } from 'hooks/task/types'
+import {
+  ComplexityScoreMap,
+  TaskReputationMap,
+  TaskReputation
+} from 'hooks/task/types'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
@@ -24,15 +28,20 @@ const initialTaskData = {
   description: '',
   taskTags: [],
   complexityScore: 0,
-  reputationLevel: 0,
+  reputationLevel: TaskReputation.ENTRY,
   duration: 1,
   shouldOpenTask: false
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
+const taskReputation = Object.entries(TaskReputationMap)
 
-const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) => {
+const CreateTask: React.FC<ICreateTask> = ({
+  organization,
+  close,
+  onCreated
+}) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
@@ -45,7 +54,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
 
     if (
       ev.target.type === 'number' ||
-      ['orgId', 'complexityScore'].includes(targetName)
+      ['orgId', 'complexityScore', 'reputationLevel'].includes(targetName)
     ) {
       if (targetValue) {
         targetValue = Number(targetValue)
@@ -227,7 +236,7 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
                   <div className=''>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='reputationTip'
                     >
                       <ReactTooltip
@@ -244,21 +253,31 @@ const CreateTask: React.FC<ICreateTask> = ({ organization, close, onCreated }) =
                         {t('reputation')}
                       </span>
                     </label>
-                    <div className='w-full border p-2 rounded-md flex items-center'>
-                      <span className='block pr-2'>
-                        <Badge />
-                      </span>
-                      <input
-                        type='number'
-                        id='reputationLevel'
-                        name='reputationLevel'
-                        min='0'
-                        onKeyDown={preventInvalidChar}
-                        value={taskData.reputationLevel}
-                        onChange={handleChange}
-                        className='overflow-hidden focus:outline-none w-full'
-                        required
-                      />
+
+                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                      {taskReputation.map(([key, value]) => {
+                        return (
+                          <span key={`task-reputation${key}`}>
+                            <input
+                              type='radio'
+                              id={`task-reputation${key}`}
+                              value={parseInt(key)}
+                              name='reputationLevel'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={
+                                taskData.reputationLevel === parseInt(key)
+                              }
+                            />
+                            <label
+                              htmlFor={`task-reputation${key}`}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{value.toUpperCase()}</span>
+                            </label>
+                          </span>
+                        )
+                      })}
                     </div>
                   </div>
                   <div className=''>
