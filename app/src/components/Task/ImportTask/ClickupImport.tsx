@@ -275,7 +275,7 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
-              <section className='py-4'>
+              <section className='pb-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>

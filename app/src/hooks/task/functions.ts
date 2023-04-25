@@ -279,7 +279,7 @@ export const getRewardMultiplier = async (
     provider
   )
 
-  const complexityScore = await contract.getRewardMultiplier(orgId, taskTags)
+  const multiplier = await contract.getRewardMultiplier(orgId, taskTags)
 
-  return complexityScore
+  return multiplier
 }
