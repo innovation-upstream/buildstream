@@ -10,7 +10,11 @@ import Reputation from 'SVGs/Reputation'
 import Spinner from 'components/Spinner/Spinner'
 import TaskTagInput from '../CreateTask/TaskTagInput'
 import { StyledScrollableContainer } from '../CreateTask/styled'
-import { ComplexityScoreMap } from 'hooks/task/types'
+import {
+  ComplexityScoreMap,
+  TaskReputationMap,
+  TaskReputation
+} from 'hooks/task/types'
 import { createNewTask } from 'hooks/task/functions'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { getCookie } from 'cookies-next'
@@ -29,13 +33,14 @@ const initialTaskData = {
   description: '',
   taskTags: [] as number[],
   complexityScore: 0,
-  reputationLevel: 0,
+  reputationLevel: TaskReputation.ENTRY,
   duration: 1,
   shouldOpenTask: false
 }
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 const taskComplexities = Object.entries(ComplexityScoreMap)
+const taskReputation = Object.entries(TaskReputationMap)
 
 const ClickupImport: React.FC<TImport> = ({
   organizationId,
@@ -61,7 +66,7 @@ const ClickupImport: React.FC<TImport> = ({
 
     if (
       ev.target.type === 'number' ||
-      ['orgId', 'complexityScore'].includes(targetName)
+      ['orgId', 'complexityScore', 'reputationLevel'].includes(targetName)
     ) {
       if (targetValue) {
         targetValue = Number(targetValue)
@@ -273,7 +278,7 @@ const ClickupImport: React.FC<TImport> = ({
                   <div className=''>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='reputationTip'
                     >
                       <ReactTooltip
@@ -290,21 +295,31 @@ const ClickupImport: React.FC<TImport> = ({
                         {t('reputation')}
                       </span>
                     </label>
-                    <div className='w-full border p-2 rounded-md flex items-center'>
-                      <span className='block pr-2'>
-                        <Badge />
-                      </span>
-                      <input
-                        type='number'
-                        id='reputationLevel'
-                        name='reputationLevel'
-                        min='0'
-                        onKeyDown={preventInvalidChar}
-                        value={taskData.reputationLevel}
-                        onChange={handleChange}
-                        className='overflow-hidden focus:outline-none w-full'
-                        required
-                      />
+
+                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                      {taskReputation.map(([key, value]) => {
+                        return (
+                          <span key={`task-reputation${key}`}>
+                            <input
+                              type='radio'
+                              id={`task-reputation${key}`}
+                              value={parseInt(key)}
+                              name='reputationLevel'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={
+                                taskData.reputationLevel === parseInt(key)
+                              }
+                            />
+                            <label
+                              htmlFor={`task-reputation${key}`}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{value.toUpperCase()}</span>
+                            </label>
+                          </span>
+                        )
+                      })}
                     </div>
                   </div>
                   <div className=''>
