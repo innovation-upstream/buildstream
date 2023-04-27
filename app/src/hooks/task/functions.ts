@@ -120,7 +120,8 @@ export const createNewTask = async (
     task.reputationLevel,
     task.taskDuration,
     false,
-    task.shouldOpenTask
+    task.shouldOpenTask,
+    false // Enable self assign
   )
 
   const taskCreateReceipt = await tx.wait()

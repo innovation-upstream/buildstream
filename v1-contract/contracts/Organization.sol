@@ -12,6 +12,7 @@ library OrgLib {
         address[] approvers;
         address[] signers;
         bool isInitialized;
+        bool archived;
     }
 
     struct OrgConfig {
@@ -187,7 +188,7 @@ contract Organization {
 
     function getRewardMultiplier(
         uint256 orgId,
-        uint256[] calldata tags
+        uint256[] memory tags
     ) external view returns (uint256 mul) {
         mul = orgConfigs[orgId].rewardMultiplier;
         for (uint256 i = 0; i < tags.length; i++) {

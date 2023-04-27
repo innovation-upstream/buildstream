@@ -273,6 +273,16 @@
             "internalType": "uint256",
             "name": "totalWaitTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "discussion",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "disableSelfAssign",
+            "type": "bool"
           }
         ],
         "indexed": false,
@@ -615,6 +625,121 @@
         "internalType": "struct TaskLib.Task",
         "name": "task",
         "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredApprovals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "assignDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "submitDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "staked",
+            "type": "bool"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "id",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "requester",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionId",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "revisionHash",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtension",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "durationExtensionRequest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "enum TaskLib.TaskRevisionStatus",
+                "name": "status",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct TaskLib.TaskRevision[]",
+            "name": "revisions",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "revisionCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "assignmentRequests",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalWaitTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "discussion",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "disableSelfAssign",
+            "type": "bool"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct TaskLib.TaskMetadata",
+        "name": "taskMetadata",
+        "type": "tuple"
       }
     ],
     "name": "TaskUpdated",
@@ -756,6 +881,11 @@
         "internalType": "uint256",
         "name": "taskDuration",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "disableSelfAssign",
+        "type": "bool"
       }
     ],
     "name": "createTask",
@@ -987,6 +1117,16 @@
             "internalType": "uint256",
             "name": "totalWaitTime",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "discussion",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "disableSelfAssign",
+            "type": "bool"
           }
         ],
         "internalType": "struct TaskLib.TaskMetadata",
@@ -1212,6 +1352,16 @@
         "internalType": "uint256",
         "name": "taskDuration",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "discussion",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "disableSelfAssign",
+        "type": "bool"
       }
     ],
     "name": "updateTask",

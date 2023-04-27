@@ -1,5 +1,5 @@
 {
-  "address": "0x4b19f2CbEAc594bD080A55331074E17E0F49787C",
+  "address": "0x56d5F4497f4D86417bD9e0a28142e210b8F75CFb",
   "abi": [
     {
       "type": "constructor",
@@ -237,6 +237,14 @@
             {
               "type": "uint256",
               "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
             }
           ]
         }
@@ -528,6 +536,99 @@
               "name": "taskDuration"
             }
           ]
+        },
+        {
+          "type": "tuple",
+          "name": "taskMetadata",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "bool",
+              "name": "staked"
+            },
+            {
+              "type": "tuple[]",
+              "name": "revisions",
+              "components": [
+                {
+                  "type": "uint256",
+                  "name": "id"
+                },
+                {
+                  "type": "address",
+                  "name": "requester"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionId"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionHash"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtension"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtensionRequest"
+                },
+                {
+                  "type": "uint8",
+                  "name": "status"
+                }
+              ]
+            },
+            {
+              "type": "uint256",
+              "name": "revisionCount"
+            },
+            {
+              "type": "address[]",
+              "name": "assignmentRequests"
+            },
+            {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "uint256",
+              "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
+            }
+          ]
         }
       ]
     },
@@ -663,6 +764,10 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": [
@@ -862,6 +967,14 @@
             {
               "type": "uint256",
               "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
             }
           ]
         }
@@ -1073,6 +1186,14 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        },
+        {
+          "type": "string",
+          "name": "discussion"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []
