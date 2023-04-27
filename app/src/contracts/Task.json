@@ -1,5 +1,5 @@
 {
-  "address": "0xdC48601f14BcD19E7232E5c81D28eC1789E54725",
+  "address": "0xd9FDfa1FBFCa8c89590c4fd0f7B7811146Ef97c1",
   "abi": [
     {
       "type": "constructor",
@@ -123,12 +123,8 @@
           "name": "requestAssignment"
         },
         {
-          "type": "bool",
-          "name": "shouldOpenTask"
-        },
-        {
-          "type": "bool",
-          "name": "disableSelfAssign"
+          "type": "string",
+          "name": "discussion"
         }
       ],
       "outputs": [
@@ -156,6 +152,10 @@
         {
           "type": "bool",
           "name": "assignCreator"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []
@@ -288,10 +288,6 @@
         {
           "type": "string",
           "name": "discussion"
-        },
-        {
-          "type": "bool",
-          "name": "disableSelfAssign"
         }
       ],
       "outputs": []

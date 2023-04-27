@@ -79,8 +79,7 @@ contract TaskContract {
         uint256 reputationLevel,
         uint256 taskDuration,
         bool requestAssignment,
-        bool shouldOpenTask,
-        bool disableSelfAssign
+        string memory discussion
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
@@ -102,14 +101,11 @@ contract TaskContract {
             reputationLevel,
             requiredTaskApprovals,
             taskDuration,
-            disableSelfAssign
+            discussion
         );
 
         if (requestAssignment)
             taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
-
-        if (shouldOpenTask && isApprover(taskId, msg.sender))
-            openTask(taskId, address(0), false);
     }
 
     /// @dev Allows an approver to update a task.
@@ -123,8 +119,7 @@ contract TaskContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
-        string memory discussion,
-        bool disableSelfAssign
+        string memory discussion
     ) external onlyApprover(taskId) {
         TaskControlLogicLibrary.ensureCanUpdateTask(
             taskTags,
@@ -140,8 +135,7 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             taskDuration,
-            discussion,
-            disableSelfAssign
+            discussion
         );
     }
 
@@ -150,7 +144,8 @@ contract TaskContract {
     function openTask(
         uint256 taskId,
         address rewardToken,
-        bool assignCreator
+        bool assignCreator,
+        bool disableSelfAssign
     ) public onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
@@ -159,7 +154,7 @@ contract TaskContract {
             organizationContract
         );
         treasuryContract.lockBalance(task.orgId, rewardToken, rewardAmount);
-        taskStorageContract.openTask(taskId, rewardAmount, rewardToken);
+        taskStorageContract.openTask(taskId, rewardAmount, rewardToken, disableSelfAssign);
 
         if (!assignCreator) return;
 
