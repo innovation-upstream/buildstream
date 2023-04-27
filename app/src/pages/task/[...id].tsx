@@ -12,13 +12,7 @@ import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import Back from 'SVGs/Back'
 import { Converter } from 'utils/converter'
-import {
-  GetTaskDocument,
-  GetTasksDocument,
-  GetTaskSnapshotsDocument,
-  Task,
-  TaskSnapshot
-} from 'graphclient'
+import { GetTaskDocument, GetTasksDocument, Task } from 'graphclient'
 import { useTranslation } from 'next-i18next'
 import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
 import ClosedCard from 'components/Task/TaskPage/ClosedCard'
@@ -43,7 +37,6 @@ type AssigneeData = {
 
 interface PageProps {
   task: Task
-  snapshots: TaskSnapshot[]
   assignmentRequests?: AssigneeData[]
   assigneeData?: AssigneeData
 }
@@ -115,17 +108,6 @@ export const getServerSideProps: GetServerSideProps =
       }
     }
 
-    const { data: snapshots } = await client.query({
-      query: GetTaskSnapshotsDocument,
-      variables: {
-        orderBy: 'timestamp',
-        orderDirection: 'desc',
-        where: {
-          taskId: taskId as any
-        }
-      }
-    })
-
     let assignmentRequests = null
     const tags = (data.task?.taskTags || [])?.map((tag) => [tag])
 
@@ -158,7 +140,6 @@ export const getServerSideProps: GetServerSideProps =
           title: clickupTask?.name || data.task.title,
           description: clickupTask?.description || data.task.description
         },
-        snapshots: snapshots.taskSnapshots,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
         assigneeData,
@@ -174,7 +155,6 @@ export const getServerSideProps: GetServerSideProps =
 
 const TaskPage: NextPage<PageProps> = ({
   task,
-  snapshots,
   assigneeData,
   assignmentRequests
 }) => {
@@ -193,28 +173,33 @@ const TaskPage: NextPage<PageProps> = ({
 
   usePolling(startPolling, stopPolling)
 
-  useEffect(() => {
-    if (!data?.task) return
-    const retrievedTask = Converter.TaskFromQuery(data.task as any)
-
+  const setupTask = async (task: any) => {
+    const retrievedTask = Converter.TaskFromQuery(task)
     if (!data?.task?.externalId) {
       setCurrentTask(retrievedTask)
       return
     }
+    try {
+      const clickupTask = await fetchClickupTask(
+        data.task.externalId,
+        data.task.orgId.id
+      )
 
-    fetchClickupTask(data.task.externalId, data.task.orgId.id)
-      .then((clickupTask) => {
-        if (clickupTask) {
-          setCurrentTask({
-            ...retrievedTask,
-            title: clickupTask?.name || retrievedTask.title,
-            description: clickupTask?.description || retrievedTask.description
-          })
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+      if (clickupTask) {
+        setCurrentTask({
+          ...retrievedTask,
+          title: clickupTask?.name || retrievedTask.title,
+          description: clickupTask?.description || retrievedTask.description
+        })
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    if (!data?.task) return
+    setupTask(data.task)
   }, [data])
 
   if (!currentTask) {
@@ -271,7 +256,7 @@ const TaskPage: NextPage<PageProps> = ({
             />
             {(task?.assignmentRequest?.length === undefined ||
               task?.assignmentRequest?.length === 0) && (
-              <TaskActions task={task} />
+              <TaskActions task={currentTask} />
             )}
           </>
           <div className='mt-7 md:hidden'>

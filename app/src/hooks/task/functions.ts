@@ -1,9 +1,10 @@
 import TaskContractInterface from 'contracts/Task.json'
 import TaskStorageContractInterface from 'contracts/TaskStorage.json'
-import OrganizationContractInterface from 'contracts/Org.json'
+import OrgContractInterface from 'contracts/Org.json'
 import getContract from 'utils/getContract'
-import { ComplexityScore } from './types'
+import { ComplexityScore, Task, TaskStatus } from './types'
 import { BigNumber } from 'ethers'
+import { useWeb3 } from 'hooks/helpers'
 
 export const openTask = async (
   taskId: number,
@@ -275,12 +276,30 @@ export const getRewardMultiplier = async (
   provider?: any
 ): Promise<BigNumber> => {
   const contract = getContract(
-    OrganizationContractInterface.address,
-    OrganizationContractInterface.abi,
+    OrgContractInterface.address,
+    OrgContractInterface.abi,
     provider
   )
 
   const multiplier = await contract.getRewardMultiplier(orgId, taskTags)
 
   return multiplier
+}
+
+export const getRewardAmount = async (
+  task: Task,
+  provider?: any
+): Promise<BigNumber> => {
+  if (task.status > TaskStatus.PROPOSED) return task.rewardAmount
+  try {
+    const multiplier = await getRewardMultiplier(
+      task?.organization.id,
+      task.taskTags.map((t) => parseInt(t.id)),
+      provider
+    )
+    return multiplier.mul(task.complexityScore + 1)
+  } catch (error) {
+    console.error(error)
+    return BigNumber.from(0)
+  }
 }

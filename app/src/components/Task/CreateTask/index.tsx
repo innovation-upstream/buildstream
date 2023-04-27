@@ -36,7 +36,8 @@ type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
 const taskComplexities = Object.entries(ComplexityScoreMap).filter(
   ([key]) =>
-    parseInt(key) !== ComplexityScores.BEGINNER && parseInt(key) != ComplexityScores.ADVANCED
+    parseInt(key) !== ComplexityScores.BEGINNER &&
+    parseInt(key) != ComplexityScores.ADVANCED
 )
 const taskReputation = Object.entries(TaskReputationMap)
 
@@ -76,22 +77,6 @@ const CreateTask: React.FC<ICreateTask> = ({
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
 
-  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-  const { tokenInfos } = useTokenInfos(tokenList)
-
-  const checkBalance = (): string => {
-    const tokens = organization?.treasury?.tokens
-    const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
-    const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
-
-    const balance = ethers.utils.formatUnits(
-      BigNumber.from(token?.balance || 0)?.toString(),
-      tokenInfo?.decimal
-    )
-
-    return balance
-  }
-
   const createTask = async (publish = false) => {
     const form = formRef.current
     if (!form?.checkValidity()) {
@@ -109,7 +94,10 @@ const CreateTask: React.FC<ICreateTask> = ({
       hours: 0
     })
 
-    if (parseFloat(checkBalance()) < 0) {
+    const treasuryBalance = organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
       setStatus({ text: t('insufficient_treasury_balance'), error: true })
       return
     }
@@ -161,7 +149,11 @@ const CreateTask: React.FC<ICreateTask> = ({
   const getRewardAmount = async (complexity: number, tags: number[]) => {
     let amount = BigNumber.from(0)
     try {
-      const multiplier = await getRewardMultiplier(organization.id, tags)
+      const multiplier = await getRewardMultiplier(
+        organization.id,
+        tags,
+        library.getSigner()
+      )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
       console.error(error)
@@ -170,6 +162,7 @@ const CreateTask: React.FC<ICreateTask> = ({
   }
 
   useEffect(() => {
+    getRewardAmount(taskData.complexityScore, taskData.taskTags)
     const body = document.body
     body.style.overflow = 'hidden'
 

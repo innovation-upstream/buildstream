@@ -1,8 +1,13 @@
 import Spinner from 'components/Spinner/Spinner'
-import { Task } from 'graphclient'
 import { useWeb3 } from 'hooks'
-import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
-import { TaskStatusMap } from 'hooks/task/types'
+import {
+  archiveTask,
+  assignToSelf,
+  getRewardAmount,
+  openTask
+} from 'hooks/task/functions'
+import { Task, TaskStatusMap } from 'hooks/task/types'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
 
@@ -18,15 +23,24 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
   const { account, library } = useWeb3()
   const [tempTaskStatus, setTempTaskStatus] = useState(taskStatus)
   const { t } = useTranslation('tasks')
+  const { tokenInfo } = useTokenInfo()
 
   const openCreatedTask = async () => {
     if (!account) {
       setStatus({ text: t('wallet_not_connected'), error: true })
       return
     }
+    const rewardAmount = await getRewardAmount(task, library?.getSigner())
+    const treasuryBalance = task?.organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
     setProcessing(true)
     try {
-      await openTask(parseInt(task.id), task.rewardToken, library.getSigner())
+      await openTask(task.id, task.rewardToken, library.getSigner())
       setProcessing(false)
       setTempTaskStatus('open')
     } catch (e) {
@@ -44,7 +58,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     setProcessing(true)
     try {
       setProcessing(true)
-      await assignToSelf(parseInt(task.id), library.getSigner())
+      await assignToSelf(task.id, library.getSigner())
       setProcessing(false)
       setTempTaskStatus('assigned')
     } catch (e) {
@@ -61,7 +75,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
     setProcessArchive(true)
     try {
-      const tx = await archiveTask(parseInt(task.id), library.getSigner())
+      const tx = await archiveTask(task.id, library.getSigner())
       setProcessArchive(false)
       if (tx) close()
     } catch (e) {

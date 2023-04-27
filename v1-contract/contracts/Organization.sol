@@ -12,7 +12,6 @@ library OrgLib {
         address[] approvers;
         address[] signers;
         bool isInitialized;
-        bool archived;
     }
 
     struct OrgConfig {

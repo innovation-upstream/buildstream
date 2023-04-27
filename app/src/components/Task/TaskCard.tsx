@@ -1,12 +1,20 @@
-import { ComplexityScore, ComplexityScoreMap, Task } from 'hooks/task/types'
+import {
+  ComplexityScore,
+  ComplexityScoreMap,
+  Task,
+  TaskStatus
+} from 'hooks/task/types'
 import Badge from 'SVGs/Badge'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import TokenGeneric from 'SVGs/TokenGeneric'
-import { ReactNode } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Share from 'SVGs/Share'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import { getRewardAmount, getRewardMultiplier } from 'hooks/task/functions'
+import { useWeb3 } from 'hooks'
 
 interface TaskCardProps {
   task: Task
@@ -57,16 +65,25 @@ const TaskCard = ({
   onShare,
   children
 }: TaskCardProps) => {
-  const reward = ethers.utils
-    .formatEther(task?.rewardAmount.toString())
-    .toString()
   const { t } = useTranslation('tasks')
+  const { tokenInfo } = useTokenInfo()
   const { pathname } = useRouter()
+  const [rewardValue, setRewardValue] = useState('')
+  const { library } = useWeb3()
 
   const handleShare = (e: any) => {
     e.stopPropagation()
     onShare?.(task.id)
   }
+
+  const getReward = useCallback(async () => {
+    const reward = await getRewardAmount(task, library?.getSigner())
+    setRewardValue(ethers.utils.formatEther(reward.toString()).toString())
+  }, [task.taskTags.toString(), library])
+
+  useEffect(() => {
+    getReward()
+  }, [getReward])
 
   return (
     <div
@@ -142,7 +159,9 @@ const TaskCard = ({
 
         <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
           <TokenGeneric />
-          <span className='font-semibold text-sm'>{reward} ETH</span>
+          <span className='font-semibold text-sm'>
+            {rewardValue} {tokenInfo?.symbol}
+          </span>
         </div>
       </section>
     </div>
