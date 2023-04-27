@@ -116,6 +116,10 @@ export class ActionContract__getActionResultValue0Struct extends ethereum.Tuple 
   get actionType(): i32 {
     return this[8].toI32();
   }
+
+  get autoExecute(): boolean {
+    return this[9].toBoolean();
+  }
 }
 
 export class ActionContract extends ethereum.SmartContract {
@@ -126,19 +130,23 @@ export class ActionContract extends ethereum.SmartContract {
   createAction(
     _orgId: BigInt,
     targetAddress: Address,
+    value: BigInt,
+    tokenAddress: Address,
     actionType: i32,
     data: Bytes,
-    value: BigInt
+    autoExecute: boolean
   ): BigInt {
     let result = super.call(
       "createAction",
-      "createAction(uint256,address,uint8,bytes,uint256):(uint256)",
+      "createAction(uint256,address,uint256,address,uint8,bytes,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
+        ethereum.Value.fromUnsignedBigInt(value),
+        ethereum.Value.fromAddress(tokenAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
         ethereum.Value.fromBytes(data),
-        ethereum.Value.fromUnsignedBigInt(value)
+        ethereum.Value.fromBoolean(autoExecute)
       ]
     );
 
@@ -148,19 +156,23 @@ export class ActionContract extends ethereum.SmartContract {
   try_createAction(
     _orgId: BigInt,
     targetAddress: Address,
+    value: BigInt,
+    tokenAddress: Address,
     actionType: i32,
     data: Bytes,
-    value: BigInt
+    autoExecute: boolean
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createAction",
-      "createAction(uint256,address,uint8,bytes,uint256):(uint256)",
+      "createAction(uint256,address,uint256,address,uint8,bytes,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
+        ethereum.Value.fromUnsignedBigInt(value),
+        ethereum.Value.fromAddress(tokenAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
         ethereum.Value.fromBytes(data),
-        ethereum.Value.fromUnsignedBigInt(value)
+        ethereum.Value.fromBoolean(autoExecute)
       ]
     );
     if (result.reverted) {
@@ -173,21 +185,21 @@ export class ActionContract extends ethereum.SmartContract {
   createAction1(
     _orgId: BigInt,
     targetAddress: Address,
-    value: BigInt,
-    tokenAddress: Address,
     actionType: i32,
-    data: Bytes
+    data: Bytes,
+    value: BigInt,
+    autoExecute: boolean
   ): BigInt {
     let result = super.call(
       "createAction",
-      "createAction(uint256,address,uint256,address,uint8,bytes):(uint256)",
+      "createAction(uint256,address,uint8,bytes,uint256,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
-        ethereum.Value.fromUnsignedBigInt(value),
-        ethereum.Value.fromAddress(tokenAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromBytes(data),
+        ethereum.Value.fromUnsignedBigInt(value),
+        ethereum.Value.fromBoolean(autoExecute)
       ]
     );
 
@@ -197,21 +209,21 @@ export class ActionContract extends ethereum.SmartContract {
   try_createAction1(
     _orgId: BigInt,
     targetAddress: Address,
-    value: BigInt,
-    tokenAddress: Address,
     actionType: i32,
-    data: Bytes
+    data: Bytes,
+    value: BigInt,
+    autoExecute: boolean
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createAction",
-      "createAction(uint256,address,uint256,address,uint8,bytes):(uint256)",
+      "createAction(uint256,address,uint8,bytes,uint256,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(_orgId),
         ethereum.Value.fromAddress(targetAddress),
-        ethereum.Value.fromUnsignedBigInt(value),
-        ethereum.Value.fromAddress(tokenAddress),
         ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(actionType)),
-        ethereum.Value.fromBytes(data)
+        ethereum.Value.fromBytes(data),
+        ethereum.Value.fromUnsignedBigInt(value),
+        ethereum.Value.fromBoolean(autoExecute)
       ]
     );
     if (result.reverted) {
@@ -247,7 +259,7 @@ export class ActionContract extends ethereum.SmartContract {
   getAction(_actionId: BigInt): ActionContract__getActionResultValue0Struct {
     let result = super.call(
       "getAction",
-      "getAction(uint256):((uint256,uint256,address,address,uint256,bytes,bool,address,uint8))",
+      "getAction(uint256):((uint256,uint256,address,address,uint256,bytes,bool,address,uint8,bool))",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
 
@@ -261,7 +273,7 @@ export class ActionContract extends ethereum.SmartContract {
   ): ethereum.CallResult<ActionContract__getActionResultValue0Struct> {
     let result = super.tryCall(
       "getAction",
-      "getAction(uint256):((uint256,uint256,address,address,uint256,bytes,bool,address,uint8))",
+      "getAction(uint256):((uint256,uint256,address,address,uint256,bytes,bool,address,uint8,bool))",
       [ethereum.Value.fromUnsignedBigInt(_actionId)]
     );
     if (result.reverted) {
@@ -488,16 +500,24 @@ export class CreateActionCall__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
+  get value(): BigInt {
+    return this._call.inputValues[2].value.toBigInt();
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[3].value.toAddress();
+  }
+
   get actionType(): i32 {
-    return this._call.inputValues[2].value.toI32();
+    return this._call.inputValues[4].value.toI32();
   }
 
   get data(): Bytes {
-    return this._call.inputValues[3].value.toBytes();
+    return this._call.inputValues[5].value.toBytes();
   }
 
-  get value(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
+  get autoExecute(): boolean {
+    return this._call.inputValues[6].value.toBoolean();
   }
 }
 
@@ -538,20 +558,20 @@ export class CreateAction1Call__Inputs {
     return this._call.inputValues[1].value.toAddress();
   }
 
-  get value(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[3].value.toAddress();
-  }
-
   get actionType(): i32 {
-    return this._call.inputValues[4].value.toI32();
+    return this._call.inputValues[2].value.toI32();
   }
 
   get data(): Bytes {
-    return this._call.inputValues[5].value.toBytes();
+    return this._call.inputValues[3].value.toBytes();
+  }
+
+  get value(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get autoExecute(): boolean {
+    return this._call.inputValues[5].value.toBoolean();
   }
 }
 

@@ -248,6 +248,14 @@ export class TaskCreationTaskMetadataStruct extends ethereum.Tuple {
   get totalWaitTime(): BigInt {
     return this[11].toBigInt();
   }
+
+  get discussion(): string {
+    return this[12].toString();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this[13].toBoolean();
+  }
 }
 
 export class TaskCreationTaskMetadataRevisionsStruct extends ethereum.Tuple {
@@ -560,6 +568,12 @@ export class TaskUpdated__Params {
       this._event.parameters[1].value.toTuple()
     );
   }
+
+  get taskMetadata(): TaskUpdatedTaskMetadataStruct {
+    return changetype<TaskUpdatedTaskMetadataStruct>(
+      this._event.parameters[2].value.toTuple()
+    );
+  }
 }
 
 export class TaskUpdatedTaskStruct extends ethereum.Tuple {
@@ -613,6 +627,94 @@ export class TaskUpdatedTaskStruct extends ethereum.Tuple {
 
   get taskDuration(): BigInt {
     return this[12].toBigInt();
+  }
+}
+
+export class TaskUpdatedTaskMetadataStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requiredApprovals(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get rewardAmount(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[3].toAddress();
+  }
+
+  get assignDate(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get submitDate(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get staked(): boolean {
+    return this[6].toBoolean();
+  }
+
+  get revisions(): Array<TaskUpdatedTaskMetadataRevisionsStruct> {
+    return this[7].toTupleArray<TaskUpdatedTaskMetadataRevisionsStruct>();
+  }
+
+  get revisionCount(): BigInt {
+    return this[8].toBigInt();
+  }
+
+  get assignmentRequests(): Array<Address> {
+    return this[9].toAddressArray();
+  }
+
+  get approvers(): Array<Address> {
+    return this[10].toAddressArray();
+  }
+
+  get totalWaitTime(): BigInt {
+    return this[11].toBigInt();
+  }
+
+  get discussion(): string {
+    return this[12].toString();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this[13].toBoolean();
+  }
+}
+
+export class TaskUpdatedTaskMetadataRevisionsStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requester(): Address {
+    return this[1].toAddress();
+  }
+
+  get revisionId(): Bytes {
+    return this[2].toBytes();
+  }
+
+  get revisionHash(): Bytes {
+    return this[3].toBytes();
+  }
+
+  get durationExtension(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get durationExtensionRequest(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get status(): i32 {
+    return this[6].toI32();
   }
 }
 
@@ -722,6 +824,14 @@ export class TaskStorageContract__getTaskMetadataResultValue0Struct extends ethe
   get totalWaitTime(): BigInt {
     return this[11].toBigInt();
   }
+
+  get discussion(): string {
+    return this[12].toString();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this[13].toBoolean();
+  }
 }
 
 export class TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct extends ethereum.Tuple {
@@ -768,11 +878,12 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    taskDuration: BigInt
+    taskDuration: BigInt,
+    disableSelfAssign: boolean
   ): BigInt {
     let result = super.call(
       "createTask",
-      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(externalId),
@@ -782,7 +893,8 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(taskDuration)
+        ethereum.Value.fromUnsignedBigInt(taskDuration),
+        ethereum.Value.fromBoolean(disableSelfAssign)
       ]
     );
 
@@ -798,11 +910,12 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    taskDuration: BigInt
+    taskDuration: BigInt,
+    disableSelfAssign: boolean
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createTask",
-      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,bool):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(externalId),
@@ -812,7 +925,8 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(taskDuration)
+        ethereum.Value.fromUnsignedBigInt(taskDuration),
+        ethereum.Value.fromBoolean(disableSelfAssign)
       ]
     );
     if (result.reverted) {
@@ -890,7 +1004,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): TaskStorageContract__getTaskMetadataResultValue0Struct {
     let result = super.call(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,string,bool))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -906,7 +1020,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   > {
     let result = super.tryCall(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,string,bool))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -1168,6 +1282,10 @@ export class CreateTaskCall__Inputs {
 
   get taskDuration(): BigInt {
     return this._call.inputValues[8].value.toBigInt();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this._call.inputValues[9].value.toBoolean();
   }
 }
 
@@ -1526,6 +1644,14 @@ export class UpdateTaskCall__Inputs {
 
   get taskDuration(): BigInt {
     return this._call.inputValues[7].value.toBigInt();
+  }
+
+  get discussion(): string {
+    return this._call.inputValues[8].value.toString();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this._call.inputValues[9].value.toBoolean();
   }
 }
 

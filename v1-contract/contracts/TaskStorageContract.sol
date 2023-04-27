@@ -59,6 +59,8 @@ library TaskLib {
         address[] assignmentRequests;
         address[] approvers;
         uint256 totalWaitTime;
+        string discussion;
+        bool disableSelfAssign;
     }
 }
 
@@ -89,7 +91,11 @@ contract TaskStorageContract {
         uint256 rewardAmount,
         address rewardToken
     );
-    event TaskAssignment(address indexed assignee, uint256 indexed taskId, bool staked);
+    event TaskAssignment(
+        address indexed assignee,
+        uint256 indexed taskId,
+        bool staked
+    );
     event TaskAssignmentRequested(
         address indexed assignee,
         uint256 indexed taskId
@@ -98,7 +104,11 @@ contract TaskStorageContract {
     event TaskSubmission(uint256 indexed taskId, string comment);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
-    event TaskUpdated(uint256 indexed taskId, TaskLib.Task task);
+    event TaskUpdated(
+        uint256 indexed taskId,
+        TaskLib.Task task,
+        TaskLib.TaskMetadata taskMetadata
+    );
     event TaskRevisionRequested(
         uint256 indexed taskId,
         TaskLib.TaskRevision revision
@@ -166,7 +176,8 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 requiredApprovals,
-        uint256 taskDuration
+        uint256 taskDuration,
+        bool disableSelfAssign
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
         tasks[taskId].createTask(
@@ -181,7 +192,11 @@ contract TaskStorageContract {
             taskDuration
         );
 
-        taskMetadata[taskId].createTaskMetadata(taskId, requiredApprovals);
+        taskMetadata[taskId].createTaskMetadata(
+            taskId,
+            requiredApprovals,
+            disableSelfAssign
+        );
         taskCount += 1;
         _taskExists[taskId] = true;
         emit TaskCreation(taskId, tasks[taskId], taskMetadata[taskId]);
@@ -197,7 +212,9 @@ contract TaskStorageContract {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration
+        uint256 taskDuration,
+        string memory discussion,
+        bool disableSelfAssign
     ) external onlyTaskContract {
         require(msg.sender == taskContractAddress, "Permission denied");
         tasks[taskId].updateTask(
@@ -209,7 +226,8 @@ contract TaskStorageContract {
             reputationLevel,
             taskDuration
         );
-        emit TaskUpdated(taskId, tasks[taskId]);
+        taskMetadata[taskId].updateTaskMetadata(discussion, disableSelfAssign);
+        emit TaskUpdated(taskId, tasks[taskId], taskMetadata[taskId]);
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -225,11 +243,9 @@ contract TaskStorageContract {
 
     /// @dev Allows closing an approved task.
     /// @param taskId Task ID.
-    function closeTask(uint256 taskId)
-        external
-        taskExists(taskId)
-        onlyTaskContract
-    {
+    function closeTask(
+        uint256 taskId
+    ) external taskExists(taskId) onlyTaskContract {
         tasks[taskId].closeTask();
         emit TaskClosed(taskId);
     }
@@ -237,21 +253,15 @@ contract TaskStorageContract {
     /// @dev Allows to retrieve a task.
     /// @param taskId Task ID.
     /// @return task.
-    function getTask(uint256 taskId)
-        external
-        view
-        taskExists(taskId)
-        returns (TaskLib.Task memory)
-    {
+    function getTask(
+        uint256 taskId
+    ) external view taskExists(taskId) returns (TaskLib.Task memory) {
         return tasks[taskId];
     }
 
-    function getTaskMetadata(uint256 taskId)
-        external
-        view
-        taskExists(taskId)
-        returns (TaskLib.TaskMetadata memory)
-    {
+    function getTaskMetadata(
+        uint256 taskId
+    ) external view taskExists(taskId) returns (TaskLib.TaskMetadata memory) {
         return taskMetadata[taskId];
     }
 
@@ -280,23 +290,21 @@ contract TaskStorageContract {
 
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
-    function makeAssignmentRequest(uint256 taskId, address assignee)
-        external
-        onlyTaskContract
-        taskExists(taskId)
-    {
-        if (assignmentRequests[taskId][assignee]) return
-        taskMetadata[taskId].makeAssignmentRequest(assignee);
+    function makeAssignmentRequest(
+        uint256 taskId,
+        address assignee
+    ) external onlyTaskContract taskExists(taskId) {
+        if (assignmentRequests[taskId][assignee])
+            return taskMetadata[taskId].makeAssignmentRequest(assignee);
         emit TaskAssignmentRequested(assignee, taskId);
     }
 
     /// @dev Allows assignees drop tasks.
     /// @param taskId Task ID.
-    function unassign(uint256 taskId, address assignee)
-        external
-        onlyTaskContract
-        taskExists(taskId)
-    {
+    function unassign(
+        uint256 taskId,
+        address assignee
+    ) external onlyTaskContract taskExists(taskId) {
         TaskLib.TaskMetadata storage taskM = taskMetadata[taskId];
         for (uint256 i; i < taskM.approvers.length; i++)
             approvals[taskId][taskM.approvers[i]] = false;
@@ -306,11 +314,10 @@ contract TaskStorageContract {
 
     /// @dev Allows a approver to approve a task.
     /// @param taskId Task ID.
-    function approveTask(uint256 taskId, address approver)
-        external
-        onlyTaskContract
-        taskExists(taskId)
-    {
+    function approveTask(
+        uint256 taskId,
+        address approver
+    ) external onlyTaskContract taskExists(taskId) {
         require(!approvals[taskId][approver], "Task is approved");
         tasks[taskId].approveTask(taskMetadata[taskId], approver);
         approvals[taskId][approver] = true;
@@ -319,11 +326,10 @@ contract TaskStorageContract {
 
     /// @dev Allows a approver to revoke approval for a task.
     /// @param taskId Task ID.
-    function revokeApproval(uint256 taskId, address approver)
-        external
-        onlyTaskContract
-        taskExists(taskId)
-    {
+    function revokeApproval(
+        uint256 taskId,
+        address approver
+    ) external onlyTaskContract taskExists(taskId) {
         require(approvals[taskId][approver], "Task not approved");
         tasks[taskId].revokeApproval(taskMetadata[taskId], approver);
         approvals[taskId][approver] = false;
@@ -352,9 +358,10 @@ contract TaskStorageContract {
         );
     }
 
-    function acceptTaskRevision(uint256 taskId, uint256 revisionIndex)
-        external
-    {
+    function acceptTaskRevision(
+        uint256 taskId,
+        uint256 revisionIndex
+    ) external {
         tasks[taskId].acceptTaskRevision(
             taskMetadata[taskId],
             revisionIndex,
@@ -388,9 +395,10 @@ contract TaskStorageContract {
         );
     }
 
-    function rejectTaskRevision(uint256 taskId, uint256 revisionIndex)
-        external
-    {
+    function rejectTaskRevision(
+        uint256 taskId,
+        uint256 revisionIndex
+    ) external {
         tasks[taskId].rejectTaskRevision(
             taskMetadata[taskId],
             revisionIndex,
@@ -406,22 +414,18 @@ contract TaskStorageContract {
     /// @dev Check if an approver approved a task.
     /// @param taskId Task ID.
     /// @param approver Approver address.
-    function didApprove(uint256 taskId, address approver)
-        external
-        view
-        taskExists(taskId)
-        returns (bool)
-    {
+    function didApprove(
+        uint256 taskId,
+        address approver
+    ) external view taskExists(taskId) returns (bool) {
         return approvals[taskId][approver];
     }
 
     /// @dev Allows approvers to archive open tasks.
     /// @param taskId Task ID.
-    function archive(uint256 taskId)
-        external
-        onlyTaskContract
-        taskExists(taskId)
-    {
+    function archive(
+        uint256 taskId
+    ) external onlyTaskContract taskExists(taskId) {
         tasks[taskId].archive(taskMetadata[taskId]);
         emit TaskArchived(taskId);
     }

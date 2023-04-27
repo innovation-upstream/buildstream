@@ -56,14 +56,16 @@ describe('Integration test: Approver flow', function () {
     )
     await addOrgConfigTx.wait()
 
+    const autoExecute = true
     const actionCreateTx = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       approver2.address,
       actionType.ADD_APPROVER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute
     )
 
     const actionCreateReceipt = await actionCreateTx.wait()
@@ -74,8 +76,6 @@ describe('Integration test: Approver flow', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     expect(
       await (await orgContract.getApprovers(orgId)).includes(approver2.address)
@@ -113,14 +113,16 @@ describe('Integration test: Approver flow', function () {
     )
     await addOrgConfigTx.wait()
 
+    const autoExecute = true
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       approver3.address,
       actionType.ADD_APPROVER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute
     )
 
     const receipt0 = await tx0.wait()
@@ -132,16 +134,16 @@ describe('Integration test: Approver flow', function () {
     await actionContract.confirmAction(actionId0)
     await actionContract.connect(signer).confirmAction(actionId0)
 
-    await orgContract.executeAction(actionId0)
-
+    const autoExecute2 = false
     const tx = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       approver3.address,
       actionType.REMOVE_APPROVER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute2
     )
 
     const receipt = await tx.wait()
@@ -153,7 +155,7 @@ describe('Integration test: Approver flow', function () {
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
-    await orgContract.executeAction(actionId)
+    await actionContract.executeAction(actionId)
 
     const approvers = await orgContract.getApprovers(orgId)
 

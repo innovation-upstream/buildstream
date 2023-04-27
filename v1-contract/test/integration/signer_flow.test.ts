@@ -8,6 +8,7 @@ const requiredConfirmations = 2
 const requiredApprovals = 1
 const rewardSlashMultiplier = 0.01
 const slashRewardEvery = 86400
+const autoExecute = true
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -57,13 +58,14 @@ describe('Integration test: Signer flow', function () {
     await addOrgConfigTx.wait()
 
     const actionCreateTx = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       signer2.address,
       actionType.ADD_SIGNER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute
     )
     const actionCreateReceipt = await actionCreateTx.wait()
     const actionCreateEvent = actionCreateReceipt?.events?.find(
@@ -73,8 +75,6 @@ describe('Integration test: Signer flow', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     expect(
       await (await orgContract.getSigners(orgId)).includes(signer2.address)
@@ -112,13 +112,14 @@ describe('Integration test: Signer flow', function () {
     await addOrgConfigTx.wait()
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       signer3.address,
       actionType.ADD_SIGNER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute
     )
 
     const receipt0 = await tx0.wait()
@@ -130,16 +131,15 @@ describe('Integration test: Signer flow', function () {
     await actionContract.confirmAction(actionId0)
     await actionContract.connect(signer).confirmAction(actionId0)
 
-    await orgContract.executeAction(actionId0)
-
     const tx = await actionContract[
-      'createAction(uint256,address,uint8,bytes,uint256)'
+      'createAction(uint256,address,uint8,bytes,uint256,bool)'
     ](
       orgId,
       signer3.address,
       actionType.REMOVE_SIGNER,
       ethers.utils.toUtf8Bytes(''),
-      0
+      0,
+      autoExecute
     )
 
     const receipt = await tx.wait()
@@ -150,8 +150,6 @@ describe('Integration test: Signer flow', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     const signers = await orgContract.getSigners(orgId)
 

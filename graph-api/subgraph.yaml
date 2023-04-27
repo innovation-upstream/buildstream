@@ -7,7 +7,7 @@ dataSources:
     network: mumbai
     source:
       abi: Organization
-      address: "0x9e6E7e140979fcC27C0b9B821aD5ff2C43cca387"
+      address: "0x32F67aAb175A277e6e4323369b8EaDAF815F4363"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -36,7 +36,7 @@ dataSources:
     network: mumbai
     source:
       abi: Treasury
-      address: "0xdCAa9572e461D1d4119cd01288150893048BB079"
+      address: "0xb4A810990Da236AB4Ae18987cD1133658D02Be20"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -63,7 +63,7 @@ dataSources:
     network: mumbai
     source:
       abi: ActionContract
-      address: "0x56c3231eAd31843096B64052320d2CF55Afaa83a"
+      address: "0xd16bd0f0d46263ed4F566bc67B69707875264866"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -88,7 +88,7 @@ dataSources:
     network: mumbai
     source:
       abi: TaskStorageContract
-      address: "0x0e8d4B4543C12dBec0Bda6bc1804D7c5486Ea3E2"
+      address: "0x56d5F4497f4D86417bD9e0a28142e210b8F75CFb"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -112,12 +112,12 @@ dataSources:
         - event: TaskConfirmation(indexed address,indexed uint256)
           handler: handleTaskConfirmation
         - event: TaskCreation(indexed
-            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256))
+            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,string,bool))
           handler: handleTaskCreation
         - event: TaskOpened(indexed uint256,uint256,address)
           handler: handleTaskOpened
         - event: TaskUpdated(indexed
-            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256))
+            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,string,bool))
           handler: handleTaskUpdated
         - event: TaskRevocation(indexed address,indexed uint256)
           handler: handleTaskRevocation
@@ -140,7 +140,7 @@ dataSources:
     network: mumbai
     source:
       abi: TeamContract
-      address: "0xC0840b1De8DCe7828686300EB1a3a5083D664943"
+      address: "0x5431823C55B218fE2E8CF8318D5ab8bAf1A4dac2"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

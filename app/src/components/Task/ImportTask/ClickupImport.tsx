@@ -43,7 +43,8 @@ const initialTaskData = {
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 const taskComplexities = Object.entries(ComplexityScoreMap).filter(
   ([key]) =>
-    parseInt(key) !== ComplexityScores.BEGINNER && parseInt(key) != ComplexityScores.ADVANCED
+    parseInt(key) !== ComplexityScores.BEGINNER &&
+    parseInt(key) != ComplexityScores.ADVANCED
 )
 const taskReputation = Object.entries(TaskReputationMap)
 
@@ -103,6 +104,14 @@ const ClickupImport: React.FC<TImport> = ({
       days: taskData.duration,
       hours: 0
     })
+
+    const treasuryBalance = organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
 
     if (taskDuration <= 0) {
       setStatus({ text: t('wrong_duration_input'), error: true })
@@ -183,7 +192,11 @@ const ClickupImport: React.FC<TImport> = ({
   const getRewardAmount = async (complexity: number, tags: number[]) => {
     let amount = BigNumber.from(0)
     try {
-      const multiplier = await getRewardMultiplier(organization.id, tags)
+      const multiplier = await getRewardMultiplier(
+        organization.id,
+        tags,
+        library.getSigner()
+      )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
       console.error(error)
@@ -193,6 +206,7 @@ const ClickupImport: React.FC<TImport> = ({
 
   useEffect(() => {
     getSpaces()
+    getRewardAmount(taskData.complexityScore, taskData.taskTags)
 
     const body = document.body
     body.style.overflow = 'hidden'

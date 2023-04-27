@@ -99,6 +99,16 @@
         "type": "address"
       },
       {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
         "internalType": "enum ActionLib.ActionType",
         "name": "actionType",
         "type": "uint8"
@@ -109,9 +119,9 @@
         "type": "bytes"
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "autoExecute",
+        "type": "bool"
       }
     ],
     "name": "createAction",
@@ -138,16 +148,6 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
-      },
-      {
         "internalType": "enum ActionLib.ActionType",
         "name": "actionType",
         "type": "uint8"
@@ -156,6 +156,16 @@
         "internalType": "bytes",
         "name": "data",
         "type": "bytes"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "autoExecute",
+        "type": "bool"
       }
     ],
     "name": "createAction",
@@ -257,6 +267,11 @@
             "internalType": "enum ActionLib.ActionType",
             "name": "actionType",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "autoExecute",
+            "type": "bool"
           }
         ],
         "internalType": "struct ActionLib.Action",

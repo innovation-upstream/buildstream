@@ -329,6 +329,7 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   const task = event.params.task
+  const taskMetadata = event.params.taskMetadata
 
   const taskEntity = Task.load(event.params.taskId.toString())
   if (!taskEntity) return
@@ -338,6 +339,7 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
+  taskEntity.discussion = taskMetadata.discussion
 
   taskEntity.raw = getRawData(taskEntity)
 

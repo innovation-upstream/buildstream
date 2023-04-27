@@ -16,8 +16,8 @@ export const createAction = async (
   )
 
   const tx = await contract[
-    'createAction(uint256,address,uint8,bytes,uint256)'
-  ](orgId, targetAddress, actionType, ethers.utils.toUtf8Bytes(''), 0)
+    'createAction(uint256,address,uint8,bytes,uint256,bool)'
+  ](orgId, targetAddress, actionType, ethers.utils.toUtf8Bytes(''), 0, true)
 
   const receipt = await tx.wait()
   const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
@@ -39,13 +39,14 @@ export const createUpdateRewardAction = async (
   )
 
   const tx = await contract[
-    'createAction(uint256,address,uint8,bytes,uint256)'
+    'createAction(uint256,address,uint8,bytes,uint256,bool)'
   ](
     orgId,
     ethers.constants.AddressZero,
     ActionType.UPDATE_REWARD_MULTIPLIER,
     ethers.utils.toUtf8Bytes(''),
-    value
+    value,
+    true
   )
 
   const receipt = await tx.wait()
@@ -68,13 +69,14 @@ export const createUpdateNameOrDescriptionAction = async (
   )
 
   const tx = await contract[
-    'createAction(uint256,address,uint8,bytes,uint256)'
+    'createAction(uint256,address,uint8,bytes,uint256,bool)'
   ](
     orgId,
     ethers.constants.AddressZero,
     actionType,
     ethers.utils.toUtf8Bytes(value),
-    BigNumber.from(0)
+    BigNumber.from(0),
+    true
   )
 
   const receipt = await tx.wait()
@@ -99,13 +101,14 @@ export const createWithdrawalAction = async (
   )
 
   const tx = await contract[
-    'createAction(uint256,address,uint256,address,uint8,bytes)'
+    'createAction(uint256,address,uint256,address,uint8,bytes,bool)'
   ](
     orgId,
     targetAddress,
     value,
     tokenAddress,
     ActionType.WITHDRAWAL,
+    true,
     ethers.utils.toUtf8Bytes(''),
     {
       from: account
@@ -129,3 +132,15 @@ export const confirmAction = async (actionId: number, provider?: any) => {
   const tx = await contract.confirmAction(actionId)
   await tx.wait()
 }
+
+export const executeAction = async (actionId: number, provider?: any) => {
+  const contract = getContract(
+    ActionContractInterface.address,
+    ActionContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract.executeAction(actionId)
+  await tx.wait()
+}
+
