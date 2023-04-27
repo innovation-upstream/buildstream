@@ -48,12 +48,6 @@ interface PageProps {
   assigneeData?: AssigneeData
 }
 
-const defaultCoverLetter = `
-Looking for an experienced web designer and WordPress developer
-for the creation of the web presence of a new start-up from scratch.
-The website  needs to be integrated into an overall.
-`
-
 const isBrowser = typeof window !== 'undefined'
 
 const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
@@ -87,7 +81,6 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
     )
   const assigneeInfo = {
     address: assignee,
-    coverLetter: defaultCoverLetter,
     tags: Array.from(new Set(filteredTasks.map((t) => t.taskTags).flat())),
     tasks: filteredTasks
       .map((t) => ({
@@ -282,13 +275,7 @@ const TaskPage: NextPage<PageProps> = ({
             )}
           </>
           <div className='mt-7 md:hidden'>
-            <TaskStatusCard
-              taskId={currentTask.id}
-              taskSnapshots={snapshots?.map((t) =>
-                Converter.TaskSnapshotFromQuery(t as any)
-              )}
-              organization={currentTask.organization}
-            />
+            <TaskStatusCard task={currentTask} />
           </div>
           {currentTask.status === TaskStatus.OPEN &&
             !!currentTask.assignmentRequests.length && (
@@ -312,21 +299,19 @@ const TaskPage: NextPage<PageProps> = ({
                 </ul>
               </div>
             )}
-          {currentTask.status > TaskStatus.OPEN &&
-            !isAssignee &&
-            !!assigneeData && (
-              <div className='mt-7'>
-                <p className='font-semibold text-[32px] mb-6'>
-                  {t('responsible_contributor')}
-                </p>
-                <AssigneeCard
-                  taskId={Number(task.id)}
-                  isAssigned
-                  isApprover={isApprover}
-                  assignee={getAssignee(assigneeData)}
-                />
-              </div>
-            )}
+          {currentTask.status > TaskStatus.OPEN && !!assigneeData && (
+            <div className='mt-7'>
+              <p className='font-semibold text-[32px] mb-6'>
+                {t('responsible_contributor')}
+              </p>
+              <AssigneeCard
+                taskId={Number(task.id)}
+                isAssigned
+                isApprover={isApprover}
+                assignee={getAssignee(assigneeData)}
+              />
+            </div>
+          )}
           <SolutionHistory
             task={currentTask}
             isApprover={
@@ -342,13 +327,7 @@ const TaskPage: NextPage<PageProps> = ({
           {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}
         </div>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>
-          <TaskStatusCard
-            taskId={currentTask.id}
-            taskSnapshots={snapshots?.map((t) =>
-              Converter.TaskSnapshotFromQuery(t as any)
-            )}
-            organization={currentTask.organization}
-          />
+          <TaskStatusCard task={currentTask} />
         </div>
       </div>
     </div>

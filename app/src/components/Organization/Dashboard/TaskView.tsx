@@ -189,7 +189,7 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
       )}
       {showClickupModal && (
         <ClickupImport
-          organizationId={organization.id}
+          organization={organization}
           clickupCode={clickupCode}
           clickupToken={clickupToken}
           close={() => setShowClickupModal(false)}

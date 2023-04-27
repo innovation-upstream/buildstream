@@ -84,3 +84,15 @@ export type TaskRevision = {
   durationExtensionRequest: number
   status: TaskRevisionStatus
 }
+
+export enum TaskReputation {
+  ENTRY = 1,
+  INTERMEDIATE = 5,
+  EXPERT = 10
+}
+
+export const TaskReputationMap: Record<TaskReputation, string> = {
+  [TaskReputation.ENTRY]: 'Entry',
+  [TaskReputation.INTERMEDIATE]: 'Intermediate',
+  [TaskReputation.EXPERT]: 'Expert'
+}

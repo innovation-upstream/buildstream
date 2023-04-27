@@ -11,10 +11,15 @@ import { Converter } from 'utils/converter'
 import { StyledListItem } from './styled'
 
 interface TaskStatusCardProps {
-  taskId: number
-  taskSnapshots?: TaskSnapshot[]
-  organization: Organization
+  task: Task
 }
+
+const statuses = [
+  TaskStatus.OPEN,
+  TaskStatus.ASSIGNED,
+  TaskStatus.SUBMITTED,
+  TaskStatus.CLOSED
+]
 
 const taskStatusConfig = {
   [TaskStatus.PROPOSED]: null,
@@ -44,45 +49,8 @@ const taskStatusConfig = {
   }
 }
 
-const TaskStatusCard = ({
-  taskId,
-  taskSnapshots: taskSnapshotsList,
-  organization
-}: TaskStatusCardProps) => {
-  const [taskSnapshots, setTaskSnapshots] = useState(taskSnapshotsList)
-  const { data, startPolling, stopPolling } = useGetTaskSnapshotsQuery({
-    variables: {
-      first: 5,
-      orderBy: 'timestamp',
-      orderDirection: 'desc',
-      where: {
-        taskId: taskId as any
-      }
-    }
-  })
-  usePolling(startPolling, stopPolling)
+const TaskStatusCard = ({ task }: TaskStatusCardProps) => {
   const { t } = useTranslation('tasks')
-
-  useEffect(() => {
-    if (data?.taskSnapshots) {
-      setTaskSnapshots(
-        data.taskSnapshots?.map((t) =>
-          Converter.TaskSnapshotFromQuery(t as any)
-        )
-      )
-    }
-  }, [data])
-
-  const statuses = taskSnapshots
-    ?.reduce((prev, curr, index) => {
-      if (
-        !taskStatusConfig[curr.status] ||
-        prev[prev.length - 1] === curr.status
-      )
-        return prev
-      return [...prev, curr.status]
-    }, [] as TaskStatus[])
-    .reverse()
 
   return (
     <div className='paper p-6'>
@@ -93,31 +61,31 @@ const TaskStatusCard = ({
           const current = taskStatusConfig[status]
           if (!current) return null
           const Component = current.icon
-          const isLastState = index === statuses.length - 1
+          const isCurrentState = task.status === status
           return (
             <StyledListItem
               showLine={statuses.length > 1}
               key={`task-timeline-${index}`}
               className={`relative items-center gap-x-3 lg:gap-x-4 mb-5 ${
-                !isLastState ? 'hidden lg:flex' : 'flex'
+                !isCurrentState ? 'hidden lg:flex' : 'flex'
               }`}
             >
               <div
                 className={`iconContainer shrink-0 flex items-center justify-center rounded-full h-9 md:h-10 w-9 md:w-10 ${
-                  isLastState ? current.background : 'bg-[#F5F5F5]'
+                  isCurrentState ? current.background : 'bg-[#F5F5F5]'
                 }`}
               >
-                <Component className={isLastState ? current.fill : ''} />
+                <Component className={isCurrentState ? current.fill : ''} />
               </div>
               <div className='flex items-center gap-3'>
                 <p
                   className={`text-xl font-medium ${
-                    !isLastState ? 'text-[#17191A]/40' : ''
+                    !isCurrentState ? 'text-[#17191A]/40' : ''
                   }`}
                 >
                   {t(current.messageKey)}
                 </p>
-                {isLastState && (
+                {isCurrentState && (
                   <div className='shrink-0 h-2 w-2 bg-[#6BC5A1] rounded-full'></div>
                 )}
               </div>

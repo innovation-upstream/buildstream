@@ -1,5 +1,7 @@
+import { Organization } from "hooks/organization/types"
+
 export interface TImport {
-  organizationId: number
+  organization: Organization
   clickupCode: string
   clickupToken?: string
   close: () => any

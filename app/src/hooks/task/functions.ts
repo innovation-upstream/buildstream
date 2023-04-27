@@ -1,7 +1,9 @@
 import TaskContractInterface from 'contracts/Task.json'
 import TaskStorageContractInterface from 'contracts/TaskStorage.json'
+import OrganizationContractInterface from 'contracts/Org.json'
 import getContract from 'utils/getContract'
 import { ComplexityScore } from './types'
+import { BigNumber } from 'ethers'
 
 export const openTask = async (
   taskId: number,
@@ -265,4 +267,20 @@ export const disputeAssignedTask = async (
   )
   await response.wait()
   return true
+}
+
+export const getRewardMultiplier = async (
+  orgId: number,
+  taskTags: number[],
+  provider?: any
+): Promise<BigNumber> => {
+  const contract = getContract(
+    OrganizationContractInterface.address,
+    OrganizationContractInterface.abi,
+    provider
+  )
+
+  const multiplier = await contract.getRewardMultiplier(orgId, taskTags)
+
+  return multiplier
 }
