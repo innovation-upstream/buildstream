@@ -65,13 +65,15 @@ const AssigneeCard: React.FC<Props> = ({
           {assigneeAddress?.substring(assigneeAddress?.length - 4)}
         </p>
       </div>
-      <div className='flex gap-1 mt-4'>
-        {assignee.tags?.map((tag) => (
-          <div key={tag} className='btn-tag'>
-            {tag}
-          </div>
-        ))}
-      </div>
+      {assignee.tags?.length > 0 && (
+        <div className='flex gap-1 mt-4'>
+          {assignee.tags?.map((tag) => (
+            <div key={tag} className='btn-tag'>
+              {tag}
+            </div>
+          ))}
+        </div>
+      )}
       {assignee.coverLetter && (
         <div className='p-4 bg-[#F8F9FA] mt-5 rounded-[10px]'>
           <p className='text-xl font-semibold mb-2'>{t('cover_letter')}</p>

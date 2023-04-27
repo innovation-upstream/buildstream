@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps =
           orderBy: 'taskId',
           orderDirection: 'desc',
           where: {
-            status_lt: TaskStatus.CLOSED
+            status: TaskStatus.OPEN
           }
         }
       })

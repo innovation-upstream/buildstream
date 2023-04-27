@@ -9,13 +9,15 @@ export const getTokenInfo = async (
   provider?: any
 ): Promise<TokenInfo | undefined> => {
   try {
-    if (address === ethers.constants.AddressZero)
+    if (address === ethers.constants.AddressZero) {
+      console.log('========== chainId', chainId)
       return {
         address,
         symbol: chainId === 80001 ? 'MATIC' : 'ETH',
         isNative: true,
         decimal: 18
       }
+    }
     const contract = getContract(address, Erc20, provider)
     const symbol = await contract.symbol()
     const decimal = await contract.decimals()
