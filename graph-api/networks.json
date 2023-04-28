@@ -47,25 +47,25 @@
   },
   "mumbai": {
     "Organization": {
-      "address": "0xd1b5aeC0b4C22F572bA0DD93854a9FC711b764bb"
+      "address": "0x44d866Ac324eE8a3533ECa5580637F9d80E43FCe"
     },
     "TaskStorageContract": {
-      "address": "0x021A5f368c47175D8f877c2Fe0d85B9c980385AD"
+      "address": "0xc6FA1F4d9a67c9dF0F7D4e9aC996620b8F38714E"
     },
     "Treasury": {
-      "address": "0x25fB269EbE70460F7141A3B09f34f5D58fac9BEB"
+      "address": "0xb3cCDbE75a2624cCA337dfAF618F65396e558F7E"
     },
     "ActionContract": {
-      "address": "0x4f0fbE26848312F8cc2f290DcCEA4304B9caa5d8"
+      "address": "0x9e3288255C3B40ef1eF97AB24d4794Bf9bfd7155"
     },
     "TeamContract": {
-      "address": "0xe40900203912e5F908d23C0A2BB520f54d709117"
+      "address": "0xb8bd38B0F402Fd1e2706842CDf46a9aeA4A0020A"
     },
     "TokenContract": {
-      "address": "0xBcEd0e6547D4Cc6a4a95daF3AE2f5cD5667E1094"
+      "address": "0x300EbD0D321945D45edFf4FE5BF9c31573170765"
     },
     "TaskContract": {
-      "address": "0x67C53930935B734f406D3313bAcf72911217E108"
+      "address": "0xd9FDfa1FBFCa8c89590c4fd0f7B7811146Ef97c1"
     }
   }
 }
