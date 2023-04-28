@@ -398,6 +398,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
   taskEntity.externalId = task.externalId
+  taskEntity.discussion = taskMetadata.discussion
 
   taskEntity.raw = getRawData(taskEntity)
   taskEntity.save()

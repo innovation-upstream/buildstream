@@ -61,6 +61,7 @@ export type Task = {
   assigner: string
   assignmentRequests: string[]
   comment: string
+  discussion: string
 }
 
 export type TaskSnapshot = {
@@ -86,9 +87,9 @@ export type TaskRevision = {
 }
 
 export enum TaskReputation {
-  ENTRY = 1,
-  INTERMEDIATE = 5,
-  EXPERT = 10
+  ENTRY = 10,
+  INTERMEDIATE = 50,
+  EXPERT = 100
 }
 
 export const TaskReputationMap: Record<TaskReputation, string> = {

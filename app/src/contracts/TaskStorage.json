@@ -1,5 +1,5 @@
 {
-  "address": "0x56d5F4497f4D86417bD9e0a28142e210b8F75CFb",
+  "address": "0xc6FA1F4d9a67c9dF0F7D4e9aC996620b8F38714E",
   "abi": [
     {
       "type": "constructor",
@@ -766,8 +766,8 @@
           "name": "taskDuration"
         },
         {
-          "type": "bool",
-          "name": "disableSelfAssign"
+          "type": "string",
+          "name": "discussion"
         }
       ],
       "outputs": [
@@ -1016,6 +1016,10 @@
         {
           "type": "address",
           "name": "rewardToken"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []
@@ -1190,10 +1194,6 @@
         {
           "type": "string",
           "name": "discussion"
-        },
-        {
-          "type": "bool",
-          "name": "disableSelfAssign"
         }
       ],
       "outputs": []

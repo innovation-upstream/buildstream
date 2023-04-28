@@ -879,11 +879,11 @@ export class TaskStorageContract extends ethereum.SmartContract {
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
     taskDuration: BigInt,
-    disableSelfAssign: boolean
+    discussion: string
   ): BigInt {
     let result = super.call(
       "createTask",
-      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,bool):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,string):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(externalId),
@@ -894,7 +894,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
         ethereum.Value.fromUnsignedBigInt(taskDuration),
-        ethereum.Value.fromBoolean(disableSelfAssign)
+        ethereum.Value.fromString(discussion)
       ]
     );
 
@@ -911,11 +911,11 @@ export class TaskStorageContract extends ethereum.SmartContract {
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
     taskDuration: BigInt,
-    disableSelfAssign: boolean
+    discussion: string
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "createTask",
-      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,bool):(uint256)",
+      "createTask(uint256,string,string,string,uint256[],uint256,uint256,uint256,uint256,string):(uint256)",
       [
         ethereum.Value.fromUnsignedBigInt(orgId),
         ethereum.Value.fromString(externalId),
@@ -926,7 +926,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
         ethereum.Value.fromUnsignedBigInt(taskDuration),
-        ethereum.Value.fromBoolean(disableSelfAssign)
+        ethereum.Value.fromString(discussion)
       ]
     );
     if (result.reverted) {
@@ -1284,8 +1284,8 @@ export class CreateTaskCall__Inputs {
     return this._call.inputValues[8].value.toBigInt();
   }
 
-  get disableSelfAssign(): boolean {
-    return this._call.inputValues[9].value.toBoolean();
+  get discussion(): string {
+    return this._call.inputValues[9].value.toString();
   }
 }
 
@@ -1362,6 +1362,10 @@ export class OpenTaskCall__Inputs {
 
   get rewardToken(): Address {
     return this._call.inputValues[2].value.toAddress();
+  }
+
+  get disableSelfAssign(): boolean {
+    return this._call.inputValues[3].value.toBoolean();
   }
 }
 
@@ -1648,10 +1652,6 @@ export class UpdateTaskCall__Inputs {
 
   get discussion(): string {
     return this._call.inputValues[8].value.toString();
-  }
-
-  get disableSelfAssign(): boolean {
-    return this._call.inputValues[9].value.toBoolean();
   }
 }
 

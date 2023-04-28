@@ -36,11 +36,11 @@ library TaskLibrary {
         TaskLib.TaskMetadata storage self,
         uint256 taskId,
         uint256 requiredApprovals,
-        bool disableSelfAssign
+        string memory discussion
     ) external {
         self.id = taskId;
         self.requiredApprovals = requiredApprovals;
-        self.disableSelfAssign = disableSelfAssign;
+        self.discussion = discussion;
     }
 
     /// @dev Allows an approver to update a task.
@@ -67,11 +67,9 @@ library TaskLibrary {
 
     function updateTaskMetadata(
         TaskLib.TaskMetadata storage self,
-        string memory discussion,
-        bool disableSelfAssign
+        string memory discussion
     ) external {
         self.discussion = discussion;
-        self.disableSelfAssign = disableSelfAssign;
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -79,7 +77,8 @@ library TaskLibrary {
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
         uint256 rewardAmount,
-        address rewardToken
+        address rewardToken,
+        bool disableSelfAssign
     ) external {
         require(
             self.status == TaskLib.TaskStatus.PROPOSED ||
@@ -89,6 +88,7 @@ library TaskLibrary {
         self.status = TaskLib.TaskStatus.OPEN;
         taskMetadata.rewardAmount = rewardAmount;
         taskMetadata.rewardToken = rewardToken;
+        taskMetadata.disableSelfAssign = disableSelfAssign;
     }
 
     /// @dev Allows a approver to approve a task.

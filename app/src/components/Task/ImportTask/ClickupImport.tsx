@@ -16,7 +16,11 @@ import {
   TaskReputation,
   ComplexityScore as ComplexityScores
 } from 'hooks/task/types'
-import { createNewTask, getRewardMultiplier } from 'hooks/task/functions'
+import {
+  createNewTask,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { getCookie } from 'cookies-next'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
@@ -136,11 +140,17 @@ const ClickupImport: React.FC<TImport> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
-          shouldOpenTask: taskData.shouldOpenTask
+          taskDuration
         },
         library.getSigner()
       )
+      if (publish)
+        await openTask(
+          taskId,
+          ethers.constants.AddressZero,
+          false, // disableSelfAssign
+          library.getSigner()
+        )
       onCreated?.(taskId)
     } catch (error) {
       setStatus({ text: t('task_not_created'), error: true })

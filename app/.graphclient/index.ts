@@ -847,6 +847,7 @@ export type Notification_orderBy =
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
+  | 'task__discussion'
   | 'action'
   | 'action__id'
   | 'action__actionId'
@@ -892,6 +893,7 @@ export type Notification_orderBy =
   | 'taskSnapshot__totalWaitTime'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
+  | 'taskSnapshot__discussion'
   | 'actionSnapshot'
   | 'actionSnapshot__id'
   | 'actionSnapshot__actionId'
@@ -2052,6 +2054,7 @@ export type Task = {
   staked: Scalars['Boolean'];
   revisions?: Maybe<Array<TaskRevision>>;
   raw: Scalars['String'];
+  discussion?: Maybe<Scalars['String']>;
 };
 
 
@@ -2229,6 +2232,7 @@ export type TaskRevision_orderBy =
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
+  | 'task__discussion'
   | 'taskSnapshot'
   | 'taskSnapshot__id'
   | 'taskSnapshot__actor'
@@ -2252,6 +2256,7 @@ export type TaskRevision_orderBy =
   | 'taskSnapshot__totalWaitTime'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
+  | 'taskSnapshot__discussion'
   | 'revisionId'
   | 'requester'
   | 'externalRevisionId'
@@ -2288,6 +2293,7 @@ export type TaskSnapshot = {
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
+  discussion?: Maybe<Scalars['String']>;
 };
 
 export type TaskSnapshot_filter = {
@@ -2609,6 +2615,26 @@ export type TaskSnapshot_filter = {
   staked_not?: InputMaybe<Scalars['Boolean']>;
   staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
   staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  discussion?: InputMaybe<Scalars['String']>;
+  discussion_not?: InputMaybe<Scalars['String']>;
+  discussion_gt?: InputMaybe<Scalars['String']>;
+  discussion_lt?: InputMaybe<Scalars['String']>;
+  discussion_gte?: InputMaybe<Scalars['String']>;
+  discussion_lte?: InputMaybe<Scalars['String']>;
+  discussion_in?: InputMaybe<Array<Scalars['String']>>;
+  discussion_not_in?: InputMaybe<Array<Scalars['String']>>;
+  discussion_contains?: InputMaybe<Scalars['String']>;
+  discussion_contains_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_contains?: InputMaybe<Scalars['String']>;
+  discussion_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  discussion_starts_with?: InputMaybe<Scalars['String']>;
+  discussion_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_starts_with?: InputMaybe<Scalars['String']>;
+  discussion_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_ends_with?: InputMaybe<Scalars['String']>;
+  discussion_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_ends_with?: InputMaybe<Scalars['String']>;
+  discussion_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<TaskSnapshot_filter>>>;
@@ -2660,7 +2686,8 @@ export type TaskSnapshot_orderBy =
   | 'comment'
   | 'approvedBy'
   | 'assignmentRequest'
-  | 'staked';
+  | 'staked'
+  | 'discussion';
 
 export type Task_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -2986,6 +3013,26 @@ export type Task_filter = {
   raw_ends_with_nocase?: InputMaybe<Scalars['String']>;
   raw_not_ends_with?: InputMaybe<Scalars['String']>;
   raw_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion?: InputMaybe<Scalars['String']>;
+  discussion_not?: InputMaybe<Scalars['String']>;
+  discussion_gt?: InputMaybe<Scalars['String']>;
+  discussion_lt?: InputMaybe<Scalars['String']>;
+  discussion_gte?: InputMaybe<Scalars['String']>;
+  discussion_lte?: InputMaybe<Scalars['String']>;
+  discussion_in?: InputMaybe<Array<Scalars['String']>>;
+  discussion_not_in?: InputMaybe<Array<Scalars['String']>>;
+  discussion_contains?: InputMaybe<Scalars['String']>;
+  discussion_contains_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_contains?: InputMaybe<Scalars['String']>;
+  discussion_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  discussion_starts_with?: InputMaybe<Scalars['String']>;
+  discussion_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_starts_with?: InputMaybe<Scalars['String']>;
+  discussion_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_ends_with?: InputMaybe<Scalars['String']>;
+  discussion_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  discussion_not_ends_with?: InputMaybe<Scalars['String']>;
+  discussion_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Task_filter>>>;
@@ -3037,7 +3084,8 @@ export type Task_orderBy =
   | 'assignmentRequest'
   | 'staked'
   | 'revisions'
-  | 'raw';
+  | 'raw'
+  | 'discussion';
 
 export type Team = {
   id: Scalars['ID'];
@@ -3828,6 +3876,7 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   revisions?: Resolver<Maybe<Array<ResolversTypes['TaskRevision']>>, ParentType, ContextType, RequireFields<TaskrevisionsArgs, 'skip' | 'first'>>;
   raw?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discussion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3873,6 +3922,7 @@ export type TaskSnapshotResolvers<ContextType = MeshContext, ParentType extends 
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  discussion?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -4228,7 +4278,7 @@ export type GetNotificationsQuery = { notifications: Array<(
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
     ), task?: Maybe<(
-      Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+      Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
       & { orgId: (
         Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4240,7 +4290,7 @@ export type GetNotificationsQuery = { notifications: Array<(
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
       ) }
     )>, deposit?: Maybe<Pick<Deposit, 'id' | 'orgId' | 'amount' | 'token' | 'initiator' | 'completedAt'>>, taskSnapshot?: Maybe<(
-      Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+      Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
       & { orgId: (
         Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4293,7 +4343,7 @@ export type GetOrganizationsQuery = { organizations: Array<(
   )> };
 
 export type TaskFragmentFragment = (
-  Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+  Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
   & { orgId: (
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4301,7 +4351,7 @@ export type TaskFragmentFragment = (
 );
 
 export type TaskSnapshotFragmentFragment = (
-  Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+  Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
   & { orgId: (
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4316,7 +4366,7 @@ export type GetTaskQueryVariables = Exact<{
 
 
 export type GetTaskQuery = { task?: Maybe<(
-    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4335,7 +4385,7 @@ export type GetTasksQueryVariables = Exact<{
 
 
 export type GetTasksQuery = { tasks: Array<(
-    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4354,7 +4404,7 @@ export type GetTaskSnapshotsQueryVariables = Exact<{
 
 
 export type GetTaskSnapshotsQuery = { taskSnapshots: Array<(
-    Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest'>
+    Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'discussion'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4583,6 +4633,7 @@ export const TaskFragmentFragmentDoc = gql`
   comment
   approvedBy
   assignmentRequest
+  discussion
 }
     ${OrganizationFragmentFragmentDoc}` as unknown as DocumentNode<TaskFragmentFragment, unknown>;
 export const TaskSnapshotFragmentFragmentDoc = gql`
@@ -4612,6 +4663,7 @@ export const TaskSnapshotFragmentFragmentDoc = gql`
   comment
   approvedBy
   assignmentRequest
+  discussion
 }
     ${OrganizationFragmentFragmentDoc}` as unknown as DocumentNode<TaskSnapshotFragmentFragment, unknown>;
 export const StatFragmentFragmentDoc = gql`

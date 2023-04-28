@@ -7,7 +7,11 @@ import {
   TaskReputation,
   ComplexityScore as ComplexityScores
 } from 'hooks/task/types'
-import { createNewTask, getRewardMultiplier } from 'hooks/task/functions'
+import {
+  createNewTask,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
@@ -125,11 +129,17 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
-          shouldOpenTask: publish
+          taskDuration
         },
         library.getSigner()
       )
+      if (publish)
+        await openTask(
+          taskId,
+          ethers.constants.AddressZero,
+          false, // disableSelfAssign
+          library.getSigner()
+        )
       onCreated?.(taskId)
     } catch (error) {
       setStatus({ text: t('task_not_created'), error: true })

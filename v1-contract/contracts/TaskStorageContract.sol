@@ -177,7 +177,7 @@ contract TaskStorageContract {
         uint256 reputationLevel,
         uint256 requiredApprovals,
         uint256 taskDuration,
-        bool disableSelfAssign
+        string memory discussion
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
         tasks[taskId].createTask(
@@ -195,7 +195,7 @@ contract TaskStorageContract {
         taskMetadata[taskId].createTaskMetadata(
             taskId,
             requiredApprovals,
-            disableSelfAssign
+            discussion
         );
         taskCount += 1;
         _taskExists[taskId] = true;
@@ -213,8 +213,7 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
-        string memory discussion,
-        bool disableSelfAssign
+        string memory discussion
     ) external onlyTaskContract {
         require(msg.sender == taskContractAddress, "Permission denied");
         tasks[taskId].updateTask(
@@ -226,7 +225,7 @@ contract TaskStorageContract {
             reputationLevel,
             taskDuration
         );
-        taskMetadata[taskId].updateTaskMetadata(discussion, disableSelfAssign);
+        taskMetadata[taskId].updateTaskMetadata(discussion);
         emit TaskUpdated(taskId, tasks[taskId], taskMetadata[taskId]);
     }
 
@@ -235,9 +234,10 @@ contract TaskStorageContract {
     function openTask(
         uint256 taskId,
         uint256 rewardAmount,
-        address rewardToken
+        address rewardToken,
+        bool disableSelfAssign
     ) external taskExists(taskId) onlyTaskContract {
-        tasks[taskId].openTask(taskMetadata[taskId], rewardAmount, rewardToken);
+        tasks[taskId].openTask(taskMetadata[taskId], rewardAmount, rewardToken, disableSelfAssign);
         emit TaskOpened(taskId, rewardAmount, rewardToken);
     }
 

@@ -9,14 +9,21 @@ import { useWeb3 } from 'hooks/helpers'
 export const openTask = async (
   taskId: number,
   rewardToken: string,
-  provider?: any
+  disableSelfAssign: boolean,
+  provider?: any,
 ): Promise<boolean> => {
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
     provider
   )
-  const tx = await contract.openTask(taskId, rewardToken, true)
+  const assignCreator = true
+  const tx = await contract.openTask(
+    taskId,
+    rewardToken,
+    assignCreator,
+    disableSelfAssign
+  )
   await tx.wait()
 
   return true
@@ -98,7 +105,6 @@ export const createNewTask = async (
     complexityScore: number
     reputationLevel: number
     taskDuration: number
-    shouldOpenTask: boolean
   },
   provider?: any
 ): Promise<number> => {
@@ -122,9 +128,8 @@ export const createNewTask = async (
     task.complexityScore,
     task.reputationLevel,
     task.taskDuration,
-    false,
-    task.shouldOpenTask,
-    false // Enable self assign
+    false, // Do not request assignment
+    '' // Discussion
   )
 
   const taskCreateReceipt = await tx.wait()

@@ -40,7 +40,12 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
     setProcessing(true)
     try {
-      await openTask(task.id, task.rewardToken, library.getSigner())
+      await openTask(
+        task.id,
+        task.rewardToken,
+        false, //disableSelfAssign
+        library.getSigner()
+      )
       setProcessing(false)
       setTempTaskStatus('open')
     } catch (e) {
