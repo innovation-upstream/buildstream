@@ -246,7 +246,11 @@ const ClickupImport: React.FC<TImport> = ({
               </button>
             </section>
           </div>
-          <form className=' h-full w-full flex flex-col'>
+          <form
+            ref={formRef}
+            onSubmit={(e) => e.preventDefault()}
+            className=' h-full w-full flex flex-col'
+          >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
