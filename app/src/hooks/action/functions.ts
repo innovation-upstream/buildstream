@@ -1,7 +1,7 @@
 import ActionContractInterface from 'contracts/Action.json'
 import { BigNumber, ethers } from 'ethers'
 import getContract from 'utils/getContract'
-import { Action, ActionType } from './types'
+import { ActionType } from './types'
 
 export const createAction = async (
   orgId: number,
@@ -108,8 +108,8 @@ export const createWithdrawalAction = async (
     value,
     tokenAddress,
     ActionType.WITHDRAWAL,
-    true,
     ethers.utils.toUtf8Bytes(''),
+    true,
     {
       from: account
     }
