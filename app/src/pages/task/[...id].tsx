@@ -1,27 +1,27 @@
-import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
+import Back from 'SVGs/Back'
+import ShareTask from 'components/Task/ShareTask'
+import TaskActions from 'components/Task/TaskActions/TaskActions'
 import TaskCard from 'components/Task/TaskCard'
+import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
+import ClosedCard from 'components/Task/TaskPage/ClosedCard'
+import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
+import SolutionTime from 'components/Task/TaskPage/SolutionTime'
+import SubmitCard from 'components/Task/TaskPage/SubmitCard'
 import TaskStatusCard from 'components/Task/TaskPage/TaskStatusCard'
 import { BigNumber } from 'ethers'
+import { GetTaskDocument, GetTasksDocument, Task } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetTaskQuery, usePolling, useWeb3 } from 'hooks'
 import { TaskStatus } from 'hooks/task/types'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import type { GetServerSideProps, NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import Back from 'SVGs/Back'
 import { Converter } from 'utils/converter'
-import { GetTaskDocument, GetTasksDocument, Task } from 'graphclient'
-import { useTranslation } from 'next-i18next'
-import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
-import ClosedCard from 'components/Task/TaskPage/ClosedCard'
-import SubmitCard from 'components/Task/TaskPage/SubmitCard'
-import SolutionTime from 'components/Task/TaskPage/SolutionTime'
-import { useRouter } from 'next/router'
-import { fetchClickupTask } from 'integrations/clickup/api'
-import TaskActions from 'components/Task/TaskActions/TaskActions'
-import ShareTask from 'components/Task/ShareTask'
 
 type AssigneeData = {
   tags: string[]
@@ -254,10 +254,7 @@ const TaskPage: NextPage<PageProps> = ({
               taskRequirementLocation='footer'
               onShare={onShare}
             />
-            {(task?.assignmentRequest?.length === undefined ||
-              task?.assignmentRequest?.length === 0) && (
-              <TaskActions task={currentTask} />
-            )}
+            <TaskActions task={currentTask} />
           </>
           <div className='mt-7 md:hidden'>
             <TaskStatusCard task={currentTask} />
