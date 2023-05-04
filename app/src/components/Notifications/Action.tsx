@@ -1,17 +1,96 @@
-import { useWeb3 } from 'hooks'
-import { useState } from 'react'
-import { ethers } from 'ethers'
-import { Notification } from 'hooks/notification/types'
-import { TokenInfo } from 'hooks/tokenInfo/types'
-import { Action, ActionSnapshot, ActionType } from 'hooks/action/types'
-import { confirmAction, executeAction } from 'hooks/action/functions'
-import injected from 'config/Walletconnectors'
 import Spinner from 'components/Spinner/Spinner'
+import injected from 'config/Walletconnectors'
+import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
+import { confirmAction, executeAction } from 'hooks/action/functions'
+import { Action, ActionSnapshot, ActionType } from 'hooks/action/types'
+import { Notification } from 'hooks/notification/types'
+import { Organization } from 'hooks/organization/types'
+import { TokenInfo } from 'hooks/tokenInfo/types'
+import { useState } from 'react'
 import { actionMessageTemplates } from './actionTemplates'
 
 interface ActionNotificationsProps {
   notification: Notification
   tokenInfos?: TokenInfo[]
+}
+
+type actionValuesParams = {
+  action: Action
+  organization: Organization
+  tokenInfos?: TokenInfo[]
+}
+
+export const getActionValues = ({
+  action,
+  organization,
+  tokenInfos
+}: actionValuesParams): { oldValue: any; newValue: any } => {
+  let newValue = action.targetAddress
+  let oldValue = ''
+  if (action.actionType === ActionType.WITHDRAWAL) {
+    const token = tokenInfos?.find((i) => i.address === action.tokenAddress)
+    const amount = ethers.utils.formatUnits(
+      action.value?.toString(),
+      token?.decimal
+    )
+    newValue = `${amount} ${token?.symbol}`
+  }
+  if (action.actionType === ActionType.UPDATE_REWARD_TOKEN) {
+    const token = tokenInfos?.find((i) => i.address === action.tokenAddress)
+    const oldToken = tokenInfos?.find(
+      (i) => i.address === organization.rewardToken
+    )
+    oldValue = oldToken?.symbol || ''
+    newValue = token?.symbol || ''
+  }
+  if (action.actionType === ActionType.UPDATE_REQUIRED_TASK_APPROVALS) {
+    oldValue = organization.requiredTaskApprovals?.toString()
+    newValue = action.value.toString()
+  }
+  if (action.actionType === ActionType.UPDATE_REQUIRED_CONFIRMATIONS) {
+    oldValue = organization.requiredConfirmations?.toString()
+    newValue = action.value.toString()
+  }
+  if (action.actionType === ActionType.UPDATE_NAME) {
+    oldValue = organization.name
+    newValue = ethers.utils.toUtf8String(action.data)
+  }
+  if (action.actionType === ActionType.UPDATE_DESCRIPTION) {
+    oldValue = organization.description
+    newValue = ethers.utils.toUtf8String(action.data)
+  }
+  if (
+    action.actionType === ActionType.UPDATE_REWARD_MULTIPLIER ||
+    action.actionType === ActionType.UPDATE_TAG_REWARD_MULTIPLIER
+  ) {
+    const token = tokenInfos?.find(
+      (i) => i.address === organization.rewardToken
+    )
+    const amount = ethers.utils.formatUnits(
+      action.value?.toString(),
+      token?.decimal
+    )
+    const oldAmount = ethers.utils.formatUnits(
+      organization.rewardMultiplier?.toString(),
+      token?.decimal
+    )
+    oldValue = `${oldAmount} ${token?.symbol}`
+    newValue = `${amount} ${token?.symbol}`
+  }
+  if (action.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER) {
+    oldValue = ethers.utils.formatUnits(
+      organization.rewardSlashMultiplier?.toString(),
+      18
+    )
+    newValue = ethers.utils.formatUnits(action.value?.toString(), 18)
+  }
+  if (action.actionType === ActionType.UPDATE_SLASH_REWARD_EVERY) {
+    oldValue = organization.slashRewardEvery?.toString()
+    newValue = action.value?.toString()
+  }
+
+  return { oldValue, newValue }
 }
 
 const ActionNotification = ({
@@ -47,69 +126,11 @@ const ActionNotification = ({
   }
 
   let tag = ''
-  let newValue = snapshot.targetAddress
-  let oldValue = ''
-  if (snapshot.actionType === ActionType.WITHDRAWAL) {
-    const token = tokenInfos?.find((i) => i.address === snapshot.tokenAddress)
-    const amount = ethers.utils.formatUnits(
-      snapshot.value?.toString(),
-      token?.decimal
-    )
-    newValue = `${amount} ${token?.symbol}`
-  }
-  if (snapshot.actionType === ActionType.UPDATE_REWARD_TOKEN) {
-    const token = tokenInfos?.find((i) => i.address === snapshot.tokenAddress)
-    const oldToken = tokenInfos?.find(
-      (i) => i.address === organization.rewardToken
-    )
-    oldValue = oldToken?.symbol || ''
-    newValue = token?.symbol || ''
-  }
-  if (snapshot.actionType === ActionType.UPDATE_REQUIRED_TASK_APPROVALS) {
-    oldValue = organization.requiredTaskApprovals?.toString()
-    newValue = snapshot.value.toString()
-  }
-  if (snapshot.actionType === ActionType.UPDATE_REQUIRED_CONFIRMATIONS) {
-    oldValue = organization.requiredConfirmations?.toString()
-    newValue = snapshot.value.toString()
-  }
-  if (snapshot.actionType === ActionType.UPDATE_NAME) {
-    oldValue = organization.name
-    newValue = ethers.utils.toUtf8String(snapshot.data)
-  }
-  if (snapshot.actionType === ActionType.UPDATE_DESCRIPTION) {
-    oldValue = organization.description
-    newValue = ethers.utils.toUtf8String(snapshot.data)
-  }
-  if (
-    snapshot.actionType === ActionType.UPDATE_REWARD_MULTIPLIER ||
-    snapshot.actionType === ActionType.UPDATE_TAG_REWARD_MULTIPLIER
-  ) {
-    const token = tokenInfos?.find(
-      (i) => i.address === organization.rewardToken
-    )
-    const amount = ethers.utils.formatUnits(
-      snapshot.value?.toString(),
-      token?.decimal
-    )
-    const oldAmount = ethers.utils.formatUnits(
-      organization.rewardMultiplier?.toString(),
-      token?.decimal
-    )
-    oldValue = `${oldAmount} ${token?.symbol}`
-    newValue = `${amount} ${token?.symbol}`
-  }
-  if (snapshot.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER) {
-    oldValue = ethers.utils.formatUnits(
-      organization.rewardSlashMultiplier?.toString(),
-      18
-    )
-    newValue = ethers.utils.formatUnits(snapshot.value?.toString(), 18)
-  }
-  if (snapshot.actionType === ActionType.UPDATE_SLASH_REWARD_EVERY) {
-    oldValue = organization.slashRewardEvery?.toString()
-    newValue = snapshot.value?.toString()
-  }
+  const { oldValue, newValue } = getActionValues({
+    action: snapshot,
+    organization,
+    tokenInfos
+  })
 
   const isConfirmation = snapshot.approvedBy.includes(snapshot.actor)
 
