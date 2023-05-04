@@ -1,4 +1,12 @@
+import ActivityView from 'components/Organization/Dashboard/ActivityView'
+import PendingActions from 'components/Organization/Dashboard/PendingActions'
+import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
+import TaskView from 'components/Organization/Dashboard/TaskView'
+import Treasury from 'components/Organization/Dashboard/Treasury'
+import { getCookie } from 'cookies-next'
 import {
+  Action,
+  GetActionsDocument,
   GetOrganizationDocument,
   GetTasksDocument,
   GetTaskSnapshotsDocument,
@@ -8,39 +16,55 @@ import {
 } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetOrganizationQuery, usePolling } from 'hooks'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage
 } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import { Converter } from 'utils/converter'
-import Treasury from 'components/Organization/Dashboard/Treasury'
-import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
-import TaskView from 'components/Organization/Dashboard/TaskView'
-import ActivityView from 'components/Organization/Dashboard/ActivityView'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { getCookie } from 'cookies-next'
-import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
-import Link from 'next/link'
 import Bell from 'SVGs/Bell'
+import { Converter } from 'utils/converter'
 
+const ACCOUNT = 'account'
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
+      const account = getCookie(ACCOUNT, context)
       const orgId =
         typeof context.params?.id === 'string'
           ? context.params?.id
           : context.params?.id?.[0] || '0'
       const locale = context.locale ?? ''
-      const { data } = await client.query({
+      const { data: organizationResponse } = await client.query({
         query: GetOrganizationDocument,
         variables: {
           id: orgId
         }
       })
+
+      let actions: Action[] = []
+      if (
+        account &&
+        organizationResponse?.organization?.signers?.includes(account as string)
+      ) {
+        const { data } = await client.query({
+          query: GetActionsDocument,
+          variables: {
+            orderDirection: 'desc',
+            orderBy: 'actionId',
+            where: {
+              orgId: organizationResponse.organization.id?.toString() as any,
+              executed: false
+            }
+          }
+        })
+        actions = (data?.actions as any) || []
+      }
 
       const { data: tasks } = await client.query({
         query: GetTasksDocument,
@@ -86,9 +110,10 @@ export const getServerSideProps: GetServerSideProps =
 
       return {
         props: {
-          org: data?.organization,
+          org: organizationResponse?.organization,
           taskList: tasksWithClickupData,
           snapshots: snapshots.taskSnapshots,
+          actions,
           ...(await serverSideTranslations(locale, [
             'common',
             'organization',
@@ -104,12 +129,14 @@ interface PageProps {
   org: Organization
   taskList: Task[]
   snapshots: TaskSnapshot[]
+  actions: Action[]
 }
 
 const OrganizationPage: NextPage<PageProps> = ({
   org,
   taskList,
-  snapshots
+  snapshots,
+  actions
 }) => {
   const [organization, setOrganization] = useState(
     Converter.OrganizationFromQuery(org)
@@ -135,10 +162,7 @@ const OrganizationPage: NextPage<PageProps> = ({
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='flex items-center mt-10 md:mt-24 mb-10'>
-        
-        <p className='text-5xl font-bold mx-5'>
-          {organization.name}
-        </p>
+        <p className='text-5xl font-bold mx-5'>{organization.name}</p>
         <Link href={`/organization/${organization.id}/notifications`}>
           <button className='bg-neutral-200 p-2 rounded-full'>
             <Bell className='fill-blue-500' />
@@ -149,6 +173,12 @@ const OrganizationPage: NextPage<PageProps> = ({
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
           <div className='rounded-2xl'>
             <Treasury organization={organization} />
+            <div className='mt-4 hidden lg:block 2xl:hidden'>
+              <PendingActions
+                actions={actions.map((a) => Converter.ActionFromQuery(a))}
+                organization={organization}
+              />
+            </div>
             <div className='mt-4 hidden lg:block 2xl:hidden'>
               <ActivityView
                 organization={organization}
@@ -169,6 +199,12 @@ const OrganizationPage: NextPage<PageProps> = ({
           />
         </div>
         <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
+          <div className='rounded-2xl mb-4'>
+            <PendingActions
+              actions={actions.map((a) => Converter.ActionFromQuery(a))}
+              organization={organization}
+            />
+          </div>
           <div className='rounded-2xl'>
             <ActivityView
               organization={organization}
