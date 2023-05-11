@@ -19,7 +19,6 @@ import {
   TaskReputationMap
 } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import {
   TOKEN_KEY,
   fetchSpaces,
@@ -73,21 +72,6 @@ const ClickupImport: React.FC<TImport> = ({
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
   const { tokenInfo } = useTokenInfo()
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
-
-  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-  const { tokenInfos } = useTokenInfos(tokenList)
-  const checkBalance = (): string => {
-    const tokens = organization?.treasury?.tokens
-    const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
-    const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
-
-    const balance = ethers.utils.formatUnits(
-      BigNumber.from(token?.balance || 0)?.toString(),
-      tokenInfo?.decimal
-    )
-
-    return balance
-  }
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
