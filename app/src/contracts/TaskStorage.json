@@ -1,5 +1,5 @@
 {
-  "address": "0x0e8d4B4543C12dBec0Bda6bc1804D7c5486Ea3E2",
+  "address": "0xc6FA1F4d9a67c9dF0F7D4e9aC996620b8F38714E",
   "abi": [
     {
       "type": "constructor",
@@ -237,6 +237,14 @@
             {
               "type": "uint256",
               "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
             }
           ]
         }
@@ -528,6 +536,99 @@
               "name": "taskDuration"
             }
           ]
+        },
+        {
+          "type": "tuple",
+          "name": "taskMetadata",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardAmount"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "assignDate"
+            },
+            {
+              "type": "uint256",
+              "name": "submitDate"
+            },
+            {
+              "type": "bool",
+              "name": "staked"
+            },
+            {
+              "type": "tuple[]",
+              "name": "revisions",
+              "components": [
+                {
+                  "type": "uint256",
+                  "name": "id"
+                },
+                {
+                  "type": "address",
+                  "name": "requester"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionId"
+                },
+                {
+                  "type": "bytes32",
+                  "name": "revisionHash"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtension"
+                },
+                {
+                  "type": "uint256",
+                  "name": "durationExtensionRequest"
+                },
+                {
+                  "type": "uint8",
+                  "name": "status"
+                }
+              ]
+            },
+            {
+              "type": "uint256",
+              "name": "revisionCount"
+            },
+            {
+              "type": "address[]",
+              "name": "assignmentRequests"
+            },
+            {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "uint256",
+              "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
+            }
+          ]
         }
       ]
     },
@@ -663,6 +764,10 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        },
+        {
+          "type": "string",
+          "name": "discussion"
         }
       ],
       "outputs": [
@@ -862,6 +967,14 @@
             {
               "type": "uint256",
               "name": "totalWaitTime"
+            },
+            {
+              "type": "string",
+              "name": "discussion"
+            },
+            {
+              "type": "bool",
+              "name": "disableSelfAssign"
             }
           ]
         }
@@ -903,6 +1016,10 @@
         {
           "type": "address",
           "name": "rewardToken"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []
@@ -1073,6 +1190,10 @@
         {
           "type": "uint256",
           "name": "taskDuration"
+        },
+        {
+          "type": "string",
+          "name": "discussion"
         }
       ],
       "outputs": []

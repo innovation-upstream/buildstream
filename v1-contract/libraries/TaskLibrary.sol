@@ -35,10 +35,12 @@ library TaskLibrary {
     function createTaskMetadata(
         TaskLib.TaskMetadata storage self,
         uint256 taskId,
-        uint256 requiredApprovals
+        uint256 requiredApprovals,
+        string memory discussion
     ) external {
         self.id = taskId;
         self.requiredApprovals = requiredApprovals;
+        self.discussion = discussion;
     }
 
     /// @dev Allows an approver to update a task.
@@ -63,12 +65,20 @@ library TaskLibrary {
         }
     }
 
+    function updateTaskMetadata(
+        TaskLib.TaskMetadata storage self,
+        string memory discussion
+    ) external {
+        self.discussion = discussion;
+    }
+
     /// @dev Allows an approver to move a task to open.
     function openTask(
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
         uint256 rewardAmount,
-        address rewardToken
+        address rewardToken,
+        bool disableSelfAssign
     ) external {
         require(
             self.status == TaskLib.TaskStatus.PROPOSED ||
@@ -78,6 +88,7 @@ library TaskLibrary {
         self.status = TaskLib.TaskStatus.OPEN;
         taskMetadata.rewardAmount = rewardAmount;
         taskMetadata.rewardToken = rewardToken;
+        taskMetadata.disableSelfAssign = disableSelfAssign;
     }
 
     /// @dev Allows a approver to approve a task.

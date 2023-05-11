@@ -83,16 +83,16 @@ async function main() {
     },
     {
       func: () => taskStorageContract.updateTaskContractAddress(Task.address),
-      message: 'Task Storage: updated task contract address'
+      message: 'Task Storage: update task contract address'
     },
     {
       func: () => treasuryContract.updateTaskContractAddress(Task.address),
-      message: 'Treasury: updated task contract address'
+      message: 'Treasury: update task contract address'
     },
     {
       func: () =>
         teamContract.updateTaskStorageContractAddress(TaskStorage.address),
-      message: 'Team: updated task contract address'
+      message: 'Team: update task contract address'
     }
   ]
 

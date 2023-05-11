@@ -16,7 +16,11 @@ import {
   TaskReputation,
   ComplexityScore as ComplexityScores
 } from 'hooks/task/types'
-import { createNewTask, getRewardMultiplier } from 'hooks/task/functions'
+import {
+  createNewTask,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { getCookie } from 'cookies-next'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
@@ -109,6 +113,14 @@ const ClickupImport: React.FC<TImport> = ({
       hours: 0
     })
 
+    const treasuryBalance = organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
+
     if (taskDuration <= 0) {
       setStatus({ text: t('wrong_duration_input'), error: true })
       return
@@ -132,11 +144,17 @@ const ClickupImport: React.FC<TImport> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
-          shouldOpenTask: taskData.shouldOpenTask
+          taskDuration
         },
         library.getSigner()
       )
+      if (publish)
+        await openTask(
+          taskId,
+          ethers.constants.AddressZero,
+          false, // disableSelfAssign
+          library.getSigner()
+        )
       onCreated?.(taskId)
     } catch (error) {
       setStatus({ text: t('task_not_created'), error: true })
@@ -188,7 +206,11 @@ const ClickupImport: React.FC<TImport> = ({
   const getRewardAmount = async (complexity: number, tags: number[]) => {
     let amount = BigNumber.from(0)
     try {
-      const multiplier = await getRewardMultiplier(organization.id, tags)
+      const multiplier = await getRewardMultiplier(
+        organization.id,
+        tags,
+        library.getSigner()
+      )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
       console.error(error)
@@ -198,6 +220,7 @@ const ClickupImport: React.FC<TImport> = ({
 
   useEffect(() => {
     getSpaces()
+    getRewardAmount(taskData.complexityScore, taskData.taskTags)
 
     const body = document.body
     body.style.overflow = 'hidden'
@@ -227,7 +250,11 @@ const ClickupImport: React.FC<TImport> = ({
               </button>
             </section>
           </div>
-          <form ref={formRef} className=' h-full w-full flex flex-col'>
+          <form
+            ref={formRef}
+            onSubmit={(e) => e.preventDefault()}
+            className=' h-full w-full flex flex-col'
+          >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>

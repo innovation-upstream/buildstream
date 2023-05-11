@@ -7,7 +7,11 @@ import {
   TaskReputation,
   ComplexityScore as ComplexityScores
 } from 'hooks/task/types'
-import { createNewTask, getRewardMultiplier } from 'hooks/task/functions'
+import {
+  createNewTask,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
@@ -81,22 +85,6 @@ const CreateTask: React.FC<ICreateTask> = ({
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
 
-  let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
-  const { tokenInfos } = useTokenInfos(tokenList)
-
-  const checkBalance = (): string => {
-    const tokens = organization?.treasury?.tokens
-    const token = tokens?.find((t) => t.token === tokens?.[0]?.token)
-    const tokenInfo = tokenInfos?.find((i) => i.address === tokens?.[0]?.token)
-
-    const balance = ethers.utils.formatUnits(
-      BigNumber.from(token?.balance || 0)?.toString(),
-      tokenInfo?.decimal
-    )
-
-    return balance
-  }
-
   const createTask = async (publish = false) => {
     const form = formRef.current
     if (!form?.checkValidity()) {
@@ -114,7 +102,10 @@ const CreateTask: React.FC<ICreateTask> = ({
       hours: 0
     })
 
-    if (parseFloat(checkBalance()) < 0) {
+    const treasuryBalance = organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
       setStatus({ text: t('insufficient_treasury_balance'), error: true })
       return
     }
@@ -142,11 +133,17 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
-          shouldOpenTask: publish
+          taskDuration
         },
         library.getSigner()
       )
+      if (publish)
+        await openTask(
+          taskId,
+          ethers.constants.AddressZero,
+          false, // disableSelfAssign
+          library.getSigner()
+        )
       onCreated?.(taskId)
     } catch (error) {
       setStatus({ text: t('task_not_created'), error: true })
@@ -166,7 +163,11 @@ const CreateTask: React.FC<ICreateTask> = ({
   const getRewardAmount = async (complexity: number, tags: number[]) => {
     let amount = BigNumber.from(0)
     try {
-      const multiplier = await getRewardMultiplier(organization.id, tags)
+      const multiplier = await getRewardMultiplier(
+        organization.id,
+        tags,
+        library.getSigner()
+      )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
       console.error(error)
@@ -175,6 +176,7 @@ const CreateTask: React.FC<ICreateTask> = ({
   }
 
   useEffect(() => {
+    getRewardAmount(taskData.complexityScore, taskData.taskTags)
     const body = document.body
     body.style.overflow = 'hidden'
 
@@ -197,7 +199,11 @@ const CreateTask: React.FC<ICreateTask> = ({
               </button>
             </section>
           </div>
-          <form ref={formRef} className=' h-full w-full flex flex-col'>
+          <form
+            ref={formRef}
+            onSubmit={(e) => e.preventDefault()}
+            className=' h-full w-full flex flex-col'
+          >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>

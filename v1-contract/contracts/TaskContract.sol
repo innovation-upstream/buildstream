@@ -79,7 +79,7 @@ contract TaskContract {
         uint256 reputationLevel,
         uint256 taskDuration,
         bool requestAssignment,
-        bool shouldOpenTask
+        string memory discussion
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
@@ -100,14 +100,12 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             requiredTaskApprovals,
-            taskDuration
+            taskDuration,
+            discussion
         );
 
         if (requestAssignment)
             taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
-
-        if (shouldOpenTask && isApprover(taskId, msg.sender))
-            openTask(taskId, address(0), false);
     }
 
     /// @dev Allows an approver to update a task.
@@ -120,7 +118,8 @@ contract TaskContract {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration
+        uint256 taskDuration,
+        string memory discussion
     ) external onlyApprover(taskId) {
         TaskControlLogicLibrary.ensureCanUpdateTask(
             taskTags,
@@ -135,7 +134,8 @@ contract TaskContract {
             taskTags,
             complexityScore,
             reputationLevel,
-            taskDuration
+            taskDuration,
+            discussion
         );
     }
 
@@ -144,7 +144,8 @@ contract TaskContract {
     function openTask(
         uint256 taskId,
         address rewardToken,
-        bool assignCreator
+        bool assignCreator,
+        bool disableSelfAssign
     ) public onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
@@ -153,7 +154,7 @@ contract TaskContract {
             organizationContract
         );
         treasuryContract.lockBalance(task.orgId, rewardToken, rewardAmount);
-        taskStorageContract.openTask(taskId, rewardAmount, rewardToken);
+        taskStorageContract.openTask(taskId, rewardAmount, rewardToken, disableSelfAssign);
 
         if (!assignCreator) return;
 
@@ -162,7 +163,7 @@ contract TaskContract {
         if (
             taskMetadata.assignmentRequests.length > 0 &&
             taskMetadata.assignmentRequests[0] != address(0)
-        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender);
+        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender, true);
     }
 
     /// @dev Allows a approver to approve a task.
@@ -245,9 +246,16 @@ contract TaskContract {
     function assign(
         uint256 taskId,
         address assignee,
-        address assigner
+        address assigner,
+        bool forceAssign
     ) internal {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
+        if (!forceAssign && taskMetadata.disableSelfAssign) {
+            taskStorageContract.makeAssignmentRequest(taskId, assignee);
+            return;
+        }
         for (uint256 i = 0; i < task.taskTags.length; i++) {
             if (
                 tokenContract.balanceOf(
@@ -257,7 +265,15 @@ contract TaskContract {
                     task.orgId
                 ) < task.reputationLevel
             ) {
-                taskStorageContract.makeAssignmentRequest(taskId, assignee);
+                if (forceAssign)
+                    taskStorageContract.assign(
+                        taskId,
+                        assignee,
+                        assigner,
+                        false
+                    );
+                else
+                    taskStorageContract.makeAssignmentRequest(taskId, assignee);
                 return;
             }
         }
@@ -277,7 +293,7 @@ contract TaskContract {
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
     function assignSelf(uint256 taskId) external {
-        assign(taskId, msg.sender, msg.sender);
+        assign(taskId, msg.sender, msg.sender, false);
     }
 
     function approveAssignRequest(

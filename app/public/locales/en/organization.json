@@ -68,5 +68,6 @@
   "onboarding_note": "Note: Input should be in Markdown format.",
   "onboarding_sub_note": "Note: Input should be in Markdown format.",
   "view_edit_onboarding": "View/Edit Onboarding Instructions",
-  "notification": "Notification"
+  "notification": "Notification",
+  "pending_actions": "Pending Actions"
 }

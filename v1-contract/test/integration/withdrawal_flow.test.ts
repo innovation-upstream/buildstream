@@ -9,6 +9,7 @@ const requiredConfirmations = 2
 const requiredApprovals = 1
 const rewardSlashMultiplier = 0.01
 const slashRewardEvery = 86400
+const autoExecute = true
 
 const getContractInstances = async () => {
   const org = await ethers.getContractFactory('Organization')
@@ -73,14 +74,15 @@ describe('Integration test: Withdrawal', function () {
     })
 
     const tx0 = await actionContract[
-      'createAction(uint256,address,uint256,address,uint8,bytes)'
+      'createAction(uint256,address,uint256,address,uint8,bytes,bool)'
     ](
       orgId,
       withdrawee.address,
       ethers.utils.parseEther(withdrawAmount.toString()),
       ethers.constants.AddressZero,
       actionType.WITHDRAWAL,
-      ethers.utils.toUtf8Bytes('')
+      ethers.utils.toUtf8Bytes(''),
+      autoExecute
     )
 
     const receipt0 = await tx0.wait()
@@ -93,8 +95,6 @@ describe('Integration test: Withdrawal', function () {
 
     await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
-
-    await orgContract.executeAction(actionId)
 
     // Assignee should receive reward
 
