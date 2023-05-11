@@ -1,17 +1,3 @@
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import Spinner from 'components/Spinner/Spinner'
-import { BigNumber, ethers } from 'ethers'
-import { useGetTaskQuery, useGetTasksQuery, useWeb3 } from 'hooks'
-import {
-  archiveTask,
-  assignToSelf,
-  getRewardAmount,
-  getRewardMultiplier,
-  openTask
-} from 'hooks/task/functions'
-import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import Bag from 'SVGs/Bag'
 import ComplexityScore from 'SVGs/ComplexityScore'
@@ -19,10 +5,23 @@ import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
 import Rewards from 'SVGs/Rewards'
 import TokenGeneric from 'SVGs/TokenGeneric'
-import { TaskDurationCalc } from 'utils/task_duration'
-import { ITaskDetail } from './types'
-import { StyledScrollableContainer } from './styled'
+import CloseIcon from 'components/IconSvg/CloseIcon'
+import Spinner from 'components/Spinner/Spinner'
+import { BigNumber, ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
+import {
+  archiveTask,
+  assignToSelf,
+  getRewardAmount,
+  openTask
+} from 'hooks/task/functions'
+import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { TaskDurationCalc } from 'utils/task_duration'
+import { StyledScrollableContainer } from './styled'
+import { ITaskDetail } from './types'
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
@@ -41,13 +40,13 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     const reward = await getRewardAmount(task, library?.getSigner())
     setRewardAmount(reward)
     setRewardValue(ethers.utils.formatEther(reward.toString()).toString())
-  }, [task.taskTags.toString(), library])
+  }, [task.taskTags.length, library])
 
   useEffect(() => {
     getReward()
   }, [getReward])
 
-  const openCreatedTask = async () => {
+  const publishTask = async () => {
     if (!account) {
       setStatus({ text: t('wallet_not_connected'), error: true })
       return
@@ -72,6 +71,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
       setProcessing(false)
       console.error('ERROR===', e)
     }
+    close()
   }
 
   const requestAssignment = async () => {
@@ -88,6 +88,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
       setProcessing(false)
       console.error('ERROR===', e)
     }
+    close()
   }
 
   const archiveCurrentTask = async () => {
@@ -104,17 +105,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
       setProcessArchive(false)
       console.error(e)
     }
-  }
-
-  const taskAction = async () => {
-    if (taskStatus === 'proposed') {
-      await openCreatedTask()
-    }
-    if (taskStatus === 'open') {
-      await requestAssignment()
-    }
     close()
-    return null
   }
 
   const buttonText =
@@ -260,22 +251,31 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-                {task.assignmentRequests.length === 0 && (
-                  <>
-                    {!processing ? (
-                      <button
-                        className='btn-primary min-w-full md:min-w-[30%]'
-                        disabled={processing}
-                        onClick={taskAction}
-                      >
-                        {buttonText}
-                      </button>
-                    ) : (
-                      <Spinner width={30} />
-                    )}
-                  </>
-                )}
-                {isApprover && taskStatus === 'open' && (
+                {!processing &&
+                  task.status === TaskStatus.PROPOSED &&
+                  isApprover && (
+                    <button
+                      className='btn-primary min-w-full md:min-w-[30%]'
+                      disabled={processing}
+                      onClick={publishTask}
+                    >
+                      {t('open_task')}
+                    </button>
+                  )}
+                {!processing &&
+                  task.status === TaskStatus.OPEN &&
+                  account &&
+                  !task.assignmentRequests.includes(account) && (
+                    <button
+                      className='btn-primary min-w-full md:min-w-[30%]'
+                      disabled={processing}
+                      onClick={requestAssignment}
+                    >
+                      {t('request_assignment')}
+                    </button>
+                  )}
+                {processing && <Spinner width={30} />}
+                {task?.status === TaskStatus.OPEN && isApprover && (
                   <button
                     className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
                     onClick={archiveCurrentTask}
