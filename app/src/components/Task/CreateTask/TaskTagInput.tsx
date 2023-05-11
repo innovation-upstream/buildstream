@@ -1,9 +1,10 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
+import Search from 'SVGs/Search'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import React, { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import Search from 'SVGs/Search'
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 interface Props {
   tags: number[]
@@ -29,9 +30,9 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
   }
 
   const handleChange = (ev: any) => {
-    if (ev.key == "Enter") {
-      ev.preventDefault();
-  }
+    if (ev.key == 'Enter') {
+      ev.preventDefault()
+    }
 
     let targetValue: any = ev.target.value
 
@@ -46,8 +47,15 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
 
   return (
     <div className='w-full'>
+      <ReactTooltip id='relevant_skills_title' />
       {!hideTitle && (
-        <span className='block text-gray-700'>{t('required_skills')}</span>
+        <span
+          className='block text-gray-700'
+          data-tooltip-id='relevant_skills_title'
+          data-tooltip-content={t('relevant_skills_hint')}
+        >
+          {t('relevant_skills')}
+        </span>
       )}
       <div
         className={`relative w-full flex items-center ${
@@ -58,7 +66,7 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
           <Search width={20} />
         </span>
         <AutoComplete
-          suggestions={tokens.map(t => ({
+          suggestions={tokens.map((t) => ({
             id: t.id,
             value: t.name.toLowerCase()
           }))}
@@ -73,13 +81,15 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
       {tags.length > 0 && (
         <div className='mt-4 flex flex-wrap gap-2'>
           {tags.map((task, index) => {
-            const token = tokens.find(t => t.id === task.toString())
+            const token = tokens.find((t) => t.id === task.toString())
             return (
               <div
                 key={task}
                 className='rounded-md py-1 px-2 bg-gray-200 flex gap-3 items-center'
               >
-                <span className='block text-sm'>{token?.name?.toLowerCase()}</span>
+                <span className='block text-sm'>
+                  {token?.name?.toLowerCase()}
+                </span>
                 <button onClick={() => deleteTag(index)}>
                   <CloseIcon width={10} />
                 </button>
