@@ -1,6 +1,6 @@
+import { Token } from '@innovationupstream/buildstream-utils'
 import { BigNumber } from 'ethers'
 import { Organization } from 'hooks/organization/types'
-import { Token } from '@innovationupstream/buildstream-utils'
 
 export enum TaskStatus {
   PROPOSED,
@@ -34,9 +34,9 @@ export const TaskStatusMap: Record<TaskStatus, string> = {
 }
 
 export const ComplexityScoreMap: Record<ComplexityScore, string> = {
-  [ComplexityScore.BASIC]: 'basic',
+  [ComplexityScore.BASIC]: 'simple',
   [ComplexityScore.BEGINNER]: 'beginner',
-  [ComplexityScore.INTERMEDIATE]: 'intermediate',
+  [ComplexityScore.INTERMEDIATE]: 'standard',
   [ComplexityScore.ADVANCED]: 'advanced',
   [ComplexityScore.COMPLEX]: 'complex'
 }

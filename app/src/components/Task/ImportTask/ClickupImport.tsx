@@ -309,170 +309,124 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
-              <section className='pb-4 border border-t-0 border-r-0 border-l-0'>
+              <section className='border-b py-4'>
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
-                <div className='mt-3 flex flex-col gap-4'>
-                  <div className='border-b pb-4'>
-                    <label
-                      htmlFor='duration'
-                      className='flex gap-2 items-center cursor-pointer max-w-xs'
-                      data-tooltip-id='durationTip'
-                      data-tooltip-content={t('expected_duration')}
-                    >
-                      <ReactTooltip id='durationTip' />
-                      <span className='block'>
-                        <Duration />
-                      </span>
-                      <span className='block text-gray-700'>
-                        {t('set_duration')}
-                      </span>
-                    </label>
-                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
-                      {durationPreset.map((duration) => {
-                        return (
-                          <span key={`duration-preset-${duration}`}>
-                            <input
-                              type='radio'
-                              id={`duration-preset-${duration}`}
-                              value={duration}
-                              name='duration'
-                              className='hidden peer'
-                              onChange={handleChange}
-                              checked={taskData.duration === duration}
-                            />
-                            <label
-                              htmlFor={`duration-preset-${duration}`}
-                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
-                            >
-                              <span>{`${duration} day${
-                                duration > 1 ? 's' : ''
-                              }`}</span>
-                            </label>
-                          </span>
-                        )
-                      })}
-                    </div>
-                    <div className='flex flex-col gap-2 text-gray-400'>
-                      <button
-                        type='button'
-                        className='py-1 px-2 border font-normal text-sm w-fit border-gray-200 rounded-lg'
-                        onClick={() =>
-                          setShowCustomDuration(!showCustomDuration)
-                        }
-                      >
-                        Custom
-                      </button>
-                      {showCustomDuration && (
-                        <input
-                          type='number'
-                          id='customDuration'
-                          name='customDuration'
-                          min='1'
-                          onKeyDown={preventInvalidChar}
-                          value={taskData.duration}
-                          onChange={(ev: any) =>
-                            setTaskData((prev) => ({
-                              ...prev,
-                              duration: ev.target.value
-                            }))
-                          }
-                          className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className='border-b pb-4'>
-                    <label
-                      htmlFor='reputationLevel'
-                      className='flex gap-2 items-center cursor-pointer max-w-xs'
-                      data-tooltip-id='reputationTip'
-                    >
-                      <ReactTooltip
-                        place='top'
-                        id='reputationTip'
-                        className='max-w-xs'
-                      >
-                        <div>{t('expected_reputation')}</div>
-                      </ReactTooltip>
-                      <span className='block'>
-                        <Reputation />
-                      </span>
-                      <span className='block text-gray-700'>
-                        {t('reputation')}
-                      </span>
-                    </label>
 
-                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
-                      {taskReputation.map(([key, value]) => {
-                        return (
-                          <span key={`task-reputation${key}`}>
-                            <input
-                              type='radio'
-                              id={`task-reputation${key}`}
-                              value={parseInt(key)}
-                              name='reputationLevel'
-                              className='hidden peer'
-                              onChange={handleChange}
-                              checked={
-                                taskData.reputationLevel === parseInt(key)
-                              }
-                            />
-                            <label
-                              htmlFor={`task-reputation${key}`}
-                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
-                            >
-                              <span>{value.toUpperCase()}</span>
-                            </label>
-                          </span>
-                        )
-                      })}
-                    </div>
+                <div className='mt-4'>
+                  <label
+                    htmlFor='duration'
+                    className='flex gap-2 items-center cursor-pointer max-w-xs'
+                    data-tooltip-id='durationTip'
+                    data-tooltip-content={t('expected_duration')}
+                  >
+                    <ReactTooltip id='durationTip' />
+                    <span className='block'>
+                      <Duration />
+                    </span>
+                    <span className='block text-gray-700'>
+                      {t('set_duration')}
+                    </span>
+                  </label>
+                  <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                    {durationPreset.map((duration) => {
+                      return (
+                        <span key={`duration-preset-${duration}`}>
+                          <input
+                            type='radio'
+                            id={`duration-preset-${duration}`}
+                            value={duration}
+                            name='duration'
+                            className='hidden peer'
+                            onChange={handleChange}
+                            checked={taskData.duration === duration}
+                          />
+                          <label
+                            htmlFor={`duration-preset-${duration}`}
+                            className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                          >
+                            <span>{`${duration} day${
+                              duration > 1 ? 's' : ''
+                            }`}</span>
+                          </label>
+                        </span>
+                      )
+                    })}
                   </div>
-                  <div className='border-b pb-4'>
-                    <label
-                      htmlFor='complexityScore'
-                      className='flex gap-2 items-center cursor-pointer max-w-xs'
-                      data-tooltip-id='complexityScoreTip'
-                      data-tooltip-content={t('expected_complexity_level')}
+                  <div className='flex flex-col gap-2 text-gray-400'>
+                    <button
+                      type='button'
+                      className='py-1 px-2 border font-normal text-sm w-fit border-gray-200 rounded-lg'
+                      onClick={() => setShowCustomDuration(!showCustomDuration)}
                     >
-                      <ReactTooltip id='complexityScoreTip' />
-                      <span className='block'>
-                        <ComplexityScore />
-                      </span>
-                      <span className='block text-gray-700'>
-                        {t('complexity_score')}
-                      </span>
-                    </label>
-                    <div className='flex gap-3 py-4 gap-y-4 py-4 flex-wrap'>
-                      {taskComplexities.slice(0, 4).map(([key, value]) => {
-                        return (
-                          <span key={value}>
-                            <input
-                              type='radio'
-                              id={value}
-                              value={parseInt(key)}
-                              name='complexityScore'
-                              className='hidden peer'
-                              onChange={handleChange}
-                              checked={
-                                taskData.complexityScore === parseInt(key)
-                              }
-                            />
-                            <label
-                              htmlFor={value}
-                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
-                            >
-                              <span>{value.toUpperCase()}</span>
-                            </label>
-                          </span>
-                        )
-                      })}
-                    </div>
+                      Custom
+                    </button>
+                    {showCustomDuration && (
+                      <input
+                        type='number'
+                        id='customDuration'
+                        name='customDuration'
+                        min='1'
+                        onKeyDown={preventInvalidChar}
+                        value={taskData.duration}
+                        onChange={(ev: any) =>
+                          setTaskData((prev) => ({
+                            ...prev,
+                            duration: ev.target.value
+                          }))
+                        }
+                        className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
+                      />
+                    )}
                   </div>
                 </div>
-                <div className='mt-3'>
+                <div className='mt-4'>
+                  <label
+                    htmlFor='reputationLevel'
+                    className='flex gap-2 items-center cursor-pointer max-w-xs'
+                    data-tooltip-id='reputationTip'
+                  >
+                    <ReactTooltip
+                      place='top'
+                      id='reputationTip'
+                      className='max-w-xs'
+                    >
+                      <div>{t('expected_reputation')}</div>
+                    </ReactTooltip>
+                    <span className='block'>
+                      <Reputation />
+                    </span>
+                    <span className='block text-gray-700'>
+                      {t('reputation')}
+                    </span>
+                  </label>
+
+                  <div className='flex gap-x-3 gap-y-4 mt-3 flex-wrap'>
+                    {taskReputation.map(([key, value]) => {
+                      return (
+                        <span key={`task-reputation${key}`}>
+                          <input
+                            type='radio'
+                            id={`task-reputation${key}`}
+                            value={parseInt(key)}
+                            name='reputationLevel'
+                            className='hidden peer'
+                            onChange={handleChange}
+                            checked={taskData.reputationLevel === parseInt(key)}
+                          />
+                          <label
+                            htmlFor={`task-reputation${key}`}
+                            className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                          >
+                            <span>{value.toUpperCase()}</span>
+                          </label>
+                        </span>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className='mt-4'>
                   <TaskTagInput
                     tags={taskData.taskTags}
                     updateTags={(tags) => {
@@ -482,36 +436,76 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
+              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
+                <span className='block text-xl font-medium'>
+                  {t('communication_and_onboarding')}
+                </span>
+                <div className='block text-base font-normal text-gray-600 mt-4'>
+                  <span>{t('provide_instructions_for_contributors')}</span>
+                  <span className='text-sm text-gray-500'>
+                    {t('contribution_information_hint')}
+                  </span>
+                  <span>{t('for_contributor')} </span>
+                </div>
+                <div className='mt-3'>
+                  <span className='block mb-2'>
+                    {t('enter_slack_channel_link')}
+                  </span>
+                  <div className='w-full px-4 py-2 border rounded-md flex items-center mt-2'>
+                    <input type='text' className='w-full focus:outline-none' />
+                  </div>
+                </div>
+              </section>
               <section className='py-4'>
                 <span className='block text-xl font-medium'>
-                  {t('task_reward')}
+                  {t('payment')}
                 </span>
                 <div className='mt-4'>
                   <label
-                    htmlFor='reward_token'
-                    className='mb-2 mr-2 text-grey-900 opacity-80'
+                    htmlFor='complexityScore'
+                    className='flex gap-2 items-center cursor-pointer max-w-xs'
+                    data-tooltip-id='complexityScoreTip'
+                    data-tooltip-content={t('expected_complexity_level')}
                   >
-                    {t('token')}:
+                    <ReactTooltip id='complexityScoreTip' />
+                    <span className='block'>
+                      <ComplexityScore />
+                    </span>
+                    <span className='block text-gray-700'>
+                      {t('complexity_score')}
+                    </span>
                   </label>
-                  {tokenInfo?.symbol}
+                  <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
+                    {taskComplexities.slice(0, 4).map(([key, value]) => {
+                      return (
+                        <span key={value}>
+                          <input
+                            type='radio'
+                            id={value}
+                            value={parseInt(key)}
+                            name='complexityScore'
+                            className='hidden peer'
+                            onChange={handleChange}
+                            checked={taskData.complexityScore === parseInt(key)}
+                          />
+                          <label
+                            htmlFor={value}
+                            className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                          >
+                            <span>{value.toUpperCase()}</span>
+                          </label>
+                        </span>
+                      )
+                    })}
+                  </div>
                 </div>
-                <div className='mt-4'>
-                  <label
-                    htmlFor='reward_amount'
-                    className='mb-2 mr-2 text-grey-900 opacity-80'
-                  >
-                    {t('amount')}:
-                  </label>
-                  {rewardAmountValue}
+                <div className='mt-8'>
+                  <span className='mb-2 mr-2 text-grey-900 opacity-80'>
+                    {t('total')}:
+                  </span>
+                  {rewardAmountValue} {tokenInfo?.symbol}
                 </div>
               </section>
-              <div
-                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
-                  status.error ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                {status.text}
-              </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6 border-t pt-4'>
               {isApprover && (
