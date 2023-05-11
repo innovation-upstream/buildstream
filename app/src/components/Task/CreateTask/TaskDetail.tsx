@@ -18,6 +18,7 @@ import {
 import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import React, { useCallback, useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { StyledScrollableContainer } from './styled'
@@ -26,7 +27,6 @@ import { ITaskDetail } from './types'
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
 const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
-  const [status, setStatus] = useState({ text: '', error: false })
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
   const { account, library } = useWeb3()
@@ -48,14 +48,14 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
 
   const publishTask = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     const treasuryBalance = task?.organization?.treasury?.tokens?.find(
       (t) => t.token === tokenInfo?.address
     )
     if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '⚠️' })
       return
     }
     setProcessing(true)
@@ -70,13 +70,14 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     } catch (e) {
       setProcessing(false)
       console.error('ERROR===', e)
+      toast.error(t('error_opening_task'), { icon: '❌' })
     }
     close()
   }
 
   const requestAssignment = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     setProcessing(true)
@@ -87,13 +88,14 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     } catch (e) {
       setProcessing(false)
       console.error('ERROR===', e)
+      toast.error(t('error_requesting_assignment'), { icon: '❌' })
     }
     close()
   }
 
   const archiveCurrentTask = async () => {
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
     setProcessArchive(true)
@@ -104,6 +106,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     } catch (e) {
       setProcessArchive(false)
       console.error(e)
+      toast.error(t('error_archiving_task'), { icon: '❌' })
     }
     close()
   }
@@ -124,6 +127,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
 
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
+      <Toaster position='bottom-left' />
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[100vh] md:h-[95vh] px-0 md:px-2 absolute right-0 top-0 rounded-none md:rounded-2xl md:my-5 overflow-hidden'>
           <div className='md:px-6 w-full px-0 md:px-3'>
@@ -241,13 +245,6 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                   </li>
                 </ul>
               </section>
-              <div
-                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
-                  status.error ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                {status.text}
-              </div>
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>

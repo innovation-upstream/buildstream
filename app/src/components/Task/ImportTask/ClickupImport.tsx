@@ -1,39 +1,39 @@
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import { useWeb3 } from 'hooks'
-import { useTranslation } from 'next-i18next'
-import React, { useEffect, useRef, useState } from 'react'
-import { ISpaces, TImport } from './types'
-import Badge from 'SVGs/Badge'
 import ComplexityScore from 'SVGs/ComplexityScore'
 import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
+import AutoComplete from 'components/AutoComplete/AutoComplete'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import TaskTagInput from '../CreateTask/TaskTagInput'
-import { StyledScrollableContainer } from '../CreateTask/styled'
-import {
-  ComplexityScoreMap,
-  TaskReputationMap,
-  TaskReputation,
-  ComplexityScore as ComplexityScores
-} from 'hooks/task/types'
+import { getCookie } from 'cookies-next'
+import { BigNumber, ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
 import {
   createNewTask,
   getRewardMultiplier,
   openTask
 } from 'hooks/task/functions'
-import { TaskDurationCalc } from 'utils/task_duration'
-import { getCookie } from 'cookies-next'
-import AutoComplete from 'components/AutoComplete/AutoComplete'
+import {
+  ComplexityScoreMap,
+  ComplexityScore as ComplexityScores,
+  TaskReputation,
+  TaskReputationMap
+} from 'hooks/task/types'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import {
   TOKEN_KEY,
+  fetchSpaces,
   fetchTasks,
-  fetchToken,
-  fetchSpaces
+  fetchToken
 } from 'integrations/clickup/api'
-import 'react-tooltip/dist/react-tooltip.css'
+import { useTranslation } from 'next-i18next'
+import React, { useEffect, useRef, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { BigNumber, ethers } from 'ethers'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import 'react-tooltip/dist/react-tooltip.css'
+import { TaskDurationCalc } from 'utils/task_duration'
+import TaskTagInput from '../CreateTask/TaskTagInput'
+import { StyledScrollableContainer } from '../CreateTask/styled'
+import { ISpaces, TImport } from './types'
 
 const initialTaskData = {
   title: '',
@@ -103,7 +103,7 @@ const ClickupImport: React.FC<TImport> = ({
       return
     }
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
 
@@ -117,16 +117,17 @@ const ClickupImport: React.FC<TImport> = ({
       (t) => t.token === tokenInfo?.address
     )
     if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
       return
     }
 
     if (taskDuration <= 0) {
-      setStatus({ text: t('wrong_duration_input'), error: true })
+      toast.error(t('wrong_duration_input'), { icon: '❌' })
       return
     }
+
     if (taskData.taskTags.length < 1) {
-      setStatus({ text: t('task_tags_not_add'), error: true })
+      toast.error(t('task_tags_not_add'), { icon: '⚠️' })
       return
     }
 
@@ -157,7 +158,7 @@ const ClickupImport: React.FC<TImport> = ({
         )
       onCreated?.(taskId)
     } catch (error) {
-      setStatus({ text: t('task_not_created'), error: true })
+      toast.error(t('task_not_created'), { icon: '❌' })
       console.error(error)
     } finally {
       setCreating(false)
@@ -238,6 +239,7 @@ const ClickupImport: React.FC<TImport> = ({
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
+      <Toaster position='bottom-left' />
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[95vh] px-2 py-5 absolute right-0 top-0 rounded-xl my-5 overflow-hidden'>
           <div className='px-6 w-full'>

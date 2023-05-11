@@ -26,6 +26,7 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 import { ICreateTask } from './types'
 import { BigNumber, ethers } from 'ethers'
 import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import toast, { Toaster } from 'react-hot-toast'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 
 const initialTaskData = {
@@ -92,7 +93,7 @@ const CreateTask: React.FC<ICreateTask> = ({
       return
     }
     if (!account) {
-      setStatus({ text: t('wallet_not_connected'), error: true })
+      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
 
@@ -106,19 +107,14 @@ const CreateTask: React.FC<ICreateTask> = ({
       (t) => t.token === tokenInfo?.address
     )
     if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
       return
     }
 
-    if (taskDuration <= 0 || !taskData.title || !taskData.description) {
-      setStatus({ text: t('invalid_input'), error: true })
-      return
-    }
     if (taskData.taskTags.length < 1) {
-      setStatus({ text: t('task_tags_not_add'), error: true })
+      toast.error(t('task_tags_not_add'), { icon: '⚠️' })
       return
     }
-    setStatus({ text: '', error: false })
 
     if (publish) setPublishing(true)
     else setCreating(true)
@@ -146,7 +142,7 @@ const CreateTask: React.FC<ICreateTask> = ({
         )
       onCreated?.(taskId)
     } catch (error) {
-      setStatus({ text: t('task_not_created'), error: true })
+      toast.error(t('task_not_created'), { icon: '❌' })
       console.error(error)
     } finally {
       setCreating(false)
@@ -187,6 +183,7 @@ const CreateTask: React.FC<ICreateTask> = ({
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
+      <Toaster position='bottom-left' />
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[95vh] px-2 py-5 absolute right-0 top-0 rounded-xl my-5 overflow-hidden'>
           <div className='px-6 w-full'>
@@ -457,13 +454,6 @@ const CreateTask: React.FC<ICreateTask> = ({
                   {rewardAmountValue}
                 </div>
               </section>
-              <div
-                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
-                  status.error ? 'text-red-500' : 'text-green-500'
-                }`}
-              >
-                {status.text}
-              </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex flex-col md:flex-row items-center gap-4 flex-0 pb-10 px-6'>
               {isApprover && (
