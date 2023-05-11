@@ -33,7 +33,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
       (t) => t.token === tokenInfo?.address
     )
     if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
       return
     }
     setProcessing(true)

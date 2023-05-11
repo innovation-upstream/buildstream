@@ -18,10 +18,10 @@ import {
 import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import React, { useCallback, useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { StyledScrollableContainer } from './styled'
-import toast, { Toaster } from 'react-hot-toast'
 import { ITaskDetail } from './types'
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
@@ -55,7 +55,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
       (t) => t.token === tokenInfo?.address
     )
     if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      toast.error(t('insufficient_treasury_balance'), { icon: '⚠️' })
       return
     }
     setProcessing(true)

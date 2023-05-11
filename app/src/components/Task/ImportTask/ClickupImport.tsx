@@ -1,40 +1,40 @@
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import { useWeb3 } from 'hooks'
-import { useTranslation } from 'next-i18next'
-import React, { useEffect, useRef, useState } from 'react'
-import { ISpaces, TImport } from './types'
-import Badge from 'SVGs/Badge'
 import ComplexityScore from 'SVGs/ComplexityScore'
 import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
+import AutoComplete from 'components/AutoComplete/AutoComplete'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import TaskTagInput from '../CreateTask/TaskTagInput'
-import { StyledScrollableContainer } from '../CreateTask/styled'
-import {
-  ComplexityScoreMap,
-  TaskReputationMap,
-  TaskReputation,
-  ComplexityScore as ComplexityScores
-} from 'hooks/task/types'
+import { getCookie } from 'cookies-next'
+import { BigNumber, ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
 import {
   createNewTask,
   getRewardMultiplier,
   openTask
 } from 'hooks/task/functions'
-import { TaskDurationCalc } from 'utils/task_duration'
-import { getCookie } from 'cookies-next'
-import AutoComplete from 'components/AutoComplete/AutoComplete'
-import toast, { Toaster } from 'react-hot-toast'
+import {
+  ComplexityScoreMap,
+  ComplexityScore as ComplexityScores,
+  TaskReputation,
+  TaskReputationMap
+} from 'hooks/task/types'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import {
   TOKEN_KEY,
+  fetchSpaces,
   fetchTasks,
-  fetchToken,
-  fetchSpaces
+  fetchToken
 } from 'integrations/clickup/api'
-import 'react-tooltip/dist/react-tooltip.css'
+import { useTranslation } from 'next-i18next'
+import React, { useEffect, useRef, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import { BigNumber, ethers } from 'ethers'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import 'react-tooltip/dist/react-tooltip.css'
+import { TaskDurationCalc } from 'utils/task_duration'
+import TaskTagInput from '../CreateTask/TaskTagInput'
+import { StyledScrollableContainer } from '../CreateTask/styled'
+import { ISpaces, TImport } from './types'
 
 const initialTaskData = {
   title: '',
