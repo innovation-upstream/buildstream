@@ -1,3 +1,11 @@
+import Back from 'SVGs/Back'
+import Administrators from 'components/Organization/Settings/Administrators'
+import MainInformation from 'components/Organization/Settings/MainInformation'
+import Reward from 'components/Organization/Settings/Reward'
+import TabControl, { Tab } from 'components/Organization/Settings/TabControl'
+import TaskManager from 'components/Organization/Settings/TaskManager'
+import TreasuryHistory from 'components/Organization/Settings/TreasuryHistory'
+import Wallet from 'components/Organization/Settings/Wallet'
 import {
   Action,
   Deposit,
@@ -13,21 +21,13 @@ import type {
   GetServerSidePropsContext,
   NextPage
 } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
-import TabControl, { Tab } from 'components/Organization/Settings/TabControl'
-import MainInformation from 'components/Organization/Settings/MainInformation'
-import TreasuryHistory from 'components/Organization/Settings/TreasuryHistory'
-import Wallet from 'components/Organization/Settings/Wallet'
-import Reward from 'components/Organization/Settings/Reward'
-import Administrators from 'components/Organization/Settings/Administrators'
-import TaskManager from 'components/Organization/Settings/TaskManager'
-import Link from 'next/link'
-import Back from 'SVGs/Back'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -51,7 +51,8 @@ export const getServerSideProps: GetServerSideProps =
           orderDirection: 'desc',
           where: {
             orgId: orgId as any,
-            actionType: 0
+            actionType: 0,
+            executed: true
           }
         }
       })

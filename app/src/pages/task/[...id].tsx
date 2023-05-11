@@ -1,33 +1,27 @@
-import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
+import Back from 'SVGs/Back'
+import ShareTask from 'components/Task/ShareTask'
+import TaskActions from 'components/Task/TaskActions/TaskActions'
 import TaskCard from 'components/Task/TaskCard'
+import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
+import ClosedCard from 'components/Task/TaskPage/ClosedCard'
+import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
+import SolutionTime from 'components/Task/TaskPage/SolutionTime'
+import SubmitCard from 'components/Task/TaskPage/SubmitCard'
 import TaskStatusCard from 'components/Task/TaskPage/TaskStatusCard'
 import { BigNumber } from 'ethers'
+import { GetTaskDocument, GetTasksDocument, Task } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetTaskQuery, usePolling, useWeb3 } from 'hooks'
 import { TaskStatus } from 'hooks/task/types'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import type { GetServerSideProps, NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
-import Back from 'SVGs/Back'
 import { Converter } from 'utils/converter'
-import {
-  GetTaskDocument,
-  GetTasksDocument,
-  GetTaskSnapshotsDocument,
-  Task,
-  TaskSnapshot
-} from 'graphclient'
-import { useTranslation } from 'next-i18next'
-import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
-import ClosedCard from 'components/Task/TaskPage/ClosedCard'
-import SubmitCard from 'components/Task/TaskPage/SubmitCard'
-import SolutionTime from 'components/Task/TaskPage/SolutionTime'
-import { useRouter } from 'next/router'
-import { fetchClickupTask } from 'integrations/clickup/api'
-import TaskActions from 'components/Task/TaskActions/TaskActions'
-import ShareTask from 'components/Task/ShareTask'
 
 type AssigneeData = {
   tags: string[]
@@ -43,16 +37,9 @@ type AssigneeData = {
 
 interface PageProps {
   task: Task
-  snapshots: TaskSnapshot[]
   assignmentRequests?: AssigneeData[]
   assigneeData?: AssigneeData
 }
-
-const defaultCoverLetter = `
-Looking for an experienced web designer and WordPress developer
-for the creation of the web presence of a new start-up from scratch.
-The website  needs to be integrated into an overall.
-`
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -87,7 +74,6 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
     )
   const assigneeInfo = {
     address: assignee,
-    coverLetter: defaultCoverLetter,
     tags: Array.from(new Set(filteredTasks.map((t) => t.taskTags).flat())),
     tasks: filteredTasks
       .map((t) => ({
@@ -122,17 +108,6 @@ export const getServerSideProps: GetServerSideProps =
       }
     }
 
-    const { data: snapshots } = await client.query({
-      query: GetTaskSnapshotsDocument,
-      variables: {
-        orderBy: 'timestamp',
-        orderDirection: 'desc',
-        where: {
-          taskId: taskId as any
-        }
-      }
-    })
-
     let assignmentRequests = null
     const tags = (data.task?.taskTags || [])?.map((tag) => [tag])
 
@@ -165,7 +140,6 @@ export const getServerSideProps: GetServerSideProps =
           title: clickupTask?.name || data.task.title,
           description: clickupTask?.description || data.task.description
         },
-        snapshots: snapshots.taskSnapshots,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
         assigneeData,
@@ -181,7 +155,6 @@ export const getServerSideProps: GetServerSideProps =
 
 const TaskPage: NextPage<PageProps> = ({
   task,
-  snapshots,
   assigneeData,
   assignmentRequests
 }) => {
@@ -200,28 +173,33 @@ const TaskPage: NextPage<PageProps> = ({
 
   usePolling(startPolling, stopPolling)
 
-  useEffect(() => {
-    if (!data?.task) return
-    const retrievedTask = Converter.TaskFromQuery(data.task as any)
-
+  const setupTask = async (task: any) => {
+    const retrievedTask = Converter.TaskFromQuery(task)
     if (!data?.task?.externalId) {
       setCurrentTask(retrievedTask)
       return
     }
+    try {
+      const clickupTask = await fetchClickupTask(
+        data.task.externalId,
+        data.task.orgId.id
+      )
 
-    fetchClickupTask(data.task.externalId, data.task.orgId.id)
-      .then((clickupTask) => {
-        if (clickupTask) {
-          setCurrentTask({
-            ...retrievedTask,
-            title: clickupTask?.name || retrievedTask.title,
-            description: clickupTask?.description || retrievedTask.description
-          })
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+      if (clickupTask) {
+        setCurrentTask({
+          ...retrievedTask,
+          title: clickupTask?.name || retrievedTask.title,
+          description: clickupTask?.description || retrievedTask.description
+        })
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    if (!data?.task) return
+    setupTask(data.task)
   }, [data])
 
   if (!currentTask) {
@@ -276,20 +254,10 @@ const TaskPage: NextPage<PageProps> = ({
               taskRequirementLocation='footer'
               onShare={onShare}
             />
-            {(task?.assignmentRequest?.length === undefined ||
-              (task?.assignmentRequest?.length === 0 &&
-                parseInt(task.status.toString()) < 2)) && (
-              <TaskActions task={task} />
-            )}
+            <TaskActions task={currentTask} />
           </>
           <div className='mt-7 md:hidden'>
-            <TaskStatusCard
-              taskId={currentTask.id}
-              taskSnapshots={snapshots?.map((t) =>
-                Converter.TaskSnapshotFromQuery(t as any)
-              )}
-              organization={currentTask.organization}
-            />
+            <TaskStatusCard task={currentTask} />
           </div>
           {currentTask.status === TaskStatus.OPEN &&
             !!currentTask.assignmentRequests.length && (
@@ -313,21 +281,19 @@ const TaskPage: NextPage<PageProps> = ({
                 </ul>
               </div>
             )}
-          {currentTask.status > TaskStatus.OPEN &&
-            !isAssignee &&
-            !!assigneeData && (
-              <div className='mt-7'>
-                <p className='font-semibold text-[32px] mb-6'>
-                  {t('responsible_contributor')}
-                </p>
-                <AssigneeCard
-                  taskId={Number(task.id)}
-                  isAssigned
-                  isApprover={isApprover}
-                  assignee={getAssignee(assigneeData)}
-                />
-              </div>
-            )}
+          {currentTask.status > TaskStatus.OPEN && !!assigneeData && (
+            <div className='mt-7'>
+              <p className='font-semibold text-[32px] mb-6'>
+                {t('responsible_contributor')}
+              </p>
+              <AssigneeCard
+                taskId={Number(task.id)}
+                isAssigned
+                isApprover={isApprover}
+                assignee={getAssignee(assigneeData)}
+              />
+            </div>
+          )}
           <SolutionHistory
             task={currentTask}
             isApprover={
@@ -343,13 +309,7 @@ const TaskPage: NextPage<PageProps> = ({
           {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}
         </div>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>
-          <TaskStatusCard
-            taskId={currentTask.id}
-            taskSnapshots={snapshots?.map((t) =>
-              Converter.TaskSnapshotFromQuery(t as any)
-            )}
-            organization={currentTask.organization}
-          />
+          <TaskStatusCard task={currentTask} />
         </div>
       </div>
     </div>

@@ -2,17 +2,6 @@ import OrgContractInterface from 'contracts/Org.json'
 import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
 
-export const executeAction = async (actionId: number, provider?: any) => {
-  const contract = getContract(
-    OrgContractInterface.address,
-    OrgContractInterface.abi,
-    provider
-  )
-
-  const tx = await contract.executeAction(actionId)
-  await tx.wait()
-}
-
 export const createOrganization = async (
   name: string,
   description: string,

@@ -46,7 +46,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
       orderBy: 'taskId',
       orderDirection: 'desc',
       where: {
-        status_lt: TaskStatus.CLOSED
+        status: TaskStatus.OPEN
       }
     }
   ])

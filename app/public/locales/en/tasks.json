@@ -95,5 +95,10 @@
   "error_requesting_assignment": "Error Requesting Assignment",
   "task_duration_error": "Task Duration must be greater than 0",
   "error_archiving_task": "Error Archiving Task",
-  "error_submitting_task": "Error Submitting Task"
+  "error_submitting_task": "Error Submitting Task",
+  "publish_task": "Publish Task",
+  "save_draft": "Save Draft",
+  "task_reward": "Task Reward",
+  "token": "Token",
+  "amount": "Amount"
 }

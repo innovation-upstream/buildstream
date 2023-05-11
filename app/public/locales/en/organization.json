@@ -69,5 +69,6 @@
   "onboarding_sub_note": "Note: Input should be in Markdown format.",
   "view_edit_onboarding": "View/Edit Onboarding Instructions",
   "notification": "Notification",
-  "error_creating_organization": "Error Creating Organization"
+  "error_creating_organization": "Error Creating Organization",
+  "pending_actions": "Pending Actions"
 }

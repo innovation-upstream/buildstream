@@ -1,10 +1,16 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { useGetTaskQuery, useGetTasksQuery, useWeb3 } from 'hooks'
-import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
+import {
+  archiveTask,
+  assignToSelf,
+  getRewardAmount,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import Bag from 'SVGs/Bag'
@@ -17,6 +23,7 @@ import { TaskDurationCalc } from 'utils/task_duration'
 import { ITaskDetail } from './types'
 import { StyledScrollableContainer } from './styled'
 import toast, { Toaster } from 'react-hot-toast'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 
 const taskComplexities = Object.entries(ComplexityScoreMap)
 
@@ -26,24 +33,40 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const { account, library } = useWeb3()
   const taskStatus = Object.entries(TaskStatusMap)[task?.status ?? 0]?.[1]
   const { t } = useTranslation('tasks')
-  const reward = ethers.utils
-    .formatEther(task.rewardAmount.toString())
-    .toString()
+  const { tokenInfo } = useTokenInfo()
+  const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
+  const [rewardValue, setRewardValue] = useState('0')
 
-  const { data } = useGetTaskQuery({
-    variables: {
-      id: task.id.toString()
-    }
-  })
+  const getReward = useCallback(async () => {
+    const reward = await getRewardAmount(task, library?.getSigner())
+    setRewardAmount(reward)
+    setRewardValue(ethers.utils.formatEther(reward.toString()).toString())
+  }, [task.taskTags.toString(), library])
+
+  useEffect(() => {
+    getReward()
+  }, [getReward])
 
   const openCreatedTask = async () => {
     if (!account) {
       toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
+    const treasuryBalance = task?.organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
     setProcessing(true)
     try {
-      await openTask(task.id, task.rewardToken, library.getSigner())
+      await openTask(
+        task.id,
+        task.rewardToken,
+        false, //disableSelfAssign
+        library.getSigner()
+      )
       setProcessing(false)
     } catch (e) {
       setProcessing(false)
@@ -108,6 +131,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
       body.style.overflow = 'auto'
     }
   }, [])
+
+  const isApprover = account && task?.organization?.approvers?.includes(account)
 
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -204,7 +229,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                         <TokenGeneric width={10} />
                       </span>
                       <span className='block font-bold text-sm md:text-base'>
-                        {reward} ETH
+                        {rewardValue} {tokenInfo?.symbol}
                       </span>
                     </div>
                   </li>
@@ -232,23 +257,22 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-                {task.assignmentRequests.length === 0 &&
-                  parseInt(task.status.toString()) !== 2 && (
-                    <>
-                      {!processing ? (
-                        <button
-                          className='btn-primary min-w-full md:min-w-[30%]'
-                          disabled={processing}
-                          onClick={taskAction}
-                        >
-                          {buttonText}
-                        </button>
-                      ) : (
-                        <Spinner width={30} />
-                      )}
-                    </>
-                  )}
-                {taskStatus === 'open' && (
+                {task.assignmentRequests.length === 0 && (
+                  <>
+                    {!processing ? (
+                      <button
+                        className='btn-primary min-w-full md:min-w-[30%]'
+                        disabled={processing}
+                        onClick={taskAction}
+                      >
+                        {buttonText}
+                      </button>
+                    ) : (
+                      <Spinner width={30} />
+                    )}
+                  </>
+                )}
+                {isApprover && taskStatus === 'open' && (
                   <button
                     className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
                     onClick={archiveCurrentTask}

@@ -122,7 +122,8 @@ export class Converter {
       approvedBy: task.approvedBy || [],
       assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || [],
-      comment: task.comment || ''
+      comment: task.comment || '',
+      discussion: task.discussion || '',
     }
   }
 

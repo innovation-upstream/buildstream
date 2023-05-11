@@ -1,4 +1,4 @@
-import { Organization } from 'hooks/organization/types'
+import { Organization } from "hooks/organization/types"
 
 export interface TImport {
   organization: Organization

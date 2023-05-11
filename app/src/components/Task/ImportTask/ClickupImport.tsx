@@ -1,7 +1,7 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import { useWeb3 } from 'hooks'
 import { useTranslation } from 'next-i18next'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ISpaces, TImport } from './types'
 import Badge from 'SVGs/Badge'
 import ComplexityScore from 'SVGs/ComplexityScore'
@@ -10,8 +10,17 @@ import Reputation from 'SVGs/Reputation'
 import Spinner from 'components/Spinner/Spinner'
 import TaskTagInput from '../CreateTask/TaskTagInput'
 import { StyledScrollableContainer } from '../CreateTask/styled'
-import { ComplexityScoreMap } from 'hooks/task/types'
-import { createNewTask } from 'hooks/task/functions'
+import {
+  ComplexityScoreMap,
+  TaskReputationMap,
+  TaskReputation,
+  ComplexityScore as ComplexityScores
+} from 'hooks/task/types'
+import {
+  createNewTask,
+  getRewardMultiplier,
+  openTask
+} from 'hooks/task/functions'
 import { TaskDurationCalc } from 'utils/task_duration'
 import { getCookie } from 'cookies-next'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
@@ -24,21 +33,25 @@ import {
 } from 'integrations/clickup/api'
 import 'react-tooltip/dist/react-tooltip.css'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import { BigNumber, ethers } from 'ethers'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 
 const initialTaskData = {
   title: '',
   description: '',
   taskTags: [] as number[],
   complexityScore: 0,
-  reputationLevel: 0,
-  duration: 1,
-  shouldOpenTask: false
+  reputationLevel: TaskReputation.ENTRY,
+  duration: 1
 }
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
-const taskComplexities = Object.entries(ComplexityScoreMap)
+const taskComplexities = Object.entries(ComplexityScoreMap).filter(
+  ([key]) =>
+    parseInt(key) !== ComplexityScores.BEGINNER &&
+    parseInt(key) != ComplexityScores.ADVANCED
+)
+const taskReputation = Object.entries(TaskReputationMap)
 
 const ClickupImport: React.FC<TImport> = ({
   organization,
@@ -48,13 +61,18 @@ const ClickupImport: React.FC<TImport> = ({
   onCreated
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
-  const [processing, setProcessing] = useState(false)
+  const [status, setStatus] = useState({ text: '', error: false })
+  const [creating, setCreating] = useState(false)
+  const [publishing, setPublishing] = useState(false)
   const [spaces, setSpaces] = useState<any[]>([])
   const [tasks, setTasks] = useState<any[]>([])
   const { t } = useTranslation('tasks')
   const { account, library } = useWeb3()
+  const formRef = useRef<HTMLFormElement>(null)
   const preventInvalidChar = (ev: any) =>
     ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
+  const { tokenInfo } = useTokenInfo()
+  const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
 
   let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
   const { tokenInfos } = useTokenInfos(tokenList)
@@ -77,7 +95,7 @@ const ClickupImport: React.FC<TImport> = ({
 
     if (
       ev.target.type === 'number' ||
-      ['orgId', 'complexityScore'].includes(targetName)
+      ['orgId', 'complexityScore', 'reputationLevel'].includes(targetName)
     ) {
       if (targetValue) {
         targetValue = Number(targetValue)
@@ -85,10 +103,17 @@ const ClickupImport: React.FC<TImport> = ({
     }
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
+
+    if (targetName === 'complexityScore')
+      getRewardAmount(Number(targetValue), taskData.taskTags)
   }
 
-  const createTask = async (ev: any) => {
-    ev.preventDefault()
+  const createTask = async (publish = false) => {
+    const form = formRef.current
+    if (!form?.checkValidity()) {
+      form?.reportValidity()
+      return
+    }
     if (!account) {
       toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
@@ -100,8 +125,16 @@ const ClickupImport: React.FC<TImport> = ({
       hours: 0
     })
 
-    if (parseFloat(checkBalance()) < 0) {
+    const treasuryBalance = organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
       toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
+      return
+    }
+
+    if (taskDuration <= 0) {
+      toast.error(t('wrong_duration_input'), { icon: '❌' })
       return
     }
 
@@ -110,7 +143,9 @@ const ClickupImport: React.FC<TImport> = ({
       return
     }
 
-    setProcessing(true)
+    setStatus({ text: '', error: false })
+    if (publish) setPublishing(true)
+    else setCreating(true)
 
     try {
       const taskId = await createNewTask(
@@ -122,17 +157,24 @@ const ClickupImport: React.FC<TImport> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
-          shouldOpenTask: taskData.shouldOpenTask
+          taskDuration
         },
         library.getSigner()
       )
-      setProcessing(false)
+      if (publish)
+        await openTask(
+          taskId,
+          ethers.constants.AddressZero,
+          false, // disableSelfAssign
+          library.getSigner()
+        )
       onCreated?.(taskId)
     } catch (error) {
-      setProcessing(false)
       toast.error(t('task_not_created'), { icon: '❌' })
       console.error(error)
+    } finally {
+      setCreating(false)
+      setPublishing(false)
     }
   }
 
@@ -174,8 +216,24 @@ const ClickupImport: React.FC<TImport> = ({
     }))
   }
 
+  const getRewardAmount = async (complexity: number, tags: number[]) => {
+    let amount = BigNumber.from(0)
+    try {
+      const multiplier = await getRewardMultiplier(
+        organization.id,
+        tags,
+        library.getSigner()
+      )
+      amount = multiplier.mul(complexity + 1)
+    } catch (error) {
+      console.error(error)
+    }
+    setRewardAmount(amount)
+  }
+
   useEffect(() => {
     getSpaces()
+    getRewardAmount(taskData.complexityScore, taskData.taskTags)
 
     const body = document.body
     body.style.overflow = 'hidden'
@@ -184,6 +242,12 @@ const ClickupImport: React.FC<TImport> = ({
       body.style.overflow = 'auto'
     }
   }, [])
+
+  const isApprover = account && organization?.approvers?.includes(account)
+  const rewardAmountValue = ethers.utils.formatUnits(
+    rewardAmount.toString(),
+    tokenInfo?.decimal
+  )
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -200,7 +264,11 @@ const ClickupImport: React.FC<TImport> = ({
               </button>
             </section>
           </div>
-          <form onSubmit={createTask} className=' h-full w-full flex flex-col'>
+          <form
+            ref={formRef}
+            onSubmit={(e) => e.preventDefault()}
+            className=' h-full w-full flex flex-col'
+          >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
@@ -253,7 +321,7 @@ const ClickupImport: React.FC<TImport> = ({
                   />
                 </div>
               </section>
-              <section className='py-4'>
+              <section className='pb-4 border border-t-0 border-r-0 border-l-0'>
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
@@ -290,7 +358,7 @@ const ClickupImport: React.FC<TImport> = ({
                   <div className=''>
                     <label
                       htmlFor='reputationLevel'
-                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='reputationTip'
                     >
                       <ReactTooltip
@@ -307,21 +375,31 @@ const ClickupImport: React.FC<TImport> = ({
                         {t('reputation')}
                       </span>
                     </label>
-                    <div className='w-full border p-2 rounded-md flex items-center'>
-                      <span className='block pr-2'>
-                        <Badge />
-                      </span>
-                      <input
-                        type='number'
-                        id='reputationLevel'
-                        name='reputationLevel'
-                        min='0'
-                        onKeyDown={preventInvalidChar}
-                        value={taskData.reputationLevel}
-                        onChange={handleChange}
-                        className='overflow-hidden focus:outline-none w-full'
-                        required
-                      />
+
+                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                      {taskReputation.map(([key, value]) => {
+                        return (
+                          <span key={`task-reputation${key}`}>
+                            <input
+                              type='radio'
+                              id={`task-reputation${key}`}
+                              value={parseInt(key)}
+                              name='reputationLevel'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={
+                                taskData.reputationLevel === parseInt(key)
+                              }
+                            />
+                            <label
+                              htmlFor={`task-reputation${key}`}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{value.toUpperCase()}</span>
+                            </label>
+                          </span>
+                        )
+                      })}
                     </div>
                   </div>
                   <div className=''>
@@ -369,24 +447,65 @@ const ClickupImport: React.FC<TImport> = ({
                 <div className='mt-3'>
                   <TaskTagInput
                     tags={taskData.taskTags}
-                    updateTags={(tags) =>
+                    updateTags={(tags) => {
                       setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
-                    }
+                      getRewardAmount(taskData.complexityScore, tags)
+                    }}
                   />
                 </div>
               </section>
+              <section className='py-4'>
+                <span className='block text-xl font-medium'>
+                  {t('task_reward')}
+                </span>
+                <div className='mt-4'>
+                  <label
+                    htmlFor='reward_token'
+                    className='mb-2 mr-2 text-grey-900 opacity-80'
+                  >
+                    {t('token')}:
+                  </label>
+                  {tokenInfo?.symbol}
+                </div>
+                <div className='mt-4'>
+                  <label
+                    htmlFor='reward_amount'
+                    className='mb-2 mr-2 text-grey-900 opacity-80'
+                  >
+                    {t('amount')}:
+                  </label>
+                  {rewardAmountValue}
+                </div>
+              </section>
+              <div
+                className={`w-full mx-auto leading-relaxed text-base mt-4 ${
+                  status.error ? 'text-red-500' : 'text-green-500'
+                }`}
+              >
+                {status.text}
+              </div>
             </StyledScrollableContainer>
             <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6 border-t pt-4'>
-              {!processing && (
+              {isApprover && (
                 <button
-                  className='btn-primary min-w-[30%]'
+                  className='btn-outline'
                   type='submit'
-                  disabled={processing}
+                  disabled={publishing || creating}
+                  name='publish_task'
+                  onClick={() => createTask(true)}
                 >
-                  {t('import_task')}
+                  {publishing ? <Spinner width={30} /> : t('publish_task')}
                 </button>
               )}
-              {processing && <Spinner width={30} />}
+              <button
+                className='btn-primary'
+                type='submit'
+                disabled={creating || publishing}
+                name='save_draft'
+                onClick={() => createTask()}
+              >
+                {creating ? <Spinner width={30} /> : t('save_draft')}
+              </button>
               <button
                 className='btn-outline px-8 border-gray-200 hover:border-gray-300'
                 onClick={close}

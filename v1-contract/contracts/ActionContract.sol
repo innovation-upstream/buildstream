@@ -31,6 +31,7 @@ library ActionLib {
         bool executed;
         address tokenAddress;
         ActionType actionType;
+        bool autoExecute;
     }
 }
 
@@ -104,7 +105,8 @@ contract ActionContract {
         uint256 value,
         address tokenAddress,
         ActionLib.ActionType actionType,
-        bytes memory data
+        bytes memory data,
+        bool autoExecute
     ) external orgExists(_orgId) onlySigner(_orgId) returns (uint256 actionId) {
         require(
             actionType == ActionLib.ActionType.WITHDRAWAL,
@@ -120,7 +122,8 @@ contract ActionContract {
             data: data,
             executed: false,
             tokenAddress: tokenAddress,
-            actionType: actionType
+            actionType: actionType,
+            autoExecute: autoExecute
         });
         actionCount += 1;
         orgActionCount[_orgId] += 1;
@@ -136,7 +139,8 @@ contract ActionContract {
         address targetAddress,
         ActionLib.ActionType actionType,
         bytes memory data,
-        uint256 value
+        uint256 value,
+        bool autoExecute
     ) external orgExists(_orgId) onlySigner(_orgId) returns (uint256 actionId) {
         require(
             actionType != ActionLib.ActionType.WITHDRAWAL,
@@ -152,7 +156,8 @@ contract ActionContract {
             data: data,
             executed: false,
             tokenAddress: address(0),
-            actionType: actionType
+            actionType: actionType,
+            autoExecute: autoExecute
         });
         actionCount += 1;
         orgActionCount[_orgId] += 1;
@@ -163,12 +168,9 @@ contract ActionContract {
 
     /// @dev Confirm an action.
     /// @param _actionId Id of action.
-    function confirmAction(uint256 _actionId)
-        external
-        actionExists(_actionId)
-        onlySigner(actions[_actionId].orgId)
-    {
-        require(!actions[_actionId].executed, "Does not exist");
+    function confirmAction(
+        uint256 _actionId
+    ) external actionExists(_actionId) onlySigner(actions[_actionId].orgId) {
         require(!actions[_actionId].executed, "Already executed");
         require(!confirmations[_actionId][msg.sender], "Already confirmed");
         confirmations[_actionId][msg.sender] = true;
@@ -178,12 +180,18 @@ contract ActionContract {
             msg.sender,
             _actionId
         );
+
+        if (actions[_actionId].autoExecute && isActionConfirmed(_actionId)) {
+            executeAction(_actionId);
+        }
     }
 
     /// @dev Returns list of action confirmers.
     /// @param _actionId action Id.
     /// @return confirmers list of confirmers.
-    function getConfirmers(uint256 _actionId)
+    function getConfirmers(
+        uint256 _actionId
+    )
         public
         view
         actionExists(_actionId)
@@ -205,12 +213,9 @@ contract ActionContract {
 
     /// @dev Get action.
     /// @param _actionId Id of action.
-    function getAction(uint256 _actionId)
-        external
-        view
-        actionExists(_actionId)
-        returns (ActionLib.Action memory)
-    {
+    function getAction(
+        uint256 _actionId
+    ) external view actionExists(_actionId) returns (ActionLib.Action memory) {
         return actions[_actionId];
     }
 
@@ -248,23 +253,17 @@ contract ActionContract {
 
     /// @dev Check if an action is executed.
     /// @param _actionId Id of action.
-    function isActionExecuted(uint256 _actionId)
-        external
-        view
-        actionExists(_actionId)
-        returns (bool)
-    {
+    function isActionExecuted(
+        uint256 _actionId
+    ) external view actionExists(_actionId) returns (bool) {
         return actions[_actionId].executed;
     }
 
     /// @dev Check if an action is confirmed.
     /// @param _actionId Id of action.
-    function isActionConfirmed(uint256 _actionId)
-        external
-        view
-        actionExists(_actionId)
-        returns (bool)
-    {
+    function isActionConfirmed(
+        uint256 _actionId
+    ) public view actionExists(_actionId) returns (bool) {
         return
             confirmationCount[_actionId] >=
             organization
@@ -272,12 +271,13 @@ contract ActionContract {
                 .requiredConfirmations;
     }
 
-    function executeAction(uint256 _actionId)
-        external
-        onlyOrgContract
-        actionExists(_actionId)
-    {
+    function executeAction(
+        uint256 _actionId
+    ) public onlySigner(actions[_actionId].orgId) actionExists(_actionId) {
+        require(!actions[_actionId].executed, "Already executed");
+        require(isActionConfirmed(_actionId), "Not confirmed");
         actions[_actionId].executed = true;
+        organization.executeAction(_actionId);
         emit ActionExecution(actions[_actionId].orgId, _actionId);
     }
 }

@@ -1,8 +1,13 @@
 import Spinner from 'components/Spinner/Spinner'
-import { Task } from 'graphclient'
 import { useWeb3 } from 'hooks'
-import { archiveTask, assignToSelf, openTask } from 'hooks/task/functions'
-import { TaskStatusMap } from 'hooks/task/types'
+import {
+  archiveTask,
+  assignToSelf,
+  getRewardAmount,
+  openTask
+} from 'hooks/task/functions'
+import { Task, TaskStatus } from 'hooks/task/types'
+import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -12,28 +17,40 @@ interface IProps {
 }
 
 const TaskActions: React.FC<IProps> = ({ task }) => {
-  const taskStatus = Object.entries(TaskStatusMap)[task?.status ?? 0]?.[1]
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
   const { account, library } = useWeb3()
-  const [tempTaskStatus, setTempTaskStatus] = useState(taskStatus)
   const { t } = useTranslation('tasks')
+  const { tokenInfo } = useTokenInfo()
 
-  const openCreatedTask = async () => {
+  const publishTask = async () => {
     if (!account) {
       toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
+    const rewardAmount = await getRewardAmount(task, library?.getSigner())
+    const treasuryBalance = task?.organization?.treasury?.tokens?.find(
+      (t) => t.token === tokenInfo?.address
+    )
+    if (rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setStatus({ text: t('insufficient_treasury_balance'), error: true })
+      return
+    }
     setProcessing(true)
     try {
-      await openTask(parseInt(task.id), task.rewardToken, library.getSigner())
+      await openTask(
+        task.id,
+        task.rewardToken,
+        false, //disableSelfAssign
+        library.getSigner()
+      )
       setProcessing(false)
-      setTempTaskStatus('open')
     } catch (e) {
       toast.error(t('error_opening_task'), { icon: '❌' })
       setProcessing(false)
       console.error('ERROR===', e)
     }
+    close()
   }
 
   const requestAssignment = async () => {
@@ -44,9 +61,9 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     setProcessing(true)
     try {
       setProcessing(true)
-      await assignToSelf(parseInt(task.id), library.getSigner())
+      await assignToSelf(task.id, library.getSigner())
       setProcessing(false)
-      setTempTaskStatus('assigned')
+      close()
     } catch (e) {
       toast.error(t('error_requesting_assignment'), { icon: '❌' })
       setProcessing(false)
@@ -61,9 +78,9 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
     setProcessArchive(true)
     try {
-      const tx = await archiveTask(parseInt(task.id), library.getSigner())
+      await archiveTask(task.id, library.getSigner())
       setProcessArchive(false)
-      if (tx) close()
+      close()
     } catch (e) {
       toast.error(t('error_archiving_task'), { icon: '❌' })
       setProcessArchive(false)
@@ -71,42 +88,42 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
   }
 
-  const taskAction = async () => {
-    if (tempTaskStatus === 'proposed') {
-      await openCreatedTask()
-    }
-    if (tempTaskStatus === 'open') {
-      await requestAssignment()
-    }
-    close()
-    return null
-  }
+  const isApprover = account && task.organization.approvers.includes(account)
 
-  const buttonText =
-    tempTaskStatus === 'proposed' ? t('open_task') : t('request_assignment')
+  if (task.status >= TaskStatus.ASSIGNED) return null
 
   return (
     <div
       className={`paper mt-4 ${
-        tempTaskStatus === 'assigned' ? 'hidden' : 'block'
+        task?.status === TaskStatus.ASSIGNED ? 'hidden' : 'block'
       }`}
     >
       <Toaster position='bottom-left' />
 
       <div className='flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0'>
-        {!processing ? (
+        {!processing && task.status === TaskStatus.PROPOSED && isApprover && (
           <button
             className='btn-primary min-w-full md:min-w-[30%]'
             disabled={processing}
-            onClick={taskAction}
+            onClick={publishTask}
           >
-            {buttonText}
+            {t('open_task')}
           </button>
-        ) : (
-          <Spinner width={30} />
         )}
-
-        {tempTaskStatus === 'open' && (
+        {!processing &&
+          task.status === TaskStatus.OPEN &&
+          account &&
+          !task.assignmentRequests.includes(account) && (
+            <button
+              className='btn-primary min-w-full md:min-w-[30%]'
+              disabled={processing}
+              onClick={requestAssignment}
+            >
+              {t('request_assignment')}
+            </button>
+          )}
+        {processing && <Spinner width={30} />}
+        {task?.status === TaskStatus.OPEN && isApprover && (
           <button
             className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
             onClick={archiveCurrentTask}

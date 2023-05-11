@@ -1,14 +1,15 @@
 import { useWeb3 } from 'hooks'
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getTokenInfo } from './functions'
 import { TokenInfo } from './types'
 
 const useTokenInfos = (tokenAddresses?: string[]) => {
   const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>()
   const { chainId = 80001, library } = useWeb3()
+  const tokenAddrStr = tokenAddresses?.toString()
 
-  const refetchTokenInfos = async () => {
+  const refetchTokenInfos = useCallback(async () => {
     if (!tokenAddresses) return
     const filteredInfoRequests = tokenAddresses?.filter((tokenAddress) =>
       ethers.utils.isAddress(tokenAddress)
@@ -20,11 +21,11 @@ const useTokenInfos = (tokenAddresses?: string[]) => {
       })
     )
     setTokenInfos(infos)
-  }
+  }, [tokenAddrStr, chainId, library])
 
   useEffect(() => {
     if (tokenAddresses) refetchTokenInfos()
-  }, [tokenAddresses?.toString()])
+  }, [refetchTokenInfos])
 
   return {
     tokenInfos,
