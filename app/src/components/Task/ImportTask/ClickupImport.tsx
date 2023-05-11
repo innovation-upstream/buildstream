@@ -1,4 +1,3 @@
-import ComplexityScore from 'SVGs/ComplexityScore'
 import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
@@ -461,22 +460,20 @@ const ClickupImport: React.FC<TImport> = ({
                   {t('payment')}
                 </span>
                 <div className='mt-4'>
-                  <label
-                    htmlFor='complexityScore'
-                    className='flex gap-2 items-center cursor-pointer max-w-xs'
+                  <ReactTooltip id='complexityScoreTip' />
+                  <div
                     data-tooltip-id='complexityScoreTip'
                     data-tooltip-content={t('expected_complexity_level')}
+                    className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'
                   >
-                    <ReactTooltip id='complexityScoreTip' />
-                    <span className='block'>
-                      <ComplexityScore />
-                    </span>
-                    <span className='block text-gray-700'>
-                      {t('complexity_score')}
-                    </span>
-                  </label>
-                  <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
                     {taskComplexities.slice(0, 4).map(([key, value]) => {
+                      const complexityReward = rewardAmount
+                        .mul(parseInt(key) + 1)
+                        .div(taskData.complexityScore + 1)
+                      const complexityRewardValue = ethers.utils.formatUnits(
+                        complexityReward.toString(),
+                        tokenInfo?.decimal
+                      )
                       return (
                         <span key={value}>
                           <input
@@ -492,7 +489,11 @@ const ClickupImport: React.FC<TImport> = ({
                             htmlFor={value}
                             className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
                           >
-                            <span>{value.toUpperCase()}</span>
+                            <span>
+                              {`${value.toUpperCase()}
+                              (${complexityRewardValue} ${tokenInfo?.symbol}
+                              )`}
+                            </span>
                           </label>
                         </span>
                       )
