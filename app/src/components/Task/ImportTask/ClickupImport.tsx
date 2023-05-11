@@ -51,6 +51,7 @@ const taskComplexities = Object.entries(ComplexityScoreMap).filter(
     parseInt(key) != ComplexityScores.ADVANCED
 )
 const taskReputation = Object.entries(TaskReputationMap)
+const durationPreset = [1, 2, 3]
 
 const ClickupImport: React.FC<TImport> = ({
   organization,
@@ -65,6 +66,7 @@ const ClickupImport: React.FC<TImport> = ({
   const [publishing, setPublishing] = useState(false)
   const [spaces, setSpaces] = useState<any[]>([])
   const [tasks, setTasks] = useState<any[]>([])
+  const [showCustomDuration, setShowCustomDuration] = useState(false)
   const { t } = useTranslation('tasks')
   const { account, library } = useWeb3()
   const formRef = useRef<HTMLFormElement>(null)
@@ -79,7 +81,9 @@ const ClickupImport: React.FC<TImport> = ({
 
     if (
       ev.target.type === 'number' ||
-      ['orgId', 'complexityScore', 'reputationLevel'].includes(targetName)
+      ['orgId', 'complexityScore', 'reputationLevel', 'duration'].includes(
+        targetName
+      )
     ) {
       if (targetValue) {
         targetValue = Number(targetValue)
@@ -309,11 +313,11 @@ const ClickupImport: React.FC<TImport> = ({
                 <span className='block text-xl font-medium'>
                   {t('general_task_settings')}
                 </span>
-                <div className='mt-3 flex flex-col gap-6'>
-                  <div className=''>
+                <div className='mt-3 flex flex-col gap-4'>
+                  <div className='border-b pb-4'>
                     <label
                       htmlFor='duration'
-                      className='flex gap-2 items-center mb-2 cursor-pointer max-w-xs'
+                      className='flex gap-2 items-center cursor-pointer max-w-xs'
                       data-tooltip-id='durationTip'
                       data-tooltip-content={t('expected_duration')}
                     >
@@ -325,21 +329,61 @@ const ClickupImport: React.FC<TImport> = ({
                         {t('set_duration')}
                       </span>
                     </label>
-                    <div className='w-full border p-2 rounded-md flex items-center'>
-                      <input
-                        type='number'
-                        id='duration'
-                        name='duration'
-                        min='1'
-                        onKeyDown={preventInvalidChar}
-                        value={taskData.duration}
-                        onChange={handleChange}
-                        className='overflow-hidden focus:outline-none w-full'
-                        required
-                      />
+                    <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
+                      {durationPreset.map((duration) => {
+                        return (
+                          <span key={`duration-preset-${duration}`}>
+                            <input
+                              type='radio'
+                              id={`duration-preset-${duration}`}
+                              value={duration}
+                              name='duration'
+                              className='hidden peer'
+                              onChange={handleChange}
+                              checked={taskData.duration === duration}
+                            />
+                            <label
+                              htmlFor={`duration-preset-${duration}`}
+                              className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
+                            >
+                              <span>{`${duration} day${
+                                duration > 1 ? 's' : ''
+                              }`}</span>
+                            </label>
+                          </span>
+                        )
+                      })}
+                    </div>
+                    <div className='flex flex-col gap-2 text-gray-400'>
+                      <button
+                        type='button'
+                        className='py-1 px-2 border font-normal text-sm w-fit border-gray-200 rounded-lg'
+                        onClick={() =>
+                          setShowCustomDuration(!showCustomDuration)
+                        }
+                      >
+                        Custom
+                      </button>
+                      {showCustomDuration && (
+                        <input
+                          type='number'
+                          id='customDuration'
+                          name='customDuration'
+                          min='1'
+                          onKeyDown={preventInvalidChar}
+                          value={taskData.duration}
+                          onChange={(ev: any) =>
+                            setTaskData((prev) => ({
+                              ...prev,
+                              duration: ev.target.value
+                            }))
+                          }
+                          className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
+                        />
+                      )}
                     </div>
                   </div>
-                  <div className=''>
+                  <div className='border-b pb-4'>
                     <label
                       htmlFor='reputationLevel'
                       className='flex gap-2 items-center cursor-pointer max-w-xs'
@@ -386,7 +430,7 @@ const ClickupImport: React.FC<TImport> = ({
                       })}
                     </div>
                   </div>
-                  <div className=''>
+                  <div className='border-b pb-4'>
                     <label
                       htmlFor='complexityScore'
                       className='flex gap-2 items-center cursor-pointer max-w-xs'
