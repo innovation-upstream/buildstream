@@ -98,7 +98,11 @@
   "error_submitting_task": "Error Submitting Task",
   "publish_task": "Publish Task",
   "save_draft": "Save Draft",
-  "task_reward": "Task Reward",
+  "payment": "Payment",
   "token": "Token",
-  "amount": "Amount"
+  "amount": "Amount",
+  "total": "Total",
+  "relevant_skills": "Relevant Skills",
+  "relevant_skills_hint": "Specify the skills required to complete this task",
+  "communication_and_onboarding": "Communication and Onboarding"
 }
