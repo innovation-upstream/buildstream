@@ -25,6 +25,7 @@ const PendingActions = ({
   const [pendingActions, setPendingActions] = useState<Action[]>(actions)
   const [isConfirming, setIsConfirming] = useState(false)
   const [isExecuting, setIsExecuting] = useState(false)
+  const [selectedAction, setSelectedAction] = useState<number | null>(null)
   const isSigner = account && organization.signers?.includes(account)
 
   const { data, startPolling, stopPolling } = useGetActionsQuery({
@@ -57,6 +58,7 @@ const PendingActions = ({
   const { tokenInfos } = useTokenInfos(tokens)
 
   const onConfirmAction = async (actionId: number) => {
+    setSelectedAction(actionId)
     setIsConfirming(true)
     try {
       await activate(injected)
@@ -65,9 +67,11 @@ const PendingActions = ({
       console.error(e)
     }
     setIsConfirming(false)
+    setSelectedAction(null)
   }
 
   const onExecuteAction = async (actionId: number) => {
+    setSelectedAction(actionId)
     setIsExecuting(true)
     try {
       await activate(injected)
@@ -76,8 +80,8 @@ const PendingActions = ({
       console.error(e)
     }
     setIsExecuting(false)
+    setSelectedAction(null)
   }
-
 
   if (!isSigner || !pendingActions?.length) return null
 
@@ -127,7 +131,11 @@ const PendingActions = ({
                         onClick={() => onConfirmAction(action.id)}
                         className='btn-primary text-sm rounded-full'
                       >
-                        {isConfirming ? <Spinner /> : 'Confirm'}
+                        {selectedAction === action.id && isConfirming ? (
+                          <Spinner />
+                        ) : (
+                          'Confirm'
+                        )}
                       </button>
                     )}
                     {canExecute && (
@@ -135,7 +143,11 @@ const PendingActions = ({
                         onClick={() => onExecuteAction(action.id)}
                         className='btn-primary text-sm rounded-full'
                       >
-                        {isExecuting ? <Spinner /> : 'Execute'}
+                        {selectedAction === action.id && isExecuting ? (
+                          <Spinner />
+                        ) : (
+                          'Execute'
+                        )}
                       </button>
                     )}
                   </div>

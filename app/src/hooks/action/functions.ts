@@ -26,10 +26,9 @@ export const createAction = async (
   return actionId.toNumber()
 }
 
-export const createUpdateRewardAction = async (
+export const createUpdateRewardMultiplierAction = async (
   orgId: number,
   value: ethers.BigNumber,
-  tokenAddress: string,
   provider?: any
 ): Promise<number> => {
   const contract = getContract(
@@ -45,6 +44,65 @@ export const createUpdateRewardAction = async (
     ethers.constants.AddressZero,
     ActionType.UPDATE_REWARD_MULTIPLIER,
     ethers.utils.toUtf8Bytes(''),
+    value,
+    true
+  )
+
+  const receipt = await tx.wait()
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
+  const actionId: BigNumber = event?.args?.[1]
+
+  return actionId.toNumber()
+}
+
+export const createUpdateRewardTokenAction = async (
+  orgId: number,
+  tokenAddress: string,
+  provider?: any
+): Promise<number> => {
+  const contract = getContract(
+    ActionContractInterface.address,
+    ActionContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract[
+    'createAction(uint256,address,uint8,bytes,uint256,bool)'
+  ](
+    orgId,
+    tokenAddress,
+    ActionType.UPDATE_REWARD_TOKEN,
+    ethers.utils.toUtf8Bytes(''),
+    0,
+    true
+  )
+
+  const receipt = await tx.wait()
+  const event = receipt.events.find((e: any) => e.event === 'ActionCreation')
+  const actionId: BigNumber = event?.args?.[1]
+
+  return actionId.toNumber()
+}
+
+export const createUpdateTagRewardMultiplierAction = async (
+  orgId: number,
+  tag: number,
+  value: ethers.BigNumber,
+  provider?: any
+): Promise<number> => {
+  const contract = getContract(
+    ActionContractInterface.address,
+    ActionContractInterface.abi,
+    provider
+  )
+
+  const tx = await contract[
+    'createAction(uint256,address,uint8,bytes,uint256,bool)'
+  ](
+    orgId,
+    ethers.constants.AddressZero,
+    ActionType.UPDATE_TAG_REWARD_MULTIPLIER,
+    ethers.utils.hexZeroPad(BigNumber.from(tag).toHexString(), 32),
     value,
     true
   )
