@@ -1,21 +1,21 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
-import { useState, useEffect, FormEvent } from 'react'
-import ReactMarkdown from 'react-markdown'
-import gfm from 'remark-gfm'
-import { wrapper } from 'state/store'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Head from 'next/head'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
+import Spinner from 'components/Spinner/Spinner'
+import client from 'graphclient/client'
+import { useWeb3 } from 'hooks'
 import {
   addOrgOnboardingInfo,
   getOrgOnboardingInfo
 } from 'hooks/organization/functions'
-import { useWeb3 } from 'hooks'
-import client from 'graphclient/client'
-import { GetOrganizationDocument, Organization } from '../../../../.graphclient'
-import { Converter } from 'utils/converter'
-import Spinner from 'components/Spinner/Spinner'
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
-import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Head from 'next/head'
+import { FormEvent, useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import gfm from 'remark-gfm'
+import { wrapper } from 'state/store'
+import { Converter } from 'utils/converter'
+import { GetOrganizationDocument, Organization } from '../../../../.graphclient'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -128,8 +128,9 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
                 </h3>
                 <div className='mt-3'>
                   <MarkDownEditor
-                    setValue={setOrgInstruction}
+                    onChange={setOrgInstruction}
                     value={orgInstruction}
+                    hideToggle
                   />
                 </div>
                 <div className='mt-7'>
