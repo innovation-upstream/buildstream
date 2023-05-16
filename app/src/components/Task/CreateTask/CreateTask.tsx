@@ -17,6 +17,7 @@ import {
   TaskReputationMap
 } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -429,6 +430,14 @@ const CreateTask: React.FC<ICreateTask> = ({
                   </span>
                   <p className='block text-sm font-normal text-gray-600 mt-4'>
                     {t('estimate_complexity')}
+                    <Link
+                      href={`/organization/${organization.id}/settings/treasury`}
+                    >
+                      <a className='text-[#3667EA] underline'>
+                        {t('link_placeholder')}
+                      </a>
+                    </Link>
+                    {t('estimate_complexity_end')}
                   </p>
                   <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
                     {taskComplexities.slice(0, 4).map(([key, value]) => {
