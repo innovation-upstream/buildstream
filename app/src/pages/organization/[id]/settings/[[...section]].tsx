@@ -2,7 +2,10 @@ import Back from 'SVGs/Back'
 import Administrators from 'components/Organization/Settings/Administrators'
 import MainInformation from 'components/Organization/Settings/MainInformation'
 import Reward from 'components/Organization/Settings/Reward'
-import TabControl, { Tab } from 'components/Organization/Settings/TabControl'
+import TabControl, {
+  Tab,
+  TabMap
+} from 'components/Organization/Settings/TabControl'
 import TaskManager from 'components/Organization/Settings/TaskManager'
 import TreasuryHistory from 'components/Organization/Settings/TreasuryHistory'
 import Wallet from 'components/Organization/Settings/Wallet'
@@ -12,7 +15,7 @@ import {
   GetActionsDocument,
   GetDepositsDocument,
   GetOrganizationDocument,
-  Organization,
+  Organization
 } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetOrganizationQuery, usePolling } from 'hooks'
@@ -37,6 +40,31 @@ export const getServerSideProps: GetServerSideProps =
           ? context.params?.id
           : context.params?.id?.[0] || '0'
       const locale = context.locale ?? ''
+
+      let activeTab = Tab.INFORMATION
+
+      const redirect = (tab: Tab) => {
+        return {
+          redirect: {
+            destination: `/organization/${orgId}/settings/${TabMap[tab]}`,
+            permanent: false
+          }
+        }
+      }
+
+      if (context.params?.section && context.params?.section?.length > 0) {
+        const tab = Object.entries(TabMap).find(
+          ([k, v]) => v === context.params?.section?.[0]
+        )?.[0]
+        if (
+          tab &&
+          parseInt(tab) >= Tab.INFORMATION &&
+          parseInt(tab) <= Tab.TASK_MANAGER_API
+        ) {
+          activeTab = parseInt(tab)
+        } else return redirect(activeTab)
+      } else return redirect(activeTab)
+
       const { data } = await client.query({
         query: GetOrganizationDocument,
         variables: {
@@ -70,6 +98,7 @@ export const getServerSideProps: GetServerSideProps =
 
       return {
         props: {
+          activeTab,
           org: data?.organization,
           withdrawals: actions.actions,
           deposits: deposits.deposits,
@@ -85,6 +114,7 @@ export const getServerSideProps: GetServerSideProps =
   )
 
 interface PageProps {
+  activeTab: Tab
   org: Organization
   withdrawals: Action[]
   deposits: Deposit[]
@@ -93,7 +123,8 @@ interface PageProps {
 const OrganizationPage: NextPage<PageProps> = ({
   org,
   withdrawals,
-  deposits
+  deposits,
+  ...props
 }) => {
   const { t } = useTranslation('organization')
   const [organization, setOrganization] = useState(
@@ -112,7 +143,16 @@ const OrganizationPage: NextPage<PageProps> = ({
     }
   }, [data])
 
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(props.activeTab)
+
+  const handleTabNavigation = (tab: Tab) => {
+    setActiveTab(tab)
+    history.replaceState(
+      undefined,
+      'Settings',
+      `/organization/${organization.id}/settings/${TabMap[tab]}`
+    )
+  }
 
   return (
     <div className='layout-container pb-20'>
@@ -144,7 +184,8 @@ const OrganizationPage: NextPage<PageProps> = ({
             {t('organization_settings')}
           </h2>
           <TabControl
-            onChange={(t) => setActiveTab(t)}
+            onChange={handleTabNavigation}
+            active={activeTab}
             tabs={{
               [Tab.INFORMATION]: (
                 <MainInformation organization={organization} />

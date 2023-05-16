@@ -1,11 +1,17 @@
-import { Organization } from 'hooks/organization/types'
-import { useEffect, useState } from 'react'
+import { useTokens } from '@innovationupstream/buildstream-utils'
+import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
-import { useTranslation } from 'react-i18next'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
-import { createAction, createUpdateRewardAction } from 'hooks/action/functions'
 import { useWeb3 } from 'hooks'
-import { ActionType } from 'hooks/action/types'
+import {
+  createUpdateRewardMultiplierAction,
+  createUpdateRewardTokenAction,
+  createUpdateTagRewardMultiplierAction
+} from 'hooks/action/functions'
+import { Organization } from 'hooks/organization/types'
+import { getRewardMultiplier } from 'hooks/task/functions'
+import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const rewardInfo = `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -17,37 +23,97 @@ interface RewardProps {
 }
 
 const Reward = ({ organization }: RewardProps) => {
+  const tagList = useTokens()
   const tokens = organization?.treasury?.tokens
   const [selected, setSelected] = useState(tokens?.[0]?.token)
+  const [tag, setTag] = useState(-1)
   const [multiplier, setMultiplier] = useState(0)
   const { t } = useTranslation('organization')
   const { library } = useWeb3()
+  const [isSaving, setIsSaving] = useState(false)
 
   const token = tokens?.find((t) => t.token === selected)
-  const currentMultiplier = ethers.utils.formatUnits(
-    BigNumber.from(organization.rewardMultiplier || 0)?.toString(),
-    18
-  )
-
   const { tokenInfos } = useTokenInfos(tokens?.map((t) => t.token))
 
+  const defaultAllTagMultiplier = useMemo(
+    () =>
+      ethers.utils.formatUnits(
+        BigNumber.from(organization.rewardMultiplier || 0)?.toString(),
+        tokenInfos?.find((i) => i.address === organization.rewardToken)
+          ?.decimal || 18
+      ),
+    [organization, tokenInfos]
+  )
+
   useEffect(() => {
-    setMultiplier(Number(currentMultiplier))
-  }, [currentMultiplier])
+    if (tag !== -1) return
+    setMultiplier(Number(defaultAllTagMultiplier))
+  }, [defaultAllTagMultiplier])
 
   const handleSave = async () => {
-    if (Number(currentMultiplier) === multiplier) return
-
-    const reward = ethers.utils.parseUnits(multiplier.toString(), 18)
-    try {
-      await createUpdateRewardAction(
-        organization.id,
-        reward,
-        selected || ethers.constants.AddressZero,
-        library.getSigner()
+    setIsSaving(true)
+    const reward = ethers.utils.parseUnits(
+      multiplier.toString(),
+      tokenInfos?.find((i) => i.address === organization.rewardToken)
+        ?.decimal || 18
+    )
+    const actions = []
+    if (selected && organization.rewardToken !== selected)
+      actions.push(
+        createUpdateRewardTokenAction(
+          organization.id,
+          selected,
+          library.getSigner()
+        )
       )
+
+    if (!reward.eq(organization.rewardMultiplier) && tag === -1) {
+      actions.push(
+        createUpdateRewardMultiplierAction(
+          organization.id,
+          reward,
+          library.getSigner()
+        )
+      )
+    }
+
+    if (!reward.eq(organization.rewardMultiplier) && tag !== -1) {
+      actions.push(
+        createUpdateTagRewardMultiplierAction(
+          organization.id,
+          tag,
+          reward,
+          library.getSigner()
+        )
+      )
+    }
+
+    if (actions.length === 0) return
+
+    try {
+      await Promise.all(actions)
     } catch (e) {
       console.error(e)
+    }
+    setIsSaving(false)
+  }
+
+  const handleTagChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTag = parseInt(e.target.value)
+    setTag(selectedTag)
+    if (selectedTag === -1 && selected === organization.rewardToken) {
+      setMultiplier(Number(defaultAllTagMultiplier))
+    } else {
+      const tagMultiplier = await getRewardMultiplier(
+        organization.id,
+        [selectedTag],
+        library.getSigner()
+      )
+      const parsedAmount = ethers.utils.formatUnits(
+        BigNumber.from(tagMultiplier || 0)?.toString(),
+        tokenInfos?.find((i) => i.address === selected)?.decimal || 18
+      )
+      setMultiplier(Number(parsedAmount) || Number(defaultAllTagMultiplier))
     }
   }
 
@@ -75,6 +141,22 @@ const Reward = ({ organization }: RewardProps) => {
       </select>
 
       <p className='text-sm font-medium mt-4 text-[#646873]'>
+        {t('select_token')}
+      </p>
+      <select
+        className='input-base mt-2'
+        value={tag}
+        onChange={handleTagChange}
+      >
+        <option value={-1}>All Tags</option>
+        {tagList?.map((t) => (
+          <option value={parseInt(t.id)} key={t.id}>
+            {t.name}
+          </option>
+        ))}
+      </select>
+
+      <p className='text-sm font-medium mt-4 text-[#646873]'>
         {t('set_multiplier')}
       </p>
       <input
@@ -85,10 +167,13 @@ const Reward = ({ organization }: RewardProps) => {
       <button
         type='button'
         onClick={handleSave}
-        disabled={Number(currentMultiplier) === multiplier}
+        disabled={
+          selected === organization.rewardToken &&
+          Number(defaultAllTagMultiplier) === multiplier
+        }
         className='w-full btn-primary flex items-center justify-center gap-x-2.5 mt-9'
       >
-        {t('save')}
+        {isSaving ? <Spinner /> : t('save')}
       </button>
     </div>
   )

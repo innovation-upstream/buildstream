@@ -114,10 +114,10 @@ export const actionMessageTemplates: Record<
   },
   [ActionType.UPDATE_TAG_REWARD_MULTIPLIER]: {
     created:
-      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
+      'Request to change tag reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been made',
     confirmed:
-      'Request to change reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
+      'Request to change tag reward multiplier <strong>{oldValue}</strong> to <strong>{newValue}</strong> has been confirmed',
     executed:
-      'Reward multiplier has been changed to <strong>{newValue}</strong>'
+      'Tag reward multiplier has been changed to <strong>{newValue}</strong>'
   }
 }

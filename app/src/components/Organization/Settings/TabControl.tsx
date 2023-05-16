@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export enum Tab {
@@ -34,6 +34,8 @@ const TabControl = ({
     onChange?.(tab)
   }
 
+  useEffect(() => setActiveTab?.(active), [active])
+
   return (
     <>
       <div className='flex justify-between whitespace-nowrap overflow-x-auto scrollbar-hide'>
@@ -58,9 +60,7 @@ const TabControl = ({
         ))}
       </div>
       <div className='divider -mt-0.5' />
-      <div className='mt-5'>
-        {tabs[activeTab]}
-      </div>
+      <div className='mt-5'>{tabs[activeTab]}</div>
     </>
   )
 }
