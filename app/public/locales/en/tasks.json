@@ -30,7 +30,7 @@
   "advanced_settings": "Advanced Settings",
   "provide_instructions_for_contributors": "Provide instructions for contributors to follow for communication once they are assigned to the task ",
   "for_contributor": "for contributor",
-  "contribution_information_hint": "(this information is never made public, it's only visible to the contributor once they have been approved by you to work on the task) ",
+  "contribution_information_hint": "This information is private and only shared with the contributor once they are assigned to the task.",
   "enter_slack_channel_link": "Enter slack channel link or similar messenger",
   "leave_figma_link": "Leave a link to figma",
   "create_task": "Create task",
@@ -104,5 +104,9 @@
   "total": "Total",
   "relevant_skills": "Relevant Skills",
   "relevant_skills_hint": "Specify the skills required to complete this task",
-  "communication_and_onboarding": "Communication and Onboarding"
+  "communication_and_onboarding": "Communication and Onboarding",
+  "private_task_materials": "Private Task Materials",
+  "cost_complexity": "Cost/Complexity",
+  "estimate_complexity": "Estimate the complexity of this task, the cost is automatically calculated based on the level of complexity and the cost multiplying configured by your organization.  You can modify this multiplier if needed",
+  "enable_self_assign": "Allow experienced contributors to self-assign to this task"
 }

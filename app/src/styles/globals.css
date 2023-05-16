@@ -52,4 +52,22 @@
   .markdown > * {
     all: revert;
   }
+  input.toggle {
+    @apply mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 hover:cursor-pointer focus:outline-none focus:ring-0;
+  }
+  input.toggle::after {
+    @apply absolute z-[2] -mt-[0.1875rem] h-5 w-5 rounded-full border-none bg-neutral-100 shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] transition-[background-color_0.2s,transform_0.2s] content-[''];
+  }
+  input.toggle:checked {
+    @apply bg-[#3B71CA];
+  }
+  input.toggle:checked:focus {
+    @apply bg-[#3B71CA];
+  }
+  input.toggle:checked::after {
+    @apply z-[2] -mt-[3px] ml-[1.0625rem] shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)];
+  }
+  input.toggle:focus::after {
+    @apply absolute z-[1] block h-5 w-5 rounded-full;
+  }
 }
