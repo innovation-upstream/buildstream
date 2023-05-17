@@ -149,7 +149,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -166,9 +166,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -255,7 +254,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -272,9 +271,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -371,7 +369,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -387,9 +385,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -486,7 +483,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -502,9 +499,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -617,7 +613,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -634,9 +630,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -749,7 +744,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -766,9 +761,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -893,7 +887,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -910,9 +904,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -1009,7 +1002,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -1026,9 +1019,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -1125,7 +1117,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -1142,9 +1134,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )
@@ -1240,7 +1231,7 @@ describe('Integration test: Task flow', function () {
         reputationLevel,
         taskDuration,
         requestAssignment,
-        ''
+        disableSelfAssign
       )
 
     const taskCreateReceipt = await createTaskTx.wait()
@@ -1257,9 +1248,8 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      .openTask(
+      ['openTask(uint256,bool,bool)'](
         taskId,
-        ethers.constants.AddressZero,
         assignCreator,
         disableSelfAssign
       )

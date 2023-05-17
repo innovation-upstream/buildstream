@@ -93,7 +93,6 @@ describe('Integration test: Withdrawal', function () {
 
     const initialBalance = await ethers.provider.getBalance(withdrawee.address)
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     // Assignee should receive reward

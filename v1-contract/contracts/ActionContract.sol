@@ -130,6 +130,7 @@ contract ActionContract {
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
         emit ActionCreation(_orgId, actionId);
+        confirmAction(actionId);
     }
 
     /// @dev Create an action.
@@ -164,13 +165,14 @@ contract ActionContract {
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
         emit ActionCreation(_orgId, actionId);
+        confirmAction(actionId);
     }
 
     /// @dev Confirm an action.
     /// @param _actionId Id of action.
     function confirmAction(
         uint256 _actionId
-    ) external actionExists(_actionId) onlySigner(actions[_actionId].orgId) {
+    ) public actionExists(_actionId) onlySigner(actions[_actionId].orgId) {
         require(!actions[_actionId].executed, "Already executed");
         require(!confirmations[_actionId][msg.sender], "Already confirmed");
         confirmations[_actionId][msg.sender] = true;

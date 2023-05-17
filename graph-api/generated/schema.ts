@@ -958,21 +958,13 @@ export class Task extends Entity {
     this.set("raw", Value.fromString(value));
   }
 
-  get discussion(): string | null {
-    let value = this.get("discussion");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+  get disableSelfAssignment(): boolean {
+    let value = this.get("disableSelfAssignment");
+    return value!.toBoolean();
   }
 
-  set discussion(value: string | null) {
-    if (!value) {
-      this.unset("discussion");
-    } else {
-      this.set("discussion", Value.fromString(<string>value));
-    }
+  set disableSelfAssignment(value: boolean) {
+    this.set("disableSelfAssignment", Value.fromBoolean(value));
   }
 }
 
@@ -1501,21 +1493,13 @@ export class TaskSnapshot extends Entity {
     this.set("staked", Value.fromBoolean(value));
   }
 
-  get discussion(): string | null {
-    let value = this.get("discussion");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+  get disableSelfAssignment(): boolean {
+    let value = this.get("disableSelfAssignment");
+    return value!.toBoolean();
   }
 
-  set discussion(value: string | null) {
-    if (!value) {
-      this.unset("discussion");
-    } else {
-      this.set("discussion", Value.fromString(<string>value));
-    }
+  set disableSelfAssignment(value: boolean) {
+    this.set("disableSelfAssignment", Value.fromBoolean(value));
   }
 }
 

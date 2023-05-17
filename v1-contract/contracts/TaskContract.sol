@@ -79,7 +79,7 @@ contract TaskContract {
         uint256 reputationLevel,
         uint256 taskDuration,
         bool requestAssignment,
-        string memory discussion
+        bool disableSelfAssign
     ) external returns (uint256 taskId) {
         TaskControlLogicLibrary.ensureCanCreateTask(
             orgId,
@@ -101,10 +101,10 @@ contract TaskContract {
             reputationLevel,
             requiredTaskApprovals,
             taskDuration,
-            discussion
+            disableSelfAssign
         );
 
-        if (requestAssignment)
+        if (requestAssignment && !disableSelfAssign)
             taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
     }
 
@@ -119,7 +119,7 @@ contract TaskContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
-        string memory discussion
+        bool disableSelfAssign
     ) external onlyApprover(taskId) {
         TaskControlLogicLibrary.ensureCanUpdateTask(
             taskTags,
@@ -135,7 +135,7 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             taskDuration,
-            discussion
+            disableSelfAssign
         );
     }
 
@@ -143,16 +143,39 @@ contract TaskContract {
     /// @param taskId Task ID.
     function openTask(
         uint256 taskId,
-        address rewardToken,
         bool assignCreator,
         bool disableSelfAssign
     ) public onlyApprover(taskId) {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
+        OrgLib.OrgConfig memory orgConfig = organizationContract.getOrganizationConfig(task.orgId);
         uint256 rewardAmount = TaskControlLogicLibrary.getTaskReward(
             taskId,
             taskStorageContract,
             organizationContract
         );
+        treasuryContract.lockBalance(task.orgId, orgConfig.rewardToken, rewardAmount);
+        taskStorageContract.openTask(taskId, rewardAmount, orgConfig.rewardToken, disableSelfAssign);
+
+        if (!assignCreator) return;
+
+        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
+            .getTaskMetadata(taskId);
+        if (
+            taskMetadata.assignmentRequests.length > 0 &&
+            taskMetadata.assignmentRequests[0] != address(0)
+        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender, true);
+    }
+
+    /// @dev Allows an approver to move a task to open.
+    /// @param taskId Task ID.
+    function openTask(
+        uint256 taskId,
+        address rewardToken,
+        uint256 rewardAmount,
+        bool assignCreator,
+        bool disableSelfAssign
+    ) public onlyApprover(taskId) {
+        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         treasuryContract.lockBalance(task.orgId, rewardToken, rewardAmount);
         taskStorageContract.openTask(taskId, rewardAmount, rewardToken, disableSelfAssign);
 

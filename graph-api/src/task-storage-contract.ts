@@ -339,7 +339,7 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
   taskEntity.taskDuration = task.taskDuration
-  taskEntity.discussion = taskMetadata.discussion
+  taskEntity.disableSelfAssignment = taskMetadata.disableSelfAssign
 
   taskEntity.raw = getRawData(taskEntity)
 
@@ -398,7 +398,7 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.staked = false
   taskEntity.totalWaitTime = new BigInt(0)
   taskEntity.externalId = task.externalId
-  taskEntity.discussion = taskMetadata.discussion
+  taskEntity.disableSelfAssignment = taskMetadata.disableSelfAssign
 
   taskEntity.raw = getRawData(taskEntity)
   taskEntity.save()
@@ -423,6 +423,7 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
   taskEntity.status = 1
   taskEntity.rewardToken = event.params.rewardToken
   taskEntity.rewardAmount = event.params.rewardAmount
+  taskEntity.disableSelfAssignment = event.params.disableSelfAssign
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
