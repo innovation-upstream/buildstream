@@ -74,7 +74,6 @@ describe('Integration test: Approver flow', function () {
     )
     const actionId = actionCreateEvent?.args?.[0]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     expect(
@@ -131,7 +130,6 @@ describe('Integration test: Approver flow', function () {
     )
     const actionId0 = event?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId0)
     await actionContract.connect(signer).confirmAction(actionId0)
 
     const autoExecute2 = false
@@ -152,7 +150,6 @@ describe('Integration test: Approver flow', function () {
     )
     const actionId = actionEvent?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     await actionContract.executeAction(actionId)

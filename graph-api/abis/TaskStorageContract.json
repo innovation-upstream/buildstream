@@ -275,11 +275,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "discussion",
-            "type": "string"
-          },
-          {
             "internalType": "bool",
             "name": "disableSelfAssign",
             "type": "bool"
@@ -314,6 +309,12 @@
         "internalType": "address",
         "name": "rewardToken",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "disableSelfAssign",
+        "type": "bool"
       }
     ],
     "name": "TaskOpened",
@@ -726,11 +727,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "discussion",
-            "type": "string"
-          },
-          {
             "internalType": "bool",
             "name": "disableSelfAssign",
             "type": "bool"
@@ -883,9 +879,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "discussion",
-        "type": "string"
+        "internalType": "bool",
+        "name": "disableSelfAssign",
+        "type": "bool"
       }
     ],
     "name": "createTask",
@@ -1117,11 +1113,6 @@
             "internalType": "uint256",
             "name": "totalWaitTime",
             "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "discussion",
-            "type": "string"
           },
           {
             "internalType": "bool",
@@ -1359,9 +1350,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "discussion",
-        "type": "string"
+        "internalType": "bool",
+        "name": "disableSelfAssign",
+        "type": "bool"
       }
     ],
     "name": "updateTask",

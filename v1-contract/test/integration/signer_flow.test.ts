@@ -73,7 +73,6 @@ describe('Integration test: Signer flow', function () {
     )
     const actionId = actionCreateEvent?.args?.[0]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     expect(
@@ -128,7 +127,6 @@ describe('Integration test: Signer flow', function () {
     )
     const actionId0 = event?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId0)
     await actionContract.connect(signer).confirmAction(actionId0)
 
     const tx = await actionContract[
@@ -148,7 +146,6 @@ describe('Integration test: Signer flow', function () {
     )
     const actionId = actionEvent?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     const signers = await orgContract.getSigners(orgId)

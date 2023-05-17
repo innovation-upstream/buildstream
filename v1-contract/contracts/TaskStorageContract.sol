@@ -59,7 +59,6 @@ library TaskLib {
         address[] assignmentRequests;
         address[] approvers;
         uint256 totalWaitTime;
-        string discussion;
         bool disableSelfAssign;
     }
 }
@@ -89,7 +88,8 @@ contract TaskStorageContract {
     event TaskOpened(
         uint256 indexed taskId,
         uint256 rewardAmount,
-        address rewardToken
+        address rewardToken,
+        bool disableSelfAssign
     );
     event TaskAssignment(
         address indexed assignee,
@@ -177,7 +177,7 @@ contract TaskStorageContract {
         uint256 reputationLevel,
         uint256 requiredApprovals,
         uint256 taskDuration,
-        string memory discussion
+        bool disableSelfAssign
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
         tasks[taskId].createTask(
@@ -195,7 +195,7 @@ contract TaskStorageContract {
         taskMetadata[taskId].createTaskMetadata(
             taskId,
             requiredApprovals,
-            discussion
+            disableSelfAssign
         );
         taskCount += 1;
         _taskExists[taskId] = true;
@@ -213,7 +213,7 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 taskDuration,
-        string memory discussion
+        bool disableSelfAssign
     ) external onlyTaskContract {
         require(msg.sender == taskContractAddress, "Permission denied");
         tasks[taskId].updateTask(
@@ -225,7 +225,7 @@ contract TaskStorageContract {
             reputationLevel,
             taskDuration
         );
-        taskMetadata[taskId].updateTaskMetadata(discussion);
+        taskMetadata[taskId].updateTaskMetadata(disableSelfAssign);
         emit TaskUpdated(taskId, tasks[taskId], taskMetadata[taskId]);
     }
 
@@ -238,7 +238,7 @@ contract TaskStorageContract {
         bool disableSelfAssign
     ) external taskExists(taskId) onlyTaskContract {
         tasks[taskId].openTask(taskMetadata[taskId], rewardAmount, rewardToken, disableSelfAssign);
-        emit TaskOpened(taskId, rewardAmount, rewardToken);
+        emit TaskOpened(taskId, rewardAmount, rewardToken, disableSelfAssign);
     }
 
     /// @dev Allows closing an approved task.

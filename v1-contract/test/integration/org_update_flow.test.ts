@@ -74,7 +74,6 @@ describe('Integration test: Organization update flow', function () {
     )
     const actionId = event?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     expect(await (await orgContract.getOrganization(orgId)).name).to.be.equal(
@@ -129,7 +128,6 @@ describe('Integration test: Organization update flow', function () {
     )
     const actionId = event?.args?.[1]?.toNumber()
 
-    await actionContract.confirmAction(actionId)
     await actionContract.connect(signer).confirmAction(actionId)
 
     expect(

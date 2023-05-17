@@ -85,7 +85,7 @@ type Task @entity {
   staked: Boolean!
   revisions: [TaskRevision!] @derivedFrom(field: "task")
   raw: String!
-  discussion: String
+  disableSelfAssignment: Boolean!
 }
 
 type TaskRevision @entity {
@@ -129,7 +129,7 @@ type TaskSnapshot @entity {
   approvedBy: [String!]
   assignmentRequest: [String!]
   staked: Boolean!
-  discussion: String
+  disableSelfAssignment: Boolean!
 }
 
 type TreasuryToken @entity {

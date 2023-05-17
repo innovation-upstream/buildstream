@@ -36,11 +36,11 @@ library TaskLibrary {
         TaskLib.TaskMetadata storage self,
         uint256 taskId,
         uint256 requiredApprovals,
-        string memory discussion
+        bool disableSelfAssign
     ) external {
         self.id = taskId;
         self.requiredApprovals = requiredApprovals;
-        self.discussion = discussion;
+        self.disableSelfAssign = disableSelfAssign;
     }
 
     /// @dev Allows an approver to update a task.
@@ -67,9 +67,9 @@ library TaskLibrary {
 
     function updateTaskMetadata(
         TaskLib.TaskMetadata storage self,
-        string memory discussion
+        bool disableSelfAssign
     ) external {
-        self.discussion = discussion;
+        self.disableSelfAssign = disableSelfAssign;
     }
 
     /// @dev Allows an approver to move a task to open.

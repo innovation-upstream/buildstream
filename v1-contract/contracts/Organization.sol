@@ -291,7 +291,7 @@ contract Organization {
             bytes memory data = action.data;
             uint key;
             assembly {
-                key := mload(add(data, add(0x20, 32)))
+                key := mload(add(data, 0x20))
             }
             multipliers[action.orgId][key] = action.value;
         }
