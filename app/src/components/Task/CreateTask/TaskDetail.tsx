@@ -251,7 +251,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                   </li>
                 </ul>
               </section>
-              {isAssignee || isApprover && (
+              {instructions && (isAssignee || isApprover) && (
                 <section className='py-4 border-t'>
                   <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
                     <p className='block text-gray-500 mb-1'>
