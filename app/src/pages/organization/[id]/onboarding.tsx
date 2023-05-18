@@ -52,7 +52,7 @@ interface PageProps {
 }
 
 const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
-  const [orgInstruction, setOrgInstruction] = useState({ text: '', html: '' })
+  const [orgInstruction, setOrgInstruction] = useState({ text: '' })
   const { account, library } = useWeb3()
   const [organization, setOrganization] = useState(
     Converter.OrganizationFromQuery(org)
@@ -128,7 +128,7 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
                 </h3>
                 <div className='mt-3'>
                   <MarkDownEditor
-                    onChange={setOrgInstruction}
+                    onChange={(value) => setOrgInstruction(value)}
                     value={orgInstruction}
                     hideToggle
                   />

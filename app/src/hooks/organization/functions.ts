@@ -66,11 +66,10 @@ export const addOrgOnboardingInfo = async (
   organizationId: number
 ) => {
   try {
-    const response = await fetch('/api/firestore/set-onboarding-info', {
+    const response = await fetch(`/api/onboarding-info/${organizationId}`, {
       method: 'POST',
       body: JSON.stringify({
-        onboardingInfo: onboardingInfo,
-        organizationId: organizationId
+        onboardingInfo
       }),
       headers: new Headers({ 'Content-Type': 'application/json' })
     })
@@ -83,11 +82,8 @@ export const addOrgOnboardingInfo = async (
 
 export const getOrgOnboardingInfo = async (organizationId: number) => {
   try {
-    const response = await fetch('/api/firestore/onboarding-info', {
-      method: 'POST',
-      body: JSON.stringify({
-        organizationId
-      }),
+    const response = await fetch(`/api/onboarding-info/${organizationId}`, {
+      method: 'GET',
       headers: new Headers({ 'Content-Type': 'application/json' })
     })
     const onboardingInfo = await response.json()

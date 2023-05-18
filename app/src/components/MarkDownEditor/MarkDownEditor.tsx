@@ -1,12 +1,15 @@
 import dynamic from 'next/dynamic'
-import { useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import Editor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
 import gfm from 'remark-gfm'
 
-interface IEditorProps {
-  onChange?: (value: any) => void
+interface IEditorProps extends React.ComponentProps<typeof Editor> {
+  onChange?: (
+    value: { text: string; html?: string },
+    event?: ChangeEvent<HTMLTextAreaElement>
+  ) => void
   value?: { text: string; html?: string }
   height?: string | number
   readonly?: boolean
@@ -35,7 +38,8 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
   value,
   height = '500px',
   readonly = false,
-  hideToggle
+  hideToggle,
+  ...props
 }) => {
   const [togglePreview, setTogglePreview] = useState(false)
   const mdEditor = useRef<Editor>(null)
@@ -85,7 +89,14 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
         onChange={onChange}
         value={value?.text}
         readOnly={readonly}
-        view={hideToggle ? undefined : { menu: true, html: false, md: true }}
+        view={
+          readonly
+            ? { menu: false, md: false, html: true }
+            : hideToggle
+            ? undefined
+            : { menu: true, html: false, md: true }
+        }
+        {...props}
       />
     </div>
   )

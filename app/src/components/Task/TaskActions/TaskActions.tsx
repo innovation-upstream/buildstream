@@ -90,7 +90,12 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
 
   const isApprover = account && task.organization.approvers.includes(account)
 
-  if (task.status >= TaskStatus.ASSIGNED) return null
+  if (
+    task.status >= TaskStatus.ASSIGNED ||
+    !account ||
+    (!isApprover && task.assignmentRequests.includes(account))
+  )
+    return null
 
   return (
     <div
