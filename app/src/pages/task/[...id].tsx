@@ -1,4 +1,5 @@
 import Back from 'SVGs/Back'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import ShareTask from 'components/Task/ShareTask'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
 import TaskCard from 'components/Task/TaskCard'
@@ -12,6 +13,7 @@ import { BigNumber } from 'ethers'
 import { GetTaskDocument, GetTasksDocument, Task } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetTaskQuery, usePolling, useWeb3 } from 'hooks'
+import { getTaskInstructions } from 'hooks/task/functions'
 import { TaskStatus } from 'hooks/task/types'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import type { GetServerSideProps, NextPage } from 'next'
@@ -37,6 +39,7 @@ type AssigneeData = {
 
 interface PageProps {
   task: Task
+  instructions?: string
   assignmentRequests?: AssigneeData[]
   assigneeData?: AssigneeData
 }
@@ -133,6 +136,11 @@ export const getServerSideProps: GetServerSideProps =
       )
     }
 
+    const instructions = await getTaskInstructions(
+      Number(data.task.orgId.id),
+      Number(taskId)
+    )
+
     return {
       props: {
         task: {
@@ -140,6 +148,7 @@ export const getServerSideProps: GetServerSideProps =
           title: clickupTask?.name || data.task.title,
           description: clickupTask?.description || data.task.description
         },
+        instructions: instructions || null,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
         assigneeData,
@@ -156,7 +165,8 @@ export const getServerSideProps: GetServerSideProps =
 const TaskPage: NextPage<PageProps> = ({
   task,
   assigneeData,
-  assignmentRequests
+  assignmentRequests,
+  instructions
 }) => {
   const { account } = useWeb3()
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
@@ -254,6 +264,21 @@ const TaskPage: NextPage<PageProps> = ({
               taskRequirementLocation='footer'
               onShare={onShare}
             />
+            {instructions && (isAssignee || isApprover) && (
+              <section className=''>
+                <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
+                  <p className='block text-gray-500 mb-1'>
+                    {t('private_task_materials')}
+                  </p>
+                  <MarkDownEditor
+                    hideToggle
+                    height={300}
+                    value={{ text: instructions }}
+                    readonly
+                  />
+                </div>
+              </section>
+            )}
             <TaskActions task={currentTask} />
           </>
           <div className='mt-7 md:hidden'>

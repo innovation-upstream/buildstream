@@ -6,6 +6,7 @@ import Reputation from 'SVGs/Reputation'
 import Rewards from 'SVGs/Rewards'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import CloseIcon from 'components/IconSvg/CloseIcon'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
@@ -13,9 +14,10 @@ import {
   archiveTask,
   assignToSelf,
   getRewardAmount,
+  getTaskInstructions,
   openTask
 } from 'hooks/task/functions'
-import { ComplexityScoreMap, TaskStatus, TaskStatusMap } from 'hooks/task/types'
+import { ComplexityScoreMap, TaskStatus } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import React, { useCallback, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -30,11 +32,11 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
   const { account, library } = useWeb3()
-  const taskStatus = Object.entries(TaskStatusMap)[task?.status ?? 0]?.[1]
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
   const [rewardValue, setRewardValue] = useState('0')
+  const [instructions, setInstructions] = useState('')
 
   const getReward = useCallback(async () => {
     const reward = await getRewardAmount(task, library?.getSigner())
@@ -111,10 +113,13 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     close()
   }
 
-  const buttonText =
-    taskStatus === 'proposed' ? t('open_task') : t('request_assignment')
+  const getInstructions = async () => {
+    const data = await getTaskInstructions(task.orgId, task.id)
+    setInstructions(data)
+  }
 
   useEffect(() => {
+    getInstructions()
     const body = document.body
     body.style.overflow = 'hidden'
 
@@ -124,6 +129,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   }, [])
 
   const isApprover = account && task?.organization?.approvers?.includes(account)
+  const isAssignee = account && task?.assigneeAddress === account
 
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -245,6 +251,21 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                   </li>
                 </ul>
               </section>
+              {instructions && (isAssignee || isApprover) && (
+                <section className='py-4 border-t'>
+                  <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
+                    <p className='block text-gray-500 mb-1'>
+                      {t('private_task_materials')}
+                    </p>
+                    <MarkDownEditor
+                      hideToggle
+                      height={300}
+                      value={{ text: instructions }}
+                      readonly
+                    />
+                  </div>
+                </section>
+              )}
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>

@@ -1,16 +1,15 @@
+import OrgContractInterface from 'contracts/Org.json'
 import TaskContractInterface from 'contracts/Task.json'
 import TaskStorageContractInterface from 'contracts/TaskStorage.json'
-import OrgContractInterface from 'contracts/Org.json'
+import { BigNumber } from 'ethers'
 import getContract from 'utils/getContract'
 import { ComplexityScore, Task, TaskStatus } from './types'
-import { BigNumber } from 'ethers'
-import { useWeb3 } from 'hooks/helpers'
 
 export const openTask = async (
   taskId: number,
   rewardToken: string,
   disableSelfAssign: boolean,
-  provider?: any,
+  provider?: any
 ): Promise<boolean> => {
   const contract = getContract(
     TaskContractInterface.address,
@@ -306,5 +305,47 @@ export const getRewardAmount = async (
   } catch (error) {
     console.error(error)
     return BigNumber.from(0)
+  }
+}
+
+export const updateTaskInstructions = async (
+  organizationId: number,
+  taskId: number,
+  instructions: string
+) => {
+  try {
+    const response = await fetch(
+      `/api/task-instructions/${organizationId}/${taskId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          instructions
+        }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      }
+    )
+    const apiResponse = await response.json()
+    return apiResponse
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getTaskInstructions = async (
+  organizationId: number,
+  taskId: number
+) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task-instructions/${organizationId}/${taskId}`,
+      {
+        method: 'GET',
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      }
+    )
+    const data = await response.json()
+    return data?.instructions
+  } catch (err) {
+    console.error(err)
   }
 }

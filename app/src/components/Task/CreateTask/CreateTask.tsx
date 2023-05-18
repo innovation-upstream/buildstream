@@ -8,7 +8,8 @@ import { useWeb3 } from 'hooks'
 import {
   createNewTask,
   getRewardMultiplier,
-  openTask
+  openTask,
+  updateTaskInstructions
 } from 'hooks/task/functions'
 import {
   ComplexityScoreMap,
@@ -35,7 +36,8 @@ const initialTaskData = {
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
   duration: 1,
-  disableSelfAssign: false
+  disableSelfAssign: false,
+  instructions: ''
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
@@ -148,13 +150,21 @@ const CreateTask: React.FC<ICreateTask> = ({
         },
         library.getSigner()
       )
-      if (publish)
-        await openTask(
-          taskId,
-          ethers.constants.AddressZero,
-          taskData.disableSelfAssign,
-          library.getSigner()
+      const promises: Promise<any>[] = []
+      if (taskData.instructions)
+        promises.push(
+          updateTaskInstructions(organization.id, taskId, taskData.instructions)
         )
+      if (publish)
+        promises.push(
+          openTask(
+            taskId,
+            ethers.constants.AddressZero,
+            taskData.disableSelfAssign,
+            library.getSigner()
+          )
+        )
+      await Promise.all(promises)
       onCreated?.(taskId)
     } catch (error) {
       toast.error(t('task_not_created'), { icon: '❌' })
@@ -415,8 +425,10 @@ const CreateTask: React.FC<ICreateTask> = ({
                 </p>
                 <div className='mt-3'>
                   <MarkDownEditor
+                    name='instructions'
                     height={300}
-                    value={{ text: instructionsTemplate }}
+                    value={{ text: taskData.instructions || instructionsTemplate }}
+                    onChange={(_, e) => handleChange(e)}
                   />
                 </div>
               </section>
