@@ -64,8 +64,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
     try {
       await openTask(
         task.id,
-        task.rewardToken,
-        false, //disableSelfAssign
+        task.disableSelfAssign, //disableSelfAssign
         library.getSigner()
       )
       setProcessing(false)

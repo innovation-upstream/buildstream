@@ -146,7 +146,8 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration
+          taskDuration,
+          disableSelfAssign: taskData.disableSelfAssign
         },
         library.getSigner()
       )
@@ -156,13 +157,10 @@ const CreateTask: React.FC<ICreateTask> = ({
           updateTaskInstructions(organization.id, taskId, taskData.instructions)
         )
       if (publish)
-        promises.push(
-          openTask(
-            taskId,
-            ethers.constants.AddressZero,
-            taskData.disableSelfAssign,
-            library.getSigner()
-          )
+        await openTask(
+          taskId,
+          taskData.disableSelfAssign,
+          library.getSigner()
         )
       await Promise.all(promises)
       onCreated?.(taskId)
