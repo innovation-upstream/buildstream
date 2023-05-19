@@ -1,5 +1,5 @@
 {
-  "address": "0xc6FA1F4d9a67c9dF0F7D4e9aC996620b8F38714E",
+  "address": "0x2AFe0FD271f958dd5325Af75791358adaecE724F",
   "abi": [
     {
       "type": "constructor",
@@ -239,10 +239,6 @@
               "name": "totalWaitTime"
             },
             {
-              "type": "string",
-              "name": "discussion"
-            },
-            {
               "type": "bool",
               "name": "disableSelfAssign"
             }
@@ -268,6 +264,11 @@
         {
           "type": "address",
           "name": "rewardToken",
+          "indexed": false
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign",
           "indexed": false
         }
       ]
@@ -621,10 +622,6 @@
               "name": "totalWaitTime"
             },
             {
-              "type": "string",
-              "name": "discussion"
-            },
-            {
               "type": "bool",
               "name": "disableSelfAssign"
             }
@@ -766,8 +763,8 @@
           "name": "taskDuration"
         },
         {
-          "type": "string",
-          "name": "discussion"
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": [
@@ -967,10 +964,6 @@
             {
               "type": "uint256",
               "name": "totalWaitTime"
-            },
-            {
-              "type": "string",
-              "name": "discussion"
             },
             {
               "type": "bool",
@@ -1192,8 +1185,8 @@
           "name": "taskDuration"
         },
         {
-          "type": "string",
-          "name": "discussion"
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []

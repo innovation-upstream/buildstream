@@ -47,6 +47,12 @@ export const getServerSideProps: GetServerSideProps =
         }
       })
 
+      if (!organizationResponse?.organization) {
+        return {
+          notFound: true
+        }
+      }
+
       let actions: Action[] = []
       if (
         account &&

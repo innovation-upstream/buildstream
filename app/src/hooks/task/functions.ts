@@ -7,7 +7,6 @@ import { ComplexityScore, Task, TaskStatus } from './types'
 
 export const openTask = async (
   taskId: number,
-  rewardToken: string,
   disableSelfAssign: boolean,
   provider?: any
 ): Promise<boolean> => {
@@ -17,9 +16,8 @@ export const openTask = async (
     provider
   )
   const assignCreator = true
-  const tx = await contract.openTask(
+  const tx = await contract['openTask(uint256,bool,bool)'](
     taskId,
-    rewardToken,
     assignCreator,
     disableSelfAssign
   )
@@ -104,6 +102,7 @@ export const createNewTask = async (
     complexityScore: number
     reputationLevel: number
     taskDuration: number
+    disableSelfAssign: boolean
   },
   provider?: any
 ): Promise<number> => {
@@ -128,7 +127,7 @@ export const createNewTask = async (
     task.reputationLevel,
     task.taskDuration,
     false, // Do not request assignment
-    '' // Discussion
+    task.disableSelfAssign
   )
 
   const taskCreateReceipt = await tx.wait()

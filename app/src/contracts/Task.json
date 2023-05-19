@@ -1,5 +1,5 @@
 {
-  "address": "0xd9FDfa1FBFCa8c89590c4fd0f7B7811146Ef97c1",
+  "address": "0xa77A408cad6E1879114CC25feaCCAf3ABDc8c94f",
   "abi": [
     {
       "type": "constructor",
@@ -123,8 +123,8 @@
           "name": "requestAssignment"
         },
         {
-          "type": "string",
-          "name": "discussion"
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": [
@@ -146,8 +146,34 @@
           "name": "taskId"
         },
         {
+          "type": "bool",
+          "name": "assignCreator"
+        },
+        {
+          "type": "bool",
+          "name": "disableSelfAssign"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
+      "name": "openTask",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        },
+        {
           "type": "address",
           "name": "rewardToken"
+        },
+        {
+          "type": "uint256",
+          "name": "rewardAmount"
         },
         {
           "type": "bool",
@@ -286,8 +312,8 @@
           "name": "taskDuration"
         },
         {
-          "type": "string",
-          "name": "discussion"
+          "type": "bool",
+          "name": "disableSelfAssign"
         }
       ],
       "outputs": []

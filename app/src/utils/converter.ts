@@ -1,15 +1,16 @@
+import { Token, useTokens } from '@innovationupstream/buildstream-utils'
 import { BigNumber, ethers } from 'ethers'
 import {
+  ActionSnapshot as ActionSnapshotType,
   Action as ActionType,
   Deposit,
+  Notification as NotificationType,
   Organization as Org,
-  Task as TaskType,
   TaskRevision as TaskRevisionType,
   TaskSnapshot as TaskSnapshotType,
+  Task as TaskType,
   Treasury as TreasuryType,
-  ActionSnapshot as ActionSnapshotType,
-  UserStat,
-  Notification as NotificationType
+  UserStat
 } from 'graphclient'
 import { Action, ActionSnapshot } from 'hooks/action/types'
 import { Notification } from 'hooks/notification/types'
@@ -17,7 +18,6 @@ import { Organization } from 'hooks/organization/types'
 import { Task, TaskRevision, TaskSnapshot } from 'hooks/task/types'
 import { DepositRecord, Treasury } from 'hooks/treasury/types'
 import { Stat } from 'hooks/userstat/types'
-import { useTokens, Token } from '@innovationupstream/buildstream-utils'
 
 export class Converter {
   public static OrganizationFromQuery = (org: Org): Organization => {
@@ -123,7 +123,7 @@ export class Converter {
       assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || [],
       comment: task.comment || '',
-      discussion: task.discussion || '',
+      disableSelfAssign: task.disableSelfAssign || '',
     }
   }
 
