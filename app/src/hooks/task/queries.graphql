@@ -22,6 +22,7 @@ fragment TaskFragment on Task {
   comment
   approvedBy
   assignmentRequest
+  disableSelfAssignment
   disableSelfAssign: disableSelfAssignment
 }
 
@@ -51,6 +52,7 @@ fragment TaskSnapshotFragment on TaskSnapshot {
   comment
   approvedBy
   assignmentRequest
+  disableSelfAssignment
   disableSelfAssign: disableSelfAssignment
 }
 

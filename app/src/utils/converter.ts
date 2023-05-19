@@ -123,7 +123,7 @@ export class Converter {
       assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || [],
       comment: task.comment || '',
-      disableSelfAssign: task.disableSelfAssign || '',
+      disableSelfAssign: task.disableSelfAssignment
     }
   }
 
