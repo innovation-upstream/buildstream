@@ -61,7 +61,7 @@ export type Task = {
   assigner: string
   assignmentRequests: string[]
   comment: string
-  discussion: string
+  disableSelfAssign: boolean
 }
 
 export type TaskSnapshot = {

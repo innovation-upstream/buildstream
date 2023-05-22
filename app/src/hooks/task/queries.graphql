@@ -22,7 +22,8 @@ fragment TaskFragment on Task {
   comment
   approvedBy
   assignmentRequest
-  discussion
+  disableSelfAssignment
+  disableSelfAssign: disableSelfAssignment
 }
 
 fragment TaskSnapshotFragment on TaskSnapshot {
@@ -50,8 +51,9 @@ fragment TaskSnapshotFragment on TaskSnapshot {
   taskDuration
   comment
   approvedBy
-  assignmentRequest,
-  discussion
+  assignmentRequest
+  disableSelfAssignment
+  disableSelfAssign: disableSelfAssignment
 }
 
 query GetTask(
