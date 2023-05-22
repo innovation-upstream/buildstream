@@ -1,7 +1,6 @@
 import Back from 'SVGs/Back'
 import Administrators from 'components/Organization/Settings/Administrators'
 import MainInformation from 'components/Organization/Settings/MainInformation'
-import Reward from 'components/Organization/Settings/Reward'
 import TabControl, {
   Tab,
   TabMap
@@ -9,6 +8,7 @@ import TabControl, {
 import TaskManager from 'components/Organization/Settings/TaskManager'
 import TreasuryHistory from 'components/Organization/Settings/TreasuryHistory'
 import Wallet from 'components/Organization/Settings/Wallet'
+import Reward from 'components/Reward/Reward'
 import {
   Action,
   Deposit,
