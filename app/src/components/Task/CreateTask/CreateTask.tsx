@@ -141,7 +141,7 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration: timestamp
+          taskDuration: timestamp,
           disableSelfAssign: taskData.disableSelfAssign
         },
         library.getSigner()

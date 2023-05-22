@@ -154,7 +154,7 @@ const ClickupImport: React.FC<TImport> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration: timestamp
+          taskDuration: timestamp,
           disableSelfAssign: taskData.disableSelfAssign
         },
         library.getSigner()
