@@ -86,7 +86,7 @@
   "spaces": "Spaces",
   "import_new_task": "Import New Task",
   "import_task": "Import Task",
-  "expected_duration": "Specify the expected duration for this task",
+  "expected_duration": "Specify the expected due date for this task",
   "expected_reputation": "Specify the minimum reputation required for a contributor to self-assign to this task.",
   "expected_complexity_level": "Indicate the complexity level of this task",
   "invalid_input": "Invalid Input",
@@ -110,5 +110,6 @@
   "estimate_complexity": "Estimate the complexity of this task, the cost is automatically calculated based on the level of complexity and the cost multiplying configured by your organization.  You can ",
   "link_placeholder": "modify this multiplier",
   "estimate_complexity_end": " if needed",
-  "enable_self_assign": "Allow experienced contributors to self-assign to this task"
+  "enable_self_assign": "Allow experienced contributors to self-assign to this task",
+  "set_due_date": "Set Due Date"
 }

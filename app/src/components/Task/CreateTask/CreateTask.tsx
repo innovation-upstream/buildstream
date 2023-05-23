@@ -19,12 +19,12 @@ import {
   TaskReputationMap,
 } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
-import { TaskDurationCalc } from 'utils/task_duration'
 import TaskTagInput from './TaskTagInput'
 import { StyledScrollableContainer } from './styled'
 import { ICreateTask } from './types'
@@ -35,7 +35,7 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  duration: 1,
+  dueDate: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
   disableSelfAssign: false,
   instructions: '',
 }
@@ -47,7 +47,6 @@ const taskComplexities = Object.entries(ComplexityScoreMap).filter(
     parseInt(key) != ComplexityScores.ADVANCED
 )
 const taskReputation = Object.entries(TaskReputationMap)
-const durationPreset = [1, 2, 3]
 const instructionsTemplate = `
   **Communication channel**: 
 
@@ -66,7 +65,6 @@ const CreateTask: React.FC<ICreateTask> = ({
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [creating, setCreating] = useState(false)
   const [publishing, setPublishing] = useState(false)
-  const [showCustomDuration, setShowCustomDuration] = useState(false)
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const formRef = useRef<HTMLFormElement>(null)
@@ -80,9 +78,7 @@ const CreateTask: React.FC<ICreateTask> = ({
 
     if (
       ev.target.type === 'number' ||
-      ['orgId', 'complexityScore', 'reputationLevel', 'duration'].includes(
-        targetName
-      )
+      ['orgId', 'complexityScore', 'reputationLevel'].includes(targetName)
     ) {
       if (targetValue) {
         targetValue = Number(targetValue)
@@ -101,9 +97,6 @@ const CreateTask: React.FC<ICreateTask> = ({
       getRewardAmount(Number(targetValue), taskData.taskTags)
   }
 
-  const preventInvalidChar = (ev: any) =>
-    ['e', 'E', '+', '-'].includes(ev.key) && ev.preventDefault()
-
   const createTask = async (publish = false) => {
     const form = formRef.current
     if (!form?.checkValidity()) {
@@ -114,12 +107,6 @@ const CreateTask: React.FC<ICreateTask> = ({
       toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
-
-    const taskDuration = TaskDurationCalc.getDurationInSeconds({
-      weeks: 0,
-      days: taskData.duration,
-      hours: 0,
-    })
 
     const treasuryBalance = organization?.treasury?.tokens?.find(
       (t) => t.token === tokenInfo?.address
@@ -137,6 +124,14 @@ const CreateTask: React.FC<ICreateTask> = ({
     if (publish) setPublishing(true)
     else setCreating(true)
 
+    const duration = moment(taskData.dueDate).diff(moment(), 'seconds')
+    if (duration <= (60 * 60)) {
+      toast.error(t('min duration is 1 hour'), {
+        icon: '⚠️',
+      })
+      return
+    }
+
     try {
       const taskId = await createNewTask(
         {
@@ -147,7 +142,7 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration,
+          taskDuration: duration,
           disableSelfAssign: taskData.disableSelfAssign,
         },
         library.getSigner()
@@ -289,59 +284,24 @@ const CreateTask: React.FC<ICreateTask> = ({
                       <Duration />
                     </span>
                     <span className='block text-gray-700'>
-                      {t('set_duration')}
+                      {t('set_due_date')}
                     </span>
                   </label>
-                  <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
-                    {durationPreset.map((duration) => {
-                      return (
-                        <span key={`duration-preset-${duration}`}>
-                          <input
-                            type='radio'
-                            id={`duration-preset-${duration}`}
-                            value={duration}
-                            name='duration'
-                            className='hidden peer'
-                            onChange={handleChange}
-                            checked={taskData.duration === duration}
-                          />
-                          <label
-                            htmlFor={`duration-preset-${duration}`}
-                            className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
-                          >
-                            <span>{`${duration} day${
-                              duration > 1 ? 's' : ''
-                            }`}</span>
-                          </label>
-                        </span>
-                      )
-                    })}
-                  </div>
                   <div className='flex flex-col gap-2 text-gray-400'>
-                    <button
-                      type='button'
-                      className='py-1 px-2 border font-normal text-sm w-fit border-gray-200 rounded-lg'
-                      onClick={() => setShowCustomDuration(!showCustomDuration)}
-                    >
-                      Custom
-                    </button>
-                    {showCustomDuration && (
-                      <input
-                        type='number'
-                        id='customDuration'
-                        name='customDuration'
-                        min='1'
-                        onKeyDown={preventInvalidChar}
-                        value={taskData.duration}
-                        onChange={(ev: any) =>
-                          setTaskData((prev) => ({
-                            ...prev,
-                            duration: ev.target.value,
-                          }))
-                        }
-                        className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
-                      />
-                    )}
+                    <input
+                      type='datetime-local'
+                      name='dueDate'
+                      min={moment().add(1, 'hours').format('YYYY-MM-DDTHH:MM')}
+                      value={taskData.dueDate}
+                      onChange={(ev: any) =>
+                        setTaskData((prev) => ({
+                          ...prev,
+                          dueDate: ev.target.value,
+                        }))
+                      }
+                      required
+                      className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black mt-2'
+                    />
                   </div>
                 </div>
                 <div className='mt-4'>
@@ -502,7 +462,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                 </div>
               </section>
             </StyledScrollableContainer>
-            <section className='mt-4 flex flex-col md:flex-row items-center gap-4 flex-0 pb-10 px-6'>
+            <section className='mt-4 flex items-center gap-4 flex-0 pb-10 px-6'>
               {isApprover && (
                 <button
                   className='btn-outline'
