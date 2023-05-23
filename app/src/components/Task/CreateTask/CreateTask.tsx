@@ -185,6 +185,7 @@ const CreateTask: React.FC<ICreateTask> = ({
     }
     setRewardAmount(amount)
   }
+  
 
   useEffect(() => {
     getRewardAmount(taskData.complexityScore, taskData.taskTags)
@@ -195,6 +196,8 @@ const CreateTask: React.FC<ICreateTask> = ({
       body.style.overflow = 'auto'
     }
   }, [])
+
+  const rewardUsd = parseFloat(rewardAmountValue) * (tokenInfo?.priceUsd || 0)
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -428,6 +431,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                         complexityReward.toString(),
                         tokenInfo?.decimal
                       )
+                      const rewardUsd = parseFloat(complexityRewardValue) * (tokenInfo?.priceUsd || 0)
                       return (
                         <span key={value}>
                           <input
@@ -445,7 +449,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                           >
                             <span>
                               {`${value.toUpperCase()}
-                              (${complexityRewardValue} ${tokenInfo?.symbol}
+                              (${rewardUsd.toPrecision(4)} USD
                               )`}
                             </span>
                           </label>
@@ -458,7 +462,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                   <span className='mb-2 mr-2 text-grey-900 opacity-80'>
                     {t('total')}:
                   </span>
-                  {rewardAmountValue} {tokenInfo?.symbol}
+                  {rewardUsd.toPrecision(4)} USD
                 </div>
               </section>
             </StyledScrollableContainer>

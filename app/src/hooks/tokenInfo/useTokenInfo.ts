@@ -1,12 +1,16 @@
-import { useWeb3 } from 'hooks'
 import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { getTokenInfo } from './functions'
 import { TokenInfo } from './types'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
   const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
   const { library, chainId = 80001 } = useWeb3()
+  const { data } = useSWR('/api/marketcap', fetcher)
 
   const refetchTokenInfo = useCallback(async () => {
     if (!ethers.utils.isAddress(tokenAddress)) {
@@ -14,8 +18,12 @@ const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
       return
     }
     const info = await getTokenInfo(tokenAddress, chainId, library)
-    setTokenInfo(info)
-  }, [tokenAddress, library, chainId])
+    const priceUsd =
+      data?.marketcap.find((asset: any) => asset.symbol == info?.symbol)
+        ?.priceUsd || null
+    const asset = info ? { ...info, priceUsd } : undefined
+    setTokenInfo(asset)
+  }, [tokenAddress, library, chainId, data])
 
   useEffect(() => {
     refetchTokenInfo()
@@ -23,7 +31,7 @@ const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
 
   return {
     tokenInfo,
-    refetchTokenInfo
+    refetchTokenInfo,
   }
 }
 

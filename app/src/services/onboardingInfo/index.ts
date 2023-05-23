@@ -1,1 +1,1 @@
-export { default as OnboardingInfo } from './onboardingInfo';
+export { default as OnboardingInfo } from './onboardingInfo'

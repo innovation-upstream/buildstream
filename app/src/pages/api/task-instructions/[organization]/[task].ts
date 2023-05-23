@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { TaskInstruction } from 'services'
-import FirestoreClient from '../../../../clients/firestore'
+import FirestoreClient from '../../../../clients/db/firestore'
 
 async function getTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
   const organizationId = req.query.organization as string

@@ -247,6 +247,7 @@ const ClickupImport: React.FC<TImport> = ({
     rewardAmount.toString(),
     tokenInfo?.decimal
   )
+  const rewardUsd = parseFloat(rewardAmountValue) * (tokenInfo?.priceUsd || 0)
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
@@ -491,6 +492,7 @@ const ClickupImport: React.FC<TImport> = ({
                         complexityReward.toString(),
                         tokenInfo?.decimal
                       )
+                      const rewardUsd = parseFloat(complexityRewardValue) * (tokenInfo?.priceUsd || 0)
                       return (
                         <span key={value}>
                           <input
@@ -508,7 +510,7 @@ const ClickupImport: React.FC<TImport> = ({
                           >
                             <span>
                               {`${value.toUpperCase()}
-                              (${complexityRewardValue} ${tokenInfo?.symbol}
+                              (${rewardUsd.toPrecision(4)} USD
                               )`}
                             </span>
                           </label>
@@ -521,7 +523,7 @@ const ClickupImport: React.FC<TImport> = ({
                   <span className='mb-2 mr-2 text-grey-900 opacity-80'>
                     {t('total')}:
                   </span>
-                  {rewardAmountValue} {tokenInfo?.symbol}
+                  {rewardUsd.toPrecision(4)} USD
                 </div>
               </section>
             </StyledScrollableContainer>
