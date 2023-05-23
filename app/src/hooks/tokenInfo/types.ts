@@ -3,4 +3,5 @@ export type TokenInfo = {
   address: string
   symbol?: string
   decimal?: number
+  priceUsd?: number
 }
