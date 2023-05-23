@@ -2,6 +2,7 @@ import Duration from 'SVGs/Duration'
 import Reputation from 'SVGs/Reputation'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
+import Reward from 'components/Reward/Reward'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
@@ -9,16 +10,15 @@ import {
   createNewTask,
   getRewardMultiplier,
   openTask,
-  updateTaskInstructions
+  updateTaskInstructions,
 } from 'hooks/task/functions'
 import {
   ComplexityScoreMap,
   ComplexityScore as ComplexityScores,
   TaskReputation,
-  TaskReputationMap
+  TaskReputationMap,
 } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
-import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -36,7 +36,7 @@ const initialTaskData = {
   reputationLevel: TaskReputation.ENTRY,
   duration: new Date().toISOString().substring(0, 16),
   disableSelfAssign: false,
-  instructions: ''
+  instructions: '',
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
@@ -59,7 +59,7 @@ const instructionsTemplate = `
 const CreateTask: React.FC<ICreateTask> = ({
   organization,
   close,
-  onCreated
+  onCreated,
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [creating, setCreating] = useState(false)
@@ -69,6 +69,7 @@ const CreateTask: React.FC<ICreateTask> = ({
   const formRef = useRef<HTMLFormElement>(null)
   const { tokenInfo } = useTokenInfo()
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
+  const [showRewardSettings, setShowRewardSettings] = useState(false)
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
@@ -86,7 +87,7 @@ const CreateTask: React.FC<ICreateTask> = ({
     if (targetName === 'disableSelfAssign')
       return setTaskData((prev) => ({
         ...prev,
-        [targetName]: !prev.disableSelfAssign
+        [targetName]: !prev.disableSelfAssign,
       }))
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
@@ -152,11 +153,7 @@ const CreateTask: React.FC<ICreateTask> = ({
           updateTaskInstructions(organization.id, taskId, taskData.instructions)
         )
       if (publish)
-        await openTask(
-          taskId,
-          taskData.disableSelfAssign,
-          library.getSigner()
-        )
+        await openTask(taskId, taskData.disableSelfAssign, library.getSigner())
       await Promise.all(promises)
       onCreated?.(taskId)
     } catch (error) {
@@ -202,6 +199,17 @@ const CreateTask: React.FC<ICreateTask> = ({
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <Toaster position='bottom-left' />
+      {showRewardSettings && (
+        <Reward
+          organization={organization}
+          showAsModal
+          onClose={() => setShowRewardSettings(false)}
+          onRewardChange={() => {
+            getRewardAmount(taskData.complexityScore, taskData.taskTags)
+            setShowRewardSettings(false)
+          }}
+        />
+      )}
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[95vh] px-2 py-5 absolute right-0 top-0 rounded-xl my-5 overflow-hidden'>
           <div className='px-6 w-full'>
@@ -384,7 +392,9 @@ const CreateTask: React.FC<ICreateTask> = ({
                   <MarkDownEditor
                     name='instructions'
                     height={300}
-                    value={{ text: taskData.instructions || instructionsTemplate }}
+                    value={{
+                      text: taskData.instructions || instructionsTemplate,
+                    }}
                     onChange={(_, e) => handleChange(e)}
                   />
                 </div>
@@ -399,13 +409,13 @@ const CreateTask: React.FC<ICreateTask> = ({
                   </span>
                   <p className='block text-sm font-normal text-gray-600 mt-4'>
                     {t('estimate_complexity')}
-                    <Link
-                      href={`/organization/${organization.id}/settings/treasury`}
+                    <button
+                      type='button'
+                      className='text-[#3667EA] underline'
+                      onClick={() => setShowRewardSettings(true)}
                     >
-                      <a className='text-[#3667EA] underline'>
-                        {t('link_placeholder')}
-                      </a>
-                    </Link>
+                      {t('link_placeholder')}
+                    </button>
                     {t('estimate_complexity_end')}
                   </p>
                   <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
