@@ -19,6 +19,7 @@ import {
   TaskReputationMap,
 } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +35,7 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  duration: new Date().toISOString().substring(0, 16),
+  dueDate: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
   disableSelfAssign: false,
   instructions: '',
 }
@@ -123,14 +124,13 @@ const CreateTask: React.FC<ICreateTask> = ({
     if (publish) setPublishing(true)
     else setCreating(true)
 
-    const currentDateTime = new Date(
-      new Date().toISOString().substring(0, 16)
-    ).getTime()
-    const selectedDateTime = new Date(taskData.duration).getTime()
-
-    const timestamp = selectedDateTime - currentDateTime
-
-    // console.log(timestamp / (1000 * 60 * 60))
+    const duration = moment(taskData.dueDate).diff(moment(), 'seconds')
+    if (duration <= (60 * 60)) {
+      toast.error(t('min duration is 1 hour'), {
+        icon: '⚠️',
+      })
+      return
+    }
 
     try {
       const taskId = await createNewTask(
@@ -142,8 +142,8 @@ const CreateTask: React.FC<ICreateTask> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration: timestamp,
-          disableSelfAssign: taskData.disableSelfAssign
+          taskDuration: duration,
+          disableSelfAssign: taskData.disableSelfAssign,
         },
         library.getSigner()
       )
@@ -290,15 +290,16 @@ const CreateTask: React.FC<ICreateTask> = ({
                   <div className='flex flex-col gap-2 text-gray-400'>
                     <input
                       type='datetime-local'
-                      name='duration'
-                      min={new Date().toISOString().substring(0, 16)}
-                      value={taskData.duration}
+                      name='dueDate'
+                      min={moment().add(1, 'hours').format('YYYY-MM-DDTHH:MM')}
+                      value={taskData.dueDate}
                       onChange={(ev: any) =>
                         setTaskData((prev) => ({
                           ...prev,
-                          duration: ev.target.value
+                          dueDate: ev.target.value,
                         }))
                       }
+                      required
                       className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black mt-2'
                     />
                   </div>

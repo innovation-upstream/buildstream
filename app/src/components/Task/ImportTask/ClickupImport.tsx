@@ -27,6 +27,7 @@ import {
   fetchTasks,
   fetchToken,
 } from 'integrations/clickup/api'
+import moment from 'moment'
 import { useTranslation } from 'next-i18next'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -42,7 +43,7 @@ const initialTaskData = {
   taskTags: [] as number[],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  duration: new Date().toISOString().substring(0, 16),
+  duration: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
   disableSelfAssign: false,
   instructions: '',
 }
@@ -54,7 +55,6 @@ const taskComplexities = Object.entries(ComplexityScoreMap).filter(
     parseInt(key) != ComplexityScores.ADVANCED
 )
 const taskReputation = Object.entries(TaskReputationMap)
-const durationPreset = [1, 2, 3]
 const instructionsTemplate = `
   **Communication channel**: 
 
@@ -73,7 +73,6 @@ const ClickupImport: React.FC<TImport> = ({
   onCreated,
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
-  const [status, setStatus] = useState({ text: '', error: false })
   const [creating, setCreating] = useState(false)
   const [publishing, setPublishing] = useState(false)
   const [spaces, setSpaces] = useState<any[]>([])
@@ -134,16 +133,16 @@ const ClickupImport: React.FC<TImport> = ({
       return
     }
 
-    setStatus({ text: '', error: false })
     if (publish) setPublishing(true)
     else setCreating(true)
 
-    const currentDateTime = new Date(
-      new Date().toISOString().substring(0, 16)
-    ).getTime()
-    const selectedDateTime = new Date(taskData.duration).getTime()
-
-    const timestamp = selectedDateTime - currentDateTime
+    const duration = moment(taskData.dueDate).diff(moment(), 'seconds')
+    if (duration <= (60 * 60)) {
+      toast.error(t('min duration is 1 hour'), {
+        icon: '⚠️',
+      })
+      return
+    }
 
     try {
       const taskId = await createNewTask(
@@ -155,7 +154,7 @@ const ClickupImport: React.FC<TImport> = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          taskDuration: timestamp,
+          taskDuration: duration,
           disableSelfAssign: taskData.disableSelfAssign
         },
         library.getSigner()
@@ -355,13 +354,13 @@ const ClickupImport: React.FC<TImport> = ({
                   <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
                     <input
                       type='datetime-local'
-                      name='duration'
-                      min={new Date().toISOString().substring(0, 16)}
-                      value={taskData.duration}
+                      name='dueDate'
+                      min={moment().add(1, 'hours').format('YYYY-MM-DDTHH:MM')}
+                      value={taskData.dueDate}
                       onChange={(ev: any) =>
                         setTaskData((prev) => ({
                           ...prev,
-                          duration: ev.target.value
+                          dueDate: ev.target.value
                         }))
                       }
                       className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
