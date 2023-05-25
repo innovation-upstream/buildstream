@@ -43,7 +43,7 @@ const initialTaskData = {
   taskTags: [] as number[],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  duration: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
+  dueDate: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
   disableSelfAssign: false,
   instructions: '',
 }
