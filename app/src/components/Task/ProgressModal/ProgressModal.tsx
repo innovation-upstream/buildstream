@@ -34,8 +34,8 @@ const ProgressModal = ({
   onError,
   onSuccess,
 }: ProgressModalProps) => {
-  const { t } = useTranslation('organization')
-  const { account, library } = useWeb3()
+  const { t } = useTranslation('tasks')
+  const { library } = useWeb3()
   const [createStatus, setCreateStatus] = useState(Progress.PENDING)
   const [updateInstructionsStatus, setUpdateInstructionStatus] = useState(
     Progress.PENDING
@@ -54,15 +54,15 @@ const ProgressModal = ({
 
     if (!taskId) return
 
-    try {
-      const promises: Promise<any>[] = []
-      if (taskData.instructions) promises.push(updateInstructions(taskId))
-      if (taskData.publish) promises.push(publishTask(taskId))
-      await Promise.allSettled(promises)
-    } catch (error) {
-      errors.push(error)
-      throw errors
-    }
+    const promises: Promise<any>[] = []
+    if (taskData.instructions) promises.push(updateInstructions(taskId))
+    if (taskData.publish) promises.push(publishTask(taskId))
+    const result = await Promise.allSettled(promises)
+
+    result.forEach((res) => {
+      if (res.status === 'rejected') errors.push(res.reason)
+    })
+    if (errors.length) throw errors
   }
 
   const createTask = async (): Promise<number | undefined> => {
@@ -115,7 +115,7 @@ const ProgressModal = ({
     } catch (error: any) {
       setPublishStatus(Progress.FAILED)
       console.error(error)
-      throw t('task_not_published')
+      throw t('error_opening_task')
     }
   }
 
@@ -174,7 +174,7 @@ const ProgressModal = ({
         <ul className='mt-5'>
           <li>
             <div className='flex gap-x-4 items-center justify-between mb-2'>
-              Create task
+              {t('create_task')}
               {getIcon(createStatus)}
             </div>
             <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
@@ -188,9 +188,9 @@ const ProgressModal = ({
           {!!taskData.instructions && (
             <li className='mt-4'>
               <div className='flex gap-x-4 items-center justify-between mb-2'>
-                Update task instructions
+                {t('update_task_instructions')}
                 {createStatus === Progress.FAILED ? (
-                  <span className='text-gray-500 text-xs'>skipped</span>
+                  <span className='text-gray-500 text-xs'>{t('skipped')}</span>
                 ) : (
                   getIcon(updateInstructionsStatus)
                 )}
@@ -207,9 +207,9 @@ const ProgressModal = ({
           {taskData.publish && (
             <li className='mt-4'>
               <div className='flex gap-x-4 items-center justify-between mb-2'>
-                Publish task
+                {t('publish_task')}
                 {createStatus === Progress.FAILED ? (
-                  <span className='text-gray-500 text-xs'>skipped</span>
+                  <span className='text-gray-500 text-xs'>{t('skipped')}</span>
                 ) : (
                   getIcon(publishStatus)
                 )}
