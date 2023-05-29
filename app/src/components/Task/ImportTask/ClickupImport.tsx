@@ -4,16 +4,10 @@ import AutoComplete from 'components/AutoComplete/AutoComplete'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Reward from 'components/Reward/Reward'
-import Spinner from 'components/Spinner/Spinner'
 import { getCookie } from 'cookies-next'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
-import {
-  createNewTask,
-  getRewardMultiplier,
-  openTask,
-  updateTaskInstructions,
-} from 'hooks/task/functions'
+import { getRewardMultiplier } from 'hooks/task/functions'
 import {
   ComplexityScoreMap,
   ComplexityScore as ComplexityScores,
@@ -35,6 +29,7 @@ import { Tooltip as ReactTooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
 import TaskTagInput from '../CreateTask/TaskTagInput'
 import { StyledScrollableContainer } from '../CreateTask/styled'
+import ProgressModal from '../ProgressModal/ProgressModal'
 import { ISpaces, TImport } from './types'
 
 const initialTaskData = {
@@ -43,9 +38,10 @@ const initialTaskData = {
   taskTags: [] as number[],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  dueDate: moment().add(1, 'days').format('YYYY-MM-DDTHH:MM'),
+  dueDate: moment().add(1, 'days').format('YYYY-MM-DD'),
   disableSelfAssign: false,
   instructions: '',
+  publish: false,
 }
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
@@ -73,8 +69,6 @@ const ClickupImport: React.FC<TImport> = ({
   onCreated,
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
-  const [creating, setCreating] = useState(false)
-  const [publishing, setPublishing] = useState(false)
   const [spaces, setSpaces] = useState<any[]>([])
   const [tasks, setTasks] = useState<any[]>([])
   const { t } = useTranslation('tasks')
@@ -83,6 +77,7 @@ const ClickupImport: React.FC<TImport> = ({
   const { tokenInfo } = useTokenInfo()
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
   const [showRewardSettings, setShowRewardSettings] = useState(false)
+  const [showProgressModal, setShowProgressModal] = useState(false)
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
@@ -102,6 +97,9 @@ const ClickupImport: React.FC<TImport> = ({
         ...prev,
         [targetName]: !prev.disableSelfAssign,
       }))
+
+    if (targetName === 'instructions' && targetValue === instructionsTemplate)
+      targetValue = ''
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
 
@@ -133,48 +131,8 @@ const ClickupImport: React.FC<TImport> = ({
       return
     }
 
-    if (publish) setPublishing(true)
-    else setCreating(true)
-
-    const duration = moment(taskData.dueDate).diff(moment(), 'seconds')
-    if (duration <= (60 * 60)) {
-      toast.error(t('min duration is 1 hour'), {
-        icon: '⚠️',
-      })
-      return
-    }
-
-    try {
-      const taskId = await createNewTask(
-        {
-          externalId: taskData.id,
-          orgId: organization.id,
-          title: '',
-          description: '',
-          taskTags: taskData.taskTags,
-          complexityScore: taskData.complexityScore,
-          reputationLevel: taskData.reputationLevel,
-          taskDuration: duration,
-          disableSelfAssign: taskData.disableSelfAssign
-        },
-        library.getSigner()
-      )
-      const promises: Promise<any>[] = []
-      if (taskData.instructions)
-        promises.push(
-          updateTaskInstructions(organization.id, taskId, taskData.instructions)
-        )
-      if (publish)
-        await openTask(taskId, taskData.disableSelfAssign, library.getSigner())
-      await Promise.all(promises)
-      onCreated?.(taskId)
-    } catch (error) {
-      toast.error(t('task_not_created'), { icon: '❌' })
-      console.error(error)
-    } finally {
-      setCreating(false)
-      setPublishing(false)
-    }
+    setTaskData((prev) => ({ ...prev, publish }))
+    setShowProgressModal(true)
   }
 
   const getSpaces = async () => {
@@ -252,6 +210,20 @@ const ClickupImport: React.FC<TImport> = ({
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <Toaster position='bottom-left' />
+      {showProgressModal && (
+        <ProgressModal
+          organization={organization}
+          taskData={taskData}
+          onClose={() => setShowProgressModal(false)}
+          onError={(err) => {
+            err.forEach((e) => toast.error(e, { icon: '❌' }))
+          }}
+          onSuccess={() => {
+            setShowProgressModal(false)
+            close()
+          }}
+        />
+      )}
       {showRewardSettings && (
         <Reward
           organization={organization}
@@ -356,12 +328,12 @@ const ClickupImport: React.FC<TImport> = ({
                     <input
                       type='datetime-local'
                       name='dueDate'
-                      min={moment().add(1, 'hours').format('YYYY-MM-DDTHH:MM')}
+                      min={moment().add(1, 'days').format('YYYY-MM-DD')}
                       value={taskData.dueDate}
                       onChange={(ev: any) =>
                         setTaskData((prev) => ({
                           ...prev,
-                          dueDate: ev.target.value
+                          dueDate: ev.target.value,
                         }))
                       }
                       className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
@@ -492,7 +464,9 @@ const ClickupImport: React.FC<TImport> = ({
                         complexityReward.toString(),
                         tokenInfo?.decimal
                       )
-                      const rewardUsd = parseFloat(complexityRewardValue) * (tokenInfo?.priceUsd || 0)
+                      const rewardUsd =
+                        parseFloat(complexityRewardValue) *
+                        (tokenInfo?.priceUsd || 0)
                       return (
                         <span key={value}>
                           <input
@@ -532,21 +506,21 @@ const ClickupImport: React.FC<TImport> = ({
                 <button
                   className='btn-outline'
                   type='submit'
-                  disabled={publishing || creating}
+                  disabled={showProgressModal}
                   name='publish_task'
                   onClick={() => createTask(true)}
                 >
-                  {publishing ? <Spinner width={30} /> : t('publish_task')}
+                  {t('publish_task')}
                 </button>
               )}
               <button
                 className='btn-primary'
                 type='submit'
-                disabled={creating || publishing}
+                disabled={showProgressModal}
                 name='save_draft'
                 onClick={() => createTask()}
               >
-                {creating ? <Spinner width={30} /> : t('save_draft')}
+                {t('save_draft')}
               </button>
               <button
                 className='btn-outline px-8 border-gray-200 hover:border-gray-300'
