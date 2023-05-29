@@ -19,7 +19,7 @@ const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
     }
     const info = await getTokenInfo(tokenAddress, chainId, library)
     const priceUsd =
-      data?.marketcap.find((asset: any) => asset.symbol == info?.symbol)
+      data?.marketcap?.find((asset: any) => asset.symbol == info?.symbol)
         ?.priceUsd || null
     const asset = info ? { ...info, priceUsd } : undefined
     setTokenInfo(asset)

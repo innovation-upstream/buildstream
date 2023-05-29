@@ -26,7 +26,7 @@ const useTokenInfos = (tokenAddresses?: string[]) => {
     )
     const assets = infos?.map((info) => {
       const priceUsd =
-        data?.marketcap.find((asset: any) => asset.symbol == info?.symbol)
+        data?.marketcap?.find((asset: any) => asset.symbol == info?.symbol)
           ?.priceUsd || null
       return { ...info, priceUsd }
     })

@@ -101,7 +101,7 @@ export const createNewTask = async (
     taskTags: number[]
     complexityScore: number
     reputationLevel: number
-    taskDuration: number
+    dueDate: number
     disableSelfAssign: boolean
   },
   provider?: any
@@ -125,7 +125,7 @@ export const createNewTask = async (
     task.taskTags,
     task.complexityScore,
     task.reputationLevel,
-    task.taskDuration,
+    task.dueDate,
     false, // Do not request assignment
     task.disableSelfAssign
   )
