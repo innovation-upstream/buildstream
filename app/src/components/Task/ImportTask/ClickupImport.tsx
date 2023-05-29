@@ -326,7 +326,7 @@ const ClickupImport: React.FC<TImport> = ({
                   </label>
                   <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
                     <input
-                      type='datetime-local'
+                      type='date'
                       name='dueDate'
                       min={moment().add(1, 'days').format('YYYY-MM-DD')}
                       value={taskData.dueDate}
