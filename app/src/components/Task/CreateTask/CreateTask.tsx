@@ -240,6 +240,15 @@ const CreateTask: React.FC<ICreateTask> = ({
                     required
                   />
                 </div>
+                <div className='mt-4'>
+                  <TaskTagInput
+                    tags={taskData.taskTags}
+                    updateTags={(tags) => {
+                      setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
+                      getRewardAmount(taskData.complexityScore, tags)
+                    }}
+                  />
+                </div>
               </section>
               <section className='border-b py-4'>
                 <span className='block text-xl font-medium'>
@@ -301,24 +310,18 @@ const CreateTask: React.FC<ICreateTask> = ({
                       <label
                         htmlFor='reputationLevel'
                         className='flex gap-2 items-center cursor-pointer max-w-xs'
-                        data-tooltip-id='reputationTip'
                       >
-                        <ReactTooltip
-                          place='top'
-                          id='reputationTip'
-                          className='max-w-xs'
-                        >
-                          <div>{t('expected_reputation')}</div>
-                        </ReactTooltip>
                         <span className='block'>
                           <Reputation />
                         </span>
                         <span className='block text-gray-700'>
-                          {t('reputation')}
+                          {t('min_reputation')}
                         </span>
                       </label>
-
-                      <div className='flex gap-x-3 gap-y-4 mt-3 flex-wrap'>
+                      <p className='block text-sm font-normal text-gray-600 mt-3'>
+                        {t('expected_reputation')}
+                      </p>
+                      <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
                         {taskReputation.map(([key, value]) => {
                           return (
                             <span key={`task-reputation${key}`}>
@@ -337,7 +340,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                                 htmlFor={`task-reputation${key}`}
                                 className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
                               >
-                                <span>{value.toUpperCase()}</span>
+                                <span>{`${value.toUpperCase()} (${key})`}</span>
                               </label>
                             </span>
                           )
@@ -345,15 +348,6 @@ const CreateTask: React.FC<ICreateTask> = ({
                       </div>
                     </div>
                   )}
-                </div>
-                <div className='mt-4'>
-                  <TaskTagInput
-                    tags={taskData.taskTags}
-                    updateTags={(tags) => {
-                      setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
-                      getRewardAmount(taskData.complexityScore, tags)
-                    }}
-                  />
                 </div>
               </section>
               <section className='py-4 border border-t-0 border-r-0 border-l-0'>

@@ -1,6 +1,7 @@
 {
   "level": "Level",
   "reputation": "Reputation",
+  "min_reputation": "Min. Reputation",
   "id": "ID",
   "task_details": "Task Details",
   "closed": "Closed",
@@ -92,6 +93,7 @@
   "invalid_input": "Invalid Input",
   "open_after_creation": "Open after creation",
   "error_opening_task": "Error Publishing Task",
+  "task_instructions_not_updated": "Task Instructions Not Updated",
   "error_requesting_assignment": "Error Requesting Assignment",
   "task_duration_error": "Task Duration must be greater than 0",
   "error_archiving_task": "Error Archiving Task",
@@ -111,5 +113,7 @@
   "link_placeholder": "modify this multiplier",
   "estimate_complexity_end": " if needed",
   "enable_self_assign": "Allow experienced contributors to self-assign to this task",
-  "set_due_date": "Set Due Date"
+  "set_due_date": "Set Due Date",
+  "update_task_instructions": "Update task instructions",
+  "skipped": "Skipped"
 }
