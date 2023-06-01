@@ -1,5 +1,5 @@
-export class TaskDurationCalc {
-  public static getTaskDuration = (seconds: number): string => {
+export class dueDateCalc {
+  public static getdueDate = (seconds: number): string => {
     return `
     ${
       this.getDurationSegments(seconds).weeks > 0

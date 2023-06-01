@@ -1,13 +1,13 @@
+import FileSvg from 'SVGs/File'
+import Warning from 'SVGs/Warning'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { approveTask, disputeAssignedTask } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
-import React, { useState } from 'react'
-import FileSvg from 'SVGs/File'
-import Warning from 'SVGs/Warning'
-import RequestChangeModal from './RequestChangeModal'
+import { useState } from 'react'
 import ChangeTaskDurationModal from './ChangeTaskDurationModal'
-import Spinner from 'components/Spinner/Spinner'
+import RequestChangeModal from './RequestChangeModal'
 
 interface TaskStatusCardProps {
   task: Task

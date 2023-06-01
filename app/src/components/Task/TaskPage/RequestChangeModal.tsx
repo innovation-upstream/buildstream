@@ -1,14 +1,13 @@
-import { useState } from 'react'
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import { useWeb3 } from 'hooks'
-import { useTranslation } from 'next-i18next'
-import { useEffect } from 'react'
-import { changeTaskDuration, requestTaskReview } from 'hooks/task/functions'
 import Duration from 'SVGs/Duration'
-import { TaskDurationCalc } from 'utils/task_duration'
-import SHA256 from 'crypto-js/sha256'
-import CryptoJS from 'crypto-js'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
+import CryptoJS from 'crypto-js'
+import SHA256 from 'crypto-js/sha256'
+import { useWeb3 } from 'hooks'
+import { changeDueDate, requestTaskReview } from 'hooks/task/functions'
+import { useTranslation } from 'next-i18next'
+import { useEffect, useState } from 'react'
+import { dueDateCalc } from 'utils/task_duration'
 
 interface RequestChangeModalProps {
   taskId: number
@@ -49,19 +48,19 @@ const RequestChangeModal = ({
     const changes = formData.get('changes') as string
     const duration = formData.get('duration') as string
     if (!account || duration === '') return
-    const taskDuration = TaskDurationCalc.getDurationInSeconds({
+    const dueDate = dueDateCalc.getDurationInSeconds({
       weeks: 0,
       days: parseInt(duration),
       hours: 0
     })
 
-    if (taskDuration < 1) return
+    if (dueDate < 1) return
 
     const { reviewId, reviewHash } = getReviewParams()
     setProcessing(true)
     try {
       if (durationExtention) {
-        await changeTaskDuration(taskId, 0, taskDuration, library.getSigner())
+        await changeDueDate(taskId, 0, dueDate, library.getSigner())
         setProcessing(false)
         onClose()
         return
@@ -70,7 +69,7 @@ const RequestChangeModal = ({
         taskId,
         reviewId,
         reviewHash,
-        taskDuration,
+        dueDate,
         library.getSigner()
       )
       setProcessing(false)

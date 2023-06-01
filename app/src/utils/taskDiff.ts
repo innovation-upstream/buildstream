@@ -12,7 +12,7 @@ const typeMap: { [keyof: string]: string } = {
   requiredApprovals: 'Number',
   rewardAmount: 'BigNumber',
   rewardToken: 'String',
-  taskDuration: 'Number',
+  dueDate: 'Number',
   approvedBy: 'StringArray',
   assigner: 'String',
   assignmentRequests: 'StringArray'

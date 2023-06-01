@@ -1,5 +1,5 @@
 {
-  "address": "0xa77A408cad6E1879114CC25feaCCAf3ABDc8c94f",
+  "address": "0xc944c60C752592cF143AFcAD9d868352EB3a8296",
   "abi": [
     {
       "type": "constructor",
@@ -116,7 +116,7 @@
         },
         {
           "type": "uint256",
-          "name": "taskDuration"
+          "name": "dueDate"
         },
         {
           "type": "bool",
@@ -207,7 +207,7 @@
         },
         {
           "type": "uint256",
-          "name": "durationExtension"
+          "name": "dueDateExtension"
         }
       ],
       "outputs": []
@@ -309,7 +309,7 @@
         },
         {
           "type": "uint256",
-          "name": "taskDuration"
+          "name": "dueDate"
         },
         {
           "type": "bool",

@@ -81,8 +81,8 @@ export type TaskRevision = {
   requester: string
   externalRevisionId: string
   revisionHash: string
-  durationExtension: number
-  durationExtensionRequest: number
+  dueDateExtension: number
+  dueDateExtensionRequest: number
   status: TaskRevisionStatus
 }
 

@@ -823,12 +823,11 @@ export type Notification_orderBy =
   | 'task__rewardToken'
   | 'task__assignDate'
   | 'task__submitDate'
-  | 'task__taskDuration'
-  | 'task__totalWaitTime'
+  | 'task__dueDate'
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
-  | 'task__disableSelfAssignment'
+  | 'task__disableSelfAssign'
   | 'action'
   | 'action__id'
   | 'action__actionId'
@@ -870,11 +869,10 @@ export type Notification_orderBy =
   | 'taskSnapshot__rewardToken'
   | 'taskSnapshot__assignDate'
   | 'taskSnapshot__submitDate'
-  | 'taskSnapshot__taskDuration'
-  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__dueDate'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
-  | 'taskSnapshot__disableSelfAssignment'
+  | 'taskSnapshot__disableSelfAssign'
   | 'actionSnapshot'
   | 'actionSnapshot__id'
   | 'actionSnapshot__actionId'
@@ -2027,15 +2025,14 @@ export type Task = {
   rewardToken?: Maybe<Scalars['Bytes']>;
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
-  taskDuration: Scalars['BigInt'];
-  totalWaitTime: Scalars['BigInt'];
+  dueDate: Scalars['BigInt'];
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
   revisions?: Maybe<Array<TaskRevision>>;
   raw: Scalars['String'];
-  disableSelfAssignment: Scalars['Boolean'];
+  disableSelfAssign: Scalars['Boolean'];
 };
 
 
@@ -2055,8 +2052,8 @@ export type TaskRevision = {
   requester: Scalars['String'];
   externalRevisionId: Scalars['Bytes'];
   revisionHash: Scalars['Bytes'];
-  durationExtension: Scalars['BigInt'];
-  durationExtensionRequest: Scalars['BigInt'];
+  dueDateExtension: Scalars['BigInt'];
+  dueDateExtensionRequest: Scalars['BigInt'];
   status: Scalars['Int'];
 };
 
@@ -2159,22 +2156,22 @@ export type TaskRevision_filter = {
   revisionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   revisionHash_contains?: InputMaybe<Scalars['Bytes']>;
   revisionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
-  durationExtension?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_not?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_gt?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_lt?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_gte?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_lte?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtensionRequest?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtension?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_not?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtensionRequest?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   status?: InputMaybe<Scalars['Int']>;
   status_not?: InputMaybe<Scalars['Int']>;
   status_gt?: InputMaybe<Scalars['Int']>;
@@ -2208,12 +2205,11 @@ export type TaskRevision_orderBy =
   | 'task__rewardToken'
   | 'task__assignDate'
   | 'task__submitDate'
-  | 'task__taskDuration'
-  | 'task__totalWaitTime'
+  | 'task__dueDate'
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
-  | 'task__disableSelfAssignment'
+  | 'task__disableSelfAssign'
   | 'taskSnapshot'
   | 'taskSnapshot__id'
   | 'taskSnapshot__actor'
@@ -2233,17 +2229,16 @@ export type TaskRevision_orderBy =
   | 'taskSnapshot__rewardToken'
   | 'taskSnapshot__assignDate'
   | 'taskSnapshot__submitDate'
-  | 'taskSnapshot__taskDuration'
-  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__dueDate'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
-  | 'taskSnapshot__disableSelfAssignment'
+  | 'taskSnapshot__disableSelfAssign'
   | 'revisionId'
   | 'requester'
   | 'externalRevisionId'
   | 'revisionHash'
-  | 'durationExtension'
-  | 'durationExtensionRequest'
+  | 'dueDateExtension'
+  | 'dueDateExtensionRequest'
   | 'status';
 
 export type TaskSnapshot = {
@@ -2268,13 +2263,12 @@ export type TaskSnapshot = {
   rewardToken?: Maybe<Scalars['Bytes']>;
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
-  taskDuration?: Maybe<Scalars['BigInt']>;
-  totalWaitTime?: Maybe<Scalars['BigInt']>;
+  dueDate?: Maybe<Scalars['BigInt']>;
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
-  disableSelfAssignment: Scalars['Boolean'];
+  disableSelfAssign: Scalars['Boolean'];
 };
 
 export type TaskSnapshot_filter = {
@@ -2544,22 +2538,14 @@ export type TaskSnapshot_filter = {
   submitDate_lte?: InputMaybe<Scalars['BigInt']>;
   submitDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
   submitDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_not?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate?: InputMaybe<Scalars['BigInt']>;
+  dueDate_not?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -2596,10 +2582,10 @@ export type TaskSnapshot_filter = {
   staked_not?: InputMaybe<Scalars['Boolean']>;
   staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
   staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_not?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_not?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<TaskSnapshot_filter>>>;
@@ -2646,13 +2632,12 @@ export type TaskSnapshot_orderBy =
   | 'rewardToken'
   | 'assignDate'
   | 'submitDate'
-  | 'taskDuration'
-  | 'totalWaitTime'
+  | 'dueDate'
   | 'comment'
   | 'approvedBy'
   | 'assignmentRequest'
   | 'staked'
-  | 'disableSelfAssignment';
+  | 'disableSelfAssign';
 
 export type Task_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -2905,22 +2890,14 @@ export type Task_filter = {
   submitDate_lte?: InputMaybe<Scalars['BigInt']>;
   submitDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
   submitDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_not?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate?: InputMaybe<Scalars['BigInt']>;
+  dueDate_not?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -2978,10 +2955,10 @@ export type Task_filter = {
   raw_ends_with_nocase?: InputMaybe<Scalars['String']>;
   raw_not_ends_with?: InputMaybe<Scalars['String']>;
   raw_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  disableSelfAssignment?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_not?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_not?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Task_filter>>>;
@@ -3026,15 +3003,14 @@ export type Task_orderBy =
   | 'rewardToken'
   | 'assignDate'
   | 'submitDate'
-  | 'taskDuration'
-  | 'totalWaitTime'
+  | 'dueDate'
   | 'comment'
   | 'approvedBy'
   | 'assignmentRequest'
   | 'staked'
   | 'revisions'
   | 'raw'
-  | 'disableSelfAssignment';
+  | 'disableSelfAssign';
 
 export type Team = {
   id: Scalars['ID'];

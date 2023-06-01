@@ -842,12 +842,11 @@ export type Notification_orderBy =
   | 'task__rewardToken'
   | 'task__assignDate'
   | 'task__submitDate'
-  | 'task__taskDuration'
-  | 'task__totalWaitTime'
+  | 'task__dueDate'
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
-  | 'task__disableSelfAssignment'
+  | 'task__disableSelfAssign'
   | 'action'
   | 'action__id'
   | 'action__actionId'
@@ -889,11 +888,10 @@ export type Notification_orderBy =
   | 'taskSnapshot__rewardToken'
   | 'taskSnapshot__assignDate'
   | 'taskSnapshot__submitDate'
-  | 'taskSnapshot__taskDuration'
-  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__dueDate'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
-  | 'taskSnapshot__disableSelfAssignment'
+  | 'taskSnapshot__disableSelfAssign'
   | 'actionSnapshot'
   | 'actionSnapshot__id'
   | 'actionSnapshot__actionId'
@@ -2046,15 +2044,14 @@ export type Task = {
   rewardToken?: Maybe<Scalars['Bytes']>;
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
-  taskDuration: Scalars['BigInt'];
-  totalWaitTime: Scalars['BigInt'];
+  dueDate: Scalars['BigInt'];
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
   revisions?: Maybe<Array<TaskRevision>>;
   raw: Scalars['String'];
-  disableSelfAssignment: Scalars['Boolean'];
+  disableSelfAssign: Scalars['Boolean'];
 };
 
 
@@ -2074,8 +2071,8 @@ export type TaskRevision = {
   requester: Scalars['String'];
   externalRevisionId: Scalars['Bytes'];
   revisionHash: Scalars['Bytes'];
-  durationExtension: Scalars['BigInt'];
-  durationExtensionRequest: Scalars['BigInt'];
+  dueDateExtension: Scalars['BigInt'];
+  dueDateExtensionRequest: Scalars['BigInt'];
   status: Scalars['Int'];
 };
 
@@ -2178,22 +2175,22 @@ export type TaskRevision_filter = {
   revisionHash_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   revisionHash_contains?: InputMaybe<Scalars['Bytes']>;
   revisionHash_not_contains?: InputMaybe<Scalars['Bytes']>;
-  durationExtension?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_not?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_gt?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_lt?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_gte?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_lte?: InputMaybe<Scalars['BigInt']>;
-  durationExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtensionRequest?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
-  durationExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  durationExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtension?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_not?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtension_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtension_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtensionRequest?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_not?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDateExtensionRequest_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDateExtensionRequest_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   status?: InputMaybe<Scalars['Int']>;
   status_not?: InputMaybe<Scalars['Int']>;
   status_gt?: InputMaybe<Scalars['Int']>;
@@ -2227,12 +2224,11 @@ export type TaskRevision_orderBy =
   | 'task__rewardToken'
   | 'task__assignDate'
   | 'task__submitDate'
-  | 'task__taskDuration'
-  | 'task__totalWaitTime'
+  | 'task__dueDate'
   | 'task__comment'
   | 'task__staked'
   | 'task__raw'
-  | 'task__disableSelfAssignment'
+  | 'task__disableSelfAssign'
   | 'taskSnapshot'
   | 'taskSnapshot__id'
   | 'taskSnapshot__actor'
@@ -2252,17 +2248,16 @@ export type TaskRevision_orderBy =
   | 'taskSnapshot__rewardToken'
   | 'taskSnapshot__assignDate'
   | 'taskSnapshot__submitDate'
-  | 'taskSnapshot__taskDuration'
-  | 'taskSnapshot__totalWaitTime'
+  | 'taskSnapshot__dueDate'
   | 'taskSnapshot__comment'
   | 'taskSnapshot__staked'
-  | 'taskSnapshot__disableSelfAssignment'
+  | 'taskSnapshot__disableSelfAssign'
   | 'revisionId'
   | 'requester'
   | 'externalRevisionId'
   | 'revisionHash'
-  | 'durationExtension'
-  | 'durationExtensionRequest'
+  | 'dueDateExtension'
+  | 'dueDateExtensionRequest'
   | 'status';
 
 export type TaskSnapshot = {
@@ -2287,13 +2282,12 @@ export type TaskSnapshot = {
   rewardToken?: Maybe<Scalars['Bytes']>;
   assignDate?: Maybe<Scalars['BigInt']>;
   submitDate?: Maybe<Scalars['BigInt']>;
-  taskDuration?: Maybe<Scalars['BigInt']>;
-  totalWaitTime?: Maybe<Scalars['BigInt']>;
+  dueDate?: Maybe<Scalars['BigInt']>;
   comment?: Maybe<Scalars['String']>;
   approvedBy?: Maybe<Array<Scalars['String']>>;
   assignmentRequest?: Maybe<Array<Scalars['String']>>;
   staked: Scalars['Boolean'];
-  disableSelfAssignment: Scalars['Boolean'];
+  disableSelfAssign: Scalars['Boolean'];
 };
 
 export type TaskSnapshot_filter = {
@@ -2563,22 +2557,14 @@ export type TaskSnapshot_filter = {
   submitDate_lte?: InputMaybe<Scalars['BigInt']>;
   submitDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
   submitDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_not?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate?: InputMaybe<Scalars['BigInt']>;
+  dueDate_not?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -2615,10 +2601,10 @@ export type TaskSnapshot_filter = {
   staked_not?: InputMaybe<Scalars['Boolean']>;
   staked_in?: InputMaybe<Array<Scalars['Boolean']>>;
   staked_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_not?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_not?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<TaskSnapshot_filter>>>;
@@ -2665,13 +2651,12 @@ export type TaskSnapshot_orderBy =
   | 'rewardToken'
   | 'assignDate'
   | 'submitDate'
-  | 'taskDuration'
-  | 'totalWaitTime'
+  | 'dueDate'
   | 'comment'
   | 'approvedBy'
   | 'assignmentRequest'
   | 'staked'
-  | 'disableSelfAssignment';
+  | 'disableSelfAssign';
 
 export type Task_filter = {
   id?: InputMaybe<Scalars['ID']>;
@@ -2924,22 +2909,14 @@ export type Task_filter = {
   submitDate_lte?: InputMaybe<Scalars['BigInt']>;
   submitDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
   submitDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_not?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lt?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_gte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_lte?: InputMaybe<Scalars['BigInt']>;
-  taskDuration_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  taskDuration_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_not?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lt?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_gte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_lte?: InputMaybe<Scalars['BigInt']>;
-  totalWaitTime_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalWaitTime_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate?: InputMaybe<Scalars['BigInt']>;
+  dueDate_not?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lt?: InputMaybe<Scalars['BigInt']>;
+  dueDate_gte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_lte?: InputMaybe<Scalars['BigInt']>;
+  dueDate_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  dueDate_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   comment?: InputMaybe<Scalars['String']>;
   comment_not?: InputMaybe<Scalars['String']>;
   comment_gt?: InputMaybe<Scalars['String']>;
@@ -2997,10 +2974,10 @@ export type Task_filter = {
   raw_ends_with_nocase?: InputMaybe<Scalars['String']>;
   raw_not_ends_with?: InputMaybe<Scalars['String']>;
   raw_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  disableSelfAssignment?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_not?: InputMaybe<Scalars['Boolean']>;
-  disableSelfAssignment_in?: InputMaybe<Array<Scalars['Boolean']>>;
-  disableSelfAssignment_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_not?: InputMaybe<Scalars['Boolean']>;
+  disableSelfAssign_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  disableSelfAssign_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Task_filter>>>;
@@ -3045,15 +3022,14 @@ export type Task_orderBy =
   | 'rewardToken'
   | 'assignDate'
   | 'submitDate'
-  | 'taskDuration'
-  | 'totalWaitTime'
+  | 'dueDate'
   | 'comment'
   | 'approvedBy'
   | 'assignmentRequest'
   | 'staked'
   | 'revisions'
   | 'raw'
-  | 'disableSelfAssignment';
+  | 'disableSelfAssign';
 
 export type Team = {
   id: Scalars['ID'];
@@ -3836,15 +3812,14 @@ export type TaskResolvers<ContextType = MeshContext, ParentType extends Resolver
   rewardToken?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
   assignDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   submitDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
-  taskDuration?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  totalWaitTime?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  dueDate?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   revisions?: Resolver<Maybe<Array<ResolversTypes['TaskRevision']>>, ParentType, ContextType, RequireFields<TaskrevisionsArgs, 'skip' | 'first'>>;
   raw?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  disableSelfAssignment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  disableSelfAssign?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3856,8 +3831,8 @@ export type TaskRevisionResolvers<ContextType = MeshContext, ParentType extends 
   requester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   externalRevisionId?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   revisionHash?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
-  durationExtension?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  durationExtensionRequest?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  dueDateExtension?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  dueDateExtensionRequest?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3884,13 +3859,12 @@ export type TaskSnapshotResolvers<ContextType = MeshContext, ParentType extends 
   rewardToken?: Resolver<Maybe<ResolversTypes['Bytes']>, ParentType, ContextType>;
   assignDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   submitDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
-  taskDuration?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
-  totalWaitTime?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
+  dueDate?: Resolver<Maybe<ResolversTypes['BigInt']>, ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   approvedBy?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   assignmentRequest?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   staked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  disableSelfAssignment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  disableSelfAssign?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -4024,7 +3998,7 @@ const buildstreamV1TestTransforms = [];
 const additionalTypeDefs = [] as any[];
 const buildstreamV1TestHandler = new GraphqlHandler({
               name: "buildstream_v1_test",
-              config: {"endpoint":"https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v2"},
+              config: {"endpoint":"https://api.thegraph.com/subgraphs/id/QmSh8mACYobfUbfH7azaJhRXRT1cd2iKWJaCzUNW5YpLjR"},
               baseDir,
               cache,
               pubsub,
@@ -4246,8 +4220,7 @@ export type GetNotificationsQuery = { notifications: Array<(
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
     ), task?: Maybe<(
-      Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-      & { disableSelfAssign: Task['disableSelfAssignment'] }
+      Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
       & { orgId: (
         Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4259,8 +4232,7 @@ export type GetNotificationsQuery = { notifications: Array<(
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
       ) }
     )>, deposit?: Maybe<Pick<Deposit, 'id' | 'orgId' | 'amount' | 'token' | 'initiator' | 'completedAt'>>, taskSnapshot?: Maybe<(
-      Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-      & { disableSelfAssign: TaskSnapshot['disableSelfAssignment'] }
+      Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
       & { orgId: (
         Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
         & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4313,8 +4285,7 @@ export type GetOrganizationsQuery = { organizations: Array<(
   )> };
 
 export type TaskFragmentFragment = (
-  Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-  & { disableSelfAssign: Task['disableSelfAssignment'] }
+  Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
   & { orgId: (
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4322,8 +4293,7 @@ export type TaskFragmentFragment = (
 );
 
 export type TaskSnapshotFragmentFragment = (
-  Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-  & { disableSelfAssign: TaskSnapshot['disableSelfAssignment'] }
+  Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
   & { orgId: (
     Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
     & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4338,8 +4308,7 @@ export type GetTaskQueryVariables = Exact<{
 
 
 export type GetTaskQuery = { task?: Maybe<(
-    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-    & { disableSelfAssign: Task['disableSelfAssignment'] }
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4358,8 +4327,7 @@ export type GetTasksQueryVariables = Exact<{
 
 
 export type GetTasksQuery = { tasks: Array<(
-    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-    & { disableSelfAssign: Task['disableSelfAssignment'] }
+    Pick<Task, 'id' | 'externalId' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4378,8 +4346,7 @@ export type GetTaskSnapshotsQueryVariables = Exact<{
 
 
 export type GetTaskSnapshotsQuery = { taskSnapshots: Array<(
-    Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'taskDuration' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssignment'>
-    & { disableSelfAssign: TaskSnapshot['disableSelfAssignment'] }
+    Pick<TaskSnapshot, 'id' | 'actor' | 'block' | 'timestamp' | 'taskId' | 'title' | 'description' | 'assigner' | 'assignee' | 'taskTags' | 'status' | 'complexityScore' | 'reputationLevel' | 'requiredApprovals' | 'rewardAmount' | 'rewardToken' | 'assignDate' | 'submitDate' | 'dueDate' | 'comment' | 'approvedBy' | 'assignmentRequest' | 'disableSelfAssign'>
     & { orgId: (
       Pick<Organization, 'id' | 'orgId' | 'name' | 'description' | 'approvers' | 'signers' | 'members' | 'requiredTaskApprovals' | 'requiredConfirmations' | 'rewardMultiplier' | 'rewardSlashMultiplier' | 'slashRewardEvery' | 'rewardToken' | 'isInitialized'>
       & { treasury: { tokens?: Maybe<Array<Pick<TreasuryToken, 'token' | 'balance' | 'lockedBalance'>>> }, stat?: Maybe<Pick<OrganizationStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> }
@@ -4398,7 +4365,7 @@ export type GetTaskRevisionsQueryVariables = Exact<{
 
 
 export type GetTaskRevisionsQuery = { taskRevisions: Array<(
-    Pick<TaskRevision, 'id' | 'revisionId' | 'requester' | 'externalRevisionId' | 'revisionHash' | 'durationExtension' | 'durationExtensionRequest' | 'status'>
+    Pick<TaskRevision, 'id' | 'revisionId' | 'requester' | 'externalRevisionId' | 'revisionHash' | 'dueDateExtension' | 'dueDateExtensionRequest' | 'status'>
     & { taskSnapshot: Pick<TaskSnapshot, 'comment' | 'status'> }
   )> };
 
@@ -4604,12 +4571,11 @@ export const TaskFragmentFragmentDoc = gql`
   rewardToken
   assignDate
   submitDate
-  taskDuration
+  dueDate
   comment
   approvedBy
   assignmentRequest
-  disableSelfAssignment
-  disableSelfAssign: disableSelfAssignment
+  disableSelfAssign
 }
     ${OrganizationFragmentFragmentDoc}` as unknown as DocumentNode<TaskFragmentFragment, unknown>;
 export const TaskSnapshotFragmentFragmentDoc = gql`
@@ -4635,12 +4601,11 @@ export const TaskSnapshotFragmentFragmentDoc = gql`
   rewardToken
   assignDate
   submitDate
-  taskDuration
+  dueDate
   comment
   approvedBy
   assignmentRequest
-  disableSelfAssignment
-  disableSelfAssign: disableSelfAssignment
+  disableSelfAssign
 }
     ${OrganizationFragmentFragmentDoc}` as unknown as DocumentNode<TaskSnapshotFragmentFragment, unknown>;
 export const StatFragmentFragmentDoc = gql`
@@ -4801,8 +4766,8 @@ export const GetTaskRevisionsDocument = gql`
     requester
     externalRevisionId
     revisionHash
-    durationExtension
-    durationExtensionRequest
+    dueDateExtension
+    dueDateExtensionRequest
     status
   }
 }

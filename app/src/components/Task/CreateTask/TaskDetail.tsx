@@ -15,14 +15,14 @@ import {
   assignToSelf,
   getRewardAmount,
   getTaskInstructions,
-  openTask
+  openTask,
 } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatus } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import React, { useCallback, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import { TaskDurationCalc } from 'utils/task_duration'
+import { dueDateCalc } from 'utils/task_duration'
 import { StyledScrollableContainer } from './styled'
 import { ITaskDetail } from './types'
 
@@ -177,9 +177,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                     </div>
                     <div>
                       <span className='block font-bold text-sm md:text-base'>
-                        {TaskDurationCalc.getDurationInDays(
-                          task?.taskDuration ?? 0
-                        )}{' '}
+                        {dueDateCalc.getDurationInDays(task?.dueDate ?? 0)}{' '}
                         {t('days')}
                       </span>
                     </div>
