@@ -77,7 +77,7 @@ contract TaskContract {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration,
+        uint256 dueDate,
         bool requestAssignment,
         bool disableSelfAssign
     ) external returns (uint256 taskId) {
@@ -100,7 +100,7 @@ contract TaskContract {
             complexityScore,
             reputationLevel,
             requiredTaskApprovals,
-            taskDuration,
+            dueDate,
             disableSelfAssign
         );
 
@@ -118,7 +118,7 @@ contract TaskContract {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration,
+        uint256 dueDate,
         bool disableSelfAssign
     ) external onlyApprover(taskId) {
         TaskControlLogicLibrary.ensureCanUpdateTask(
@@ -134,7 +134,7 @@ contract TaskContract {
             taskTags,
             complexityScore,
             reputationLevel,
-            taskDuration,
+            dueDate,
             disableSelfAssign
         );
     }
@@ -368,13 +368,13 @@ contract TaskContract {
         uint256 taskId,
         bytes32 reviewId,
         bytes32 revisionHash,
-        uint256 durationExtension
+        uint256 dueDateExtension
     ) external onlyApprover(taskId) {
         taskStorageContract.requestForTaskRevision(
             taskId,
             reviewId,
             revisionHash,
-            durationExtension,
+            dueDateExtension,
             msg.sender
         );
     }

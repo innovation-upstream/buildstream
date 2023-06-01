@@ -112,12 +112,12 @@ dataSources:
         - event: TaskConfirmation(indexed address,indexed uint256)
           handler: handleTaskConfirmation
         - event: TaskCreation(indexed
-            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,bool))
+            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],bool))
           handler: handleTaskCreation
         - event: TaskOpened(indexed uint256,uint256,address,bool)
           handler: handleTaskOpened
         - event: TaskUpdated(indexed
-            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,bool))
+            uint256,(uint256,string,uint256,string,string,address,address,uint256[],uint256,uint256,uint8,string,uint256),(uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],bool))
           handler: handleTaskUpdated
         - event: TaskRevocation(indexed address,indexed uint256)
           handler: handleTaskRevocation
@@ -125,7 +125,7 @@ dataSources:
           handler: handleTaskSubmission
         - event: TaskUnassignment(indexed address,indexed uint256)
           handler: handleTaskUnassignment
-        - event: TaskRevisionAccepted(indexed uint256,uint256,bytes32,uint256,uint256)
+        - event: TaskRevisionAccepted(indexed uint256,uint256,bytes32,uint256)
           handler: handleTaskRevisionAccepted
         - event: TaskRevisionRejected(indexed uint256,uint256,bytes32)
           handler: handleTaskRevisionRejected

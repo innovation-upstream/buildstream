@@ -166,7 +166,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "taskDuration",
+            "name": "dueDate",
             "type": "uint256"
           }
         ],
@@ -236,12 +236,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtension",
+                "name": "dueDateExtension",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtensionRequest",
+                "name": "dueDateExtensionRequest",
                 "type": "uint256"
               },
               {
@@ -268,11 +268,6 @@
             "internalType": "address[]",
             "name": "approvers",
             "type": "address[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalWaitTime",
-            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -363,13 +358,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "taskDuration",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "totalWaitTime",
+        "name": "dueDate",
         "type": "uint256"
       }
     ],
@@ -400,7 +389,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "durationExtension",
+        "name": "dueDateExtension",
         "type": "uint256"
       }
     ],
@@ -465,12 +454,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "durationExtension",
+            "name": "dueDateExtension",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "durationExtensionRequest",
+            "name": "dueDateExtensionRequest",
             "type": "uint256"
           },
           {
@@ -618,7 +607,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "taskDuration",
+            "name": "dueDate",
             "type": "uint256"
           }
         ],
@@ -688,12 +677,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtension",
+                "name": "dueDateExtension",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtensionRequest",
+                "name": "dueDateExtensionRequest",
                 "type": "uint256"
               },
               {
@@ -720,11 +709,6 @@
             "internalType": "address[]",
             "name": "approvers",
             "type": "address[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalWaitTime",
-            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -875,7 +859,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "taskDuration",
+        "name": "dueDate",
         "type": "uint256"
       },
       {
@@ -993,7 +977,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "taskDuration",
+            "name": "dueDate",
             "type": "uint256"
           }
         ],
@@ -1076,12 +1060,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtension",
+                "name": "dueDateExtension",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "durationExtensionRequest",
+                "name": "dueDateExtensionRequest",
                 "type": "uint256"
               },
               {
@@ -1108,11 +1092,6 @@
             "internalType": "address[]",
             "name": "approvers",
             "type": "address[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalWaitTime",
-            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -1211,7 +1190,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "durationExtension",
+        "name": "dueDateExtension",
         "type": "uint256"
       },
       {
@@ -1239,11 +1218,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "durationExtension",
+        "name": "dueDateExtension",
         "type": "uint256"
       }
     ],
-    "name": "requestForTaskRevisionDurationExtension",
+    "name": "requestForTaskRevisionDueDateExtension",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1346,7 +1325,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "taskDuration",
+        "name": "dueDate",
         "type": "uint256"
       },
       {

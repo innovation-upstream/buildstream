@@ -18,12 +18,11 @@ fragment TaskFragment on Task {
   rewardToken
   assignDate
   submitDate
-  taskDuration
+  dueDate
   comment
   approvedBy
   assignmentRequest
-  disableSelfAssignment
-  disableSelfAssign: disableSelfAssignment
+  disableSelfAssign
 }
 
 fragment TaskSnapshotFragment on TaskSnapshot {

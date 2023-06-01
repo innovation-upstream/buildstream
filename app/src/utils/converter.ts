@@ -118,7 +118,7 @@ export class Converter {
       requiredApprovals: Number(task.requiredApprovals),
       rewardAmount: BigNumber.from(task.rewardAmount),
       rewardToken: task.rewardToken,
-      taskDuration: Number(task.taskDuration),
+      dueDate: Number(task.dueDate),
       approvedBy: task.approvedBy || [],
       assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || [],

@@ -77,7 +77,8 @@ const ProgressModal = ({
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
-          dueDate: moment(taskData.dueDate).unix(),
+          // End of day
+          dueDate: moment(taskData.dueDate).add(60 * 60 * 60 - 1, 'seconds').unix(),
           disableSelfAssign: taskData.disableSelfAssign,
         },
         library.getSigner()

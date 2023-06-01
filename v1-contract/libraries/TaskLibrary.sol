@@ -19,7 +19,7 @@ library TaskLibrary {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration
+        uint256 dueDate
     ) external {
         self.id = taskId;
         self.externalId = externalId;
@@ -29,7 +29,7 @@ library TaskLibrary {
         self.taskTags = taskTags;
         self.complexityScore = complexityScore;
         self.reputationLevel = reputationLevel;
-        self.taskDuration = taskDuration;
+        self.dueDate = dueDate;
     }
 
     function createTaskMetadata(
@@ -52,12 +52,12 @@ library TaskLibrary {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration
+        uint256 dueDate
     ) external {
         self.externalId = externalId;
         self.title = title;
         self.description = description;
-        self.taskDuration = taskDuration;
+        self.dueDate = dueDate;
         self.reputationLevel = reputationLevel;
         if (self.status == TaskLib.TaskStatus.PROPOSED) {
             self.taskTags = taskTags;
@@ -192,7 +192,7 @@ library TaskLibrary {
         TaskLib.TaskMetadata storage taskMetadata,
         bytes32 revisionId,
         bytes32 revisionHash,
-        uint256 durationExtension,
+        uint256 dueDateExtension,
         address approver
     ) external {
         require(
@@ -212,8 +212,8 @@ library TaskLibrary {
                 requester: approver,
                 revisionId: revisionId,
                 revisionHash: revisionHash,
-                durationExtension: durationExtension,
-                durationExtensionRequest: 0,
+                dueDateExtension: dueDateExtension,
+                dueDateExtensionRequest: 0,
                 status: TaskLib.TaskRevisionStatus.PROPOSED
             })
         );
@@ -240,20 +240,17 @@ library TaskLibrary {
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
             .ACCEPTED;
-        // Account for time spent during reviews
-        uint256 timeOffset = block.timestamp - taskMetadata.submitDate;
-        self.taskDuration =
-            self.taskDuration +
-            taskMetadata.revisions[revisionIndex].durationExtension;
-        taskMetadata.totalWaitTime = taskMetadata.totalWaitTime + timeOffset;
+        self.dueDate =
+            self.dueDate +
+            taskMetadata.revisions[revisionIndex].dueDateExtension;
         taskMetadata.submitDate = 0;
     }
 
-    function requestForTaskRevisionDurationExtension(
+    function requestForTaskRevisionDueDateExtension(
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
         uint256 revisionIndex,
-        uint256 durationExtension,
+        uint256 dueDateExtension,
         address assignee
     ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
         require(
@@ -271,7 +268,7 @@ library TaskLibrary {
             .CHANGES_REQUESTED;
         taskMetadata
             .revisions[revisionIndex]
-            .durationExtensionRequest = durationExtension;
+            .dueDateExtensionRequest = dueDateExtension;
     }
 
     function rejectTaskRevision(

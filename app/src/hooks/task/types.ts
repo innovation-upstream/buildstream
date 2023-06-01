@@ -56,7 +56,7 @@ export type Task = {
   requiredApprovals: number
   rewardAmount: BigNumber
   rewardToken: string
-  taskDuration: number
+  dueDate: number
   approvedBy: string[]
   assigner: string
   assignmentRequests: string[]

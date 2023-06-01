@@ -338,8 +338,8 @@ export function handleTaskUpdated(event: TaskUpdatedEvent): void {
   taskEntity.taskTags = task.taskTags
   taskEntity.complexityScore = task.complexityScore
   taskEntity.reputationLevel = task.reputationLevel
-  taskEntity.taskDuration = task.taskDuration
-  taskEntity.disableSelfAssignment = taskMetadata.disableSelfAssign
+  taskEntity.dueDate = task.dueDate
+  taskEntity.disableSelfAssign = taskMetadata.disableSelfAssign
 
   taskEntity.raw = getRawData(taskEntity)
 
@@ -393,12 +393,11 @@ export function handleTaskCreation(event: TaskCreationEvent): void {
   taskEntity.rewardToken = taskMetadata.rewardToken
   taskEntity.assignDate = taskMetadata.assignDate
   taskEntity.submitDate = taskMetadata.submitDate
-  taskEntity.taskDuration = task.taskDuration
+  taskEntity.dueDate = task.dueDate
   taskEntity.comment = task.comment
   taskEntity.staked = false
-  taskEntity.totalWaitTime = new BigInt(0)
   taskEntity.externalId = task.externalId
-  taskEntity.disableSelfAssignment = taskMetadata.disableSelfAssign
+  taskEntity.disableSelfAssign = taskMetadata.disableSelfAssign
 
   taskEntity.raw = getRawData(taskEntity)
   taskEntity.save()
@@ -423,7 +422,7 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
   taskEntity.status = 1
   taskEntity.rewardToken = event.params.rewardToken
   taskEntity.rewardAmount = event.params.rewardAmount
-  taskEntity.disableSelfAssignment = event.params.disableSelfAssign
+  taskEntity.disableSelfAssign = event.params.disableSelfAssign
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -541,8 +540,8 @@ export function handleTaskRevisionRequested(
   revisionEntity.requester = revision.requester.toHexString()
   revisionEntity.externalRevisionId = revision.revisionId
   revisionEntity.revisionHash = revision.revisionHash
-  revisionEntity.durationExtension = revision.durationExtension
-  revisionEntity.durationExtensionRequest = revision.durationExtensionRequest
+  revisionEntity.dueDateExtension = revision.dueDateExtension
+  revisionEntity.dueDateExtensionRequest = revision.dueDateExtensionRequest
   revisionEntity.status = revision.status
 
   const taskId = event.params.taskId.toString()
@@ -576,8 +575,7 @@ export function handleTaskRevisionAccepted(
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 2
-  taskEntity.taskDuration = event.params.taskDuration
-  taskEntity.totalWaitTime = event.params.totalWaitTime
+  taskEntity.dueDate = event.params.dueDate
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -609,7 +607,7 @@ export function handleTaskRevisionChangesRequested(
   const revisionEntity = TaskRevision.load(entityId.toHexString())
   if (!revisionEntity) return
   revisionEntity.status = 1
-  revisionEntity.durationExtensionRequest = event.params.durationExtension
+  revisionEntity.dueDateExtension = event.params.dueDateExtension
 
   revisionEntity.save()
 }
