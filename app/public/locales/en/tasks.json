@@ -115,5 +115,12 @@
   "enable_self_assign": "Allow experienced contributors to self-assign to this task",
   "set_due_date": "Set Due Date",
   "update_task_instructions": "Update task instructions",
-  "skipped": "Skipped"
+  "skipped": "Skipped",
+  "expert": "Expert",
+  "intermediate": "Intermediate",
+  "entry": "Entry",
+  "expert_hint": "An assignee must have at least 100 reputation points to be able to assign themselves to this task.",
+  "intermediate_hint": "An assignee must have at least 50 reputation points to be able to assign themselves to this task.",
+  "entry_hint": "An assignee must have at least 10 reputation points to be able to assign themselves to this task.",
+  "how_it_works": "How it works"
 }

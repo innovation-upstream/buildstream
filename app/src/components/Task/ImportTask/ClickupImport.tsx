@@ -1,9 +1,11 @@
 import Duration from 'SVGs/Duration'
+import Hint from 'SVGs/Hint'
 import Reputation from 'SVGs/Reputation'
 import AutoComplete from 'components/AutoComplete/AutoComplete'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Reward from 'components/Reward/Reward'
+import Tooltip from 'components/Tooltip/Tooltip'
 import { getCookie } from 'cookies-next'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
@@ -369,20 +371,42 @@ const ClickupImport: React.FC<TImport> = ({
                   </div>
                   {!taskData.disableSelfAssign && (
                     <div>
-                      <label
-                        htmlFor='reputationLevel'
-                        className='flex gap-2 items-center cursor-pointer max-w-xs'
-                      >
-                        <span className='block'>
-                          <Reputation />
-                        </span>
-                        <span className='block text-gray-700'>
-                          {t('min_reputation')}
-                        </span>
-                      </label>
-                      <p className='block text-sm font-normal text-gray-600 mt-3'>
-                        {t('expected_reputation')}
-                      </p>
+                      <div className='flex items-center justify-between'>
+                        <label
+                          htmlFor='reputationLevel'
+                          className='flex gap-2 items-center cursor-pointer max-w-xs'
+                        >
+                          <span className='block'>
+                            <Reputation />
+                          </span>
+                          <span className='block text-gray-700'>
+                            {t('min_reputation')}
+                          </span>
+                        </label>
+                        <Tooltip
+                          label={
+                            <span className='flex gap-x-2 p-2 text-sm bg-[#F7F7F7] w-fit rounded-full'>
+                              <Hint /> {t('how_it_works')}?
+                            </span>
+                          }
+                        >
+                          <div className='text-sm font-normal text-gray-600'>
+                            <strong>{t('expected_reputation')}</strong>
+                            <span className='block mt-4'>
+                              <strong>{t('entry')}: </strong>
+                              {t('entry_hint')}
+                            </span>
+                            <span className='block mt-2'>
+                              <strong>{t('intermediate')}: </strong>
+                              {t('intermediate_hint')}
+                            </span>
+                            <span className='block mt-2'>
+                              <strong>{t('expert')}: </strong>
+                              {t('expert_hint')}
+                            </span>
+                          </div>
+                        </Tooltip>
+                      </div>
                       <div className='flex gap-x-3 gap-y-4 mt-4 flex-wrap'>
                         {taskReputation.map(([key, value]) => {
                           return (
@@ -402,7 +426,7 @@ const ClickupImport: React.FC<TImport> = ({
                                 htmlFor={`task-reputation${key}`}
                                 className='cursor-pointer w-[max-content] border text-sm text-center px-4 py-1 rounded-lg focus:bg-blue-700 peer-checked:bg-blue-700 peer-checked:text-white peer-checked:font-medium peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
                               >
-                                <span>{`${value.toUpperCase()} (${key})`}</span>
+                                <span>{value.toUpperCase()}</span>
                               </label>
                             </span>
                           )

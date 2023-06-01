@@ -25,7 +25,8 @@ module.exports = {
         full: '100%',
       },
       boxShadow: {
-        paper: '0px 4px 24px rgba(0, 0, 0, 0.03)'
+        paper: '0px 4px 24px rgba(0, 0, 0, 0.03)',
+        tooltip: '0px 0px 24px rgba(0, 0, 0, 0.12)'
       },
       container: {
         center: true
