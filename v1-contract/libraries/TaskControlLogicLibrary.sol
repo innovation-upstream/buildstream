@@ -21,10 +21,7 @@ library TaskControlLogicLibrary {
     ) external view {
         require(organization.doesOrgExists(orgId), "Org not exist");
         for (uint256 i = 0; i < taskTags.length; i++) {
-            require(
-                sbtToken.doesTokenExist(taskTags[i]),
-                "Invalid tag"
-            );
+            require(sbtToken.doesTokenExist(taskTags[i]), "Invalid tag");
         }
         OrgLib.Org memory org = organization.getOrganization(orgId);
         require(org.isInitialized, "Organization not initialized");
@@ -36,10 +33,7 @@ library TaskControlLogicLibrary {
         SBTToken sbtToken
     ) external view {
         for (uint256 i = 0; i < taskTags.length; i++) {
-            require(
-                sbtToken.doesTokenExist(taskTags[i]),
-                "Invalid tag"
-            );
+            require(sbtToken.doesTokenExist(taskTags[i]), "Invalid tag");
         }
     }
 
@@ -56,11 +50,10 @@ library TaskControlLogicLibrary {
         rewardAmount = multiplier * (task.complexityScore + 1);
     }
 
-    function canCloseTask(uint256 taskId, TaskStorageContract taskStorage)
-        external
-        view
-        returns (bool)
-    {
+    function canCloseTask(
+        uint256 taskId,
+        TaskStorageContract taskStorage
+    ) external view returns (bool) {
         TaskLib.TaskMetadata memory taskMetadata = taskStorage.getTaskMetadata(
             taskId
         );
@@ -81,29 +74,24 @@ library TaskControlLogicLibrary {
             task.orgId
         );
 
-        if (
-            task.taskDuration + taskMetadata.totalWaitTime >=
-            taskMetadata.submitDate - taskMetadata.assignDate
-        ) rewardAmount = taskMetadata.rewardAmount;
-        else {
-            uint256 overtime = taskMetadata.submitDate -
-                taskMetadata.assignDate -
-                task.taskDuration;
-            // Round up values
-            uint256 roundedRemainder = overtime % orgConfig.slashRewardEvery > 0
-                ? 1
-                : 0;
-            uint256 slashRatio = (overtime / orgConfig.slashRewardEvery) +
-                roundedRemainder;
-            slashAmount =
-                (slashRatio *
-                    orgConfig.rewardSlashMultiplier *
-                    taskMetadata.rewardAmount) /
-                10**18;
-            if (slashAmount > taskMetadata.rewardAmount)
-                slashAmount = taskMetadata.rewardAmount;
-            rewardAmount = taskMetadata.rewardAmount - slashAmount;
-        }
+        if (task.dueDate >= taskMetadata.submitDate)
+            return (taskMetadata.rewardAmount, 0);
+
+        uint256 overtime = taskMetadata.submitDate - task.dueDate;
+        // Round up values
+        uint256 roundedRemainder = overtime % orgConfig.slashRewardEvery > 0
+            ? 1
+            : 0;
+        uint256 slashRatio = (overtime / orgConfig.slashRewardEvery) +
+            roundedRemainder;
+        slashAmount =
+            (slashRatio *
+                orgConfig.rewardSlashMultiplier *
+                taskMetadata.rewardAmount) /
+            10 ** 18;
+        if (slashAmount > taskMetadata.rewardAmount)
+            slashAmount = taskMetadata.rewardAmount;
+        rewardAmount = taskMetadata.rewardAmount - slashAmount;
     }
 
     function getPayees(
@@ -128,7 +116,7 @@ library TaskControlLogicLibrary {
         }
 
         uint256 teamReward = (rewardAmount * team.teamRewardMultiplier) /
-            (10**18);
+            (10 ** 18);
         payees[0] = Payee({
             walletAddress: teamAssignee,
             amount: rewardAmount - teamReward

@@ -11978,15 +11978,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "task__taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "task__totalWaitTime"
+            "value": "task__dueDate"
           },
           "directives": []
         },
@@ -12018,7 +12010,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "task__disableSelfAssignment"
+            "value": "task__disableSelfAssign"
           },
           "directives": []
         },
@@ -12354,15 +12346,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskSnapshot__taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "taskSnapshot__totalWaitTime"
+            "value": "taskSnapshot__dueDate"
           },
           "directives": []
         },
@@ -12386,7 +12370,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskSnapshot__disableSelfAssignment"
+            "value": "taskSnapshot__disableSelfAssign"
           },
           "directives": []
         },
@@ -27707,26 +27691,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NonNullType",
-            "type": {
-              "kind": "NamedType",
-              "name": {
-                "kind": "Name",
-                "value": "BigInt"
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
+            "value": "dueDate"
           },
           "arguments": [],
           "type": {
@@ -27949,7 +27914,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "arguments": [],
           "type": {
@@ -28112,7 +28077,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension"
+            "value": "dueDateExtension"
           },
           "arguments": [],
           "type": {
@@ -28131,7 +28096,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest"
+            "value": "dueDateExtensionRequest"
           },
           "arguments": [],
           "type": {
@@ -29734,7 +29699,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension"
+            "value": "dueDateExtension"
           },
           "type": {
             "kind": "NamedType",
@@ -29749,7 +29714,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_not"
+            "value": "dueDateExtension_not"
           },
           "type": {
             "kind": "NamedType",
@@ -29764,7 +29729,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_gt"
+            "value": "dueDateExtension_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -29779,7 +29744,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_lt"
+            "value": "dueDateExtension_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -29794,7 +29759,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_gte"
+            "value": "dueDateExtension_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -29809,7 +29774,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_lte"
+            "value": "dueDateExtension_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -29824,7 +29789,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_in"
+            "value": "dueDateExtension_in"
           },
           "type": {
             "kind": "ListType",
@@ -29845,7 +29810,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension_not_in"
+            "value": "dueDateExtension_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -29866,7 +29831,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest"
+            "value": "dueDateExtensionRequest"
           },
           "type": {
             "kind": "NamedType",
@@ -29881,7 +29846,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_not"
+            "value": "dueDateExtensionRequest_not"
           },
           "type": {
             "kind": "NamedType",
@@ -29896,7 +29861,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_gt"
+            "value": "dueDateExtensionRequest_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -29911,7 +29876,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_lt"
+            "value": "dueDateExtensionRequest_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -29926,7 +29891,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_gte"
+            "value": "dueDateExtensionRequest_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -29941,7 +29906,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_lte"
+            "value": "dueDateExtensionRequest_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -29956,7 +29921,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_in"
+            "value": "dueDateExtensionRequest_in"
           },
           "type": {
             "kind": "ListType",
@@ -29977,7 +29942,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest_not_in"
+            "value": "dueDateExtensionRequest_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -30340,15 +30305,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "task__taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "task__totalWaitTime"
+            "value": "task__dueDate"
           },
           "directives": []
         },
@@ -30380,7 +30337,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "task__disableSelfAssignment"
+            "value": "task__disableSelfAssign"
           },
           "directives": []
         },
@@ -30540,15 +30497,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskSnapshot__taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "taskSnapshot__totalWaitTime"
+            "value": "taskSnapshot__dueDate"
           },
           "directives": []
         },
@@ -30572,7 +30521,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskSnapshot__disableSelfAssignment"
+            "value": "taskSnapshot__disableSelfAssign"
           },
           "directives": []
         },
@@ -30612,7 +30561,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtension"
+            "value": "dueDateExtension"
           },
           "directives": []
         },
@@ -30620,7 +30569,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "durationExtensionRequest"
+            "value": "dueDateExtensionRequest"
           },
           "directives": []
         },
@@ -31012,23 +30961,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
-          },
-          "arguments": [],
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "FieldDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
+            "value": "dueDate"
           },
           "arguments": [],
           "type": {
@@ -31123,7 +31056,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "arguments": [],
           "type": {
@@ -35419,7 +35352,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
+            "value": "dueDate"
           },
           "type": {
             "kind": "NamedType",
@@ -35434,7 +35367,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_not"
+            "value": "dueDate_not"
           },
           "type": {
             "kind": "NamedType",
@@ -35449,7 +35382,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_gt"
+            "value": "dueDate_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -35464,7 +35397,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_lt"
+            "value": "dueDate_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -35479,7 +35412,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_gte"
+            "value": "dueDate_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -35494,7 +35427,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_lte"
+            "value": "dueDate_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -35509,7 +35442,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_in"
+            "value": "dueDate_in"
           },
           "type": {
             "kind": "ListType",
@@ -35530,139 +35463,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_not_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "BigInt"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_not"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_gt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_lt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_gte"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_lte"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "BigInt"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_not_in"
+            "value": "dueDate_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -36319,7 +36120,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "type": {
             "kind": "NamedType",
@@ -36334,7 +36135,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_not"
+            "value": "disableSelfAssign_not"
           },
           "type": {
             "kind": "NamedType",
@@ -36349,7 +36150,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_in"
+            "value": "disableSelfAssign_in"
           },
           "type": {
             "kind": "ListType",
@@ -36370,7 +36171,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_not_in"
+            "value": "disableSelfAssign_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -36769,15 +36570,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
+            "value": "dueDate"
           },
           "directives": []
         },
@@ -36817,7 +36610,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "directives": []
         }
@@ -40837,7 +40630,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
+            "value": "dueDate"
           },
           "type": {
             "kind": "NamedType",
@@ -40852,7 +40645,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_not"
+            "value": "dueDate_not"
           },
           "type": {
             "kind": "NamedType",
@@ -40867,7 +40660,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_gt"
+            "value": "dueDate_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -40882,7 +40675,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_lt"
+            "value": "dueDate_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -40897,7 +40690,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_gte"
+            "value": "dueDate_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -40912,7 +40705,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_lte"
+            "value": "dueDate_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -40927,7 +40720,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_in"
+            "value": "dueDate_in"
           },
           "type": {
             "kind": "ListType",
@@ -40948,139 +40741,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration_not_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "BigInt"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_not"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_gt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_lt"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_gte"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_lte"
-          },
-          "type": {
-            "kind": "NamedType",
-            "name": {
-              "kind": "Name",
-              "value": "BigInt"
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_in"
-          },
-          "type": {
-            "kind": "ListType",
-            "type": {
-              "kind": "NonNullType",
-              "type": {
-                "kind": "NamedType",
-                "name": {
-                  "kind": "Name",
-                  "value": "BigInt"
-                }
-              }
-            }
-          },
-          "directives": []
-        },
-        {
-          "kind": "InputValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime_not_in"
+            "value": "dueDate_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -42064,7 +41725,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "type": {
             "kind": "NamedType",
@@ -42079,7 +41740,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_not"
+            "value": "disableSelfAssign_not"
           },
           "type": {
             "kind": "NamedType",
@@ -42094,7 +41755,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_in"
+            "value": "disableSelfAssign_in"
           },
           "type": {
             "kind": "ListType",
@@ -42115,7 +41776,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment_not_in"
+            "value": "disableSelfAssign_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -42498,15 +42159,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "taskDuration"
-          },
-          "directives": []
-        },
-        {
-          "kind": "EnumValueDefinition",
-          "name": {
-            "kind": "Name",
-            "value": "totalWaitTime"
+            "value": "dueDate"
           },
           "directives": []
         },
@@ -42562,7 +42215,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "disableSelfAssignment"
+            "value": "disableSelfAssign"
           },
           "directives": []
         }

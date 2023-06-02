@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { TaskRevision, TaskRevisionStatus } from 'hooks/task/types'
-import { useTranslation } from 'next-i18next'
 import Bell from 'SVGs/Bell'
 import FileWrite from 'SVGs/FileWrite'
 import Warning from 'SVGs/Warning'
-import { TaskDurationCalc } from 'utils/task_duration'
-import ChangeTaskDurationModal from './ChangeTaskDurationModal'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { acceptRevision } from 'hooks/task/functions'
-import Spinner from 'components/Spinner/Spinner'
+import { TaskRevision, TaskRevisionStatus } from 'hooks/task/types'
+import { useTranslation } from 'next-i18next'
+import { useState } from 'react'
+import { dueDateCalc } from 'utils/task_duration'
+import ChangeDueDateModal from './ChangeDueDateModal'
 
 const demoRevision = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras viverra eu eleifend orci. 
@@ -58,15 +58,15 @@ const ChangeRequest = ({
         <span className='block text-gray-500'>
           {t('duration_extension')}:{' '}
           <span className='text-gray-700 font-bold'>
-            {TaskDurationCalc.getDurationInDays(revision.durationExtension)}{' '}
+            {dueDateCalc.getDurationInDays(revision.dueDateExtension)}{' '}
             {t('days')}
           </span>
         </span>
         <span className='block text-gray-500'>
           {t('duration_extension_request')}:{' '}
           <span className='text-gray-700 font-bold'>
-            {TaskDurationCalc.getDurationInDays(
-              revision.durationExtensionRequest
+            {dueDateCalc.getDurationInDays(
+              revision.dueDateExtensionRequest
             )}{' '}
             {t('days')}
           </span>
@@ -94,7 +94,7 @@ const ChangeRequest = ({
         </div>
       )}
       {changeConditions && (
-        <ChangeTaskDurationModal
+        <ChangeDueDateModal
           taskId={taskId}
           onClose={() => setChangeConditions(false)}
         />

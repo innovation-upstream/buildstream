@@ -195,7 +195,7 @@ export class TaskCreationTaskStruct extends ethereum.Tuple {
     return this[11].toString();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this[12].toBigInt();
   }
 }
@@ -245,12 +245,8 @@ export class TaskCreationTaskMetadataStruct extends ethereum.Tuple {
     return this[10].toAddressArray();
   }
 
-  get totalWaitTime(): BigInt {
-    return this[11].toBigInt();
-  }
-
   get disableSelfAssign(): boolean {
-    return this[12].toBoolean();
+    return this[11].toBoolean();
   }
 }
 
@@ -271,11 +267,11 @@ export class TaskCreationTaskMetadataRevisionsStruct extends ethereum.Tuple {
     return this[3].toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this[4].toBigInt();
   }
 
-  get durationExtensionRequest(): BigInt {
+  get dueDateExtensionRequest(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -361,12 +357,8 @@ export class TaskRevisionAccepted__Params {
     return this._event.parameters[2].value.toBytes();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this._event.parameters[3].value.toBigInt();
-  }
-
-  get totalWaitTime(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
   }
 }
 
@@ -395,7 +387,7 @@ export class TaskRevisionChangesRequested__Params {
     return this._event.parameters[2].value.toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this._event.parameters[3].value.toBigInt();
   }
 }
@@ -467,11 +459,11 @@ export class TaskRevisionRequestedRevisionStruct extends ethereum.Tuple {
     return this[3].toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this[4].toBigInt();
   }
 
-  get durationExtensionRequest(): BigInt {
+  get dueDateExtensionRequest(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -625,7 +617,7 @@ export class TaskUpdatedTaskStruct extends ethereum.Tuple {
     return this[11].toString();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this[12].toBigInt();
   }
 }
@@ -675,12 +667,8 @@ export class TaskUpdatedTaskMetadataStruct extends ethereum.Tuple {
     return this[10].toAddressArray();
   }
 
-  get totalWaitTime(): BigInt {
-    return this[11].toBigInt();
-  }
-
   get disableSelfAssign(): boolean {
-    return this[12].toBoolean();
+    return this[11].toBoolean();
   }
 }
 
@@ -701,11 +689,11 @@ export class TaskUpdatedTaskMetadataRevisionsStruct extends ethereum.Tuple {
     return this[3].toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this[4].toBigInt();
   }
 
-  get durationExtensionRequest(): BigInt {
+  get dueDateExtensionRequest(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -763,7 +751,7 @@ export class TaskStorageContract__getTaskResultValue0Struct extends ethereum.Tup
     return this[11].toString();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this[12].toBigInt();
   }
 }
@@ -817,12 +805,8 @@ export class TaskStorageContract__getTaskMetadataResultValue0Struct extends ethe
     return this[10].toAddressArray();
   }
 
-  get totalWaitTime(): BigInt {
-    return this[11].toBigInt();
-  }
-
   get disableSelfAssign(): boolean {
-    return this[12].toBoolean();
+    return this[11].toBoolean();
   }
 }
 
@@ -843,11 +827,11 @@ export class TaskStorageContract__getTaskMetadataResultValue0RevisionsStruct ext
     return this[3].toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this[4].toBigInt();
   }
 
-  get durationExtensionRequest(): BigInt {
+  get dueDateExtensionRequest(): BigInt {
     return this[5].toBigInt();
   }
 
@@ -870,7 +854,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    taskDuration: BigInt,
+    dueDate: BigInt,
     disableSelfAssign: boolean
   ): BigInt {
     let result = super.call(
@@ -885,7 +869,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(taskDuration),
+        ethereum.Value.fromUnsignedBigInt(dueDate),
         ethereum.Value.fromBoolean(disableSelfAssign)
       ]
     );
@@ -902,7 +886,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
     complexityScore: BigInt,
     reputationLevel: BigInt,
     requiredApprovals: BigInt,
-    taskDuration: BigInt,
+    dueDate: BigInt,
     disableSelfAssign: boolean
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
@@ -917,7 +901,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
         ethereum.Value.fromUnsignedBigInt(complexityScore),
         ethereum.Value.fromUnsignedBigInt(reputationLevel),
         ethereum.Value.fromUnsignedBigInt(requiredApprovals),
-        ethereum.Value.fromUnsignedBigInt(taskDuration),
+        ethereum.Value.fromUnsignedBigInt(dueDate),
         ethereum.Value.fromBoolean(disableSelfAssign)
       ]
     );
@@ -996,7 +980,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   ): TaskStorageContract__getTaskMetadataResultValue0Struct {
     let result = super.call(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,bool))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],bool))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
 
@@ -1012,7 +996,7 @@ export class TaskStorageContract extends ethereum.SmartContract {
   > {
     let result = super.tryCall(
       "getTaskMetadata",
-      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],uint256,bool))",
+      "getTaskMetadata(uint256):((uint256,uint256,uint256,address,uint256,uint256,bool,(uint256,address,bytes32,bytes32,uint256,uint256,uint8)[],uint256,address[],address[],bool))",
       [ethereum.Value.fromUnsignedBigInt(taskId)]
     );
     if (result.reverted) {
@@ -1272,7 +1256,7 @@ export class CreateTaskCall__Inputs {
     return this._call.inputValues[7].value.toBigInt();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this._call.inputValues[8].value.toBigInt();
   }
 
@@ -1432,7 +1416,7 @@ export class RequestForTaskRevisionCall__Inputs {
     return this._call.inputValues[2].value.toBytes();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
   }
 
@@ -1449,20 +1433,20 @@ export class RequestForTaskRevisionCall__Outputs {
   }
 }
 
-export class RequestForTaskRevisionDurationExtensionCall extends ethereum.Call {
-  get inputs(): RequestForTaskRevisionDurationExtensionCall__Inputs {
-    return new RequestForTaskRevisionDurationExtensionCall__Inputs(this);
+export class RequestForTaskRevisionDueDateExtensionCall extends ethereum.Call {
+  get inputs(): RequestForTaskRevisionDueDateExtensionCall__Inputs {
+    return new RequestForTaskRevisionDueDateExtensionCall__Inputs(this);
   }
 
-  get outputs(): RequestForTaskRevisionDurationExtensionCall__Outputs {
-    return new RequestForTaskRevisionDurationExtensionCall__Outputs(this);
+  get outputs(): RequestForTaskRevisionDueDateExtensionCall__Outputs {
+    return new RequestForTaskRevisionDueDateExtensionCall__Outputs(this);
   }
 }
 
-export class RequestForTaskRevisionDurationExtensionCall__Inputs {
-  _call: RequestForTaskRevisionDurationExtensionCall;
+export class RequestForTaskRevisionDueDateExtensionCall__Inputs {
+  _call: RequestForTaskRevisionDueDateExtensionCall;
 
-  constructor(call: RequestForTaskRevisionDurationExtensionCall) {
+  constructor(call: RequestForTaskRevisionDueDateExtensionCall) {
     this._call = call;
   }
 
@@ -1474,15 +1458,15 @@ export class RequestForTaskRevisionDurationExtensionCall__Inputs {
     return this._call.inputValues[1].value.toBigInt();
   }
 
-  get durationExtension(): BigInt {
+  get dueDateExtension(): BigInt {
     return this._call.inputValues[2].value.toBigInt();
   }
 }
 
-export class RequestForTaskRevisionDurationExtensionCall__Outputs {
-  _call: RequestForTaskRevisionDurationExtensionCall;
+export class RequestForTaskRevisionDueDateExtensionCall__Outputs {
+  _call: RequestForTaskRevisionDueDateExtensionCall;
 
-  constructor(call: RequestForTaskRevisionDurationExtensionCall) {
+  constructor(call: RequestForTaskRevisionDueDateExtensionCall) {
     this._call = call;
   }
 }
@@ -1638,7 +1622,7 @@ export class UpdateTaskCall__Inputs {
     return this._call.inputValues[6].value.toBigInt();
   }
 
-  get taskDuration(): BigInt {
+  get dueDate(): BigInt {
     return this._call.inputValues[7].value.toBigInt();
   }
 

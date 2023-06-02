@@ -25,8 +25,8 @@ library TaskLib {
         address requester;
         bytes32 revisionId;
         bytes32 revisionHash;
-        uint256 durationExtension;
-        uint256 durationExtensionRequest;
+        uint256 dueDateExtension;
+        uint256 dueDateExtensionRequest;
         TaskRevisionStatus status;
     }
 
@@ -43,7 +43,7 @@ library TaskLib {
         uint256 reputationLevel;
         TaskStatus status;
         string comment;
-        uint256 taskDuration;
+        uint256 dueDate;
     }
 
     struct TaskMetadata {
@@ -58,7 +58,6 @@ library TaskLib {
         uint256 revisionCount;
         address[] assignmentRequests;
         address[] approvers;
-        uint256 totalWaitTime;
         bool disableSelfAssign;
     }
 }
@@ -117,14 +116,13 @@ contract TaskStorageContract {
         uint256 indexed taskId,
         uint256 id,
         bytes32 revisionId,
-        uint256 taskDuration,
-        uint256 totalWaitTime
+        uint256 dueDate
     );
     event TaskRevisionChangesRequested(
         uint256 indexed taskId,
         uint256 id,
         bytes32 revisionId,
-        uint256 durationExtension
+        uint256 dueDateExtension
     );
     event TaskRevisionRejected(
         uint256 indexed taskId,
@@ -165,7 +163,7 @@ contract TaskStorageContract {
     /// @param complexityScore Task complexity score.
     /// @param reputationLevel Number of tokens.
     /// @param requiredApprovals Number of approvers required.
-    /// @param taskDuration Number of seconds to take to complete the task
+    /// @param dueDate Number of seconds to take to complete the task
     /// @return taskId task ID.
     function createTask(
         uint256 orgId,
@@ -176,7 +174,7 @@ contract TaskStorageContract {
         uint256 complexityScore,
         uint256 reputationLevel,
         uint256 requiredApprovals,
-        uint256 taskDuration,
+        uint256 dueDate,
         bool disableSelfAssign
     ) external onlyTaskContract returns (uint256 taskId) {
         taskId = taskCount;
@@ -189,7 +187,7 @@ contract TaskStorageContract {
             taskTags,
             complexityScore,
             reputationLevel,
-            taskDuration
+            dueDate
         );
 
         taskMetadata[taskId].createTaskMetadata(
@@ -212,7 +210,7 @@ contract TaskStorageContract {
         uint256[] memory taskTags,
         uint256 complexityScore,
         uint256 reputationLevel,
-        uint256 taskDuration,
+        uint256 dueDate,
         bool disableSelfAssign
     ) external onlyTaskContract {
         require(msg.sender == taskContractAddress, "Permission denied");
@@ -223,7 +221,7 @@ contract TaskStorageContract {
             taskTags,
             complexityScore,
             reputationLevel,
-            taskDuration
+            dueDate
         );
         taskMetadata[taskId].updateTaskMetadata(disableSelfAssign);
         emit TaskUpdated(taskId, tasks[taskId], taskMetadata[taskId]);
@@ -340,14 +338,14 @@ contract TaskStorageContract {
         uint256 taskId,
         bytes32 revisionId,
         bytes32 revisionHash,
-        uint256 durationExtension,
+        uint256 dueDateExtension,
         address approver
     ) external onlyTaskContract {
         tasks[taskId].requestForTaskRevision(
             taskMetadata[taskId],
             revisionId,
             revisionHash,
-            durationExtension,
+            dueDateExtension,
             approver
         );
         emit TaskRevisionRequested(
@@ -371,27 +369,26 @@ contract TaskStorageContract {
             taskId,
             revisionIndex,
             taskMetadata[taskId].revisions[revisionIndex].revisionId,
-            tasks[taskId].taskDuration,
-            taskMetadata[taskId].totalWaitTime
+            tasks[taskId].dueDate
         );
     }
 
-    function requestForTaskRevisionDurationExtension(
+    function requestForTaskRevisionDueDateExtension(
         uint256 taskId,
         uint256 revisionIndex,
-        uint256 durationExtension
+        uint256 dueDateExtension
     ) external {
-        tasks[taskId].requestForTaskRevisionDurationExtension(
+        tasks[taskId].requestForTaskRevisionDueDateExtension(
             taskMetadata[taskId],
             revisionIndex,
-            durationExtension,
+            dueDateExtension,
             msg.sender
         );
         emit TaskRevisionChangesRequested(
             taskId,
             revisionIndex,
             taskMetadata[taskId].revisions[revisionIndex].revisionId,
-            durationExtension
+            dueDateExtension
         );
     }
 

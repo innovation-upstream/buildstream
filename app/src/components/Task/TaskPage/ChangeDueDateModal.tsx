@@ -1,14 +1,13 @@
-import { useState } from 'react'
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import { useWeb3 } from 'hooks'
-import { useTranslation } from 'next-i18next'
-import { useEffect } from 'react'
-import { changeTaskDuration } from 'hooks/task/functions'
 import Duration from 'SVGs/Duration'
-import { TaskDurationCalc } from 'utils/task_duration'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
+import { useWeb3 } from 'hooks'
+import { changeDueDate } from 'hooks/task/functions'
+import moment from 'moment'
+import { useTranslation } from 'next-i18next'
+import { useEffect, useState } from 'react'
 
-interface ChangeTaskDurationProps {
+interface ChangeDueDateProps {
   taskId: number
   onClose: () => void
 }
@@ -16,10 +15,7 @@ interface ChangeTaskDurationProps {
 const requestMessage =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis sem erat, at bibendum ante porta at. Pellentesque condimentum ex eu malesuada iaculis. Sed varius vulputate rutrum. Pellentesque non diam consequat, faucibus velit vitae, dapibus erat. Nunc maximus mauris magna, sed aliquet nibh faucibus at. Ut id justo elit. Etiam nunc eros, lacinia nec consectetur sed, sollicitudin in arcu.'
 
-const ChangeTaskDurationModal = ({
-  taskId,
-  onClose
-}: ChangeTaskDurationProps) => {
+const ChangeDueDateModal = ({ taskId, onClose }: ChangeDueDateProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [processing, setProcessing] = useState(false)
@@ -31,18 +27,16 @@ const ChangeTaskDurationModal = ({
     }
     const formData = new FormData(e.target as any)
 
-    const duration = formData.get('duration') as string
-    if (!account || duration === '') return
+    const dueDateStr = formData.get('dueDate') as string
+    if (!account || dueDateStr === '') return
 
-    const taskDuration = TaskDurationCalc.getDurationInSeconds({
-      weeks: 0,
-      days: parseInt(duration),
-      hours: 0
-    })
+    const dueDate = moment(dueDateStr)
+      .add(60 * 60 * 60 - 1, 'seconds')
+      .unix()
 
     setProcessing(true)
     try {
-      await changeTaskDuration(taskId, 0, taskDuration, library.getSigner())
+      await changeDueDate(taskId, 0, dueDate, library.getSigner())
       setProcessing(false)
       onClose()
     } catch (e) {
@@ -88,10 +82,9 @@ const ChangeTaskDurationModal = ({
               <span className='block text-gray-500'>{t('set_duration')}</span>
             </label>
             <input
-              type='number'
-              id='duration'
-              name='duration'
-              min='1'
+              type='date'
+              id='dueDate'
+              name='dueDate'
               className='overflow-hidden focus:outline-none rounded-md p-2 border border-gray-200'
             />
           </div>
@@ -116,4 +109,4 @@ const ChangeTaskDurationModal = ({
   )
 }
 
-export default ChangeTaskDurationModal
+export default ChangeDueDateModal

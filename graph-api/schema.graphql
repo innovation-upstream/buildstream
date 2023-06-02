@@ -77,15 +77,14 @@ type Task @entity {
   rewardToken: Bytes
   assignDate: BigInt
   submitDate: BigInt
-  taskDuration: BigInt!
-  totalWaitTime: BigInt!
+  dueDate: BigInt!
   comment: String
   approvedBy: [String!]
   assignmentRequest: [String!]
   staked: Boolean!
   revisions: [TaskRevision!] @derivedFrom(field: "task")
   raw: String!
-  disableSelfAssignment: Boolean!
+  disableSelfAssign: Boolean!
 }
 
 type TaskRevision @entity {
@@ -96,8 +95,8 @@ type TaskRevision @entity {
   requester: String!
   externalRevisionId: Bytes!
   revisionHash: Bytes!
-  durationExtension: BigInt!
-  durationExtensionRequest: BigInt!
+  dueDateExtension: BigInt!
+  dueDateExtensionRequest: BigInt!
   status: Int!
 }
 
@@ -123,13 +122,12 @@ type TaskSnapshot @entity {
   rewardToken: Bytes
   assignDate: BigInt
   submitDate: BigInt
-  taskDuration: BigInt
-  totalWaitTime: BigInt
+  dueDate: BigInt
   comment: String
   approvedBy: [String!]
   assignmentRequest: [String!]
   staked: Boolean!
-  disableSelfAssignment: Boolean!
+  disableSelfAssign: Boolean!
 }
 
 type TreasuryToken @entity {

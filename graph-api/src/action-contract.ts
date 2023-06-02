@@ -15,7 +15,7 @@ import {
 } from '../generated/schema'
 import { ACTION, TREASURY, WITHDRAWAL } from '../helpers/notification'
 
-const organizationAddress = '0xEa9978FB1c9eB21A1776DB8b0aFf0C88b74cf6F7'
+const organizationAddress = '0x606ab1F995931FDC8780Db9cd3CEeD9db4e7845c'
 
 enum ActionType {
   WITHDRAWAL,

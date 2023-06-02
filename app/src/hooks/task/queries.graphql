@@ -18,12 +18,11 @@ fragment TaskFragment on Task {
   rewardToken
   assignDate
   submitDate
-  taskDuration
+  dueDate
   comment
   approvedBy
   assignmentRequest
-  disableSelfAssignment
-  disableSelfAssign: disableSelfAssignment
+  disableSelfAssign
 }
 
 fragment TaskSnapshotFragment on TaskSnapshot {
@@ -48,12 +47,11 @@ fragment TaskSnapshotFragment on TaskSnapshot {
   rewardToken
   assignDate
   submitDate
-  taskDuration
+  dueDate
   comment
   approvedBy
   assignmentRequest
-  disableSelfAssignment
-  disableSelfAssign: disableSelfAssignment
+  disableSelfAssign
 }
 
 query GetTask(
@@ -137,8 +135,8 @@ query GetTaskRevisions(
     requester
     externalRevisionId
     revisionHash
-    durationExtension
-    durationExtensionRequest
+    dueDateExtension
+    dueDateExtensionRequest
     status
   }
 }

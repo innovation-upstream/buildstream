@@ -165,7 +165,7 @@ export const editTask = async (
   taskTags: number[],
   complexityScore: ComplexityScore,
   reputationLevel: number,
-  taskDuration: number,
+  dueDate: number,
   provider?: any
 ): Promise<boolean> => {
   const externalId = ''
@@ -183,7 +183,7 @@ export const editTask = async (
     taskTags,
     complexityScore,
     reputationLevel,
-    taskDuration
+    dueDate
   )
   await response.wait()
 
@@ -194,7 +194,7 @@ export const requestTaskReview = async (
   taskId: number,
   reviewId: string,
   revisionHash: string,
-  durationExtension: number,
+  dueDateExtension: number,
   provider?: any
 ): Promise<boolean> => {
   const contract = getContract(
@@ -206,17 +206,17 @@ export const requestTaskReview = async (
     taskId,
     reviewId,
     revisionHash,
-    durationExtension
+    dueDateExtension
   )
   await response.wait()
 
   return true
 }
 
-export const changeTaskDuration = async (
+export const changeDueDate = async (
   taskId: number,
   revisionIndex: number,
-  durationExtension: number,
+  dueDateExtension: number,
   provider?: any
 ): Promise<boolean> => {
   const taskStorageContract = getContract(
@@ -226,10 +226,10 @@ export const changeTaskDuration = async (
   )
 
   const response =
-    await taskStorageContract.requestForTaskRevisionDurationExtension(
+    await taskStorageContract.requestForTaskRevisionDueDateExtension(
       taskId,
       revisionIndex,
-      durationExtension
+      dueDateExtension
     )
   await response.wait()
   return true

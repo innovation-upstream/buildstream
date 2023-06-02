@@ -851,22 +851,13 @@ export class Task extends Entity {
     }
   }
 
-  get taskDuration(): BigInt {
-    let value = this.get("taskDuration");
+  get dueDate(): BigInt {
+    let value = this.get("dueDate");
     return value!.toBigInt();
   }
 
-  set taskDuration(value: BigInt) {
-    this.set("taskDuration", Value.fromBigInt(value));
-  }
-
-  get totalWaitTime(): BigInt {
-    let value = this.get("totalWaitTime");
-    return value!.toBigInt();
-  }
-
-  set totalWaitTime(value: BigInt) {
-    this.set("totalWaitTime", Value.fromBigInt(value));
+  set dueDate(value: BigInt) {
+    this.set("dueDate", Value.fromBigInt(value));
   }
 
   get comment(): string | null {
@@ -958,13 +949,13 @@ export class Task extends Entity {
     this.set("raw", Value.fromString(value));
   }
 
-  get disableSelfAssignment(): boolean {
-    let value = this.get("disableSelfAssignment");
+  get disableSelfAssign(): boolean {
+    let value = this.get("disableSelfAssign");
     return value!.toBoolean();
   }
 
-  set disableSelfAssignment(value: boolean) {
-    this.set("disableSelfAssignment", Value.fromBoolean(value));
+  set disableSelfAssign(value: boolean) {
+    this.set("disableSelfAssign", Value.fromBoolean(value));
   }
 }
 
@@ -1053,22 +1044,22 @@ export class TaskRevision extends Entity {
     this.set("revisionHash", Value.fromBytes(value));
   }
 
-  get durationExtension(): BigInt {
-    let value = this.get("durationExtension");
+  get dueDateExtension(): BigInt {
+    let value = this.get("dueDateExtension");
     return value!.toBigInt();
   }
 
-  set durationExtension(value: BigInt) {
-    this.set("durationExtension", Value.fromBigInt(value));
+  set dueDateExtension(value: BigInt) {
+    this.set("dueDateExtension", Value.fromBigInt(value));
   }
 
-  get durationExtensionRequest(): BigInt {
-    let value = this.get("durationExtensionRequest");
+  get dueDateExtensionRequest(): BigInt {
+    let value = this.get("dueDateExtensionRequest");
     return value!.toBigInt();
   }
 
-  set durationExtensionRequest(value: BigInt) {
-    this.set("durationExtensionRequest", Value.fromBigInt(value));
+  set dueDateExtensionRequest(value: BigInt) {
+    this.set("dueDateExtensionRequest", Value.fromBigInt(value));
   }
 
   get status(): i32 {
@@ -1396,8 +1387,8 @@ export class TaskSnapshot extends Entity {
     }
   }
 
-  get taskDuration(): BigInt | null {
-    let value = this.get("taskDuration");
+  get dueDate(): BigInt | null {
+    let value = this.get("dueDate");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -1405,28 +1396,11 @@ export class TaskSnapshot extends Entity {
     }
   }
 
-  set taskDuration(value: BigInt | null) {
+  set dueDate(value: BigInt | null) {
     if (!value) {
-      this.unset("taskDuration");
+      this.unset("dueDate");
     } else {
-      this.set("taskDuration", Value.fromBigInt(<BigInt>value));
-    }
-  }
-
-  get totalWaitTime(): BigInt | null {
-    let value = this.get("totalWaitTime");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set totalWaitTime(value: BigInt | null) {
-    if (!value) {
-      this.unset("totalWaitTime");
-    } else {
-      this.set("totalWaitTime", Value.fromBigInt(<BigInt>value));
+      this.set("dueDate", Value.fromBigInt(<BigInt>value));
     }
   }
 
@@ -1493,13 +1467,13 @@ export class TaskSnapshot extends Entity {
     this.set("staked", Value.fromBoolean(value));
   }
 
-  get disableSelfAssignment(): boolean {
-    let value = this.get("disableSelfAssignment");
+  get disableSelfAssign(): boolean {
+    let value = this.get("disableSelfAssign");
     return value!.toBoolean();
   }
 
-  set disableSelfAssignment(value: boolean) {
-    this.set("disableSelfAssignment", Value.fromBoolean(value));
+  set disableSelfAssign(value: boolean) {
+    this.set("disableSelfAssign", Value.fromBoolean(value));
   }
 }
 

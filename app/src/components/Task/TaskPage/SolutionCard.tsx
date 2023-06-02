@@ -1,13 +1,13 @@
+import FileSvg from 'SVGs/File'
+import Warning from 'SVGs/Warning'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { approveTask, disputeAssignedTask } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
-import React, { useState } from 'react'
-import FileSvg from 'SVGs/File'
-import Warning from 'SVGs/Warning'
+import { useState } from 'react'
+import ChangeDueDateModal from './ChangeDueDateModal'
 import RequestChangeModal from './RequestChangeModal'
-import ChangeTaskDurationModal from './ChangeTaskDurationModal'
-import Spinner from 'components/Spinner/Spinner'
 
 interface TaskStatusCardProps {
   task: Task
@@ -105,7 +105,7 @@ const SolutionCard = ({
         />
       )}
       {durationExtention && (
-        <ChangeTaskDurationModal
+        <ChangeDueDateModal
           taskId={task.id}
           onClose={() => setDurationExtention(false)}
         />

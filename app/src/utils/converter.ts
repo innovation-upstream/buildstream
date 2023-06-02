@@ -118,12 +118,12 @@ export class Converter {
       requiredApprovals: Number(task.requiredApprovals),
       rewardAmount: BigNumber.from(task.rewardAmount),
       rewardToken: task.rewardToken,
-      taskDuration: Number(task.taskDuration),
+      dueDate: Number(task.dueDate),
       approvedBy: task.approvedBy || [],
       assigner: task.assigner || '',
       assignmentRequests: task.assignmentRequest || [],
       comment: task.comment || '',
-      disableSelfAssign: task.disableSelfAssignment
+      disableSelfAssign: task.disableSelfAssign
     }
   }
 
@@ -153,8 +153,8 @@ export class Converter {
       requester: taskRevision.requester,
       externalRevisionId: taskRevision.externalRevisionId,
       revisionHash: taskRevision.revisionHash,
-      durationExtension: Number(taskRevision.durationExtension),
-      durationExtensionRequest: Number(taskRevision.durationExtensionRequest),
+      dueDateExtension: Number(taskRevision.dueDateExtension),
+      dueDateExtensionRequest: Number(taskRevision.dueDateExtensionRequest),
       status: taskRevision.status
     }
   }

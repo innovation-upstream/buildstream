@@ -8,7 +8,7 @@ const complexityScore = 0
 const requiredConfirmations = 1
 const requiredApprovals = 2
 const reputationLevel = 1
-const taskDuration = 86400
+let dueDate = 86400
 const teamRewardMultiplier = 0.1
 const SOLIDITY_TAG = 0
 const disableSelfAssign = false
@@ -93,6 +93,13 @@ const getContractInstances = async () => {
 }
 
 describe('Integration test: Task flow', function () {
+  this.beforeEach(async () => {
+    const currentBlock = await ethers.provider.getBlockNumber()
+    const currentBlockTimestamp = (await ethers.provider.getBlock(currentBlock))
+      .timestamp
+    dueDate = currentBlockTimestamp + 86400
+  })
+
   it('Should successfully complete the task flow', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
     const {
@@ -147,7 +154,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -166,11 +173,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -252,7 +255,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -271,11 +274,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -367,7 +366,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -385,11 +384,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -481,7 +476,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -499,11 +494,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -611,7 +602,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -630,11 +621,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -742,7 +729,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -761,11 +748,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -790,7 +773,7 @@ describe('Integration test: Task flow', function () {
 
     await storageContract
       .connect(assignee)
-      .requestForTaskRevisionDurationExtension(taskId, 0, 3000)
+      .requestForTaskRevisionDueDateExtension(taskId, 0, 3000)
 
     await taskContract
       .connect(approver1)
@@ -885,7 +868,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -904,11 +887,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     await taskContract
       .connect(approver1)
@@ -1000,7 +979,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -1019,11 +998,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -1115,7 +1090,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -1134,11 +1109,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
@@ -1229,7 +1200,7 @@ describe('Integration test: Task flow', function () {
         [SOLIDITY_TAG],
         complexityScore,
         reputationLevel,
-        taskDuration,
+        dueDate,
         requestAssignment,
         disableSelfAssign
       )
@@ -1248,11 +1219,7 @@ describe('Integration test: Task flow', function () {
     const assignCreator = true
     await taskContract
       .connect(approver1)
-      ['openTask(uint256,bool,bool)'](
-        taskId,
-        assignCreator,
-        disableSelfAssign
-      )
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
 
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)

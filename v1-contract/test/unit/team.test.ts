@@ -19,7 +19,7 @@ const mockTask = {
   complexityScore: 0,
   reputationLevel: 0,
   comment: '',
-  taskDuration: 0
+  dueDate: 0
 }
 
 const getContractInstances = async () => {
