@@ -6,7 +6,7 @@ import { approveTask, disputeAssignedTask } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
-import ChangeTaskDurationModal from './ChangeTaskDurationModal'
+import ChangeDueDateModal from './ChangeDueDateModal'
 import RequestChangeModal from './RequestChangeModal'
 
 interface TaskStatusCardProps {
@@ -105,7 +105,7 @@ const SolutionCard = ({
         />
       )}
       {durationExtention && (
-        <ChangeTaskDurationModal
+        <ChangeDueDateModal
           taskId={task.id}
           onClose={() => setDurationExtention(false)}
         />

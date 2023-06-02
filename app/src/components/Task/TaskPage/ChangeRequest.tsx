@@ -8,7 +8,7 @@ import { TaskRevision, TaskRevisionStatus } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import { dueDateCalc } from 'utils/task_duration'
-import ChangeTaskDurationModal from './ChangeTaskDurationModal'
+import ChangeDueDateModal from './ChangeDueDateModal'
 
 const demoRevision = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras viverra eu eleifend orci. 
@@ -94,7 +94,7 @@ const ChangeRequest = ({
         </div>
       )}
       {changeConditions && (
-        <ChangeTaskDurationModal
+        <ChangeDueDateModal
           taskId={taskId}
           onClose={() => setChangeConditions(false)}
         />
