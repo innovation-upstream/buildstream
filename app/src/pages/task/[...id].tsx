@@ -1,4 +1,5 @@
 import Back from 'SVGs/Back'
+import Alert from 'components/Alert/Alert'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import ShareTask from 'components/Task/ShareTask'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
@@ -17,7 +18,7 @@ import { getTaskInstructions } from 'hooks/task/functions'
 import { TaskStatus } from 'hooks/task/types'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import type { GetServerSideProps, NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
+import { Trans, useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -123,11 +124,6 @@ export const getServerSideProps: GetServerSideProps =
       )
     }
 
-    let assigneeData = null
-    if (data.task.status >= TaskStatus.ASSIGNED) {
-      assigneeData = await getAssigneeData(data.task?.assignee as string, tags)
-    }
-
     let clickupTask
     if (data.task.externalId) {
       clickupTask = await fetchClickupTask(
@@ -151,7 +147,6 @@ export const getServerSideProps: GetServerSideProps =
         instructions: instructions || null,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
-        assigneeData,
         ...(await serverSideTranslations(context.locale ?? '', [
           'common',
           'organization',
@@ -164,7 +159,6 @@ export const getServerSideProps: GetServerSideProps =
 
 const TaskPage: NextPage<PageProps> = ({
   task,
-  assigneeData,
   assignmentRequests,
   instructions
 }) => {
@@ -228,8 +222,8 @@ const TaskPage: NextPage<PageProps> = ({
     }))
   })
 
-  const onShare = (taskId: number) => {
-    setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
+  const onShare = () => {
+    setShareLink(`${isBrowser ? window.location.origin : ''}/task/${task.id}`)
   }
 
   return (
@@ -262,7 +256,6 @@ const TaskPage: NextPage<PageProps> = ({
               showDescription
               hideViewButton
               taskRequirementLocation='footer'
-              onShare={onShare}
             />
             {instructions && (isAssignee || isApprover) && (
               <section className=''>
@@ -272,19 +265,58 @@ const TaskPage: NextPage<PageProps> = ({
                   </p>
                   <MarkDownEditor
                     hideToggle
-                    height={300}
+                    className='!h-[300px]'
                     value={{ text: instructions }}
-                    readonly
+                    readOnly
                   />
                 </div>
               </section>
             )}
-            <TaskActions task={currentTask} />
+            <TaskActions task={currentTask} onShare={onShare} />
           </>
           <div className='mt-7 md:hidden'>
             <TaskStatusCard task={currentTask} />
           </div>
-          {currentTask.status === TaskStatus.OPEN &&
+          {task.status === TaskStatus.OPEN &&
+            account &&
+            task.assignmentRequest?.includes(account) && (
+              <div className='mt-4'>
+                <Alert>
+                  <p className='font-bold mb-2 text-lg'>
+                    {t('assignment_request_alert_title')}
+                  </p>
+                  <p>{t('assignment_request_alert_body')}</p>
+                </Alert>
+              </div>
+            )}
+          {isApprover &&
+            currentTask.status === TaskStatus.OPEN &&
+            !currentTask.assignmentRequests.length && (
+              <div className='mt-4'>
+                <Alert>
+                  <p className='font-bold mb-2 text-lg'>
+                    {t('no_requests_title')}
+                  </p>
+                  <p>
+                    <Trans
+                      t={t}
+                      i18nKey='no_requests_body'
+                      components={[
+                        <button
+                          className='text-blue-500 underline'
+                          key={0}
+                          onClick={onShare}
+                        >
+                          Share this task
+                        </button>
+                      ]}
+                    />
+                  </p>
+                </Alert>
+              </div>
+            )}
+          {isApprover &&
+            currentTask.status === TaskStatus.OPEN &&
             !!currentTask.assignmentRequests.length && (
               <div className='mt-7'>
                 <p className='font-semibold text-[32px] mb-6'>
@@ -306,19 +338,6 @@ const TaskPage: NextPage<PageProps> = ({
                 </ul>
               </div>
             )}
-          {currentTask.status > TaskStatus.OPEN && !!assigneeData && (
-            <div className='mt-7'>
-              <p className='font-semibold text-[32px] mb-6'>
-                {t('responsible_contributor')}
-              </p>
-              <AssigneeCard
-                taskId={Number(task.id)}
-                isAssigned
-                isApprover={isApprover}
-                assignee={getAssignee(assigneeData)}
-              />
-            </div>
-          )}
           <SolutionHistory
             task={currentTask}
             isApprover={

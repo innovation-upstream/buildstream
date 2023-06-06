@@ -9,13 +9,14 @@ import { useEffect, useState } from 'react'
 
 interface ChangeDueDateProps {
   taskId: number
+  revisionId: number
   onClose: () => void
 }
 
 const requestMessage =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis sem erat, at bibendum ante porta at. Pellentesque condimentum ex eu malesuada iaculis. Sed varius vulputate rutrum. Pellentesque non diam consequat, faucibus velit vitae, dapibus erat. Nunc maximus mauris magna, sed aliquet nibh faucibus at. Ut id justo elit. Etiam nunc eros, lacinia nec consectetur sed, sollicitudin in arcu.'
 
-const ChangeDueDateModal = ({ taskId, onClose }: ChangeDueDateProps) => {
+const ChangeDueDateModal = ({ taskId, revisionId, onClose }: ChangeDueDateProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [processing, setProcessing] = useState(false)
@@ -36,7 +37,7 @@ const ChangeDueDateModal = ({ taskId, onClose }: ChangeDueDateProps) => {
 
     setProcessing(true)
     try {
-      await changeDueDate(taskId, 0, dueDate, library.getSigner())
+      await changeDueDate(taskId, revisionId, dueDate, library.getSigner())
       setProcessing(false)
       onClose()
     } catch (e) {
@@ -85,6 +86,7 @@ const ChangeDueDateModal = ({ taskId, onClose }: ChangeDueDateProps) => {
               type='date'
               id='dueDate'
               name='dueDate'
+              defaultValue={moment().add(1, 'days').format('YYYY-MM-DD')}
               className='overflow-hidden focus:outline-none rounded-md p-2 border border-gray-200'
             />
           </div>

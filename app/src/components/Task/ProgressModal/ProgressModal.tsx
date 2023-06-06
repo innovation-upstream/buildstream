@@ -70,15 +70,17 @@ const ProgressModal = ({
       setCreateStatus(Progress.IN_PROGRESS)
       const taskId = await createNewTask(
         {
-          externalId: '',
+          externalId: taskData.externalId || '',
           orgId: organization.id,
-          title: taskData.title,
-          description: taskData.description,
+          title: taskData.externalId ? '' : taskData.title,
+          description: taskData.externalId ? '' : taskData.description,
           taskTags: taskData.taskTags,
           complexityScore: taskData.complexityScore,
           reputationLevel: taskData.reputationLevel,
           // End of day
-          dueDate: moment(taskData.dueDate).add(60 * 60 * 60 - 1, 'seconds').unix(),
+          dueDate: moment(taskData.dueDate)
+            .add(60 * 60 * 60 - 1, 'seconds')
+            .unix(),
           disableSelfAssign: taskData.disableSelfAssign,
         },
         library.getSigner()
@@ -156,6 +158,19 @@ const ProgressModal = ({
     }
   }
 
+  let modalTitle = t('create_task')
+  if (
+    createStatus === Progress.SUCCESS &&
+    updateInstructionsStatus === Progress.IN_PROGRESS
+  )
+    modalTitle = t('update_task_instructions')
+  if (
+    createStatus === Progress.SUCCESS &&
+    updateInstructionsStatus === Progress.SUCCESS &&
+    publishStatus === Progress.IN_PROGRESS
+  )
+    modalTitle = t('publish_task')
+
   return (
     <>
       <div
@@ -167,9 +182,7 @@ const ProgressModal = ({
           <button onClick={onClose} className='absolute top-0 -right-5'>
             <CloseIcon />
           </button>
-          <p className='text-3xl text-center font-semibold'>
-            {t('reward_settings')}
-          </p>
+          <p className='text-3xl text-center font-semibold'>{modalTitle}</p>
         </div>
         <div className='divider' />
         <ul className='mt-5'>

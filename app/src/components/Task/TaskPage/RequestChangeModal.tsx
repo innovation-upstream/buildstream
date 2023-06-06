@@ -5,14 +5,15 @@ import CryptoJS from 'crypto-js'
 import SHA256 from 'crypto-js/sha256'
 import { useWeb3 } from 'hooks'
 import { changeDueDate, requestTaskReview } from 'hooks/task/functions'
+import moment from 'moment'
 import { useTranslation } from 'next-i18next'
 import { useEffect, useState } from 'react'
-import { dueDateCalc } from 'utils/task_duration'
 
 interface RequestChangeModalProps {
   taskId: number
   onClose: () => void
   durationExtention?: boolean
+  dueDate?: string
 }
 
 const requestMessage =
@@ -21,6 +22,7 @@ const requestMessage =
 const RequestChangeModal = ({
   taskId,
   onClose,
+  dueDate,
   durationExtention = false
 }: RequestChangeModalProps) => {
   const { account, library } = useWeb3()
@@ -46,15 +48,13 @@ const RequestChangeModal = ({
     const formData = new FormData(e.target as any)
 
     const changes = formData.get('changes') as string
-    const duration = formData.get('duration') as string
-    if (!account || duration === '') return
-    const dueDate = dueDateCalc.getDurationInSeconds({
-      weeks: 0,
-      days: parseInt(duration),
-      hours: 0
-    })
+    const dueDateStr = formData.get('dueDate') as string
+    if (!account || dueDateStr === '') return
+    const dueDate = moment(dueDateStr)
+      .add(60 * 60 * 60 - 1, 'seconds')
+      .unix()
 
-    if (dueDate < 1) return
+    if (dueDate < moment.now() / 1000) return
 
     const { reviewId, reviewHash } = getReviewParams()
     setProcessing(true)
@@ -107,30 +107,30 @@ const RequestChangeModal = ({
         <form className='mt-3' onSubmit={submitTask}>
           {durationExtention && <div className='mb-3'>{requestMessage}</div>}
           <div className='col-span-4 w-1/3 mb-0'>
-            <label htmlFor='duration' className='flex gap-2 items-center mb-2'>
+            <label htmlFor='dueDate' className='flex gap-2 items-center mb-2'>
               <span className='block text-gray-500'>
                 <Duration />
               </span>
               <span className='block text-gray-500'>{t('set_duration')}</span>
             </label>
             <input
-              type='number'
-              id='duration'
-              name='duration'
-              min='1'
+              type='date'
+              id='dueDate'
+              name='dueDate'
+              defaultValue={dueDate || moment().add(1, 'days').format('YYYY-MM-DD')}
               className='overflow-hidden focus:outline-none rounded-md p-2 border border-gray-200'
             />
           </div>
           {!durationExtention && (
             <>
               <p className='text-sm mt-3 mb-3'>{t('changes_description')}</p>
-              <textarea className='input-base' name='changes' rows={9} />
+              <textarea className='input-base' name='changes' rows={5} />
             </>
           )}
 
           <div className='mt-4 flex gap-x-6'>
             <button
-              className='btn-primary text-sm flext justify-center'
+              className='btn-primary text-sm flex justify-center'
               type='submit'
             >
               {processing ? (

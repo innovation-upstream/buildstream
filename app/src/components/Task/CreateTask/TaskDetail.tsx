@@ -12,7 +12,6 @@ import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import {
   archiveTask,
-  assignToSelf,
   getRewardAmount,
   getTaskInstructions,
   openTask,
@@ -23,6 +22,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { dueDateCalc } from 'utils/task_duration'
+import RequestAssignment from '../RequestAssignment/RequestAssignment'
 import { StyledScrollableContainer } from './styled'
 import { ITaskDetail } from './types'
 
@@ -37,6 +37,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
   const [rewardValue, setRewardValue] = useState('0')
   const [instructions, setInstructions] = useState('')
+  const [requestAssignmentProcessing, setRequestAssignmentProcessing] =
+    useState(false)
 
   const getReward = useCallback(async () => {
     const reward = await getRewardAmount(task, library?.getSigner())
@@ -67,31 +69,12 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
         task.disableSelfAssign, //disableSelfAssign
         library.getSigner()
       )
-      setProcessing(false)
+      close()
     } catch (e) {
-      setProcessing(false)
-      console.error('ERROR===', e)
+      console.error(e)
       toast.error(t('error_opening_task'), { icon: '❌' })
     }
-    close()
-  }
-
-  const requestAssignment = async () => {
-    if (!account) {
-      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
-      return
-    }
-    setProcessing(true)
-    try {
-      setProcessing(true)
-      await assignToSelf(task.id, library.getSigner())
-      setProcessing(false)
-    } catch (e) {
-      setProcessing(false)
-      console.error('ERROR===', e)
-      toast.error(t('error_requesting_assignment'), { icon: '❌' })
-    }
-    close()
+    setProcessing(false)
   }
 
   const archiveCurrentTask = async () => {
@@ -133,6 +116,18 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   return (
     <div className='layout-container p-0 md:px-4 flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <Toaster position='bottom-left' />
+      {requestAssignmentProcessing && (
+        <RequestAssignment
+          task={task}
+          onSuccess={() =>
+            toast.success(t('assignment_requested'), { icon: '👍' })
+          }
+          onError={() =>
+            toast.error(t('error_requesting_assignment'), { icon: '❌' })
+          }
+          onClose={() => setRequestAssignmentProcessing(false)}
+        />
+      )}
       <div className='relative w-full h-full my-6 mx-auto z-50 overflow-hidden'>
         <div className='paper w-full md:w-1/2 h-[100vh] md:h-[95vh] px-0 md:px-2 absolute right-0 top-0 rounded-none md:rounded-2xl md:my-5 overflow-hidden'>
           <div className='md:px-6 w-full px-0 md:px-3'>
@@ -256,9 +251,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
                     </p>
                     <MarkDownEditor
                       hideToggle
-                      height={300}
                       value={{ text: instructions }}
-                      readonly
+                      readOnly
                     />
                   </div>
                 </section>
@@ -266,25 +260,25 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
             </StyledScrollableContainer>
             {task.status < TaskStatus.CLOSED && (
               <section className='mt-4 flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0 pb-10 px-3 md:px-6'>
-                {!processing &&
-                  task.status === TaskStatus.PROPOSED &&
-                  isApprover && (
-                    <button
-                      className='btn-primary min-w-full md:min-w-[30%]'
-                      disabled={processing}
-                      onClick={publishTask}
-                    >
-                      {t('open_task')}
-                    </button>
-                  )}
-                {!processing &&
-                  task.status === TaskStatus.OPEN &&
+                {task.status === TaskStatus.PROPOSED && isApprover && (
+                  <button
+                    className='btn-primary min-w-full md:min-w-[30%]'
+                    disabled={processing}
+                    onClick={publishTask}
+                  >
+                    {t('open_task')}
+                  </button>
+                )}
+                {task.status === TaskStatus.OPEN &&
                   account &&
                   !task.assignmentRequests.includes(account) && (
                     <button
                       className='btn-primary min-w-full md:min-w-[30%]'
-                      disabled={processing}
-                      onClick={requestAssignment}
+                      onClick={() => {
+                        if (!account)
+                          toast.error(t('wallet_not_connected'), { icon: '⚠️' })
+                        else setRequestAssignmentProcessing(true)
+                      }}
                     >
                       {t('request_assignment')}
                     </button>

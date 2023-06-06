@@ -607,7 +607,7 @@ export function handleTaskRevisionChangesRequested(
   const revisionEntity = TaskRevision.load(entityId.toHexString())
   if (!revisionEntity) return
   revisionEntity.status = 1
-  revisionEntity.dueDateExtension = event.params.dueDateExtension
+  revisionEntity.dueDateExtensionRequest = event.params.dueDateExtension
 
   revisionEntity.save()
 }

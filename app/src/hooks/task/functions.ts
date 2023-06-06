@@ -254,7 +254,7 @@ export const acceptRevision = async (
   return true
 }
 
-export const disputeAssignedTask = async (
+export const rejectTaskRevision = async (
   taskId: number,
   revisionIndex: number,
   provider?: any

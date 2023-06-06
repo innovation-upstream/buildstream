@@ -1,24 +1,23 @@
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
-import {
-  archiveTask,
-  assignToSelf,
-  getRewardAmount,
-  openTask
-} from 'hooks/task/functions'
+import { archiveTask, getRewardAmount, openTask } from 'hooks/task/functions'
 import { Task, TaskStatus } from 'hooks/task/types'
 import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import RequestAssignment from '../RequestAssignment/RequestAssignment'
 
 interface IProps {
   task: Task
+  onShare?: (id: number) => void
 }
 
-const TaskActions: React.FC<IProps> = ({ task }) => {
+const TaskActions: React.FC<IProps> = ({ task, onShare }) => {
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
+  const [requestAssignmentProcessing, setRequestAssignmentProcessing] =
+    useState(false)
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
@@ -38,36 +37,14 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
     setProcessing(true)
     try {
-      await openTask(
-        task.id,
-        task.disableSelfAssign,
-        library.getSigner()
-      )
+      await openTask(task.id, task.disableSelfAssign, library.getSigner())
       setProcessing(false)
     } catch (e) {
       toast.error(t('error_opening_task'), { icon: '❌' })
       setProcessing(false)
-      console.error('ERROR===', e)
+      console.error(e)
     }
     close()
-  }
-
-  const requestAssignment = async () => {
-    if (!account) {
-      toast.error(t('wallet_not_connected'), { icon: '⚠️' })
-      return
-    }
-    setProcessing(true)
-    try {
-      setProcessing(true)
-      await assignToSelf(task.id, library.getSigner())
-      setProcessing(false)
-      close()
-    } catch (e) {
-      toast.error(t('error_requesting_assignment'), { icon: '❌' })
-      setProcessing(false)
-      console.error('ERROR===', e)
-    }
   }
 
   const archiveCurrentTask = async () => {
@@ -87,14 +64,12 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     }
   }
 
-  const isApprover = account && task.organization.approvers.includes(account)
+  const handleShare = (e: any) => {
+    e.stopPropagation()
+    onShare?.(task.id)
+  }
 
-  if (
-    task.status >= TaskStatus.ASSIGNED ||
-    !account ||
-    (!isApprover && task.assignmentRequests.includes(account))
-  )
-    return null
+  const isApprover = account && task.organization.approvers.includes(account)
 
   return (
     <div
@@ -103,8 +78,29 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
       }`}
     >
       <Toaster position='bottom-left' />
+      {requestAssignmentProcessing && (
+        <RequestAssignment
+          task={task}
+          onSuccess={() =>
+            toast.success(t('assignment_requested'), { icon: '👍' })
+          }
+          onError={() =>
+            toast.error(t('error_requesting_assignment'), { icon: '❌' })
+          }
+          onClose={() => setRequestAssignmentProcessing(false)}
+        />
+      )}
 
       <div className='flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0'>
+        {onShare && (
+          <button
+            className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500'
+            disabled={processing}
+            onClick={handleShare}
+          >
+            {t('share')}
+          </button>
+        )}
         {!processing && task.status === TaskStatus.PROPOSED && isApprover && (
           <button
             className='btn-primary min-w-full md:min-w-[30%]'
@@ -121,7 +117,11 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
             <button
               className='btn-primary min-w-full md:min-w-[30%]'
               disabled={processing}
-              onClick={requestAssignment}
+              onClick={() => {
+                if (!account)
+                  toast.error(t('wallet_not_connected'), { icon: '⚠️' })
+                else setRequestAssignmentProcessing(true)
+              }}
             >
               {t('request_assignment')}
             </button>

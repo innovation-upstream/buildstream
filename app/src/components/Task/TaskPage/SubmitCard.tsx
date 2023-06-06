@@ -1,27 +1,43 @@
-import { useState } from 'react'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { taskSubmission } from 'hooks/task/functions'
 import { useTranslation } from 'next-i18next'
-import Spinner from 'components/Spinner/Spinner'
+import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 
 interface SubmitCardProps {
   taskId: number
 }
 
+const commentTemplate = `
+**Link to review work (ex. Github PR, Figma, etc)**: 
+
+**Notes**: 
+`
+
 const SubmitCard = ({ taskId }: SubmitCardProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [processing, setProcessing] = useState(false)
+  const [comment, setComment] = useState('')
+
+  const handleChange = (e: any) => {
+    let newComment = e?.target?.value
+    if (newComment === commentTemplate) newComment = ''
+    setComment(newComment)
+  }
 
   const submitTask = async (e: any) => {
     e.preventDefault()
+    if (!comment) {
+      toast.error(t('comment_required'), { icon: '⚠️' })
+      return
+    }
     if (!account) {
       toast.error(t('wallet_not_connected'), { icon: '⚠️' })
       return
     }
-    const formData = new FormData(e.target as any)
-    const comment = formData.get('comment') as string
     setProcessing(true)
     try {
       await taskSubmission(taskId, comment, library.getSigner())
@@ -35,13 +51,23 @@ const SubmitCard = ({ taskId }: SubmitCardProps) => {
 
   return (
     <div className='paper mt-7'>
-      <Toaster position='bottom-left' />
+      <Toaster />
       <p className='text-2xl font-semibold'>{t('in_progress')}</p>
-      <form className='flex items-center mt-4 gap-x-6' onSubmit={submitTask}>
-        <input className='input-base' name='comment' />
+      <form onSubmit={submitTask}>
+        <MarkDownEditor
+          name='comment'
+          className='!h-[200px]'
+          value={{
+            text: comment || commentTemplate
+          }}
+          required
+          onChange={(_, e) => handleChange(e)}
+        />
+
         <button
-          className='btn-primary whitespace-nowrap flex justify-center'
+          className='mt-4 btn-primary whitespace-nowrap flex justify-center'
           type='submit'
+          disabled={processing}
         >
           {processing ? (
             <Spinner className='text-white' />
