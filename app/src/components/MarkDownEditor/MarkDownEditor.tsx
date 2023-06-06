@@ -11,9 +11,9 @@ interface IEditorProps extends React.ComponentProps<typeof Editor> {
     event?: ChangeEvent<HTMLTextAreaElement>
   ) => void
   value?: { text: string; html?: string }
-  height?: string | number
-  readonly?: boolean
+  readOnly?: boolean
   hideToggle?: boolean
+  className?: string
 }
 
 const MdEditor = dynamic(
@@ -36,9 +36,10 @@ const MdEditor = dynamic(
 const MarkDownEditor: React.FC<IEditorProps> = ({
   onChange,
   value,
-  height = '500px',
-  readonly = false,
+  readOnly = false,
   hideToggle,
+  noBorder,
+  className = '',
   ...props
 }) => {
   const [togglePreview, setTogglePreview] = useState(false)
@@ -49,6 +50,15 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
 
   const markdownMode = () =>
     mdEditor.current?.setView?.({ menu: true, html: false, md: true })
+
+  const view =
+    readOnly && hideToggle
+      ? { menu: false, md: false, html: true }
+      : readOnly
+      ? { menu: false, md: false, html: true }
+      : hideToggle
+      ? undefined
+      : { menu: true, html: false, md: true }
 
   return (
     <div>
@@ -80,22 +90,14 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
       <MdEditor
         /* @ts-ignore next-line */
         forwardedRef={mdEditor}
-        style={{ height }}
+        className={className}
         renderHTML={(text) => (
-          <ReactMarkdown remarkPlugins={[gfm]} className='markdown'>
-            {text}
-          </ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[gfm]}>{text}</ReactMarkdown>
         )}
         onChange={onChange}
         value={value?.text}
-        readOnly={readonly}
-        view={
-          readonly
-            ? { menu: false, md: false, html: true }
-            : hideToggle
-            ? undefined
-            : { menu: true, html: false, md: true }
-        }
+        readOnly={readOnly}
+        view={view}
         {...props}
       />
     </div>

@@ -1,11 +1,10 @@
-import Spinner from 'components/Spinner/Spinner'
+import TokenGeneric from 'SVGs/TokenGeneric'
 import { BigNumber, ethers } from 'ethers'
-import { useWeb3 } from 'hooks'
-import { approveAssignedRequest } from 'hooks/task/functions'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import TokenGeneric from 'SVGs/TokenGeneric'
+import toast from 'react-hot-toast'
+import AssignTask from '../AssignTask/AssignTask'
 
 interface Props {
   taskId: number
@@ -33,27 +32,7 @@ const AssigneeCard: React.FC<Props> = ({
   isApprover
 }) => {
   const [processing, setProcessing] = useState(false)
-  const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
-
-  const approveTask = async (address: string) => {
-    if (!account) return
-    setProcessing(true)
-    try {
-      const tx = await approveAssignedRequest(
-        taskId,
-        address,
-        library.getSigner()
-      )
-      if (tx) {
-        onAssign?.()
-      }
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setProcessing(false)
-    }
-  }
 
   const assigneeAddress = assignee.address
 
@@ -106,12 +85,40 @@ const AssigneeCard: React.FC<Props> = ({
       {!isAssigned && isApprover && (
         <div className='flex gap-4 mt-6'>
           <button
-            onClick={() => approveTask(assigneeAddress)}
+            onClick={() => setProcessing(true)}
             className='btn-primary px-12'
           >
-            {processing ? <Spinner /> : t('assign')}
+            {t('assign')}
           </button>
         </div>
+      )}
+      {processing && (
+        <AssignTask
+          taskId={taskId}
+          assignee={assigneeAddress}
+          onSuccess={() => {
+            toast.success(
+              t('assigned_successfully', {
+                assignee: assigneeAddress.substring(0, 6)
+              }),
+              {
+                icon: '👍'
+              }
+            )
+            onAssign?.()
+          }}
+          onError={() =>
+            toast.error(
+              t('error_assigning', {
+                assignee: assigneeAddress.substring(0, 6)
+              }),
+              {
+                icon: '❌'
+              }
+            )
+          }
+          onClose={() => setProcessing(false)}
+        />
       )}
     </div>
   )

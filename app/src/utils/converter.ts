@@ -144,12 +144,12 @@ export class Converter {
     taskRevision: TaskRevisionType
   ): TaskRevision => {
     return {
-      id: Number(taskRevision.id),
+      id: Number(taskRevision.revisionId),
       taskSnapshot: {
         comment: taskRevision.taskSnapshot.comment || '',
         status: taskRevision.taskSnapshot.status
       },
-      revisionId: taskRevision.revisionId.toString(),
+      revisionId: taskRevision.id.toString(),
       requester: taskRevision.requester,
       externalRevisionId: taskRevision.externalRevisionId,
       revisionHash: taskRevision.revisionHash,

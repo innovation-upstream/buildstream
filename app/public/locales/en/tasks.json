@@ -122,5 +122,21 @@
   "expert_hint": "An assignee must have at least 100 reputation points to be able to assign themselves to this task.",
   "intermediate_hint": "An assignee must have at least 50 reputation points to be able to assign themselves to this task.",
   "entry_hint": "An assignee must have at least 10 reputation points to be able to assign themselves to this task.",
-  "how_it_works": "How it works"
+  "how_it_works": "How it works",
+  "share": "Share",
+  "continue": "Continue",
+  "assignment_requested": "Assignment Requested",
+  "assignment_request_alert_title": "Assignment Request Pending",
+  "assignment_request_alert_body": "Your assignment request has been submitted, check back frequently to see when the author approves your request",
+  "request_task_explainer": "Send a request to the task author for you to be assigned to this task.  If they accept, you will be responsible for completing the task in it's entirety according to the task description.  Once the task work is submitted by you and accepted by the author, you'll be paid ${{amount}} instantly and be rewarded {{tokens}} reputation tokens for {{skills}} skills.",
+  "no_requests_title": "There are no requests yet",
+  "no_requests_body": "<0>Share this task</0> to encourage talented contributors to participate!",
+  "assign_task_title": "Assign {{assignee}}",
+  "assign_task_body": "The contributor will be notified and private task information will be shared with them.  Once they submit the task work, you will be able to review and confirm it is completed correctly before they are paid",
+  "assigned_successfully": "{{assignee}} has been assigned to this task",
+  "error_assigning": "Error Assigning {{assignee}}...",
+  "comment_required": "Comment is required",
+  "duedate_extension": "Due Date Extension",
+  "duedate_extension_request": "Due Date Extension Request",
+  "accept_duedate_extension_request": "Accept Due Date Extension Request"
 }

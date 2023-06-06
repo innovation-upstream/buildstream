@@ -1,12 +1,11 @@
 import FileSvg from 'SVGs/File'
-import Warning from 'SVGs/Warning'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
-import { approveTask, disputeAssignedTask } from 'hooks/task/functions'
+import { approveTask } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
-import ChangeDueDateModal from './ChangeDueDateModal'
 import RequestChangeModal from './RequestChangeModal'
 
 interface TaskStatusCardProps {
@@ -22,33 +21,23 @@ const requestMessage =
 const SolutionCard = ({
   task,
   isUpdatedSolution,
-  showControls
+  showControls,
+  comment
 }: TaskStatusCardProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [requestChangeModal, setShowRequestChangeModal] = useState(false)
-  const [durationExtention, setDurationExtention] = useState(false)
-  const [processDispute, setProcessDispute] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
   const approve = async () => {
     if (!account) return
+    setProcessing(true)
     try {
       await approveTask(task.id, library.getSigner())
     } catch (e) {
       console.error(e)
     }
-  }
-
-  const disputeTask = async () => {
-    if (!account) return
-    setProcessDispute(true)
-    try {
-      await disputeAssignedTask(task.id, 0, library.getSigner())
-      setProcessDispute(false)
-    } catch (e) {
-      console.error(e)
-      setProcessDispute(false)
-    }
+    setProcessing(false)
   }
 
   const yourSolution =
@@ -66,17 +55,23 @@ const SolutionCard = ({
         <p className='text-2xl font-semibold'>
           {!isUpdatedSolution ? yourSolution : updatedSolution}
         </p>
-        <div className='mt-4 px-4 py-3 bg-[#F8F9FA] rounded-[10px]'>
-          {task.comment}
+        <div className='mt-4'>
+          <MarkDownEditor
+            className='!border-0'
+            value={{ text: comment || task.comment }}
+            readOnly
+            hideToggle
+          />
         </div>
         {showControls && (
           <div className='flex flex-col lg:flex-row gap-4 mt-4'>
             <button
               className='btn-primary text-sm flex justify-center gap-2.5 items-center'
               onClick={approve}
+              disabled={processing}
             >
               <FileSvg />
-              {t('approve_and_complete')}
+              {processing ? <Spinner /> : t('approve_and_complete')}
             </button>
             <button
               className='btn-outline border-[#EFF0F1] text-sm'
@@ -84,17 +79,6 @@ const SolutionCard = ({
             >
               {t('request_changes')}
             </button>
-            {processDispute ? (
-              <Spinner />
-            ) : (
-              <button
-                className='btn-outline border-[#EFF0F1] text-sm flex justify-center gap-2.5 items-center'
-                onClick={disputeTask}
-              >
-                <Warning />
-                {t('dispute_task')}
-              </button>
-            )}
           </div>
         )}
       </div>
@@ -102,12 +86,6 @@ const SolutionCard = ({
         <RequestChangeModal
           taskId={task.id}
           onClose={() => setShowRequestChangeModal(false)}
-        />
-      )}
-      {durationExtention && (
-        <ChangeDueDateModal
-          taskId={task.id}
-          onClose={() => setDurationExtention(false)}
         />
       )}
     </>

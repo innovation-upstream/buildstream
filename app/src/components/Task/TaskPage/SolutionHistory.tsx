@@ -16,23 +16,6 @@ interface SolutionHistoryProps {
   isApprover?: boolean
 }
 
-// const demoTaskRevision = [
-//   {
-//     taskSnapshot: {
-//       comment: 'comment 1',
-//       status: TaskStatus.SUBMITTED
-//     },
-//     status: TaskRevisionStatus.ACCEPTED
-//   },
-//   {
-//     taskSnapshot: {
-//       comment: 'comment 2',
-//       status: TaskStatus.SUBMITTED
-//     },
-//     status: TaskRevisionStatus.PROPOSED
-//   }
-// ] as any[] as TaskRevision[]
-
 const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
   const { account, library } = useWeb3()
   const [taskRevisions, setTaskRevisions] = useState<TaskRevision[]>([])
@@ -59,7 +42,10 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
   }, [data])
 
   const wasChangesRequested = (index: number) =>
-    taskRevisions[index - 1].status === TaskRevisionStatus.CHANGES_REQUESTED
+    taskRevisions[index - 1]?.status === TaskRevisionStatus.CHANGES_REQUESTED
+  
+  const isRevisionPending = () =>
+    taskRevisions[taskRevisions?.length - 1]?.status != TaskRevisionStatus.ACCEPTED
 
   return (
     <>
@@ -77,11 +63,13 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
               revision={revision}
               isAssignee={task.assigneeAddress === account}
               taskId={task.id}
+              isLast={index === taskRevisions.length - 1}
+              isApprover={isApprover}
             />
           </React.Fragment>
         )
       })}
-      {task.status >= TaskStatus.SUBMITTED && (
+      {data && !isRevisionPending() && task.status >= TaskStatus.SUBMITTED && (
         <SolutionCard
           task={task}
           comment={task.comment}

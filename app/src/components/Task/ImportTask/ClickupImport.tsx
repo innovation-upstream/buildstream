@@ -446,7 +446,7 @@ const ClickupImport: React.FC<TImport> = ({
                 <div className='mt-3'>
                   <MarkDownEditor
                     name='instructions'
-                    height={300}
+                    className='!h-[300px]'
                     value={{
                       text: taskData.instructions || instructionsTemplate,
                     }}
