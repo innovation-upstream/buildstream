@@ -48,6 +48,7 @@ interface PageProps {
 const isBrowser = typeof window !== 'undefined'
 
 const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
+  const allTags = tags.flat().filter((t) => t)
   // Tagless query
   tags.push([])
   const allTasks = await Promise.all(
@@ -61,7 +62,7 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
           where: {
             assignee: assignee.toLowerCase(),
             status: TaskStatus.CLOSED,
-            taskTags_contains_nocase: tag
+            taskTags_contains: tag
           }
         }
       })
@@ -84,9 +85,16 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
         id: t.id,
         title: t.title,
         rewardAmount: t.rewardAmount,
-        rewardToken: t.rewardToken
+        rewardToken: t.rewardToken,
+        taskTags: t.taskTags
       }))
       .flat()
+      .sort((a, b) => {
+        const aCount = allTags.filter((t) => a.taskTags.includes(t)).length
+        const bCount = allTags.filter((t) => b.taskTags.includes(t)).length
+
+        return bCount - aCount
+      })
       .slice(0, 5)
   }
 
