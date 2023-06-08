@@ -96,21 +96,80 @@ export class UserStat extends Entity {
     this.set("archivedTasks", Value.fromBigInt(value));
   }
 
-  get tags(): Array<BigInt> | null {
-    let value = this.get("tags");
+  get tokens(): Array<string> | null {
+    let value = this.get("tokens");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toBigIntArray();
+      return value.toStringArray();
     }
   }
 
-  set tags(value: Array<BigInt> | null) {
+  set tokens(value: Array<string> | null) {
     if (!value) {
-      this.unset("tags");
+      this.unset("tokens");
     } else {
-      this.set("tags", Value.fromBigIntArray(<Array<BigInt>>value));
+      this.set("tokens", Value.fromStringArray(<Array<string>>value));
     }
+  }
+}
+
+export class UserToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save UserToken entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type UserToken must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("UserToken", id.toString(), this);
+    }
+  }
+
+  static load(id: string): UserToken | null {
+    return changetype<UserToken | null>(store.get("UserToken", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get user(): string {
+    let value = this.get("user");
+    return value!.toString();
+  }
+
+  set user(value: string) {
+    this.set("user", Value.fromString(value));
+  }
+
+  get token(): BigInt {
+    let value = this.get("token");
+    return value!.toBigInt();
+  }
+
+  set token(value: BigInt) {
+    this.set("token", Value.fromBigInt(value));
+  }
+
+  get count(): BigInt {
+    let value = this.get("count");
+    return value!.toBigInt();
+  }
+
+  set count(value: BigInt) {
+    this.set("count", Value.fromBigInt(value));
   }
 }
 

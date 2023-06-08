@@ -6,7 +6,14 @@ type UserStat @entity {
   submittedTasks: BigInt!
   closedTasks: BigInt!
   archivedTasks: BigInt!
-  tags: [BigInt!]
+  tokens: [UserToken!] @derivedFrom(field: "user")
+}
+
+type UserToken @entity {
+  id: ID!
+  user: UserStat!
+  token: BigInt!
+  count: BigInt!
 }
 
 type OrganizationStat @entity {

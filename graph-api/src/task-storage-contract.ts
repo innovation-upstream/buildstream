@@ -6,7 +6,8 @@ import {
   TaskRevision,
   TaskSnapshot,
   Team,
-  UserStat
+  UserStat,
+  UserToken
 } from '../generated/schema'
 
 import {
@@ -210,13 +211,6 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
       organizationStatsEntity.closedTasks = organizationStatsEntity.closedTasks.plus(
         ONE
       )
-      const taskTags = taskEntity.taskTags
-      const userTags = (userStatsEntity.tags || []) as BigInt[]
-      for (let i = 0; i < taskTags.length; i++) {
-        const index = userTags.indexOf(taskTags[i] as BigInt)
-        if (index === -1) userTags.push(taskTags[i] as BigInt)
-      }
-      if (!!userTags.length) userStatsEntity.tags = userTags
       break
     }
     case TaskStatus.ARCHIVED: {
@@ -325,6 +319,24 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
     taskSnapshotEntity
   )
   notificationEntity.save()
+
+  if (!taskEntity.assignee) return
+  for (let i = 0; i < taskEntity.taskTags.length; i++) {
+    const tag = taskEntity.taskTags[i]
+    let userTokenEntity = UserToken.load(
+      `${taskEntity.assignee as string}-${tag}`
+    )
+    if (!userTokenEntity) {
+      userTokenEntity = new UserToken(
+        `${taskEntity.assignee as string}-${tag}`
+      )
+      userTokenEntity.user = taskEntity.assignee as string
+      userTokenEntity.token = tag
+      userTokenEntity.count = BigInt.fromI32(0)
+    }
+    userTokenEntity.count = userTokenEntity.count.plus(taskEntity.complexityScore)
+    userTokenEntity.save()
+  }
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {
