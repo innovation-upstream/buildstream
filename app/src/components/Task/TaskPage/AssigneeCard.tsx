@@ -1,3 +1,4 @@
+import { useTokens } from '@innovationupstream/buildstream-utils'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { BigNumber, ethers } from 'ethers'
 import { useTranslation } from 'next-i18next'
@@ -33,6 +34,7 @@ const AssigneeCard: React.FC<Props> = ({
 }) => {
   const [processing, setProcessing] = useState(false)
   const { t } = useTranslation('tasks')
+  const tokenList = useTokens()
 
   const assigneeAddress = assignee.address
 
@@ -48,7 +50,7 @@ const AssigneeCard: React.FC<Props> = ({
         <div className='flex gap-1 mt-4'>
           {assignee.tags?.map((tag) => (
             <div key={tag} className='btn-tag'>
-              {tag}
+              {tokenList?.find(t => t.id === tag)?.name}
             </div>
           ))}
         </div>
@@ -60,7 +62,7 @@ const AssigneeCard: React.FC<Props> = ({
         </div>
       )}
       {!isAssigned && !!assignee.tasks.length && (
-        <div className='flex flex-col md:flex-row gap-3 mt-4'>
+        <div className='mt-4'>
           <p className='text-xl font-semibold'>{t('recent_tasks')}:</p>
           <ul className='mt-1 list-disc ml-4'>
             {assignee.tasks.map((task) => (
