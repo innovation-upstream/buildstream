@@ -6,8 +6,7 @@ import {
   TaskRevision,
   TaskSnapshot,
   Team,
-  UserStat,
-  UserToken
+  UserStat
 } from '../generated/schema'
 
 import {
@@ -319,24 +318,6 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
     taskSnapshotEntity
   )
   notificationEntity.save()
-
-  if (!taskEntity.assignee) return
-  for (let i = 0; i < taskEntity.taskTags.length; i++) {
-    const tag = taskEntity.taskTags[i]
-    let userTokenEntity = UserToken.load(
-      `${taskEntity.assignee as string}-${tag}`
-    )
-    if (!userTokenEntity) {
-      userTokenEntity = new UserToken(
-        `${taskEntity.assignee as string}-${tag}`
-      )
-      userTokenEntity.user = taskEntity.assignee as string
-      userTokenEntity.token = tag
-      userTokenEntity.count = BigInt.fromI32(0)
-    }
-    userTokenEntity.count = userTokenEntity.count.plus(taskEntity.complexityScore)
-    userTokenEntity.save()
-  }
 }
 
 export function handleTaskUpdated(event: TaskUpdatedEvent): void {

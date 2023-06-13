@@ -168,3 +168,22 @@ dataSources:
             address,(uint256,string,string,address,bool,address[],uint256))
           handler: handleTeamUpdated
       file: ./src/team-contract.ts
+  - kind: ethereum
+    name: TokenContract
+    network: mumbai
+    source:
+      abi: TokenContract
+      address: "0xcB4b72812Ca5D982f547dDf21d574b1d405f2Bb7"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - UserToken
+      abis:
+        - name: TokenContract
+          file: ./abis/TokenContract.json
+      eventHandlers:
+        - event: SBTRewardUser(indexed address,indexed uint256,uint256)
+          handler: handleSBTRewardUser
+      file: ./src/token-contract.ts
