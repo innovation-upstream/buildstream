@@ -7,37 +7,18 @@ contract SBTToken is ERC1155 {
     address private owner;
     address private taskContractAddress;
 
-    // BASIC = 0;
-    // BEGINNER = 1;
-    // INTERMEDIATE = 2;
-    // ADVANCED = 3;
-    // COMPLEX = 4;
-
     mapping(uint256 => bool) private tokenExists;
-    mapping(address => mapping(uint256 => uint256))
-        public totalComplexityEarned;
     // balances[user][id]
     mapping(address => mapping(uint256 => uint256)) private balances;
-    // balancesByComplexity[user][id][complexity]
-    mapping(address => mapping(uint256 => mapping(uint256 => uint256)))
-        public balancesByComplexity;
-    // orgBalances[user][id][orgId]
-    mapping(address => mapping(uint256 => mapping(uint256 => uint256)))
-        private orgBalances;
-    // orgBalancesByComplexity[user][id][complexity][orgId]
-    mapping(address => mapping(uint256 => mapping(uint256 => mapping(uint256 => uint256))))
-        private orgBalancesByComplexity;
-    // locked[user][id][complexity][orgId]
-    mapping(address => mapping(uint256 => mapping(uint256 => mapping(uint256 => uint256))))
+    // locked[user][id]
+    mapping(address => mapping(uint256 => uint256))
         private locked;
 
     uint256 private tokenCount = 0;
 
     event SBTRewardUser(
         address indexed user,
-        uint256 indexed orgId,
         uint256 indexed tokenId,
-        uint256 complexity,
         uint256 amount
     );
 
@@ -92,29 +73,6 @@ contract SBTToken is ERC1155 {
         return balances[_address][tokenId];
     }
 
-    /// @dev Get token if a token exists.
-    /// @param tokenId Id of token.
-    function balanceOf(
-        address _address,
-        uint256 tokenId,
-        uint256 orgId
-    ) public view returns (uint256) {
-        require(doesTokenExist(tokenId), "Token does not exist");
-        return orgBalances[_address][tokenId][orgId];
-    }
-
-    /// @dev Get token if a token exists.
-    /// @param tokenId Id of token.
-    function balanceOf(
-        address _address,
-        uint256 tokenId,
-        uint256 complexity,
-        uint256 orgId
-    ) public view returns (uint256) {
-        require(doesTokenExist(tokenId), "Token does not exist");
-        return orgBalancesByComplexity[_address][tokenId][complexity][orgId];
-    }
-
     /// @dev Allows to change task contract address.
     /// @param _taskContractAddress new task contract address.
     function updateTaskContractAddress(
@@ -129,17 +87,12 @@ contract SBTToken is ERC1155 {
     function reward(
         address to,
         uint256 tokenId,
-        uint256 complexity,
-        uint256 orgId
+        uint256 amount
     ) public onlyTaskContract returns (bool) {
         require(doesTokenExist(tokenId), "Token does not exist");
-        _mint(to, tokenId, 1, "");
-        balances[to][tokenId] += 1;
-        orgBalances[to][tokenId][orgId] += 1;
-        orgBalancesByComplexity[to][tokenId][complexity][orgId] += 1;
-        totalComplexityEarned[to][complexity] += 1;
-        balancesByComplexity[to][tokenId][complexity] += 1;
-        emit SBTRewardUser(to, orgId, tokenId, complexity, 1);
+        _mint(to, tokenId, amount, "");
+        balances[to][tokenId] += amount;
+        emit SBTRewardUser(to, tokenId, amount);
         return true;
     }
 
@@ -167,14 +120,10 @@ contract SBTToken is ERC1155 {
 
     function stakableTokens(
         address _address,
-        uint256 tokenId,
-        uint256 complexity,
-        uint256 orgId
+        uint256 tokenId
     ) public view returns (uint256) {
-        uint256 balance = orgBalancesByComplexity[_address][tokenId][
-            complexity
-        ][orgId];
-        return balance - locked[_address][tokenId][complexity][orgId];
+        uint256 balance = balances[_address][tokenId];
+        return balance - locked[_address][tokenId];
     }
 
     /// @dev Allows to lock an assignee tokens.
@@ -182,18 +131,14 @@ contract SBTToken is ERC1155 {
     function stake(
         address _address,
         uint256 tokenId,
-        uint256 complexity,
-        uint256 amount,
-        uint256 orgId
+        uint256 amount
     ) public onlyTaskContract returns (bool) {
-        uint256 balance = orgBalancesByComplexity[_address][tokenId][
-            complexity
-        ][orgId];
+        uint256 balance = balances[_address][tokenId];
         require(
-            balance >= locked[_address][tokenId][complexity][orgId] + amount,
+            balance >= locked[_address][tokenId] + amount,
             "Tokens are locked"
         );
-        locked[_address][tokenId][complexity][orgId] += amount;
+        locked[_address][tokenId] += amount;
         return true;
     }
 
@@ -202,15 +147,13 @@ contract SBTToken is ERC1155 {
     function unStake(
         address _address,
         uint256 tokenId,
-        uint256 complexity,
-        uint256 amount,
-        uint256 orgId
+        uint256 amount
     ) public onlyTaskContract returns (bool) {
         require(
-            locked[_address][tokenId][complexity][orgId] >= amount,
+            locked[_address][tokenId] >= amount,
             "Tokens not locked"
         );
-        locked[_address][tokenId][complexity][orgId] -= amount;
+        locked[_address][tokenId] -= amount;
         return true;
     }
 

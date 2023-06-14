@@ -54,19 +54,7 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "orgId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "uint256",
         "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "complexity",
         "type": "uint256"
       },
       {
@@ -199,69 +187,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_address",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "complexity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
-        "type": "uint256"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address[]",
         "name": "accounts",
         "type": "address[]"
@@ -286,41 +211,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
+        "name": "count",
         "type": "uint256"
       }
     ],
-    "name": "balancesByComplexity",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "createToken",
+    "name": "createTokens",
     "outputs": [
       {
         "internalType": "bool",
@@ -401,12 +297,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "complexity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
+        "name": "amount",
         "type": "uint256"
       }
     ],
@@ -516,16 +407,6 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "complexity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
-        "type": "uint256"
       }
     ],
     "name": "stakableTokens",
@@ -553,17 +434,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "complexity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
         "type": "uint256"
       }
     ],
@@ -600,49 +471,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "tokenExists",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "totalComplexityEarned",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_address",
         "type": "address"
@@ -654,17 +482,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "complexity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "orgId",
         "type": "uint256"
       }
     ],

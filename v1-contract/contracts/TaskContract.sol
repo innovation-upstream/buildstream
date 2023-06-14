@@ -220,8 +220,7 @@ contract TaskContract {
             tokenContract.reward(
                 task.assigneeAddress,
                 task.taskTags[i],
-                task.complexityScore,
-                task.orgId
+                task.complexityScore + 1
             );
         }
 
@@ -230,9 +229,7 @@ contract TaskContract {
                 tokenContract.unStake(
                     task.assigneeAddress,
                     task.taskTags[i],
-                    task.complexityScore,
-                    task.reputationLevel,
-                    task.orgId
+                    task.complexityScore
                 );
             }
         if (slashAmount > 0)
@@ -280,13 +277,17 @@ contract TaskContract {
             return;
         }
         for (uint256 i = 0; i < task.taskTags.length; i++) {
+            uint256 tokenBalance = tokenContract.balanceOf(
+                assignee,
+                task.taskTags[i]
+            );
+            uint256 stakableTokens = tokenContract.stakableTokens(
+                assignee,
+                task.taskTags[i]
+            );
             if (
-                tokenContract.balanceOf(
-                    assignee,
-                    task.taskTags[i],
-                    task.complexityScore,
-                    task.orgId
-                ) < task.reputationLevel
+                tokenBalance < task.reputationLevel ||
+                stakableTokens < task.complexityScore
             ) {
                 if (forceAssign)
                     taskStorageContract.assign(
@@ -306,9 +307,7 @@ contract TaskContract {
             tokenContract.stake(
                 assignee,
                 task.taskTags[i],
-                task.complexityScore,
-                task.reputationLevel,
-                task.orgId
+                task.complexityScore
             );
         }
     }
@@ -338,9 +337,7 @@ contract TaskContract {
                 tokenContract.unStake(
                     msg.sender,
                     task.taskTags[i],
-                    task.complexityScore,
-                    task.reputationLevel,
-                    task.orgId
+                    task.complexityScore
                 );
             }
     }
@@ -357,9 +354,7 @@ contract TaskContract {
                 tokenContract.unStake(
                     task.assigneeAddress,
                     task.taskTags[i],
-                    task.complexityScore,
-                    task.reputationLevel,
-                    task.orgId
+                    task.complexityScore
                 );
             }
     }

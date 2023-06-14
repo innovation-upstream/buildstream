@@ -170,9 +170,9 @@ export class URI__Params {
   }
 }
 
-export class TokenContract extends ethereum.SmartContract {
-  static bind(address: Address): TokenContract {
-    return new TokenContract("TokenContract", address);
+export class SbtToken extends ethereum.SmartContract {
+  static bind(address: Address): SbtToken {
+    return new SbtToken("SbtToken", address);
   }
 
   balanceOf(_address: Address, tokenId: BigInt): BigInt {

@@ -202,12 +202,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -302,12 +297,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -423,12 +413,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -536,12 +521,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -665,12 +645,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -804,12 +779,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -913,12 +883,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -995,7 +960,7 @@ describe('Integration test: Task flow', function () {
     const taskId = taskEvent?.args?.[0]?.toNumber() as number
 
     // Open task
-    const assignCreator = true
+    const assignCreator = false
     await taskContract
       .connect(approver1)
       ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
@@ -1023,12 +988,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })
@@ -1138,12 +1098,7 @@ describe('Integration test: Task flow', function () {
     const isEqual = expectedBalance.eq(newBalance)
 
     expect(
-      await tokenContract['balanceOf(address,uint256,uint256,uint256)'](
-        assignee.address,
-        SOLIDITY_TAG,
-        complexityScore,
-        orgId
-      )
+      await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
   })

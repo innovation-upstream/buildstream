@@ -17,7 +17,7 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr2] = await ethers.getSigners()
     await expect(
-      contractInstance.reward(addr2.address, SOLIDITY_TAG, 0, 0)
+      contractInstance.reward(addr2.address, SOLIDITY_TAG, 1)
     ).to.be.revertedWith('Permission denied')
   })
 
@@ -25,16 +25,9 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr1, addr2] = await ethers.getSigners()
     await contractInstance.updateTaskContractAddress(addr1.address)
-    await contractInstance
-      .connect(addr1)
-      .reward(addr2.address, SOLIDITY_TAG, 0, 0)
+    await contractInstance.connect(addr1).reward(addr2.address, SOLIDITY_TAG, 1)
     await expect(
-      await contractInstance['balanceOf(address,uint256,uint256,uint256)'](
-        addr2.address,
-        SOLIDITY_TAG,
-        0,
-        0
-      )
+      await contractInstance.balanceOf(addr2.address, SOLIDITY_TAG)
     ).to.be.equal(1)
   })
 
@@ -42,9 +35,7 @@ describe('Unit test: Reputation token contract', function () {
     const { contractInstance } = await getContractInstance()
     const [, addr1, addr2, addr3] = await ethers.getSigners()
     await contractInstance.updateTaskContractAddress(addr1.address)
-    await contractInstance
-      .connect(addr1)
-      .reward(addr2.address, SOLIDITY_TAG, 0, 0)
+    await contractInstance.connect(addr1).reward(addr2.address, SOLIDITY_TAG, 1)
     await expect(
       contractInstance
         .connect(addr2)
