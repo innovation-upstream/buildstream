@@ -52,6 +52,10 @@ interface PageProps {
   instructions?: string
   assignmentRequests?: AssigneeData[]
   assigneeData?: AssigneeData
+  taskDenials: {
+    assignee: string
+    message: string
+  }[]
 }
 
 const isBrowser = typeof window !== 'undefined'
@@ -178,6 +182,7 @@ export const getServerSideProps: GetServerSideProps =
         instructions: instructions || null,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
+        taskDenials: deniedAssignees,
         ...(await serverSideTranslations(context.locale ?? '', [
           'common',
           'organization',
@@ -191,7 +196,8 @@ export const getServerSideProps: GetServerSideProps =
 const TaskPage: NextPage<PageProps> = ({
   task,
   assignmentRequests,
-  instructions
+  instructions,
+  taskDenials
 }) => {
   const { account } = useWeb3()
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
@@ -244,6 +250,7 @@ const TaskPage: NextPage<PageProps> = ({
   const isAssignee = account && currentTask.assigneeAddress === account
   const isApprover =
     !!account && currentTask?.organization.approvers.includes(account)
+  const taskDenial = taskDenials.find(a => a.assignee === account)
 
   const getAssignee = (assignee: AssigneeData) => ({
     ...assignee,
@@ -310,7 +317,7 @@ const TaskPage: NextPage<PageProps> = ({
           </div>
           {currentTask.status === TaskStatus.OPEN &&
             account &&
-            currentTask.assignmentRequests?.includes(account) && (
+            assignmentRequests?.some(a => a.address === account) && (
               <div className='mt-4'>
                 <Alert>
                   <p className='font-bold mb-2 text-lg'>
@@ -369,6 +376,16 @@ const TaskPage: NextPage<PageProps> = ({
                 </ul>
               </div>
             )}
+          {taskDenial && (
+            <div className='mt-4'>
+            <Alert>
+              <p className='font-bold mb-2 text-lg'>
+                {t('you_are_denied')}
+              </p>
+              <p>{taskDenial.message}</p>
+            </Alert>
+          </div>
+          )}
           <SolutionHistory
             task={currentTask}
             isApprover={
