@@ -8,9 +8,9 @@ import {
   createUpdateRewardTokenAction,
   createUpdateTagRewardMultiplierAction,
 } from 'hooks/action/functions'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { Organization } from 'hooks/organization/types'
 import { getRewardMultiplier } from 'hooks/task/functions'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 

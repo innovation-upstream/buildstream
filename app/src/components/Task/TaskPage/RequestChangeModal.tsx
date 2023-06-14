@@ -4,7 +4,7 @@ import Spinner from 'components/Spinner/Spinner'
 import CryptoJS from 'crypto-js'
 import SHA256 from 'crypto-js/sha256'
 import { useWeb3 } from 'hooks'
-import { changeDueDate, requestTaskReview } from 'hooks/task/functions'
+import { createRevision, requestTaskReview } from 'hooks/task/functions'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
 import { useEffect, useState } from 'react'
@@ -12,27 +12,22 @@ import { useEffect, useState } from 'react'
 interface RequestChangeModalProps {
   taskId: number
   onClose: () => void
-  durationExtention?: boolean
   dueDate?: string
 }
-
-const requestMessage =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis sem erat, at bibendum ante porta at. Pellentesque condimentum ex eu malesuada iaculis. Sed varius vulputate rutrum. Pellentesque non diam consequat, faucibus velit vitae, dapibus erat. Nunc maximus mauris magna, sed aliquet nibh faucibus at. Ut id justo elit. Etiam nunc eros, lacinia nec consectetur sed, sollicitudin in arcu.'
 
 const RequestChangeModal = ({
   taskId,
   onClose,
-  dueDate,
-  durationExtention = false
+  dueDate
 }: RequestChangeModalProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [processing, setProcessing] = useState(false)
 
-  const getReviewParams = (): { reviewId: string; reviewHash: string } => {
+  const getReviewParams = (changes: string): { reviewId: string; reviewHash: string } => {
     const idHash = SHA256(Date.parse(Date()).toString())
     const reviewId = '0x' + idHash.toString(CryptoJS.enc.Hex)
-    const reviewHash = '0x' + SHA256(requestMessage)
+    const reviewHash = '0x' + SHA256(changes)
 
     return {
       reviewId: reviewId,
@@ -56,22 +51,17 @@ const RequestChangeModal = ({
 
     if (dueDate < moment.now() / 1000) return
 
-    const { reviewId, reviewHash } = getReviewParams()
+    const { reviewId, reviewHash } = getReviewParams(changes)
     setProcessing(true)
     try {
-      if (durationExtention) {
-        await changeDueDate(taskId, 0, dueDate, library.getSigner())
-        setProcessing(false)
-        onClose()
-        return
-      }
-      await requestTaskReview(
+      const revisionId = await requestTaskReview(
         taskId,
         reviewId,
         reviewHash,
         dueDate,
         library.getSigner()
       )
+      await createRevision(taskId, reviewId, revisionId, changes)
       setProcessing(false)
       onClose()
     } catch (e) {
@@ -105,7 +95,6 @@ const RequestChangeModal = ({
         <div className='divider' />
 
         <form className='mt-3' onSubmit={submitTask}>
-          {durationExtention && <div className='mb-3'>{requestMessage}</div>}
           <div className='col-span-4 w-1/3 mb-0'>
             <label htmlFor='dueDate' className='flex gap-2 items-center mb-2'>
               <span className='block text-gray-500'>
@@ -121,12 +110,8 @@ const RequestChangeModal = ({
               className='overflow-hidden focus:outline-none rounded-md p-2 border border-gray-200'
             />
           </div>
-          {!durationExtention && (
-            <>
-              <p className='text-sm mt-3 mb-3'>{t('changes_description')}</p>
-              <textarea className='input-base' name='changes' rows={5} />
-            </>
-          )}
+          <p className='text-sm mt-3 mb-3'>{t('changes_description')}</p>
+          <textarea className='input-base' name='changes' rows={5} />
 
           <div className='mt-4 flex gap-x-6'>
             <button

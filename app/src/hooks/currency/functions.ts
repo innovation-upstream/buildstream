@@ -1,13 +1,13 @@
 import Erc20 from 'contracts/ERC20.json'
 import { ethers } from 'ethers'
 import getContract from 'utils/getContract'
-import { TokenInfo } from './types'
+import { Currency } from './types'
 
 export const getTokenInfo = async (
   address: string,
   chainId: number,
   provider?: any
-): Promise<TokenInfo | undefined> => {
+): Promise<Currency | undefined> => {
   try {
     if (address === ethers.constants.AddressZero) {
       return {

@@ -1,52 +1,48 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
-import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
-import useTokenInfo from 'hooks/currency/useCurrency'
-import { assignToSelf } from 'hooks/task/functions'
-import { Task } from 'hooks/task/types'
+import { denyAssignee } from 'hooks/task/functions'
 import { useTranslation } from 'next-i18next'
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 
-interface IRequestAssignment {
-  task: Task
+interface IDenyTask {
+  taskId: number
   onClose: () => void
+  assignee: string
   onSuccess?: () => void
   onError?: () => void
 }
 
-const RequestAssignment = ({
-  task,
+const DenyTask = ({
+  taskId,
   onClose,
+  assignee,
   onSuccess,
   onError,
-}: IRequestAssignment) => {
+}: IDenyTask) => {
   const [processing, setProcessing] = useState(false)
   const { t } = useTranslation('tasks')
   const { library } = useWeb3()
 
-  const requestAssignment = async () => {
+  const denyTask = async (message: string) => {
+    setProcessing(true)
     try {
-      await assignToSelf(task.id, library.getSigner())
+      await denyAssignee(taskId, assignee, message)
       onSuccess?.()
     } catch (e) {
-      onError?.()
       console.error(e)
+      onError?.()
     }
     onClose()
   }
 
-  const handleRequestAssignment = () => {
+  const handleDenyTask = (e: FormEvent) => {
+    e.preventDefault()
     setProcessing(true)
-    requestAssignment()
+    const formData = new FormData(e.target as any)
+    const message = formData.get('message') as string
+    denyTask(message)
   }
-
-  const { tokenInfo } = useTokenInfo(task.rewardToken)
-  const rewardAmountValue = ethers.utils.formatUnits(
-    task.rewardAmount.toString(),
-    tokenInfo?.decimal
-  )
-  const rewardUsd = parseFloat(rewardAmountValue) * (tokenInfo?.priceUsd || 0)
 
   return (
     <>
@@ -63,28 +59,26 @@ const RequestAssignment = ({
             >
               <CloseIcon />
             </button>
-            <p className='text-3xl text-center font-semibold'>
-              {t('request_assignment')}
+            <p className='text-3xl text-center text-ellipsis whitespace-nowrap overflow-hidden px-8 font-semibold'>
+              {t('deny_task_title', {
+                assignee,
+              })}
             </p>
           </div>
           <div className='divider' />
-          <div className='mt-5'>
-            <span>
-              {t('request_task_explainer', {
-                amount: rewardUsd.toPrecision(4),
-                tokens: task.taskTags.length,
-                skills: task.taskTags.map((tag) => tag.name).join(', '),
-              })}
-            </span>
+          <form onSubmit={handleDenyTask} className='mt-5'>
+            <span>{t('deny_task_body')}</span>
+            <textarea className='mt-3 input-base' name='message' rows={5} />
             <div className='mt-10 flex flex-col md:flex-row items-center gap-4 flex-0'>
               <button
+                type='submit'
                 className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500'
                 disabled={processing}
-                onClick={handleRequestAssignment}
               >
                 {t('continue')}
               </button>
               <button
+                type='button'
                 className='btn-primary min-w-full md:min-w-fit'
                 disabled={processing}
                 onClick={onClose}
@@ -92,7 +86,7 @@ const RequestAssignment = ({
                 {t('cancel')}
               </button>
             </div>
-          </div>
+          </form>
           {processing && (
             <div className='absolute inset-0 z-10 w-full h-full rounded-2xl flex items-center justify-center bg-zinc-500/30'>
               <Spinner width={100} />
@@ -104,4 +98,4 @@ const RequestAssignment = ({
   )
 }
 
-export default RequestAssignment
+export default DenyTask

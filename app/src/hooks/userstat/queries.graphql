@@ -6,7 +6,11 @@ fragment StatFragment on UserStat {
   submittedTasks
   closedTasks
   archivedTasks
-  tags
+  tokens {
+    id
+    token
+    count
+  }
 }
 
 query GetUserStat(

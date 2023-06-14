@@ -138,5 +138,10 @@
   "comment_required": "Comment is required",
   "duedate_extension": "Due Date Extension",
   "duedate_extension_request": "Due Date Extension Request",
-  "accept_duedate_extension_request": "Accept Due Date Extension Request"
+  "accept_duedate_extension_request": "Accept Due Date Extension Request",
+  "reject": "Reject",
+  "deny_task_title": "Deny {{assignee}}",
+  "deny_task_body": "This user will be hidden from the request list",
+  "denied_successfully": "{{assignee}} has been denied",
+  "error_denying": "Error Denying {{assignee}}..."
 }

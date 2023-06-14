@@ -1,17 +1,18 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { BigNumber, ethers } from 'ethers'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import AssignTask from '../AssignTask/AssignTask'
+import DenyTask from '../DenyTask/DenyTask'
 
 interface Props {
   taskId: number
   isAssigned?: boolean
   assignee: {
-    tags: string[]
     address: string
     coverLetter?: string
     tasks: {
@@ -19,6 +20,11 @@ interface Props {
       title: string
       rewardAmount: BigNumber
       rewardToken: string
+    }[]
+    tokens: {
+      id: string
+      token: number
+      count: number
     }[]
   }
   isApprover?: boolean
@@ -33,8 +39,10 @@ const AssigneeCard: React.FC<Props> = ({
   isApprover
 }) => {
   const [processing, setProcessing] = useState(false)
+  const [processingDeny, setProcessingDeny] = useState(false)
   const { t } = useTranslation('tasks')
   const tokenList = useTokens()
+  const { tokenInfos } = useTokenInfos()
 
   const assigneeAddress = assignee.address
 
@@ -46,11 +54,12 @@ const AssigneeCard: React.FC<Props> = ({
           {assigneeAddress?.substring(assigneeAddress?.length - 4)}
         </p>
       </div>
-      {assignee.tags?.length > 0 && (
+      {assignee.tokens?.length > 0 && (
         <div className='flex gap-1 mt-4'>
-          {assignee.tags?.map((tag) => (
-            <div key={tag} className='btn-tag'>
-              {tokenList?.find(t => t.id === tag)?.name}
+          {assignee.tokens?.map((token) => (
+            <div key={token.id} className='btn-tag'>
+              {tokenList?.find(t => t.id === token.token.toString())?.name}
+              <span className='ml-2 font-bold'>{token.count}</span>
             </div>
           ))}
         </div>
@@ -76,7 +85,7 @@ const AssigneeCard: React.FC<Props> = ({
                     {ethers.utils
                       .formatEther(task?.rewardAmount.toString())
                       .toString()}{' '}
-                    ETH
+                    {tokenInfos?.find(t => t.address === task.rewardToken)?.symbol}
                   </span>
                 </span>
               </li>
@@ -91,6 +100,12 @@ const AssigneeCard: React.FC<Props> = ({
             className='btn-primary px-12'
           >
             {t('assign')}
+          </button>
+          <button
+            onClick={() => setProcessingDeny(true)}
+            className='btn-primary bg-rose-400 hover:bg-rose-300 px-12'
+          >
+            {t('reject')}
           </button>
         </div>
       )}
@@ -120,6 +135,34 @@ const AssigneeCard: React.FC<Props> = ({
             )
           }
           onClose={() => setProcessing(false)}
+        />
+      )}
+      {processingDeny && (
+        <DenyTask
+          taskId={taskId}
+          assignee={assigneeAddress}
+          onSuccess={() => {
+            toast.success(
+              t('denied_successfully', {
+                assignee: assigneeAddress.substring(0, 6)
+              }),
+              {
+                icon: '👍'
+              }
+            )
+            onAssign?.()
+          }}
+          onError={() =>
+            toast.error(
+              t('error_denying', {
+                assignee: assigneeAddress.substring(0, 6)
+              }),
+              {
+                icon: '❌'
+              }
+            )
+          }
+          onClose={() => setProcessingDeny(false)}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
+import useTokenInfo from 'hooks/currency/useCurrency'
 import { useCallback, useEffect, useState } from 'react'
 
 export const usePolling = (
