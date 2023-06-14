@@ -1,8 +1,6 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
-import { BigNumber } from 'ethers'
 import { useWeb3 } from 'hooks'
-import useBalance from 'hooks/balance/useBalance'
 import { useUserStat } from 'hooks/userstat'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
@@ -14,13 +12,12 @@ interface Props {
 
 const ProfileCard = ({ address }: Props) => {
   const { account } = useWeb3()
-  const { balance } = useBalance(address)
   const stat = useUserStat(address)
   const tokens = useTokens()
 
-  const totalTokens = balance?.reduce(
-    (aggregator, curr) => aggregator.add(curr.balance),
-    BigNumber.from(0)
+  const totalTokens = stat?.tokens?.reduce(
+    (aggregator, curr) => aggregator + curr.count,
+    0
   )
 
   let userId = address
@@ -45,9 +42,10 @@ const ProfileCard = ({ address }: Props) => {
       <div className='my-5'>
         <p className='font-semibold mb-2'>{t('your_skills')}</p>
         <div className='flex flex-wrap gap-1 mt-3'>
-          {stat.tags?.map((tag) => (
-            <div key={tag} className='btn-tag'>
-              {tokens?.find(t => t.id === tag.toString())?.name || tag}
+          {stat.tokens?.map((tag) => (
+            <div key={tag.id} className='btn-tag'>
+              {tokens?.find(t => t.id === tag.token.toString())?.name}
+              <span className='ml-2 font-bold'>{tag.count}</span>
             </div>
           ))}
         </div>

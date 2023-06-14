@@ -49,7 +49,11 @@ export class Converter {
       submittedTasks: BigNumber.from(stat?.submittedTasks || 0),
       closedTasks: BigNumber.from(stat?.closedTasks || 0),
       archivedTasks: BigNumber.from(stat?.archivedTasks || 0),
-      tags: stat?.tags?.map(t => Number(t)) || []
+      tokens: stat?.tokens?.map(t => ({
+        id: t.id,
+        token: Number(t.token),
+        count: Number(t.count)
+      })) || []
     }
   }
 

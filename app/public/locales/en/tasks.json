@@ -143,5 +143,7 @@
   "deny_task_title": "Deny {{assignee}}",
   "deny_task_body": "This user will be hidden from the request list",
   "denied_successfully": "{{assignee}} has been denied",
-  "error_denying": "Error Denying {{assignee}}..."
+  "error_denying": "Error Denying {{assignee}}...",
+  "you_are_assigned": "You are assigned to this task!  The task is due in {{days}} days",
+  "you_are_assigned_body": "Use the private task materials to complete the task according to the task description.  If you have any questions, you can get in touch with the task author using the communication channel specified by them in the private task materials"
 }

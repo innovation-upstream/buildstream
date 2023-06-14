@@ -375,10 +375,10 @@ const TaskPage: NextPage<PageProps> = ({
               !!account && currentTask?.organization.approvers.includes(account)
             }
           />
-          {currentTask.status == TaskStatus.ASSIGNED && (
+          {isAssignee && (
             <>
-              <SolutionTime />
-              {isAssignee && <SubmitCard taskId={currentTask.id} />}
+              <SolutionTime task={currentTask} />
+              <SubmitCard taskId={currentTask.id} />
             </>
           )}
           {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}

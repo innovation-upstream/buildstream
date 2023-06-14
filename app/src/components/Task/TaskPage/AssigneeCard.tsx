@@ -49,10 +49,12 @@ const AssigneeCard: React.FC<Props> = ({
   return (
     <div className='paper'>
       <div className='flex'>
-        <p className='text-xl font-semibold'>
-          {assigneeAddress?.substring(0, 6)}...
-          {assigneeAddress?.substring(assigneeAddress?.length - 4)}
-        </p>
+        <Link href={`/account/${assigneeAddress}`}>
+          <a className='text-xl font-semibold' target='_blank'>
+            {`${assigneeAddress?.substring(0, 12)}...
+            ${assigneeAddress?.substring(assigneeAddress?.length - 4)}`}
+          </a>
+        </Link>
       </div>
       {assignee.tokens?.length > 0 && (
         <div className='flex gap-1 mt-4'>
@@ -77,7 +79,7 @@ const AssigneeCard: React.FC<Props> = ({
             {assignee.tasks.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
-                  <a className='text-[#3667EA] underline'>{task.title}</a>
+                  <a className='text-[#3667EA] underline' target='_blank'>{task.title}</a>
                 </Link>
                 <span className='ml-3 inline-flex items-center gap-1 bg-[#70C550]/25 px-2 py-1 rounded-full'>
                   <TokenGeneric width={7.6} />
