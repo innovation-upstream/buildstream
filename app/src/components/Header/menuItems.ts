@@ -7,14 +7,6 @@ type menuTypes = 'default' | 'task' | 'organization'
 
 export const defaultMenu: IProps[] = [
   {
-    label: 'about',
-    url: '/about'
-  },
-  {
-    label: 'faq',
-    url: '/faq'
-  },
-  {
     label: 'support',
     url: '/support'
   }
