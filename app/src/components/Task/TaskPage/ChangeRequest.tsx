@@ -4,20 +4,13 @@ import Warning from 'SVGs/Warning'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
-import { acceptRevision, rejectTaskRevision } from 'hooks/task/functions'
+import { acceptRevision, getRevisions, rejectTaskRevision } from 'hooks/task/functions'
 import { TaskRevision, TaskRevisionStatus } from 'hooks/task/types'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChangeDueDateModal from './ChangeDueDateModal'
 import RequestChangeModal from './RequestChangeModal'
-
-const demoRevision = `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras viverra eu eleifend orci. 
-Eleifend curabitur vitae et tempor tellus amet. Adipiscing eget eget interdum eu quam facilisi lacus. 
-Auctor adipiscing maecenas aenean vestibulum. Mollis sem tristique libero magna urna. 
-Sit eget imperdiet ipsum eu. Enim posuere justo gravida gravida nunc neque, volutpat nisi.
-`
 
 interface ChangeRequestProps {
   revision: TaskRevision
@@ -40,6 +33,7 @@ const ChangeRequest = ({
   const [processing, setProcessing] = useState(false)
   const [processDispute, setProcessDispute] = useState(false)
   const [processAcceptConditions, setProcessAcceptConditions] = useState(false)
+  const [message, setMessage] = useState('')
 
   const accept = async () => {
     if (!account) return
@@ -65,6 +59,15 @@ const ChangeRequest = ({
     }
   }
 
+  useEffect(() => {
+    if (taskId === undefined) return
+    getRevisions(taskId).then((revisions) => {
+      const revisionData = revisions.find((r: any) => r.revisionId == revision.id)
+      console.log(revisions, revisionData)
+      setMessage(revisionData?.message || '')
+    })
+  }, [taskId, revision.id])
+
   const acceptConditions = () => {
     setProcessAcceptConditions(true)
   }
@@ -84,7 +87,7 @@ const ChangeRequest = ({
       </div>
       <MarkDownEditor
         className='!mt-4 !border-0'
-        value={{ text: demoRevision }}
+        value={{ text: message }}
         readOnly
         hideToggle
       />

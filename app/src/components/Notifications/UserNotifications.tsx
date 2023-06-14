@@ -1,14 +1,14 @@
-import { usePolling, useWeb3 } from 'hooks'
-import { TaskSnapshot, TaskStatus } from 'hooks/task/types'
-import { useEffect, useMemo, useState } from 'react'
-import { Converter } from 'utils/converter'
-import { useTranslation } from 'react-i18next'
-import isSameDay from 'utils/isSameDay'
 import TokenGeneric from 'SVGs/TokenGeneric'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import { ethers } from 'ethers'
+import { usePolling, useWeb3 } from 'hooks'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { useGetNotificationsQuery } from 'hooks/notification'
 import { Notification } from 'hooks/notification/types'
+import { TaskSnapshot, TaskStatus } from 'hooks/task/types'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Converter } from 'utils/converter'
+import isSameDay from 'utils/isSameDay'
 
 const messageTemplates: Record<any, string> = {
   1: 'A request for <strong>{title}</strong> has been made',

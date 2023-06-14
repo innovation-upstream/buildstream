@@ -1,4 +1,4 @@
-export type TokenInfo = {
+export type Currency = {
   isNative?: boolean
   address: string
   symbol?: string

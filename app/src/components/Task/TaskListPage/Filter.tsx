@@ -1,12 +1,12 @@
-import { useTranslation } from 'react-i18next'
+import { useTokens } from '@innovationupstream/buildstream-utils'
+import ChevronDown from 'components/IconSvg/ChevronDown'
 import { ComplexityScoreMap } from 'hooks/task/types'
 import { useUserStat } from 'hooks/userstat'
-import TaskTagInput from '../CreateTask/TaskTagInput'
-import ChevronDown from 'components/IconSvg/ChevronDown'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import TaskTagInput from '../CreateTask/TaskTagInput'
 import { FilterUpdate, useTaskFilter } from './FilterContext'
 import { StyledContainer } from './styled'
-import { useTokens } from '@innovationupstream/buildstream-utils'
 
 interface FilterProps {
   expand?: boolean
@@ -100,16 +100,16 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
               hideTitle
             />
             <div className='mt-4'>
-              {stats.tags.map((tag) => {
-                const token = tokens.find((t) => t.id === tag.toString())
+              {stats.tokens.map((tag) => {
+                const token = tokens.find((t) => t.id === tag.token.toString())
                 return (
-                  <label key={tag} className='flex gap-x-3 mb-2.5 items-center'>
+                  <label key={tag.id} className='flex gap-x-3 mb-2.5 items-center'>
                     <input
                       type='checkbox'
                       className='w-5 h-5'
-                      checked={!!filters?.tags?.includes(tag)}
+                      checked={!!filters?.tags?.includes(tag.token)}
                       onChange={() =>
-                        handleCheckbox(filters?.tags || [], tag, 'tags')
+                        handleCheckbox(filters?.tags || [], tag.token, 'tags')
                       }
                     />
                     <span className='text-[#646873] capitalize'>{token?.name}</span>

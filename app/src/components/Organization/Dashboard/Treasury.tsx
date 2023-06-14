@@ -1,15 +1,15 @@
-import Gear from 'SVGs/Gear'
-import TokenGeneric from 'SVGs/TokenGeneric'
 import Copy from 'SVGs/Copy'
+import Gear from 'SVGs/Gear'
 import Plus from 'SVGs/Plus'
-import { Organization } from 'hooks/organization/types'
-import { useState } from 'react'
-import { BigNumber, ethers } from 'ethers'
-import TreasuryAbi from 'contracts/Treasury.json'
+import TokenGeneric from 'SVGs/TokenGeneric'
 import Deposit from 'components/Deposit/Deposit'
-import { useTranslation } from 'react-i18next'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
+import TreasuryAbi from 'contracts/Treasury.json'
+import { BigNumber, ethers } from 'ethers'
+import useTokenInfos from 'hooks/currency/useCurrencies'
+import { Organization } from 'hooks/organization/types'
 import Link from 'next/link'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TreasuryProps {
   organization: Organization

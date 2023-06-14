@@ -1,38 +1,38 @@
-import { ApiError } from 'next/dist/server/api-utils'
 
-export default class TaskInstruction {
+export default class TaskApprovalService {
   private client: FirebaseFirestore.Firestore
 
   constructor(_client: FirebaseFirestore.Firestore) {
     this.client = _client
   }
 
-  public async get(taskId: string): Promise<string> {
+  public async getAllDenials(taskId: string): Promise<any[]> {
     const snapshot = await this.client
       .collection('tasks')
       .doc(taskId.toString())
+      .collection('taskDenials')
       .get()
 
-    const taskInstruction = snapshot.data()?.taskInstruction
+    const denials = snapshot.docs.map((doc) => doc.data())
 
-    if (!taskInstruction) throw new ApiError(404, 'Data not found')
-
-    return taskInstruction
+    return denials
   }
 
-  public async set(
-    organizationId: string,
+  public async denyAssignee(
     taskId: string,
-    taskInstruction: string
+    assignee: string,
+    message: string
   ): Promise<void> {
     const docRef = this.client
       .collection('tasks')
       .doc(taskId.toString())
+      .collection('taskDenials')
+      .doc(assignee)
 
     await docRef.set(
       {
-        taskInstruction,
-        organizationId
+        assignee,
+        message
       },
       { merge: true }
     )

@@ -1,17 +1,27 @@
+import Alert from 'components/Alert/Alert'
+import { Task } from 'hooks/task/types'
+import moment from 'moment'
 import { useTranslation } from 'next-i18next'
-import ClockSmall from 'SVGs/ClockSmall'
 
-const SolutionTime = () => {
+interface ISolutionTimeProps {
+  task: Task
+}
+
+const SolutionTime = ({ task }: ISolutionTimeProps) => {
   const { t } = useTranslation('tasks')
 
+  const days = moment.unix(task.dueDate).diff(moment(), 'days')
+
   return (
-    <div className='paper flex items-center gap-x-4 mt-7'>
-      <div className='shrink-0 h-9 md:h-10 w-9 md:w-10 flex items-center justify-center rounded-md bg-[#E1F3EC]'>
-        <ClockSmall className='fill-[#6BC5A1]' />
-      </div>
-      <p className='text-2xl font-semibold'>
-        {t('solution_will_be_in').replace('{placeholder}', '3d')}
-      </p>
+    <div className='mt-4'>
+      <Alert>
+        <p className='font-bold mb-2 text-lg'>
+          {t('you_are_assigned', {
+            days
+          })}
+        </p>
+        <p>{t('you_are_assigned_body')}</p>
+      </Alert>
     </div>
   )
 }

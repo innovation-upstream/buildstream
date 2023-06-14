@@ -1,13 +1,13 @@
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { ethers } from 'ethers'
-import { Notification } from 'hooks/notification/types'
-import { TokenInfo } from 'hooks/tokenInfo/types'
 import { Action } from 'hooks/action/types'
+import { Currency } from 'hooks/currency/types'
+import { Notification } from 'hooks/notification/types'
 import { DepositRecord } from 'hooks/treasury/types'
 
 interface TreasuryNotificationProps {
   notification: Notification
-  tokenInfos?: TokenInfo[]
+  tokenInfos?: Currency[]
 }
 
 const treasuryMessageTemplates = {

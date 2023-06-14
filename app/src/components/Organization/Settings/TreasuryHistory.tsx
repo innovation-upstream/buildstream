@@ -1,11 +1,11 @@
+import CaretFilled from 'SVGs/CaretFilled'
 import { BigNumber, ethers } from 'ethers'
 import { Action } from 'hooks/action/types'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { Organization } from 'hooks/organization/types'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
 import { DepositRecord } from 'hooks/treasury/types'
 import { useTranslation } from 'next-i18next'
 import { useMemo } from 'react'
-import CaretFilled from 'SVGs/CaretFilled'
 import isSameDay from 'utils/isSameDay'
 
 interface ITreasuryHistoryProps {

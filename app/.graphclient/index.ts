@@ -37,6 +37,7 @@ export type Scalars = {
   BigDecimal: any;
   BigInt: bigint;
   Bytes: any;
+  Int8: any;
 };
 
 export type Action = {
@@ -1447,6 +1448,8 @@ export type Organization_orderBy =
 export type Query = {
   userStat?: Maybe<UserStat>;
   userStats: Array<UserStat>;
+  userToken?: Maybe<UserToken>;
+  userTokens: Array<UserToken>;
   organizationStat?: Maybe<OrganizationStat>;
   organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
@@ -1491,6 +1494,24 @@ export type QueryuserStatsArgs = {
   orderBy?: InputMaybe<UserStat_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryuserTokenArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryuserTokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -1737,6 +1758,8 @@ export type Query_metaArgs = {
 export type Subscription = {
   userStat?: Maybe<UserStat>;
   userStats: Array<UserStat>;
+  userToken?: Maybe<UserToken>;
+  userTokens: Array<UserToken>;
   organizationStat?: Maybe<OrganizationStat>;
   organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
@@ -1781,6 +1804,24 @@ export type SubscriptionuserStatsArgs = {
   orderBy?: InputMaybe<UserStat_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionuserTokenArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionuserTokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -3294,7 +3335,16 @@ export type UserStat = {
   submittedTasks: Scalars['BigInt'];
   closedTasks: Scalars['BigInt'];
   archivedTasks: Scalars['BigInt'];
-  tags?: Maybe<Array<Scalars['BigInt']>>;
+  tokens?: Maybe<Array<UserToken>>;
+};
+
+
+export type UserStattokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
 };
 
 export type UserStat_filter = {
@@ -3354,12 +3404,7 @@ export type UserStat_filter = {
   archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
   archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
   archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  tokens_?: InputMaybe<UserToken_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<UserStat_filter>>>;
@@ -3374,7 +3419,79 @@ export type UserStat_orderBy =
   | 'submittedTasks'
   | 'closedTasks'
   | 'archivedTasks'
-  | 'tags';
+  | 'tokens';
+
+export type UserToken = {
+  id: Scalars['ID'];
+  user: UserStat;
+  token: Scalars['BigInt'];
+  count: Scalars['BigInt'];
+};
+
+export type UserToken_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  user?: InputMaybe<Scalars['String']>;
+  user_not?: InputMaybe<Scalars['String']>;
+  user_gt?: InputMaybe<Scalars['String']>;
+  user_lt?: InputMaybe<Scalars['String']>;
+  user_gte?: InputMaybe<Scalars['String']>;
+  user_lte?: InputMaybe<Scalars['String']>;
+  user_in?: InputMaybe<Array<Scalars['String']>>;
+  user_not_in?: InputMaybe<Array<Scalars['String']>>;
+  user_contains?: InputMaybe<Scalars['String']>;
+  user_contains_nocase?: InputMaybe<Scalars['String']>;
+  user_not_contains?: InputMaybe<Scalars['String']>;
+  user_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  user_starts_with?: InputMaybe<Scalars['String']>;
+  user_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  user_not_starts_with?: InputMaybe<Scalars['String']>;
+  user_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  user_ends_with?: InputMaybe<Scalars['String']>;
+  user_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  user_not_ends_with?: InputMaybe<Scalars['String']>;
+  user_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  user_?: InputMaybe<UserStat_filter>;
+  token?: InputMaybe<Scalars['BigInt']>;
+  token_not?: InputMaybe<Scalars['BigInt']>;
+  token_gt?: InputMaybe<Scalars['BigInt']>;
+  token_lt?: InputMaybe<Scalars['BigInt']>;
+  token_gte?: InputMaybe<Scalars['BigInt']>;
+  token_lte?: InputMaybe<Scalars['BigInt']>;
+  token_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  token_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  count?: InputMaybe<Scalars['BigInt']>;
+  count_not?: InputMaybe<Scalars['BigInt']>;
+  count_gt?: InputMaybe<Scalars['BigInt']>;
+  count_lt?: InputMaybe<Scalars['BigInt']>;
+  count_gte?: InputMaybe<Scalars['BigInt']>;
+  count_lte?: InputMaybe<Scalars['BigInt']>;
+  count_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  count_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<UserToken_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<UserToken_filter>>>;
+};
+
+export type UserToken_orderBy =
+  | 'id'
+  | 'user'
+  | 'user__id'
+  | 'user__proposedTasks'
+  | 'user__openedTasks'
+  | 'user__assignedTasks'
+  | 'user__submittedTasks'
+  | 'user__closedTasks'
+  | 'user__archivedTasks'
+  | 'token'
+  | 'count';
 
 export type _Block_ = {
   /** The hash of the block */
@@ -3495,6 +3612,7 @@ export type ResolversTypes = ResolversObject<{
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Int8: ResolverTypeWrapper<Scalars['Int8']>;
   Notification: ResolverTypeWrapper<Notification>;
   Notification_filter: Notification_filter;
   Notification_orderBy: Notification_orderBy;
@@ -3532,6 +3650,9 @@ export type ResolversTypes = ResolversObject<{
   UserStat: ResolverTypeWrapper<UserStat>;
   UserStat_filter: UserStat_filter;
   UserStat_orderBy: UserStat_orderBy;
+  UserToken: ResolverTypeWrapper<UserToken>;
+  UserToken_filter: UserToken_filter;
+  UserToken_orderBy: UserToken_orderBy;
   _Block_: ResolverTypeWrapper<_Block_>;
   _Meta_: ResolverTypeWrapper<_Meta_>;
   _SubgraphErrorPolicy_: _SubgraphErrorPolicy_;
@@ -3554,6 +3675,7 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
+  Int8: Scalars['Int8'];
   Notification: Notification;
   Notification_filter: Notification_filter;
   Organization: Organization;
@@ -3579,6 +3701,8 @@ export type ResolversParentTypes = ResolversObject<{
   Treasury_filter: Treasury_filter;
   UserStat: UserStat;
   UserStat_filter: UserStat_filter;
+  UserToken: UserToken;
+  UserToken_filter: UserToken_filter;
   _Block_: _Block_;
   _Meta_: _Meta_;
 }>;
@@ -3663,6 +3787,10 @@ export type DepositResolvers<ContextType = MeshContext, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export interface Int8ScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Int8'], any> {
+  name: 'Int8';
+}
+
 export type NotificationResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3731,6 +3859,8 @@ export type OrganizationStatResolvers<ContextType = MeshContext, ParentType exte
 export type QueryResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   userStat?: Resolver<Maybe<ResolversTypes['UserStat']>, ParentType, ContextType, RequireFields<QueryuserStatArgs, 'id' | 'subgraphError'>>;
   userStats?: Resolver<Array<ResolversTypes['UserStat']>, ParentType, ContextType, RequireFields<QueryuserStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  userToken?: Resolver<Maybe<ResolversTypes['UserToken']>, ParentType, ContextType, RequireFields<QueryuserTokenArgs, 'id' | 'subgraphError'>>;
+  userTokens?: Resolver<Array<ResolversTypes['UserToken']>, ParentType, ContextType, RequireFields<QueryuserTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   organizationStat?: Resolver<Maybe<ResolversTypes['OrganizationStat']>, ParentType, ContextType, RequireFields<QueryorganizationStatArgs, 'id' | 'subgraphError'>>;
   organizationStats?: Resolver<Array<ResolversTypes['OrganizationStat']>, ParentType, ContextType, RequireFields<QueryorganizationStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
   organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryorganizationArgs, 'id' | 'subgraphError'>>;
@@ -3763,6 +3893,8 @@ export type QueryResolvers<ContextType = MeshContext, ParentType extends Resolve
 export type SubscriptionResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
   userStat?: SubscriptionResolver<Maybe<ResolversTypes['UserStat']>, "userStat", ParentType, ContextType, RequireFields<SubscriptionuserStatArgs, 'id' | 'subgraphError'>>;
   userStats?: SubscriptionResolver<Array<ResolversTypes['UserStat']>, "userStats", ParentType, ContextType, RequireFields<SubscriptionuserStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
+  userToken?: SubscriptionResolver<Maybe<ResolversTypes['UserToken']>, "userToken", ParentType, ContextType, RequireFields<SubscriptionuserTokenArgs, 'id' | 'subgraphError'>>;
+  userTokens?: SubscriptionResolver<Array<ResolversTypes['UserToken']>, "userTokens", ParentType, ContextType, RequireFields<SubscriptionuserTokensArgs, 'skip' | 'first' | 'subgraphError'>>;
   organizationStat?: SubscriptionResolver<Maybe<ResolversTypes['OrganizationStat']>, "organizationStat", ParentType, ContextType, RequireFields<SubscriptionorganizationStatArgs, 'id' | 'subgraphError'>>;
   organizationStats?: SubscriptionResolver<Array<ResolversTypes['OrganizationStat']>, "organizationStats", ParentType, ContextType, RequireFields<SubscriptionorganizationStatsArgs, 'skip' | 'first' | 'subgraphError'>>;
   organization?: SubscriptionResolver<Maybe<ResolversTypes['Organization']>, "organization", ParentType, ContextType, RequireFields<SubscriptionorganizationArgs, 'id' | 'subgraphError'>>;
@@ -3904,7 +4036,15 @@ export type UserStatResolvers<ContextType = MeshContext, ParentType extends Reso
   submittedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   closedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   archivedTasks?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  tags?: Resolver<Maybe<Array<ResolversTypes['BigInt']>>, ParentType, ContextType>;
+  tokens?: Resolver<Maybe<Array<ResolversTypes['UserToken']>>, ParentType, ContextType, RequireFields<UserStattokensArgs, 'skip' | 'first'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserTokenResolvers<ContextType = MeshContext, ParentType extends ResolversParentTypes['UserToken'] = ResolversParentTypes['UserToken']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['UserStat'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3929,6 +4069,7 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   BigInt?: GraphQLScalarType;
   Bytes?: GraphQLScalarType;
   Deposit?: DepositResolvers<ContextType>;
+  Int8?: GraphQLScalarType;
   Notification?: NotificationResolvers<ContextType>;
   Organization?: OrganizationResolvers<ContextType>;
   OrganizationSnapshot?: OrganizationSnapshotResolvers<ContextType>;
@@ -3942,6 +4083,7 @@ export type Resolvers<ContextType = MeshContext> = ResolversObject<{
   Treasury?: TreasuryResolvers<ContextType>;
   TreasuryToken?: TreasuryTokenResolvers<ContextType>;
   UserStat?: UserStatResolvers<ContextType>;
+  UserToken?: UserTokenResolvers<ContextType>;
   _Block_?: _Block_Resolvers<ContextType>;
   _Meta_?: _Meta_Resolvers<ContextType>;
 }>;
@@ -3998,7 +4140,7 @@ const buildstreamV1TestTransforms = [];
 const additionalTypeDefs = [] as any[];
 const buildstreamV1TestHandler = new GraphqlHandler({
               name: "buildstream_v1_test",
-              config: {"endpoint":"https://api.thegraph.com/subgraphs/id/QmSh8mACYobfUbfH7azaJhRXRT1cd2iKWJaCzUNW5YpLjR"},
+              config: {"endpoint":"https://api.thegraph.com/subgraphs/name/kil-san/buildstream-v2"},
               baseDir,
               cache,
               pubsub,
@@ -4425,7 +4567,10 @@ export type GetDepositQueryVariables = Exact<{
 
 export type GetDepositQuery = { deposit?: Maybe<Pick<Deposit, 'id' | 'orgId' | 'amount' | 'token' | 'initiator' | 'completedAt'>> };
 
-export type StatFragmentFragment = Pick<UserStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>;
+export type StatFragmentFragment = (
+  Pick<UserStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks'>
+  & { tokens?: Maybe<Array<Pick<UserToken, 'id' | 'token' | 'count'>>> }
+);
 
 export type GetUserStatQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -4434,7 +4579,10 @@ export type GetUserStatQueryVariables = Exact<{
 }>;
 
 
-export type GetUserStatQuery = { userStat?: Maybe<Pick<UserStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks' | 'tags'>> };
+export type GetUserStatQuery = { userStat?: Maybe<(
+    Pick<UserStat, 'id' | 'proposedTasks' | 'openedTasks' | 'assignedTasks' | 'submittedTasks' | 'closedTasks' | 'archivedTasks'>
+    & { tokens?: Maybe<Array<Pick<UserToken, 'id' | 'token' | 'count'>>> }
+  )> };
 
 export const OrganizationSnapshotFragmentFragmentDoc = gql`
     fragment OrganizationSnapshotFragment on OrganizationSnapshot {
@@ -4617,7 +4765,11 @@ export const StatFragmentFragmentDoc = gql`
   submittedTasks
   closedTasks
   archivedTasks
-  tags
+  tokens {
+    id
+    token
+    count
+  }
 }
     ` as unknown as DocumentNode<StatFragmentFragment, unknown>;
 export const GetActionDocument = gql`

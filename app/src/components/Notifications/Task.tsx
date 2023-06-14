@@ -1,12 +1,12 @@
-import { TaskSnapshot, TaskStatus } from 'hooks/task/types'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { ethers } from 'ethers'
+import { Currency } from 'hooks/currency/types'
 import { Notification } from 'hooks/notification/types'
-import { TokenInfo } from 'hooks/tokenInfo/types'
+import { TaskSnapshot, TaskStatus } from 'hooks/task/types'
 
 interface TaskNotificationsProps {
   notification: Notification
-  tokenInfos?: TokenInfo[]
+  tokenInfos?: Currency[]
 }
 
 const messageTemplates: Record<any, string> = {

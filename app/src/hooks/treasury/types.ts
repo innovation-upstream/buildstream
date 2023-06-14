@@ -1,9 +1,9 @@
 import { BigNumber } from "ethers"
-import { TokenInfo } from "hooks/tokenInfo/types"
+import { Currency } from "hooks/currency/types"
 
 export type Balance = {
   token: 'ETH'|string
-  tokenInfo?: TokenInfo
+  tokenInfo?: Currency
   total: BigNumber
   locked: BigNumber
 }

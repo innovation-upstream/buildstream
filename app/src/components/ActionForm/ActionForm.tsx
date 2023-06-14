@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import { createAction, createWithdrawalAction } from 'hooks/action/functions'
 import { ActionType, ActionTypeMap } from 'hooks/action/types'
+import useTokenInfo from 'hooks/currency/useCurrency'
 import { Organization } from 'hooks/organization/types'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useState } from 'react'
 
 interface ActionProps {

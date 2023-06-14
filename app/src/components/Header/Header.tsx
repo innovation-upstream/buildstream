@@ -3,12 +3,13 @@ import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
 import injected from 'config/Walletconnectors'
 import { getCookie, setCookies } from 'cookies-next'
-import { useWeb3 } from 'hooks'
+import { useGetOrganizationsQuery, useWeb3 } from 'hooks'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { checkNetwork } from 'utils/checkNetwork'
+import { Converter } from 'utils/converter'
 import ChevronDown from '../IconSvg/ChevronDown'
 import Logo from '../IconSvg/Logo'
 import MobileNav from './MobileNav'
@@ -22,6 +23,32 @@ const Header = () => {
   const [showMobileNav, setModalNav] = useState(false)
   const { pathname } = useRouter()
   const navMenu = activeMenuItems(pathname)
+
+  const { data: approverOrgs } = useGetOrganizationsQuery({
+    variables: {
+      where: {
+        approvers_contains_nocase: [address as string]
+      }
+    },
+    skip: !address
+  })
+
+  const { data: signerOrgs } = useGetOrganizationsQuery({
+    variables: {
+      where: {
+        signers_contains_nocase: [address as string]
+      }
+    },
+    skip: !address
+  })
+
+  const organizations = [
+    ...(signerOrgs?.organizations || []),
+    ...(approverOrgs?.organizations || [])
+  ].filter(
+    (organization, index, array) =>
+      array.findIndex((t) => t.id == organization.id) == index
+  ).map((organization) => Converter.OrganizationFromQuery(organization))
 
   const ACCOUNT = 'account'
 
@@ -62,6 +89,7 @@ const Header = () => {
         <MobileNav
           close={() => setModalNav(!showMobileNav)}
           connectWallet={() => setWalletModal(!showWalletModal)}
+          organizations={organizations}
         />
       )}
       <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center justify-between md:justify-start'>
@@ -95,6 +123,25 @@ const Header = () => {
                 </li>
               )
             })}
+          </ul>
+
+          <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
+            {organizations.map((org) => (
+              <li key={org.id} className={`font-semibold hover:text-gray-900`}>
+                <Link href={`/organization/${org.id}`}>
+                  <a
+                    className={`${
+                      pathname.includes('/organization') &&
+                      pathname.endsWith(org.id.toString())
+                        ? 'active:text-gray-900'
+                        : 'text-[#686C6F]'
+                    }`}
+                  >
+                    {org.name}
+                  </a>
+                </Link>
+              </li>
+            ))}
           </ul>
 
           {address ? (

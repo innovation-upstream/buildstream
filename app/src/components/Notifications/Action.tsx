@@ -4,21 +4,21 @@ import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import { confirmAction, executeAction } from 'hooks/action/functions'
 import { Action, ActionSnapshot, ActionType } from 'hooks/action/types'
+import { Currency } from 'hooks/currency/types'
 import { Notification } from 'hooks/notification/types'
 import { Organization } from 'hooks/organization/types'
-import { TokenInfo } from 'hooks/tokenInfo/types'
 import { useState } from 'react'
 import { actionMessageTemplates } from './actionTemplates'
 
 interface ActionNotificationsProps {
   notification: Notification
-  tokenInfos?: TokenInfo[]
+  tokenInfos?: Currency[]
 }
 
 type actionValuesParams = {
   action: Action
   organization: Organization
-  tokenInfos?: TokenInfo[]
+  tokenInfos?: Currency[]
 }
 
 export const getActionValues = ({

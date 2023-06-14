@@ -138,5 +138,13 @@
   "comment_required": "Comment is required",
   "duedate_extension": "Due Date Extension",
   "duedate_extension_request": "Due Date Extension Request",
-  "accept_duedate_extension_request": "Accept Due Date Extension Request"
+  "accept_duedate_extension_request": "Accept Due Date Extension Request",
+  "reject": "Reject",
+  "deny_task_title": "Deny {{assignee}}",
+  "deny_task_body": "This user will be hidden from the request list",
+  "denied_successfully": "{{assignee}} has been denied",
+  "error_denying": "Error Denying {{assignee}}...",
+  "you_are_assigned": "You are assigned to this task!  The task is due in {{days}} days",
+  "you_are_assigned_body": "Use the private task materials to complete the task according to the task description.  If you have any questions, you can get in touch with the task author using the communication channel specified by them in the private task materials",
+  "you_are_denied": "Sorry, You were denied this task, see reason below"
 }
