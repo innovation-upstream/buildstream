@@ -1,13 +1,13 @@
-import { useWalletBalance, useWeb3 } from 'hooks'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
+import { useWalletBalance, useWeb3 } from 'hooks'
+import { Currency } from 'hooks/currency/types'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { Organization } from 'hooks/organization/types'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
-import { useEffect, useState } from 'react'
 import { depositNative, depositToken } from 'hooks/treasury/functions'
-import CloseIcon from 'components/IconSvg/CloseIcon'
 import { useTranslation } from 'next-i18next'
-import { TokenInfo } from 'hooks/tokenInfo/types'
+import { useEffect, useState } from 'react'
 
 interface DepositProps {
   organization: Organization
@@ -40,7 +40,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
     )
   }
 
-  const processCustom = async (token: TokenInfo) => {
+  const processCustom = async (token: Currency) => {
     await depositToken(
       organization.id,
       ethers.utils.parseUnits(amount.toString(), token.decimal),

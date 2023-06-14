@@ -1,13 +1,13 @@
-import { useWeb3 } from 'hooks'
+import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
-import { Organization } from 'hooks/organization/types'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
-import { useEffect, useState } from 'react'
-import CloseIcon from 'components/IconSvg/CloseIcon'
-import { useTranslation } from 'next-i18next'
-import { TokenInfo } from 'hooks/tokenInfo/types'
+import { useWeb3 } from 'hooks'
 import { createWithdrawalAction } from 'hooks/action/functions'
+import { Currency } from 'hooks/currency/types'
+import useTokenInfos from 'hooks/currency/useCurrencies'
+import { Organization } from 'hooks/organization/types'
+import { useTranslation } from 'next-i18next'
+import { useEffect, useState } from 'react'
 
 interface WithdrawalProps {
   organization: Organization
@@ -28,7 +28,7 @@ const Withdrawal = ({ organization, onClose }: WithdrawalProps) => {
   const { account, library } = useWeb3()
   const [isTransacting, setIsTransacting] = useState(false)
 
-  const processWithdrawal = async (token: TokenInfo) => {
+  const processWithdrawal = async (token: Currency) => {
     const withdrawAmount = token.isNative
       ? ethers.utils.parseEther(amount.toString())
       : ethers.utils.parseUnits(amount.toString(), token?.decimal)

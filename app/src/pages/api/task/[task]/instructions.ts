@@ -4,12 +4,11 @@ import { TaskInstruction } from 'services'
 import FirestoreClient from '../../../../clients/db/firestore'
 
 async function getTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
-  const organizationId = req.query.organization as string
   const taskId = req.query.task as string
   const taskInstructionService = new TaskInstruction(FirestoreClient)
 
   try {
-    const instructions = await taskInstructionService.get(organizationId, taskId)
+    const instructions = await taskInstructionService.get(taskId)
     res.json({ instructions })
   } catch (err: any) {
     console.error(err)
@@ -20,10 +19,9 @@ async function getTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function setTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
-  const organizationId = req.query.organization as string
   const taskId = req.query.task as string
   const taskInstructionService = new TaskInstruction(FirestoreClient)
-  const { instructions } = req.body
+  const { organizationId, instructions } = req.body
 
   if (!instructions)
     return res.status(400).send({ message: 'Instructions are required' })

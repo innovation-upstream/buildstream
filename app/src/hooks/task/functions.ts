@@ -196,21 +196,35 @@ export const requestTaskReview = async (
   revisionHash: string,
   dueDateExtension: number,
   provider?: any
-): Promise<boolean> => {
+): Promise<number> => {
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
     provider
   )
+  const taskStorageContract = getContract(
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
+    provider
+  )
+
   const response = await contract.requestForTaskRevision(
     taskId,
     reviewId,
     revisionHash,
     dueDateExtension
   )
-  await response.wait()
+  const revisionReciept = await response.wait()
+  const eventFilter = taskStorageContract.filters.TaskRevisionRequested()
+  const events = await taskStorageContract.queryFilter(eventFilter)
 
-  return true
+  const taskEvent = events?.find(
+    (e) => e.transactionHash === revisionReciept.events?.[0].transactionHash
+  )
+
+  const revisionId = taskEvent?.args?.[1]?.id?.toNumber() as number
+
+  return revisionId
 }
 
 export const changeDueDate = async (
@@ -313,16 +327,14 @@ export const updateTaskInstructions = async (
   instructions: string
 ) => {
   try {
-    const response = await fetch(
-      `/api/task-instructions/${organizationId}/${taskId}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          instructions
-        }),
-        headers: new Headers({ 'Content-Type': 'application/json' })
-      }
-    )
+    const response = await fetch(`/api/task/${taskId}/instructions`, {
+      method: 'POST',
+      body: JSON.stringify({
+        instructions,
+        organizationId
+      }),
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    })
     const apiResponse = await response.json()
     return apiResponse
   } catch (err) {
@@ -330,13 +342,10 @@ export const updateTaskInstructions = async (
   }
 }
 
-export const getTaskInstructions = async (
-  organizationId: number,
-  taskId: number
-) => {
+export const getTaskInstructions = async (taskId: number) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task-instructions/${organizationId}/${taskId}`,
+      `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task/${taskId}/instructions`,
       {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -347,4 +356,88 @@ export const getTaskInstructions = async (
   } catch (err) {
     console.error(err)
   }
+}
+
+export const createRevision = async (
+  taskId: number,
+  id: string,
+  revisionId: number,
+  message: string
+) => {
+  try {
+    const response = await fetch(`/api/task/${taskId}/revisions`, {
+      method: 'POST',
+      body: JSON.stringify({
+        id,
+        revisionId,
+        message
+      }),
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    })
+    const apiResponse = await response.json()
+    return apiResponse
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getRevisions = async (taskId: number) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task/${taskId}/revisions`,
+      {
+        method: 'GET',
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      }
+    )
+    const data = await response.json()
+    return data
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const denyAssignee = async (
+  taskId: number,
+  assignee: string,
+  message: string
+) => {
+  try {
+    const response = await fetch(`/api/task/${taskId}/task-approvals`, {
+      method: 'POST',
+      body: JSON.stringify({
+        assignee,
+        message
+      }),
+      headers: new Headers({ 'Content-Type': 'application/json' })
+    })
+    const apiResponse = await response.json()
+    return apiResponse
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export const getTaskDenials = async (
+  taskId: number
+): Promise<
+  {
+    assignee: string
+    message: string
+  }[]
+> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task/${taskId}/task-approvals`,
+      {
+        method: 'GET',
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      }
+    )
+    const data = await response.json()
+    return data
+  } catch (err) {
+    console.error(err)
+  }
+  return []
 }

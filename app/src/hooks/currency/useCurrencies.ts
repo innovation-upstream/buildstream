@@ -3,12 +3,12 @@ import { useWeb3 } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { getTokenInfo } from './functions'
-import { TokenInfo } from './types'
+import { Currency } from './types'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-const useTokenInfos = (tokenAddresses?: string[]) => {
-  const [tokenInfos, setTokenInfos] = useState<TokenInfo[]>()
+const useCurrencies = (tokenAddresses = [ethers.constants.AddressZero]) => {
+  const [tokenInfos, setTokenInfos] = useState<Currency[]>()
   const { chainId = 80001, library } = useWeb3()
   const tokenAddrStr = tokenAddresses?.toString()
   const { data } = useSWR('/api/marketcap', fetcher)
@@ -21,7 +21,7 @@ const useTokenInfos = (tokenAddresses?: string[]) => {
     const duplicatesRemoved = Array.from(new Set(filteredInfoRequests))
     const infos = await Promise.all(
       duplicatesRemoved?.map(async (tokenAddress) => {
-        return (await getTokenInfo(tokenAddress, chainId, library)) as TokenInfo
+        return (await getTokenInfo(tokenAddress, chainId, library)) as Currency
       })
     )
     const assets = infos?.map((info) => {
@@ -43,4 +43,4 @@ const useTokenInfos = (tokenAddresses?: string[]) => {
   }
 }
 
-export default useTokenInfos
+export default useCurrencies

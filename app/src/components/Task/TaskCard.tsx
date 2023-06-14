@@ -1,20 +1,19 @@
+import Badge from 'SVGs/Badge'
+import Share from 'SVGs/Share'
+import TokenGeneric from 'SVGs/TokenGeneric'
+import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
+import useTokenInfo from 'hooks/currency/useCurrency'
+import { getRewardAmount } from 'hooks/task/functions'
 import {
   ComplexityScore,
   ComplexityScoreMap,
-  Task,
-  TaskStatus
+  Task
 } from 'hooks/task/types'
-import Badge from 'SVGs/Badge'
-import { BigNumber, ethers } from 'ethers'
-import TokenGeneric from 'SVGs/TokenGeneric'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Share from 'SVGs/Share'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
-import { getRewardAmount, getRewardMultiplier } from 'hooks/task/functions'
-import { useWeb3 } from 'hooks'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TaskCardProps {
   task: Task

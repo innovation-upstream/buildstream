@@ -3,12 +3,12 @@ import { useWeb3 } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { getTokenInfo } from './functions'
-import { TokenInfo } from './types'
+import { Currency } from './types'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
-  const [tokenInfo, setTokenInfo] = useState<TokenInfo>()
+const useCurrency = (tokenAddress = ethers.constants.AddressZero) => {
+  const [tokenInfo, setTokenInfo] = useState<Currency>()
   const { library, chainId = 80001 } = useWeb3()
   const { data } = useSWR('/api/marketcap', fetcher)
 
@@ -35,4 +35,4 @@ const useTokenInfo = (tokenAddress = ethers.constants.AddressZero) => {
   }
 }
 
-export default useTokenInfo
+export default useCurrency

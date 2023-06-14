@@ -1,12 +1,12 @@
+import DepositSVG from 'SVGs/Deposit'
+import Withdraw from 'SVGs/Withdraw'
+import Deposit from 'components/Deposit/Deposit'
+import Withdrawal from 'components/Withdrawal/Withdrawal'
+import { BigNumber, ethers } from 'ethers'
+import useTokenInfos from 'hooks/currency/useCurrencies'
 import { Organization } from 'hooks/organization/types'
 import { useState } from 'react'
-import { BigNumber, ethers } from 'ethers'
-import Deposit from 'components/Deposit/Deposit'
 import { useTranslation } from 'react-i18next'
-import Withdraw from 'SVGs/Withdraw'
-import DepositSVG from 'SVGs/Deposit'
-import useTokenInfos from 'hooks/tokenInfo/useTokenInfos'
-import Withdrawal from 'components/Withdrawal/Withdrawal'
 
 interface WalletProps {
   organization: Organization

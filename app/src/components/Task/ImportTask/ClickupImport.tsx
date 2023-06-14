@@ -9,6 +9,7 @@ import Tooltip from 'components/Tooltip/Tooltip'
 import { getCookie } from 'cookies-next'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
+import useTokenInfo from 'hooks/currency/useCurrency'
 import { getRewardMultiplier } from 'hooks/task/functions'
 import {
   ComplexityScoreMap,
@@ -16,7 +17,6 @@ import {
   TaskReputation,
   TaskReputationMap,
 } from 'hooks/task/types'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import {
   TOKEN_KEY,
   fetchSpaces,

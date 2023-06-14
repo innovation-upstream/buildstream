@@ -18,6 +18,11 @@ export type Scalars = {
   BigDecimal: any;
   BigInt: bigint;
   Bytes: any;
+  /**
+   * 8 bytes signed integer
+   *
+   */
+  Int8: any;
 };
 
 export type Action = {
@@ -1428,6 +1433,8 @@ export type Organization_orderBy =
 export type Query = {
   userStat?: Maybe<UserStat>;
   userStats: Array<UserStat>;
+  userToken?: Maybe<UserToken>;
+  userTokens: Array<UserToken>;
   organizationStat?: Maybe<OrganizationStat>;
   organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
@@ -1472,6 +1479,24 @@ export type QueryuserStatsArgs = {
   orderBy?: InputMaybe<UserStat_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryuserTokenArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryuserTokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -1718,6 +1743,8 @@ export type Query_metaArgs = {
 export type Subscription = {
   userStat?: Maybe<UserStat>;
   userStats: Array<UserStat>;
+  userToken?: Maybe<UserToken>;
+  userTokens: Array<UserToken>;
   organizationStat?: Maybe<OrganizationStat>;
   organizationStats: Array<OrganizationStat>;
   organization?: Maybe<Organization>;
@@ -1762,6 +1789,24 @@ export type SubscriptionuserStatsArgs = {
   orderBy?: InputMaybe<UserStat_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   where?: InputMaybe<UserStat_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionuserTokenArgs = {
+  id: Scalars['ID'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionuserTokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -3275,7 +3320,16 @@ export type UserStat = {
   submittedTasks: Scalars['BigInt'];
   closedTasks: Scalars['BigInt'];
   archivedTasks: Scalars['BigInt'];
-  tags?: Maybe<Array<Scalars['BigInt']>>;
+  tokens?: Maybe<Array<UserToken>>;
+};
+
+
+export type UserStattokensArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<UserToken_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<UserToken_filter>;
 };
 
 export type UserStat_filter = {
@@ -3335,12 +3389,7 @@ export type UserStat_filter = {
   archivedTasks_lte?: InputMaybe<Scalars['BigInt']>;
   archivedTasks_in?: InputMaybe<Array<Scalars['BigInt']>>;
   archivedTasks_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  tags_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
+  tokens_?: InputMaybe<UserToken_filter>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<UserStat_filter>>>;
@@ -3355,7 +3404,79 @@ export type UserStat_orderBy =
   | 'submittedTasks'
   | 'closedTasks'
   | 'archivedTasks'
-  | 'tags';
+  | 'tokens';
+
+export type UserToken = {
+  id: Scalars['ID'];
+  user: UserStat;
+  token: Scalars['BigInt'];
+  count: Scalars['BigInt'];
+};
+
+export type UserToken_filter = {
+  id?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  user?: InputMaybe<Scalars['String']>;
+  user_not?: InputMaybe<Scalars['String']>;
+  user_gt?: InputMaybe<Scalars['String']>;
+  user_lt?: InputMaybe<Scalars['String']>;
+  user_gte?: InputMaybe<Scalars['String']>;
+  user_lte?: InputMaybe<Scalars['String']>;
+  user_in?: InputMaybe<Array<Scalars['String']>>;
+  user_not_in?: InputMaybe<Array<Scalars['String']>>;
+  user_contains?: InputMaybe<Scalars['String']>;
+  user_contains_nocase?: InputMaybe<Scalars['String']>;
+  user_not_contains?: InputMaybe<Scalars['String']>;
+  user_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  user_starts_with?: InputMaybe<Scalars['String']>;
+  user_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  user_not_starts_with?: InputMaybe<Scalars['String']>;
+  user_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  user_ends_with?: InputMaybe<Scalars['String']>;
+  user_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  user_not_ends_with?: InputMaybe<Scalars['String']>;
+  user_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  user_?: InputMaybe<UserStat_filter>;
+  token?: InputMaybe<Scalars['BigInt']>;
+  token_not?: InputMaybe<Scalars['BigInt']>;
+  token_gt?: InputMaybe<Scalars['BigInt']>;
+  token_lt?: InputMaybe<Scalars['BigInt']>;
+  token_gte?: InputMaybe<Scalars['BigInt']>;
+  token_lte?: InputMaybe<Scalars['BigInt']>;
+  token_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  token_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  count?: InputMaybe<Scalars['BigInt']>;
+  count_not?: InputMaybe<Scalars['BigInt']>;
+  count_gt?: InputMaybe<Scalars['BigInt']>;
+  count_lt?: InputMaybe<Scalars['BigInt']>;
+  count_gte?: InputMaybe<Scalars['BigInt']>;
+  count_lte?: InputMaybe<Scalars['BigInt']>;
+  count_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  count_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<UserToken_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<UserToken_filter>>>;
+};
+
+export type UserToken_orderBy =
+  | 'id'
+  | 'user'
+  | 'user__id'
+  | 'user__proposedTasks'
+  | 'user__openedTasks'
+  | 'user__assignedTasks'
+  | 'user__submittedTasks'
+  | 'user__closedTasks'
+  | 'user__archivedTasks'
+  | 'token'
+  | 'count';
 
 export type _Block_ = {
   /** The hash of the block */
@@ -3394,6 +3515,10 @@ export type QueryBuildstreamV1TestSdk = {
   userStat: InContextSdkMethod<BuildstreamV1TestTypes.Query['userStat'], BuildstreamV1TestTypes.QueryuserStatArgs, MeshContext>,
   /** undefined **/
   userStats: InContextSdkMethod<BuildstreamV1TestTypes.Query['userStats'], BuildstreamV1TestTypes.QueryuserStatsArgs, MeshContext>,
+  /** undefined **/
+  userToken: InContextSdkMethod<BuildstreamV1TestTypes.Query['userToken'], BuildstreamV1TestTypes.QueryuserTokenArgs, MeshContext>,
+  /** undefined **/
+  userTokens: InContextSdkMethod<BuildstreamV1TestTypes.Query['userTokens'], BuildstreamV1TestTypes.QueryuserTokensArgs, MeshContext>,
   /** undefined **/
   organizationStat: InContextSdkMethod<BuildstreamV1TestTypes.Query['organizationStat'], BuildstreamV1TestTypes.QueryorganizationStatArgs, MeshContext>,
   /** undefined **/
@@ -3459,6 +3584,10 @@ export type SubscriptionBuildstreamV1TestSdk = {
   userStat: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['userStat'], BuildstreamV1TestTypes.SubscriptionuserStatArgs, MeshContext>,
   /** undefined **/
   userStats: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['userStats'], BuildstreamV1TestTypes.SubscriptionuserStatsArgs, MeshContext>,
+  /** undefined **/
+  userToken: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['userToken'], BuildstreamV1TestTypes.SubscriptionuserTokenArgs, MeshContext>,
+  /** undefined **/
+  userTokens: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['userTokens'], BuildstreamV1TestTypes.SubscriptionuserTokensArgs, MeshContext>,
   /** undefined **/
   organizationStat: InContextSdkMethod<BuildstreamV1TestTypes.Subscription['organizationStat'], BuildstreamV1TestTypes.SubscriptionorganizationStatArgs, MeshContext>,
   /** undefined **/

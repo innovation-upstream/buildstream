@@ -10,6 +10,7 @@ import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import { BigNumber, ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
+import useTokenInfo from 'hooks/currency/useCurrency'
 import {
   archiveTask,
   getRewardAmount,
@@ -17,7 +18,6 @@ import {
   openTask,
 } from 'hooks/task/functions'
 import { ComplexityScoreMap, TaskStatus } from 'hooks/task/types'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import React, { useCallback, useEffect, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -96,7 +96,7 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
   }
 
   const getInstructions = async () => {
-    const data = await getTaskInstructions(task.orgId, task.id)
+    const data = await getTaskInstructions(task.id)
     setInstructions(data)
   }
 

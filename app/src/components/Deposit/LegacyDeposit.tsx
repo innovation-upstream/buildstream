@@ -1,10 +1,10 @@
-import { useWeb3 } from 'hooks'
 import Spinner from 'components/Spinner/Spinner'
 import ERC20 from 'contracts/ERC20.json'
 import Treasury from 'contracts/Treasury.json'
 import { ethers } from 'ethers'
+import { useWeb3 } from 'hooks'
+import useTokenInfo from 'hooks/currency/useCurrency'
 import { Organization } from 'hooks/organization/types'
-import useTokenInfo from 'hooks/tokenInfo/useTokenInfo'
 import { useState } from 'react'
 import getContract from 'utils/getContract'
 
