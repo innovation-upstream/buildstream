@@ -5,7 +5,7 @@ import { Organization } from 'hooks/organization/types'
 import {
   createNewTask,
   openTask,
-  updateTaskInstructions,
+  updateTaskInstructions
 } from 'hooks/task/functions'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
@@ -24,7 +24,7 @@ enum Progress {
   PENDING,
   IN_PROGRESS,
   SUCCESS,
-  FAILED,
+  FAILED
 }
 
 const ProgressModal = ({
@@ -32,7 +32,7 @@ const ProgressModal = ({
   onClose,
   taskData,
   onError,
-  onSuccess,
+  onSuccess
 }: ProgressModalProps) => {
   const { t } = useTranslation('tasks')
   const { library } = useWeb3()
@@ -54,8 +54,7 @@ const ProgressModal = ({
 
     if (!taskId) return
 
-    const promises: Promise<any>[] = []
-    if (taskData.instructions) promises.push(updateInstructions(taskId))
+    const promises: Promise<any>[] = [updateInstructions(taskId)]
     if (taskData.publish) promises.push(publishTask(taskId))
     const result = await Promise.allSettled(promises)
 
@@ -81,7 +80,7 @@ const ProgressModal = ({
           dueDate: moment(taskData.dueDate)
             .add(60 * 60 * 60 - 1, 'seconds')
             .unix(),
-          disableSelfAssign: taskData.disableSelfAssign,
+          disableSelfAssign: taskData.disableSelfAssign
         },
         library.getSigner()
       )
@@ -100,7 +99,7 @@ const ProgressModal = ({
       await updateTaskInstructions(
         organization.id,
         taskId,
-        taskData.instructions
+        taskData.instructions || null
       )
       setUpdateInstructionStatus(Progress.SUCCESS)
     } catch (error: any) {
@@ -199,25 +198,23 @@ const ProgressModal = ({
               />
             </div>
           </li>
-          {!!taskData.instructions && (
-            <li className='mt-4'>
-              <div className='flex gap-x-4 items-center justify-between mb-2'>
-                {t('update_task_instructions')}
-                {createStatus === Progress.FAILED ? (
-                  <span className='text-gray-500 text-xs'>{t('skipped')}</span>
-                ) : (
-                  getIcon(updateInstructionsStatus)
-                )}
-              </div>
-              <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
-                <div
-                  className={`bg-blue-600 h-2 rounded-full ${getClassName(
-                    updateInstructionsStatus
-                  )}`}
-                />
-              </div>
-            </li>
-          )}
+          <li className='mt-4'>
+            <div className='flex gap-x-4 items-center justify-between mb-2'>
+              {t('update_task_instructions')}
+              {createStatus === Progress.FAILED ? (
+                <span className='text-gray-500 text-xs'>{t('skipped')}</span>
+              ) : (
+                getIcon(updateInstructionsStatus)
+              )}
+            </div>
+            <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
+              <div
+                className={`bg-blue-600 h-2 rounded-full ${getClassName(
+                  updateInstructionsStatus
+                )}`}
+              />
+            </div>
+          </li>
           {taskData.publish && (
             <li className='mt-4'>
               <div className='flex gap-x-4 items-center justify-between mb-2'>

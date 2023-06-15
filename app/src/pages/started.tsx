@@ -1,7 +1,10 @@
+import Find from 'SVGs/Find'
+import Team from 'SVGs/Team'
+import Write from 'SVGs/Write'
 import WalletModal from 'components/Modals/WalletModal'
-import { GetOrganizationsDocument, Organization } from 'graphclient'
-import client from 'graphclient/client'
 import { useWeb3 } from 'hooks'
+import { getUserOrganizations } from 'hooks/userstat/functions'
+import { IUserOrganizations } from 'hooks/userstat/types'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -14,10 +17,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { wrapper } from 'state/store'
-import Find from 'SVGs/Find'
-import Team from 'SVGs/Team'
-import Write from 'SVGs/Write'
-import { getCookie, setCookies } from 'cookies-next'
 
 const ACCOUNT = 'account'
 
@@ -25,50 +24,9 @@ export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
       const locale = context.locale ?? ''
-      const account = getCookie(ACCOUNT, context)
-      let memberOrganizationIds: string[] = []
-      let approverOrganizationIds: string[] = []
-      let signerOrganizationIds: string[] = []
 
-      if (account) {
-        const { data: memberOrgs } = await client.query({
-          query: GetOrganizationsDocument,
-          variables: {
-            where: {
-              members_contains_nocase: [account?.toString()]
-            }
-          }
-        })
-        const { data: approverOrgs } = await client.query({
-          query: GetOrganizationsDocument,
-          variables: {
-            where: {
-              approvers_contains_nocase: [account?.toString()]
-            }
-          }
-        })
-        const { data: signerOrgs } = await client.query({
-          query: GetOrganizationsDocument,
-          variables: {
-            where: {
-              signers_contains_nocase: [account?.toString()]
-            }
-          }
-        })
-        memberOrganizationIds =
-          memberOrgs?.organizations?.map((o) => o.id) || []
-        approverOrganizationIds =
-          approverOrgs?.organizations?.map((o) => o.id) || []
-        signerOrganizationIds =
-          signerOrgs?.organizations?.map((o) => o.id) || []
-      }
       return {
         props: {
-          orgs: {
-            memberOrganizationIds,
-            approverOrganizationIds,
-            signerOrganizationIds
-          },
           ...(await serverSideTranslations(locale, [
             'common',
             'home',
@@ -85,22 +43,28 @@ enum action {
   findTeam
 }
 
-interface IGetStarted {
-  orgs: {
-    memberOrganizationIds: string[]
-    approverOrganizationIds: string[]
-    signerOrganizationIds: string[]
-  }
-}
+interface IGetStarted {}
 
-const Home: NextPage<IGetStarted> = ({ orgs }) => {
+const Started: NextPage<IGetStarted> = () => {
   const { account } = useWeb3()
   const [showModal, setShowModal] = useState(false)
   const [actionValue, setActionValue] = useState<typeof action | undefined>()
   const router = useRouter()
   const { t } = useTranslation('home')
+  const [orgs, setOrgs] = useState<IUserOrganizations>()
 
-  const handleAction = (param?: any) => {
+  useEffect(() => {
+    if (!account) return
+    getUserOrganizations(account as string).then((orgs) => {
+      setOrgs(orgs)
+      if (actionValue !== undefined) handleAction(actionValue, orgs)
+    })
+  }, [account])
+
+  const handleAction = async (
+    param: any,
+    userOrganizations: IUserOrganizations
+  ) => {
     if (param === action.findTeam) {
       router.push('/organization')
     }
@@ -108,23 +72,23 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       router.push('/task')
     }
     if (param === action.createTask) {
-      let orgId
+      let org
       if (
-        orgs.signerOrganizationIds.length > 1 ||
-        orgs.approverOrganizationIds.length > 1 ||
-        orgs.memberOrganizationIds.length > 1
+        userOrganizations.signerOrganizations.length > 1 ||
+        userOrganizations.approverOrganizations.length > 1 ||
+        userOrganizations.memberOrganizations.length > 1
       )
         return router.push('/organization')
 
-      if (orgs.signerOrganizationIds.length === 1)
-        orgId = orgs.signerOrganizationIds[0]
-      else if (orgs.approverOrganizationIds.length === 1)
-        orgId = orgs.approverOrganizationIds[0]
-      else if (orgs.memberOrganizationIds.length === 1)
-        orgId = orgs.memberOrganizationIds[0]
+      if (userOrganizations.signerOrganizations.length === 1)
+        org = userOrganizations.signerOrganizations[0]
+      else if (userOrganizations.approverOrganizations.length === 1)
+        org = userOrganizations.approverOrganizations[0]
+      else if (userOrganizations.memberOrganizations.length === 1)
+        org = userOrganizations.memberOrganizations[0]
       else return router.push(`/organization/create`)
 
-      router.push(`/organization/${orgId}`)
+      router.push(`/organization/${org.id}`)
     }
   }
 
@@ -134,7 +98,8 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       setShowModal(true)
       return
     }
-    handleAction(param)
+    if (!orgs) return
+    handleAction(param, orgs)
   }
 
   return (
@@ -149,7 +114,6 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       {showModal && (
         <WalletModal
           close={() => setShowModal(!showModal)}
-          onConnect={() => handleAction(actionValue)}
         />
       )}
       <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
@@ -227,4 +191,4 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
   )
 }
 
-export default Home
+export default Started

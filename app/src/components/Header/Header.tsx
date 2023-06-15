@@ -3,7 +3,9 @@ import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import WalletModal from 'components/Modals/WalletModal'
 import injected from 'config/Walletconnectors'
 import { getCookie, setCookies } from 'cookies-next'
-import { useGetOrganizationsQuery, useWeb3 } from 'hooks'
+import { useWeb3 } from 'hooks'
+import { Organization } from 'hooks/organization/types'
+import { getUserOrganizations } from 'hooks/userstat/functions'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -16,6 +18,8 @@ import MobileNav from './MobileNav'
 import { activeMenuItems } from './menuItems'
 import { ConnectWalletButton, Navbar } from './styled'
 
+const ACCOUNT = 'account'
+
 const Header = () => {
   const { account: address, deactivate, activate } = useWeb3()
   const { t } = useTranslation('header')
@@ -23,34 +27,29 @@ const Header = () => {
   const [showMobileNav, setModalNav] = useState(false)
   const { pathname } = useRouter()
   const navMenu = activeMenuItems(pathname)
+  const [userOrganizations, setUserOrganizations] = useState<Organization[]>([])
 
-  const { data: approverOrgs } = useGetOrganizationsQuery({
-    variables: {
-      where: {
-        approvers_contains_nocase: [address as string]
-      }
-    },
-    skip: !address
-  })
+  const fetchUserOrganizations = async () => {
+    const orgs = await getUserOrganizations(address as string)
+    const organizations = [
+      ...orgs.signerOrganizations,
+      ...(orgs.approverOrganizations || [])
+    ]
+      .filter(
+        (organization, index, array) =>
+          array.findIndex((t) => t.id == organization.id) == index
+      )
+      .map((organization) => Converter.OrganizationFromQuery(organization))
+    setUserOrganizations(organizations)
+  }
 
-  const { data: signerOrgs } = useGetOrganizationsQuery({
-    variables: {
-      where: {
-        signers_contains_nocase: [address as string]
-      }
-    },
-    skip: !address
-  })
-
-  const organizations = [
-    ...(signerOrgs?.organizations || []),
-    ...(approverOrgs?.organizations || [])
-  ].filter(
-    (organization, index, array) =>
-      array.findIndex((t) => t.id == organization.id) == index
-  ).map((organization) => Converter.OrganizationFromQuery(organization))
-
-  const ACCOUNT = 'account'
+  useEffect(() => {
+    if (!address) {
+      setUserOrganizations([])
+      return
+    }
+    fetchUserOrganizations()
+  }, [address])
 
   async function disconnect() {
     try {
@@ -89,7 +88,7 @@ const Header = () => {
         <MobileNav
           close={() => setModalNav(!showMobileNav)}
           connectWallet={() => setWalletModal(!showWalletModal)}
-          organizations={organizations}
+          organizations={userOrganizations}
         />
       )}
       <div className='layout-container flex flex-wrap py-5 top-0 md:flex-row items-center justify-between md:justify-start'>
@@ -126,7 +125,7 @@ const Header = () => {
           </ul>
 
           <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
-            {organizations.map((org) => (
+            {userOrganizations.map((org) => (
               <li key={org.id} className={`font-semibold hover:text-gray-900`}>
                 <Link href={`/organization/${org.id}`}>
                   <a

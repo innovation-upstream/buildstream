@@ -68,7 +68,7 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
         <AutoComplete
           suggestions={tokens.map((t) => ({
             id: t.id,
-            value: t.name.toLowerCase()
+            value: t.name
           }))}
           onChange={(val) => addTag(parseInt(val.id))}
           id='taskTags'

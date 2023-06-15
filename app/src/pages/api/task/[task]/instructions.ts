@@ -23,9 +23,6 @@ async function setTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
   const taskInstructionService = new TaskInstruction(FirestoreClient)
   const { organizationId, instructions } = req.body
 
-  if (!instructions)
-    return res.status(400).send({ message: 'Instructions are required' })
-
   try {
     await taskInstructionService.set(organizationId, taskId, instructions)
     res.status(200).send({ message: 'Instructions updated' })
