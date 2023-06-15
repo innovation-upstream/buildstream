@@ -99,7 +99,7 @@ const ProgressModal = ({
       await updateTaskInstructions(
         organization.id,
         taskId,
-        taskData.instructions
+        taskData.instructions || null
       )
       setUpdateInstructionStatus(Progress.SUCCESS)
     } catch (error: any) {

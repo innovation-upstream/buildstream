@@ -24,8 +24,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
   const [showSuggestions, setShowSuggestions] = React.useState(false)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (suggestions.length)
-      setShowSuggestions(true)
+    if (suggestions.length) setShowSuggestions(true)
     const value = e.target.value
     setTempInput(value)
     const suggestion = suggestions.find(
@@ -42,19 +41,22 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
     }
   }
 
-  const onSuggestionClick = useCallback((id: string) => {
-    if (!inputRef.current) return
-    const suggestion = suggestions.find((suggestion) => suggestion.id === id)
-    if (!suggestion) return
-    var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      'value'
-    )?.set
-    nativeInputValueSetter?.call(inputRef.current, suggestion?.value)
+  const onSuggestionClick = useCallback(
+    (id: string) => {
+      if (!inputRef.current) return
+      const suggestion = suggestions.find((suggestion) => suggestion.id === id)
+      if (!suggestion) return
+      var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      )?.set
+      nativeInputValueSetter?.call(inputRef.current, suggestion?.value)
 
-    var event = new Event('input', { bubbles: true })
-    inputRef.current.dispatchEvent(event)
-  }, [suggestions])
+      var event = new Event('input', { bubbles: true })
+      inputRef.current.dispatchEvent(event)
+    },
+    [suggestions]
+  )
 
   const filteredSuggestions = filterSuggestions
     ? filterSuggestions(suggestions, tempInput)
@@ -162,26 +164,32 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
         onClick={() => setShowSuggestions(true)}
         autoComplete='off'
       />
-      {showSuggestions && (
+      {showSuggestions && !!filteredSuggestions?.length && (
         <ul
           ref={suggestionsRef}
           className='shadow-md py-2 absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'
         >
-          {filteredSuggestions.length > 0 ? (
-            filteredSuggestions.map((suggestion) => (
+          {filteredSuggestions
+            .sort((a, b) => a.value.localeCompare(b.value))
+            .map((suggestion) => (
               <li
                 tabIndex={-1}
                 data-id={suggestion.id}
-                key={suggestion.value}
+                key={suggestion.id}
                 onClick={() => onSuggestionClick(suggestion.id)}
                 className='autocomplete-input p-2 mx-2 cursor-pointer hover:bg-gray-300 focus:bg-gray-300 focus-within:bg-gray-300 focus-visible:outline-none rounded-md'
               >
                 {suggestion.value}
               </li>
-            ))
-          ) : (
-            <ListLoading />
-          )}
+            ))}
+        </ul>
+      )}
+      {!suggestions.length && (
+        <ul
+          ref={suggestionsRef}
+          className='shadow-md py-2 absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'
+        >
+          <ListLoading />
         </ul>
       )}
     </div>

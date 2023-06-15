@@ -7,12 +7,14 @@ const serviceAccount = SERVICE_ACCOUNT_KEY
   ? JSON.parse(SERVICE_ACCOUNT_KEY)
   : null
 
+let db: FirebaseFirestore.Firestore
+
 if (!getApps().length) {
   initializeApp({
     credential: cert(serviceAccount)
   })
-}
-
-const db = getFirestore()
+  db = getFirestore()
+  db.settings({ ignoreUndefinedProperties: true })
+} else db = getFirestore()
 
 export default db
