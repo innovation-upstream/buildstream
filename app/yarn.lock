@@ -2809,10 +2809,10 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@innovationupstream/buildstream-utils@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@innovationupstream/buildstream-utils/-/buildstream-utils-0.0.6.tgz#3e61797834b0e594decaa3279f90ccb2a4c9aa8e"
-  integrity sha512-Bo7JzWhwPPxHCwmCExmuMib8aiKuglYJp6YwYLA+DITWttAQqVCWam1mRGQAHZaGAJMN4ZcX3KY2M0Rpv31wTg==
+"@innovationupstream/buildstream-utils@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@innovationupstream/buildstream-utils/-/buildstream-utils-0.0.7.tgz#2eadb230c64a56975e490dd08410f6801b740282"
+  integrity sha512-LsG0m1BIAblmCeu7k0+a6WIhlk5cf44qn1Ypw8V2rOGQ3ZxT/JPI+p2gdLclPmivVigwHd6wOlF3lxFYqTdiAg==
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
