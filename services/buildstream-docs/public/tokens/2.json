@@ -1,5 +1,6 @@
 {
-	"name": "ReactJS",
-	"description": "ReactJS tokens",
-	"image": ""
+  "name": "JavaScript",
+  "description": "JavaScript is a high-level programming language primarily used for front-end web development.",
+  "altNames": "JS",
+  "image": ""
 }

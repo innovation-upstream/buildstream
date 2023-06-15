@@ -1,5 +1,6 @@
 {
-	"name": "NodeJS",
-	"description": "NodeJS tokens",
-	"image": ""
+  "name": "Python",
+  "description": "Python is a versatile programming language known for its simplicity and readability.",
+  "altNames": "",
+  "image": ""
 }

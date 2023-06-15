@@ -1,0 +1,6 @@
+{
+  "name": "Apache Kafka",
+  "description": "Apache Kafka is a distributed event streaming platform used for building real-time streaming data pipelines and applications.",
+  "altNames": "Kafka",
+  "image": ""
+}
