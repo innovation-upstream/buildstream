@@ -184,7 +184,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
             ))}
         </ul>
       )}
-      {!suggestions.length && (
+      {showSuggestions && !suggestions.length && (
         <ul
           ref={suggestionsRef}
           className='shadow-md py-2 absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'
