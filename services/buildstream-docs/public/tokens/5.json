@@ -1,5 +1,6 @@
 {
-	"name": "Web3",
-	"description": "Web3 tokens",
-	"image": ""
+  "name": "C++",
+  "description": "C++ is an extension of the C programming language with added features for object-oriented programming.",
+  "altNames": "Cpp",
+  "image": ""
 }

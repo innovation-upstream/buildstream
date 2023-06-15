@@ -1,0 +1,6 @@
+{
+  "name": "Kubernetes",
+  "description": "Kubernetes is an open-source container orchestration platform used for automating the deployment, scaling, and management of containerized applications.",
+  "altNames": "K8s",
+  "image": ""
+}
