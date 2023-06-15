@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: setup git config
+      - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
@@ -36,6 +36,10 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+        working-directory: ${{env.working-directory}}
+      
+      - name: Build package
+        run: yarn build
         working-directory: ${{env.working-directory}}
       
       - name: Release
