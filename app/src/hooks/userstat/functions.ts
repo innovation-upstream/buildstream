@@ -1,10 +1,13 @@
-import { GetOrganizationsDocument } from 'graphclient'
+import { GetOrganizationsDocument, Organization } from 'graphclient'
 import client from 'graphclient/client'
+import { IUserOrganizations } from './types'
 
-export const getUserOrganizations = async (account: string) => {
-  let memberOrganizationIds: string[] = []
-  let approverOrganizationIds: string[] = []
-  let signerOrganizationIds: string[] = []
+export const getUserOrganizations = async (
+  account: string
+): Promise<IUserOrganizations> => {
+  let memberOrganizations: Organization[] = []
+  let approverOrganizations: Organization[] = []
+  let signerOrganizations: Organization[] = []
 
   if (account) {
     const { data: memberOrgs } = await client.query({
@@ -31,15 +34,14 @@ export const getUserOrganizations = async (account: string) => {
         }
       }
     })
-    memberOrganizationIds = memberOrgs?.organizations?.map((o) => o.id) || []
-    approverOrganizationIds =
-      approverOrgs?.organizations?.map((o) => o.id) || []
-    signerOrganizationIds = signerOrgs?.organizations?.map((o) => o.id) || []
+    memberOrganizations = (memberOrgs?.organizations as any) || []
+    approverOrganizations = (approverOrgs?.organizations as any) || []
+    signerOrganizations = (signerOrgs?.organizations as any) || []
   }
 
   return {
-    memberOrganizationIds,
-    approverOrganizationIds,
-    signerOrganizationIds
+    memberOrganizations,
+    approverOrganizations,
+    signerOrganizations
   }
 }

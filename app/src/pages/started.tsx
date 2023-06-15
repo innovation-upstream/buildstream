@@ -2,9 +2,9 @@ import Find from 'SVGs/Find'
 import Team from 'SVGs/Team'
 import Write from 'SVGs/Write'
 import WalletModal from 'components/Modals/WalletModal'
-import { getCookie } from 'cookies-next'
 import { useWeb3 } from 'hooks'
 import { getUserOrganizations } from 'hooks/userstat/functions'
+import { IUserOrganizations } from 'hooks/userstat/types'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -14,7 +14,7 @@ import { Trans } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { wrapper } from 'state/store'
 
@@ -24,12 +24,9 @@ export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
       const locale = context.locale ?? ''
-      const account = getCookie(ACCOUNT, context)
-      const orgs = await getUserOrganizations(account as string)
 
       return {
         props: {
-          orgs,
           ...(await serverSideTranslations(locale, [
             'common',
             'home',
@@ -46,24 +43,27 @@ enum action {
   findTeam
 }
 
-interface IGetStarted {
-  orgs: {
-    memberOrganizationIds: string[]
-    approverOrganizationIds: string[]
-    signerOrganizationIds: string[]
-  }
-}
+interface IGetStarted {}
 
-const Home: NextPage<IGetStarted> = ({ orgs }) => {
+const Started: NextPage<IGetStarted> = () => {
   const { account } = useWeb3()
   const [showModal, setShowModal] = useState(false)
   const [actionValue, setActionValue] = useState<typeof action | undefined>()
   const router = useRouter()
   const { t } = useTranslation('home')
+  const [orgs, setOrgs] = useState<IUserOrganizations>()
+
+  useEffect(() => {
+    if (!account) return
+    getUserOrganizations(account as string).then((orgs) => {
+      setOrgs(orgs)
+      if (actionValue !== undefined) handleAction(actionValue, orgs)
+    })
+  }, [account])
 
   const handleAction = async (
     param: any,
-    userOrganizations: IGetStarted['orgs']
+    userOrganizations: IUserOrganizations
   ) => {
     if (param === action.findTeam) {
       router.push('/organization')
@@ -72,23 +72,23 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       router.push('/task')
     }
     if (param === action.createTask) {
-      let orgId
+      let org
       if (
-        userOrganizations.signerOrganizationIds.length > 1 ||
-        userOrganizations.approverOrganizationIds.length > 1 ||
-        userOrganizations.memberOrganizationIds.length > 1
+        userOrganizations.signerOrganizations.length > 1 ||
+        userOrganizations.approverOrganizations.length > 1 ||
+        userOrganizations.memberOrganizations.length > 1
       )
         return router.push('/organization')
 
-      if (userOrganizations.signerOrganizationIds.length === 1)
-        orgId = userOrganizations.signerOrganizationIds[0]
-      else if (userOrganizations.approverOrganizationIds.length === 1)
-        orgId = userOrganizations.approverOrganizationIds[0]
-      else if (userOrganizations.memberOrganizationIds.length === 1)
-        orgId = userOrganizations.memberOrganizationIds[0]
+      if (userOrganizations.signerOrganizations.length === 1)
+        org = userOrganizations.signerOrganizations[0]
+      else if (userOrganizations.approverOrganizations.length === 1)
+        org = userOrganizations.approverOrganizations[0]
+      else if (userOrganizations.memberOrganizations.length === 1)
+        org = userOrganizations.memberOrganizations[0]
       else return router.push(`/organization/create`)
 
-      router.push(`/organization/${orgId}`)
+      router.push(`/organization/${org.id}`)
     }
   }
 
@@ -98,6 +98,7 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       setShowModal(true)
       return
     }
+    if (!orgs) return
     handleAction(param, orgs)
   }
 
@@ -113,10 +114,6 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
       {showModal && (
         <WalletModal
           close={() => setShowModal(!showModal)}
-          onConnect={async () => {
-            const userOrgs = await getUserOrganizations(account as string)
-            handleAction(actionValue, userOrgs)
-          }}
         />
       )}
       <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
@@ -194,4 +191,4 @@ const Home: NextPage<IGetStarted> = ({ orgs }) => {
   )
 }
 
-export default Home
+export default Started

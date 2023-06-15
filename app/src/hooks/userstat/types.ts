@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { Organization } from '../../../.graphclient'
 
 export type Stat = {
   id: string
@@ -13,4 +14,10 @@ export type Stat = {
     token: number
     count: number
   }[]
+}
+
+export interface IUserOrganizations {
+  memberOrganizations: Organization[]
+  approverOrganizations: Organization[]
+  signerOrganizations: Organization[]
 }
