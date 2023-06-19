@@ -1,10 +1,10 @@
 import Camera from 'SVGs/Camera'
-import { useTranslation } from 'react-i18next'
-import { FormEvent, useState } from 'react'
 import { useWeb3 } from 'hooks'
-import { Organization } from 'hooks/organization/types'
 import { createUpdateNameOrDescriptionAction } from 'hooks/action/functions'
 import { ActionType } from 'hooks/action/types'
+import { Organization } from 'hooks/organization/types'
+import { FormEvent, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const MainInformation = ({ organization }: { organization: Organization }) => {
   const { account, library } = useWeb3()
@@ -102,7 +102,9 @@ const MainInformation = ({ organization }: { organization: Organization }) => {
         </select>
       </div>
       <div className='mt-3 underline text-blue-600'>
-        <a href={`onboarding`}>{t('view_edit_onboarding')}</a>
+        <a href={`/organization/${organization.id}/onboarding`}>
+          {t('view_edit_onboarding')}
+        </a>
       </div>
       <button
         type='submit'
