@@ -20,7 +20,7 @@ export default class OnboardingInfo {
     return onboardingInfo
   }
 
-  public async set(
+  public async update(
     organizationId: string,
     onboardingInfo: string
   ): Promise<void> {

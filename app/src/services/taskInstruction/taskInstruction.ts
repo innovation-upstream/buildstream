@@ -20,7 +20,7 @@ export default class TaskInstruction {
     return taskInstruction
   }
 
-  public async set(
+  public async update(
     organizationId: string,
     taskId: string,
     taskInstruction: string

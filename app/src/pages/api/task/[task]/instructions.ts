@@ -1,3 +1,4 @@
+import { authMiddleware } from 'middleware/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { TaskInstruction } from 'services'
@@ -18,13 +19,13 @@ async function getTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function setTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
+async function updateTaskInstructions(req: NextApiRequest, res: NextApiResponse) {
   const taskId = req.query.task as string
   const taskInstructionService = new TaskInstruction(FirestoreClient)
   const { organizationId, instructions } = req.body
 
   try {
-    await taskInstructionService.set(organizationId, taskId, instructions)
+    await taskInstructionService.update(organizationId, taskId, instructions)
     res.status(200).send({ message: 'Instructions updated' })
   } catch (err: any) {
     console.error(err)
@@ -42,7 +43,7 @@ export default async function taskInstructions(
     case 'GET':
       return getTaskInstructions(req, res)
     case 'POST':
-      return setTaskInstructions(req, res)
+      return authMiddleware(req, res, updateTaskInstructions)
     default:
       return res.status(405).send({ code: 405, message: 'Method not allowed' })
   }

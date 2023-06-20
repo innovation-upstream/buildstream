@@ -1,3 +1,4 @@
+import { authMiddleware } from 'middleware/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { TaskApprovalService } from 'services'
@@ -45,7 +46,7 @@ export default async function denyTask(
     case 'GET':
       return getDenials(req, res)
     case 'POST':
-      return denyAssignee(req, res)
+      return authMiddleware(req, res, denyAssignee)
     default:
       return res.status(405).send({ code: 405, message: 'Method not allowed' })
   }

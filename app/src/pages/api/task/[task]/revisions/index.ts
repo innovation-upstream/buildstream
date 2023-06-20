@@ -1,3 +1,4 @@
+import { authMiddleware } from 'middleware/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { RevisionService } from 'services'
@@ -45,7 +46,7 @@ export default async function taskInstructions(
     case 'GET':
       return getRevisions(req, res)
     case 'POST':
-      return createRevision(req, res)
+      return authMiddleware(req, res, createRevision)
     default:
       return res.status(405).send({ code: 405, message: 'Method not allowed' })
   }
