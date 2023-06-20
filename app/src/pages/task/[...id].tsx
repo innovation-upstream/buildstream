@@ -303,7 +303,6 @@ const TaskPage: NextPage<PageProps> = ({
                   </p>
                   <MarkDownEditor
                     hideToggle
-                    className='!h-[300px]'
                     value={{ text: instructions }}
                     readOnly
                   />

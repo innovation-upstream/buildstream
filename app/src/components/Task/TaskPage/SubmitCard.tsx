@@ -22,8 +22,8 @@ const SubmitCard = ({ taskId }: SubmitCardProps) => {
   const [processing, setProcessing] = useState(false)
   const [comment, setComment] = useState('')
 
-  const handleChange = (e: any) => {
-    let newComment = e?.target?.value
+  const handleChange = (c: string) => {
+    let newComment = c
     if (newComment === commentTemplate) newComment = ''
     setComment(newComment)
   }
@@ -61,7 +61,7 @@ const SubmitCard = ({ taskId }: SubmitCardProps) => {
             text: comment || commentTemplate
           }}
           required
-          onChange={(_, e) => handleChange(e)}
+          onChange={(v) => handleChange(v.text)}
         />
 
         <button

@@ -46,13 +46,13 @@ const taskComplexities = Object.entries(ComplexityScoreMap).filter(
 )
 const taskReputation = Object.entries(TaskReputationMap)
 const instructionsTemplate = `
-  **Communication channel**: 
+**Communication channel**: 
 
-  **link/instructions**: 
+**link/instructions**: 
 
-  **Code Repo/Figma/etc links**: 
+**Code Repo/Figma/etc links**: 
 
-  **Onboarding instructions**: 
+**Onboarding instructions**: 
 `
 
 const CreateTask: React.FC<ICreateTask> = ({
@@ -87,9 +87,6 @@ const CreateTask: React.FC<ICreateTask> = ({
         ...prev,
         [targetName]: !prev.disableSelfAssign,
       }))
-
-    if (targetName === 'instructions' && targetValue === instructionsTemplate)
-      targetValue = ''
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
 
@@ -388,7 +385,11 @@ const CreateTask: React.FC<ICreateTask> = ({
                     value={{
                       text: taskData.instructions || instructionsTemplate,
                     }}
-                    onChange={(_, e) => handleChange(e)}
+                    onChange={(v) => {
+                      let text = v.text
+                      if (v.text === instructionsTemplate) text = ''
+                      setTaskData((prev) => ({ ...prev, instructions: text }))
+                    }}
                   />
                 </div>
               </section>
