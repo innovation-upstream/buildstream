@@ -71,3 +71,7 @@
     @apply absolute z-[1] block h-5 w-5 rounded-full;
   }
 }
+
+.editor-container>.section {
+  border: 0 !important;
+}
