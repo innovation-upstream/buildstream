@@ -65,19 +65,15 @@ export const addOrgOnboardingInfo = async (
   onboardingInfo: string,
   organizationId: number
 ) => {
-  try {
-    const response = await fetch(`/api/onboarding-info/${organizationId}`, {
-      method: 'POST',
-      body: JSON.stringify({
-        onboardingInfo
-      }),
-      headers: new Headers({ 'Content-Type': 'application/json' })
-    })
-    const apiResponse = await response.json()
-    return apiResponse
-  } catch (err) {
-    console.error(err)
-  }
+  const response = await fetch(`/api/onboarding-info/${organizationId}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      onboardingInfo
+    }),
+    headers: new Headers({ 'Content-Type': 'application/json' })
+  })
+  const apiResponse = await response.json()
+  return apiResponse
 }
 
 export const getOrgOnboardingInfo = async (organizationId: number) => {

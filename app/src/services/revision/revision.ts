@@ -1,3 +1,5 @@
+import { GetTaskDocument } from 'graphclient'
+import client from 'graphclient/client'
 import { ApiError } from 'next/dist/server/api-utils'
 
 export default class RevisionService {
@@ -35,11 +37,27 @@ export default class RevisionService {
   }
 
   public async create(
+    user: string,
     id: string,
     taskId: string,
     revisionId: string,
     message: string
   ): Promise<string> {
+    const { data } = await client.query({
+      query: GetTaskDocument,
+      variables: {
+        id: taskId
+      }
+    })
+
+    if (!data?.task) throw new ApiError(404, 'Task does not exist')
+
+    if (
+      !data.task.orgId.approvers.includes(user) &&
+      !data.task.orgId.signers.includes(user)
+    )
+      throw new ApiError(403, 'User is not an approver or signer')
+
     const docRef = this.client
       .collection('tasks')
       .doc(taskId.toString())

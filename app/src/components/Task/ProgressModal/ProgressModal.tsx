@@ -96,11 +96,7 @@ const ProgressModal = ({
   const updateInstructions = async (taskId: number) => {
     try {
       setUpdateInstructionStatus(Progress.IN_PROGRESS)
-      await updateTaskInstructions(
-        organization.id,
-        taskId,
-        taskData.instructions || null
-      )
+      await updateTaskInstructions(taskId, taskData.instructions || null)
       setUpdateInstructionStatus(Progress.SUCCESS)
     } catch (error: any) {
       setUpdateInstructionStatus(Progress.FAILED)

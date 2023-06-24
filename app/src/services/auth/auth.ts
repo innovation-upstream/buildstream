@@ -61,10 +61,15 @@ export default class AuthService {
   public async verify(address: string, token: string): Promise<boolean> {
     if (!JWT_SECRET) throw new ApiError(500, 'JWT_SECRET is not defined')
 
-    console.log('======== token', token)
-
     const claims = jwt.verify(token, JWT_SECRET) as JwtPayload
     if (claims.sub?.toLowerCase() !== address.toLowerCase()) return false
     return true
+  }
+
+  public async getUser(token: string): Promise<string|null> {
+    if (!JWT_SECRET) throw new ApiError(500, 'JWT_SECRET is not defined')
+
+    const claims = jwt.verify(token, JWT_SECRET) as JwtPayload
+    return claims.sub?.toLowerCase() || null
   }
 }

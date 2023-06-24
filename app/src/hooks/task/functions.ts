@@ -322,7 +322,6 @@ export const getRewardAmount = async (
 }
 
 export const updateTaskInstructions = async (
-  organizationId: number,
   taskId: number,
   instructions: string
 ) => {
@@ -330,8 +329,7 @@ export const updateTaskInstructions = async (
     const response = await fetch(`/api/task/${taskId}/instructions`, {
       method: 'POST',
       body: JSON.stringify({
-        instructions,
-        organizationId
+        instructions
       }),
       headers: new Headers({ 'Content-Type': 'application/json' })
     })

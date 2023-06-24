@@ -70,5 +70,6 @@
   "view_edit_onboarding": "View/Edit Onboarding Instructions",
   "notification": "Notification",
   "error_creating_organization": "Error Creating Organization",
-  "pending_actions": "Pending Actions"
+  "pending_actions": "Pending Actions",
+  "edit_instructions": "Edit Instructions"
 }

@@ -1,4 +1,5 @@
 import { authMiddleware } from 'middleware/auth'
+import { NextApiRequestWithUser } from 'middleware/auth/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { OnboardingInfo } from 'services'
@@ -19,13 +20,13 @@ async function getOnboardingInfo(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function updateOnboardingInfo(req: NextApiRequest, res: NextApiResponse) {
+async function updateOnboardingInfo(req: NextApiRequestWithUser, res: NextApiResponse) {
   const organizationId = req.query.organization?.[0] as string
   const { onboardingInfo } = req.body
   const onboardingInfoService = new OnboardingInfo(FirestoreClient)
 
   try {
-    await onboardingInfoService.update(organizationId, onboardingInfo)
+    await onboardingInfoService.update(req.user, organizationId, onboardingInfo)
     res.status(200).send({ message: 'Onboarding info updated' })
   } catch (err: any) {
     console.error(err)

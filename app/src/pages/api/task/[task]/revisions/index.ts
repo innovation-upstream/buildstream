@@ -1,4 +1,5 @@
 import { authMiddleware } from 'middleware/auth'
+import { NextApiRequestWithUser } from 'middleware/auth/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { RevisionService } from 'services'
@@ -19,16 +20,24 @@ async function getRevisions(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function createRevision(req: NextApiRequest, res: NextApiResponse) {
+async function createRevision(
+  req: NextApiRequestWithUser,
+  res: NextApiResponse
+) {
   const taskId = req.query.task as string
   const revisionService = new RevisionService(FirestoreClient)
   const { id, revisionId, message } = req.body
 
-  if (!message)
-    return res.status(400).send({ message: 'Message required' })
+  if (!message) return res.status(400).send({ message: 'Message required' })
 
   try {
-    const revision = await revisionService.create(id, taskId, revisionId, message)
+    const revision = await revisionService.create(
+      req.user,
+      id,
+      taskId,
+      revisionId,
+      message
+    )
     res.status(200).send({ revision })
   } catch (err: any) {
     console.error(err)
