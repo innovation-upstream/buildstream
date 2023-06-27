@@ -1,3 +1,5 @@
+import { authMiddleware } from 'middleware/auth'
+import { NextApiRequestWithUser } from 'middleware/auth/auth'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApiError } from 'next/dist/server/api-utils'
 import { TaskApprovalService } from 'services'
@@ -18,7 +20,7 @@ async function getDenials(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function denyAssignee(req: NextApiRequest, res: NextApiResponse) {
+async function denyAssignee(req: NextApiRequestWithUser, res: NextApiResponse) {
   const taskId = req.query.task as string
   const taskApprovalService = new TaskApprovalService(FirestoreClient)
   const { assignee, message } = req.body
@@ -27,7 +29,7 @@ async function denyAssignee(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).send({ message: 'Assignee is required' })
 
   try {
-    await taskApprovalService.denyAssignee(taskId, assignee, message)
+    await taskApprovalService.denyAssignee(req.user, taskId, assignee, message)
     res.status(200).send({ message: 'Assignee denied' })
   } catch (err: any) {
     console.error(err)
@@ -45,7 +47,7 @@ export default async function denyTask(
     case 'GET':
       return getDenials(req, res)
     case 'POST':
-      return denyAssignee(req, res)
+      return authMiddleware(req, res, denyAssignee)
     default:
       return res.status(405).send({ code: 405, message: 'Method not allowed' })
   }

@@ -75,6 +75,7 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
       await addOrgOnboardingInfo(tempInstructions, organization.id)
       setOrgInstruction(tempInstructions)
       setProcessing(false)
+      setShowForm(false)
     } catch (err) {
       setProcessing(false)
       console.error(err)
