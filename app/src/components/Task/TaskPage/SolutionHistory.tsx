@@ -19,7 +19,7 @@ interface SolutionHistoryProps {
 const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
   const { account, library } = useWeb3()
   const [taskRevisions, setTaskRevisions] = useState<TaskRevision[]>([])
-  const { data, startPolling, stopPolling } = useGetTaskRevisionsQuery({
+  const { data, startPolling, stopPolling, loading } = useGetTaskRevisionsQuery({
     variables: {
       orderBy: 'revisionId',
       orderDirection: 'asc',
@@ -45,7 +45,7 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
     taskRevisions[index - 1]?.status === TaskRevisionStatus.CHANGES_REQUESTED
   
   const isRevisionPending = () =>
-    taskRevisions[taskRevisions?.length - 1]?.status != TaskRevisionStatus.ACCEPTED
+    taskRevisions.length && taskRevisions[taskRevisions?.length - 1]?.status != TaskRevisionStatus.ACCEPTED
 
   return (
     <>
@@ -69,7 +69,7 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
           </React.Fragment>
         )
       })}
-      {data && !isRevisionPending() && task.status >= TaskStatus.SUBMITTED && (
+      {!loading && !isRevisionPending() && task.status >= TaskStatus.SUBMITTED && (
         <SolutionCard
           task={task}
           comment={task.comment}

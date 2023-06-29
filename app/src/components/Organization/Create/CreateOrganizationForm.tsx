@@ -1,11 +1,11 @@
+import MainInformation from 'components/Organization/Create/MainInformation'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { createOrganization } from 'hooks/organization/functions'
 import { useRouter } from 'next/router'
-import React, { FormEvent, useState } from 'react'
-import MainInformation from 'components/Organization/Create/MainInformation'
-import { useTranslation } from 'react-i18next'
+import { FormEvent, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 
 const sliderTitles = [
   {
@@ -39,7 +39,7 @@ const CreateOrgForm = () => {
       setProcessing(true)
       await createOrganization(
         name,
-        description,
+        description || '',
         [account],
         [account],
         true,
@@ -47,7 +47,7 @@ const CreateOrgForm = () => {
       )
       router.push('/organization')
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast.error(t('error_creating_organization'), { icon: '❌' })
     } finally {
       setProcessing(false)

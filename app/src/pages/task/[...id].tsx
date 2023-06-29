@@ -3,12 +3,12 @@ import Alert from 'components/Alert/Alert'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import ShareTask from 'components/Task/ShareTask'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
-import TaskCard from 'components/Task/TaskCard'
 import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
 import ClosedCard from 'components/Task/TaskPage/ClosedCard'
 import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
 import SolutionTime from 'components/Task/TaskPage/SolutionTime'
 import SubmitCard from 'components/Task/TaskPage/SubmitCard'
+import TaskInfoCard from 'components/Task/TaskPage/TaskInfoCard'
 import TaskStatusCard from 'components/Task/TaskPage/TaskStatusCard'
 import { BigNumber } from 'ethers'
 import {
@@ -38,7 +38,6 @@ type AssigneeData = {
     count: number
   }[]
   address: string
-  coverLetter?: string
   tasks: {
     id: number
     title: string
@@ -60,14 +59,16 @@ interface PageProps {
 
 const isBrowser = typeof window !== 'undefined'
 
-const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
+const getAssigneeData = async (
+  assignee: string,
+  tags: bigint[][]
+): Promise<AssigneeData> => {
   const { data: statData } = await client.query({
     query: GetUserStatDocument,
     variables: {
       id: assignee.toLowerCase()
     }
   })
-  console.log(statData)
   const allTags = tags.flat().filter((t) => t)
   // Tagless query
   tags.push([])
@@ -99,11 +100,12 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
     )
   const assigneeInfo = {
     address: assignee,
-    tokens: statData.userStat?.tokens?.map((t) => ({
-      id: t.id,
-      token: Number(t.token),
-      count: Number(t.count)
-    })),
+    tokens:
+      statData.userStat?.tokens?.map((t) => ({
+        id: t.id,
+        token: Number(t.token),
+        count: Number(t.count)
+      })) || [],
     tasks: filteredTasks
       .map((t) => ({
         id: t.id,
@@ -120,7 +122,7 @@ const getAssigneeData = async (assignee: string, tags: bigint[][]) => {
         return bCount - aCount
       })
       .slice(0, 5)
-  }
+  } as any as AssigneeData
 
   return assigneeInfo
 }
@@ -149,7 +151,7 @@ export const getServerSideProps: GetServerSideProps =
 
     const deniedAssignees = await getTaskDenials(Number(data.task.id))
 
-    if (data.task.status >= TaskStatus.OPEN) {
+    if (data.task.status === TaskStatus.OPEN) {
       assignmentRequests = await Promise.all(
         (data.task.assignmentRequest || [])
           ?.filter(
@@ -160,6 +162,11 @@ export const getServerSideProps: GetServerSideProps =
             return data
           })
       )
+    }
+
+    let assigneeData = null
+    if (data.task.status >= TaskStatus.ASSIGNED && data.task.assignee) {
+      assigneeData = await getAssigneeData(data.task.assignee, tags)
     }
 
     let clickupTask
@@ -180,6 +187,7 @@ export const getServerSideProps: GetServerSideProps =
           description: clickupTask?.description || data.task.description
         },
         instructions: instructions || null,
+        assigneeData,
         assignmentRequests:
           data.task.status === TaskStatus.OPEN ? assignmentRequests : null,
         taskDenials: deniedAssignees,
@@ -195,14 +203,18 @@ export const getServerSideProps: GetServerSideProps =
 
 const TaskPage: NextPage<PageProps> = ({
   task,
-  assignmentRequests,
+  assigneeData,
   instructions,
-  taskDenials
+  taskDenials,
+  ...props
 }) => {
   const { account } = useWeb3()
   const [currentTask, setCurrentTask] = useState(Converter.TaskFromQuery(task))
   const router = useRouter()
   const [shareLink, setShareLink] = useState<string>()
+  const [assignmentRequests, setAssignmentRequests] = useState(
+    props.assignmentRequests
+  )
 
   const { t } = useTranslation('tasks')
 
@@ -238,9 +250,34 @@ const TaskPage: NextPage<PageProps> = ({
     }
   }
 
+  const fetchAssigneeData = async (addresses: string[]) => {
+    const tags = (currentTask?.taskTags || [])?.map((tag) => [tag.id])
+
+    const deniedAssignees = await getTaskDenials(Number(currentTask.id))
+
+    const requests = await Promise.all(
+      (addresses || [])
+        ?.filter(
+          (assignee) => !deniedAssignees.some((a) => a.assignee === assignee)
+        )
+        ?.map(async (assignee) => {
+          const data = await getAssigneeData(assignee, tags as any)
+          return data
+        })
+    )
+    setAssignmentRequests(requests)
+  }
+
   useEffect(() => {
     if (!data?.task) return
     setupTask(data.task)
+
+    if (
+      data.task.assignmentRequest?.length &&
+      data.task.assignmentRequest?.length !== assignmentRequests?.length
+    ) {
+      fetchAssigneeData(data.task.assignmentRequest)
+    }
   }, [data])
 
   if (!currentTask) {
@@ -250,7 +287,7 @@ const TaskPage: NextPage<PageProps> = ({
   const isAssignee = account && currentTask.assigneeAddress === account
   const isApprover =
     !!account && currentTask?.organization.approvers.includes(account)
-  const taskDenial = taskDenials.find(a => a.assignee === account)
+  const taskDenial = taskDenials.find((a) => a.assignee === account)
 
   const getAssignee = (assignee: AssigneeData) => ({
     ...assignee,
@@ -289,12 +326,7 @@ const TaskPage: NextPage<PageProps> = ({
                 onClose={() => setShareLink(undefined)}
               />
             )}
-            <TaskCard
-              task={currentTask}
-              showDescription
-              hideViewButton
-              taskRequirementLocation='footer'
-            />
+            <TaskInfoCard task={currentTask} onShare={onShare} />
             {instructions && (isAssignee || isApprover) && (
               <section className=''>
                 <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
@@ -309,14 +341,14 @@ const TaskPage: NextPage<PageProps> = ({
                 </div>
               </section>
             )}
-            <TaskActions task={currentTask} onShare={onShare} />
+            <TaskActions task={currentTask} />
           </>
           <div className='mt-7 md:hidden'>
             <TaskStatusCard task={currentTask} />
           </div>
           {currentTask.status === TaskStatus.OPEN &&
             account &&
-            assignmentRequests?.some(a => a.address === account) && (
+            assignmentRequests?.some((a) => a.address === account) && (
               <div className='mt-4'>
                 <Alert>
                   <p className='font-bold mb-2 text-lg'>
@@ -368,6 +400,9 @@ const TaskPage: NextPage<PageProps> = ({
                           taskId={currentTask.id}
                           isApprover={isApprover}
                           assignee={getAssignee(assignee)}
+                          onDeny={() =>
+                            fetchAssigneeData(currentTask.assignmentRequests || [])
+                          }
                         />
                       </li>
                     )
@@ -377,26 +412,39 @@ const TaskPage: NextPage<PageProps> = ({
             )}
           {taskDenial && (
             <div className='mt-4'>
-            <Alert>
-              <p className='font-bold mb-2 text-lg'>
-                {t('you_are_denied')}
-              </p>
-              <p>{taskDenial.message}</p>
-            </Alert>
-          </div>
+              <Alert>
+                <p className='font-bold mb-2 text-lg'>{t('you_are_denied')}</p>
+                <p>{taskDenial.message}</p>
+              </Alert>
+            </div>
           )}
+
+          {isApprover && assigneeData && (
+            <div className='mt-7'>
+              <AssigneeCard
+                taskId={currentTask.id}
+                isApprover={isApprover}
+                assignee={getAssignee(assigneeData)}
+              />
+            </div>
+          )}
+
           <SolutionHistory
             task={currentTask}
             isApprover={
               !!account && currentTask?.organization.approvers.includes(account)
             }
           />
-          {isAssignee && (
-            <>
+
+          {(isApprover || isAssignee) &&
+            currentTask.status === TaskStatus.ASSIGNED && (
               <SolutionTime task={currentTask} />
-              <SubmitCard taskId={currentTask.id} />
-            </>
+            )}
+
+          {isAssignee && currentTask.status === TaskStatus.ASSIGNED && (
+            <SubmitCard taskId={currentTask.id} />
           )}
+
           {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}
         </div>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>

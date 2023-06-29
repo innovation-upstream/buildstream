@@ -54,7 +54,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
     e.preventDefault()
     const token = tokenInfos?.find((i) => i.address === tokenAddress)
     if (!token) {
-      console.log('Deposit: invalid token')
+      console.error('Deposit: invalid token')
       return
     }
     if (amount <= 0) {

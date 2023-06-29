@@ -24,7 +24,7 @@ const MobileNav = ({ close, connectWallet, organizations }: Props) => {
     try {
       deactivate()
     } catch (ex) {
-      console.log(ex)
+      console.error(ex)
     }
   }
 

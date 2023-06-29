@@ -63,7 +63,6 @@ const ChangeRequest = ({
     if (taskId === undefined) return
     getRevisions(taskId).then((revisions) => {
       const revisionData = revisions.find((r: any) => r.revisionId == revision.id)
-      console.log(revisions, revisionData)
       setMessage(revisionData?.message || '')
     })
   }, [taskId, revision.id])

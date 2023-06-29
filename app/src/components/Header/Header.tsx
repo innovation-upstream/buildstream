@@ -58,7 +58,7 @@ const Header = () => {
       deactivate()
       setCookies(ACCOUNT, '')
     } catch (ex) {
-      console.log(ex)
+      console.error(ex)
     }
   }
 
@@ -68,7 +68,7 @@ const Header = () => {
         await checkNetwork()
         activate(injected)
       } catch (ex) {
-        console.log(ex)
+        console.error(ex)
       }
     }
   }

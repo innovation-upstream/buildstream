@@ -27,7 +27,7 @@ const WalletModal: React.FC<IModalProps> = ({ close, onConnect }) => {
       onConnect?.()
       close()
     } catch (ex) {
-      console.log(ex)
+      console.error(ex)
     }
   }
 

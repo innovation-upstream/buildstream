@@ -47,11 +47,11 @@ const Withdrawal = ({ organization, onClose }: WithdrawalProps) => {
     e.preventDefault()
     const token = tokenInfos?.find((i) => i.address === tokenAddress)
     if (!token) {
-      console.log('Withdrawal: invalid token')
+      console.error('Withdrawal: invalid token')
       return
     }
     if (!ethers.utils.isAddress(recipient)) {
-      console.log('Withdrawal: invalid recipient')
+      console.error('Withdrawal: invalid recipient')
       return
     }
     if (amount === 0) {

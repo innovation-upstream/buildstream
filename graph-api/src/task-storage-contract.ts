@@ -286,6 +286,9 @@ export function handleTaskAssignmentRequest(
   if (!taskEntity) return
   let assignmentRequests = taskEntity.assignmentRequest
   if (assignmentRequests == null) assignmentRequests = []
+
+  if (assignmentRequests.includes(event.params.assignee.toHexString())) return
+
   assignmentRequests.push(event.params.assignee.toHexString())
   taskEntity.assignmentRequest = assignmentRequests
   taskEntity.save()

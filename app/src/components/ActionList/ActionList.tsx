@@ -1,8 +1,7 @@
-import { useWeb3 } from 'hooks'
 import ListView from 'components/ListView/ListView'
 import Spinner from 'components/Spinner/Spinner'
 import injected from 'config/Walletconnectors'
-import { useGetActionsQuery, usePolling } from 'hooks'
+import { useGetActionsQuery, usePolling, useWeb3 } from 'hooks'
 import { confirmAction, executeAction } from 'hooks/action/functions'
 import { Action, ActionTypeMap } from 'hooks/action/types'
 import { useEffect, useState } from 'react'
@@ -60,7 +59,7 @@ const ActionList = ({ orgId }: ActionListProps) => {
     try {
       await activate(injected)
     } catch (ex) {
-      console.log(ex)
+      console.error(ex)
     }
   }
 

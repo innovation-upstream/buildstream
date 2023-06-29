@@ -7,11 +7,17 @@ import { getRewardAmount } from 'hooks/task/functions'
 import { ComplexityScore, ComplexityScoreMap, Task } from 'hooks/task/types'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-interface TaskCardProps {
+interface TaskListItemProps {
   task: Task
+  showDescription?: boolean
+  hideChildren?: boolean
+  hideViewButton?: boolean
+  taskRequirementLocation?: 'inline' | 'footer'
+  taskRequirementLocationTablet?: 'inline' | 'footer'
+  children?: ReactNode
   onClick?: (id: number) => void
   onShare?: (id: number) => void
 }
@@ -42,11 +48,17 @@ const TaskRequirement = ({
   )
 }
 
-const TaskCard = ({
+const TaskListItem = ({
   task,
+  showDescription,
+  hideChildren,
+  hideViewButton,
+  taskRequirementLocation = 'inline',
+  taskRequirementLocationTablet = 'inline',
   onClick,
-  onShare
-}: TaskCardProps) => {
+  onShare,
+  children
+}: TaskListItemProps) => {
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
   const { pathname } = useRouter()
@@ -68,9 +80,9 @@ const TaskCard = ({
   }, [getReward])
 
   return (
-    
+    <Link href={`/task/${task.id}`}>
       <div
-        className='relative paper hover:drop-shadow-xl hover:brightness-[0.98]'
+        className='paper cursor-pointer hover:drop-shadow-xl hover:brightness-[0.98]'
         onClick={() => onClick?.(task.id)}
       >
         <div className='flex mb-2'>
@@ -79,7 +91,7 @@ const TaskCard = ({
           ) : (
             <div className='flex'>
               <Link href={`/organization/${task.orgId}`}>
-                <a className='hover:text-blue-700 hover:underline z-10'>
+                <a className='hover:text-blue-700 hover:underline'>
                   {task.organization.name}
                 </a>
               </Link>
@@ -89,13 +101,24 @@ const TaskCard = ({
         <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
           {task.title}
         </p>
-        <TaskRequirement
-          complexityScore={task.complexityScore}
-          reputationLevel={task.reputationLevel}
-          className='hidden lg:flex'
-        />
+        {taskRequirementLocation === 'inline' && (
+          <TaskRequirement
+            complexityScore={task.complexityScore}
+            reputationLevel={task.reputationLevel}
+            className='hidden lg:flex'
+          />
+        )}
+        {taskRequirementLocationTablet === 'inline' && (
+          <TaskRequirement
+            complexityScore={task.complexityScore}
+            reputationLevel={task.reputationLevel}
+            className='flex lg:hidden'
+          />
+        )}
         <div
-          className='flex flex-wrap gap-1 mt-3'
+          className={`flex flex-wrap gap-1 mt-3 ${
+            showDescription ? '' : 'mb-6'
+          }`}
         >
           {task.taskTags?.map((tag) => (
             <div key={tag.id} className='btn-tag'>
@@ -103,16 +126,26 @@ const TaskCard = ({
             </div>
           ))}
         </div>
-        <p className='mt-3 mb-6 break-all'>{task.description}</p>
+        {showDescription && (
+          <p className='mt-3 mb-6 break-all'>{task.description}</p>
+        )}
         <div className='divider' />
         <section className='flex justify-between items-center mt-6'>
           <div className='flex gap-5'>
             <button
-              className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 z-10'
+              className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500'
               onClick={handleShare}
             >
               {t('share')}
             </button>
+            {!hideChildren && children}
+            {taskRequirementLocation === 'footer' && (
+              <TaskRequirement
+                complexityScore={task.complexityScore}
+                reputationLevel={task.reputationLevel}
+                className='hidden lg:flex'
+              />
+            )}
           </div>
 
           <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
@@ -122,11 +155,9 @@ const TaskCard = ({
             </span>
           </div>
         </section>
-        <Link href={`/task/${task.id}`}>
-          <a className='after:absolute after:w-full after:h-full after:inset-0' />
-        </Link>
       </div>
+    </Link>
   )
 }
 
-export default TaskCard
+export default TaskListItem

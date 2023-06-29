@@ -86,6 +86,6 @@ export const fetchToken = async (code: string, organizationId: string) => {
       return data.access_token
     }
   } catch (e) {
-    console.log('ERRORRR===', e)
+    console.error(e)
   }
 }

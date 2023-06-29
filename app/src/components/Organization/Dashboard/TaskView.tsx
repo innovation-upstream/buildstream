@@ -1,10 +1,10 @@
 import ClickupLogo from 'SVGs/ClickupLogo'
 import Plus from 'SVGs/Plus'
 import CreateTask from 'components/Task/CreateTask/CreateTask'
-import TaskDetail from 'components/Task/CreateTask/TaskDetail'
 import ClickupImport from 'components/Task/ImportTask/ClickupImport'
 import TaskCard from 'components/Task/TaskCard'
 import { getCookie } from 'cookies-next'
+import { Task as TaskType } from 'graphclient'
 import { useGetTasksQuery, usePolling } from 'hooks'
 import { Organization } from 'hooks/organization/types'
 import { Task, TaskStatus } from 'hooks/task/types'
@@ -19,7 +19,11 @@ import { TaskFilters } from './types'
 
 interface TaskViewProps {
   organization: Organization
-  tasks?: Task[]
+  showCreateTask?: boolean
+  tasksWithoutRequest: Task[]
+  tasksWithRequest: Task[]
+  tasksInProgress: Task[]
+  tasksClosed: Task[]
 }
 
 interface IEmptyTaskViewProps {
@@ -90,64 +94,90 @@ const EmptyTaskView = ({
   )
 }
 
-const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
-  const [tasks, setTasks] = useState(taskList)
-  const [showCreateModal, setShowCreateModal] = useState(false)
+const TaskView = ({
+  organization,
+  showCreateTask,
+  ...props
+}: TaskViewProps) => {
+  // const [tasks, setTasks] = useState(taskList)
+  const [showCreateModal, setShowCreateModal] = useState(showCreateTask)
   const [currentTab, setCurrentTab] = useState(TaskFilters.WITHOUT_REQUEST)
   const [showClickupModal, setShowClickupModal] = useState(false)
   const [clickupCode, setClickupCode] = useState('')
-  const [clickupToken, setClickupToken] = useState()
   const [shareLink, setShareLink] = useState<string>()
+  const [tasksWithoutRequest, setTasksWithoutRequest] = useState<Task[]>(props.tasksWithoutRequest)
+  const [tasksWithRequest, setTasksWithRequest] = useState<Task[]>(props.tasksWithRequest)
+  const [tasksInProgress, setTasksInProgress] = useState<Task[]>(props.tasksInProgress)
+  const [tasksClosed, setTasksClosed] = useState<Task[]>(props.tasksClosed)
+  const clickupToken = getCookie(TOKEN_KEY)
 
   const onCode = async (code: any, params?: any) => {
     setClickupCode(code)
     setShowClickupModal(true)
   }
 
-  const queryParams = () => {
-    if (currentTab === TaskFilters.WITHOUT_REQUEST) {
-      return {
+  const {
+    data: tasksWithoutRequestData,
+    startPolling: startTasksWithoutRequestPolling,
+    stopPolling: stopTasksWithoutRequestPolling
+  } = useGetTasksQuery({
+    variables: {
+      where: {
+        orgId: organization.id.toString(),
         status_lte: TaskStatus.OPEN,
         assignmentRequest: null
       }
     }
-    if (currentTab === TaskFilters.WITH_REQUEST) {
-      return {
+  })
+  const {
+    data: tasksWithRequestData,
+    startPolling: startTasksWithRequestPolling,
+    stopPolling: stopTasksWithRequestPolling
+  } = useGetTasksQuery({
+    variables: {
+      where: {
+        orgId: organization.id.toString(),
         status_lte: TaskStatus.OPEN,
         assignmentRequest_not: null
       }
     }
-    if (currentTab === TaskFilters.IN_PROGRESS) {
-      return {
-        status: TaskStatus.ASSIGNED
-      }
-    }
-    return {
-      status: TaskStatus.CLOSED
-    }
-  }
-
-  const { data, startPolling, stopPolling } = useGetTasksQuery({
+  })
+  const {
+    data: tasksInProgressData,
+    startPolling: startTasksInProgressPolling,
+    stopPolling: stopTasksInProgressPolling
+  } = useGetTasksQuery({
     variables: {
       where: {
         orgId: organization.id.toString(),
-        ...queryParams()
+        status: TaskStatus.ASSIGNED
       }
     }
   })
-  usePolling(startPolling, stopPolling)
+  const {
+    data: tasksClosedData,
+    startPolling: startTasksClosedPolling,
+    stopPolling: stopTasksClosedPolling
+  } = useGetTasksQuery({
+    variables: {
+      where: {
+        orgId: organization.id.toString(),
+        status: TaskStatus.CLOSED
+      }
+    }
+  })
+
+  usePolling(startTasksWithoutRequestPolling, stopTasksWithoutRequestPolling)
+  usePolling(startTasksWithRequestPolling, stopTasksWithRequestPolling)
+  usePolling(startTasksInProgressPolling, stopTasksInProgressPolling)
+  usePolling(startTasksClosedPolling, stopTasksClosedPolling)
+
   const { t: tr } = useTranslation('organization')
   const [selected, setSelected] = useState<number>()
 
-  useEffect(() => {
-    const token: any = getCookie(TOKEN_KEY)
-    if (token) {
-      setClickupToken(token)
-    }
-
-    if (!data?.tasks) return
-    Promise.all(
-      data.tasks.map(async (t) => {
+  const processTasks = async (tasks: TaskType[]): Promise<Task[]> => {
+    const processedTasks = await Promise.all(
+      tasks.map(async (t) => {
         if (!t.externalId) {
           return t
         }
@@ -161,12 +191,38 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
           description: clickupTask?.description || t.description
         }
       })
-    ).then((tasksWithClickupData) =>
-      setTasks(tasksWithClickupData.map((t) => Converter.TaskFromQuery(t)))
     )
-  }, [data])
 
-  const selectedTask = tasks?.find((t) => t.id === selected)
+    return processedTasks.map((t) => Converter.TaskFromQuery(t))
+  }
+
+  useEffect(() => {
+    if (!tasksWithRequestData?.tasks) return
+    processTasks(tasksWithRequestData.tasks).then((tasksWithClickupData) =>
+      setTasksWithRequest(tasksWithClickupData)
+    )
+  }, [tasksWithRequestData])
+
+  useEffect(() => {
+    if (!tasksWithoutRequestData?.tasks) return
+    processTasks(tasksWithoutRequestData.tasks).then((tasksWithClickupData) =>
+      setTasksWithoutRequest(tasksWithClickupData)
+    )
+  }, [tasksWithoutRequestData])
+
+  useEffect(() => {
+    if (!tasksInProgressData?.tasks) return
+    processTasks(tasksInProgressData.tasks).then((tasksWithClickupData) =>
+      setTasksInProgress(tasksWithClickupData)
+    )
+  }, [tasksInProgressData])
+
+  useEffect(() => {
+    if (!tasksClosedData?.tasks) return
+    processTasks(tasksClosedData.tasks).then((tasksWithClickupData) =>
+      setTasksClosed(tasksWithClickupData)
+    )
+  }, [tasksClosedData])
 
   const onCreated = (taskId: number) => {
     setShowCreateModal(false)
@@ -177,6 +233,19 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
   const onShare = (taskId: number) => {
     setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
   }
+
+  const taskMap = {
+    [TaskFilters.WITHOUT_REQUEST]: tasksWithoutRequest,
+    [TaskFilters.WITH_REQUEST]: tasksWithRequest,
+    [TaskFilters.IN_PROGRESS]: tasksInProgress,
+    [TaskFilters.CLOSED]: tasksClosed
+  }
+
+  const showEmptyView =
+    !tasksWithoutRequest?.length &&
+    !tasksWithRequest.length &&
+    !tasksInProgress.length &&
+    !tasksClosed.length
 
   return (
     <div className='mt-6'>
@@ -191,24 +260,16 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
         <ClickupImport
           organization={organization}
           clickupCode={clickupCode}
-          clickupToken={clickupToken}
           close={() => setShowClickupModal(false)}
           onCreated={onCreated}
         />
-      )}
-      {selectedTask && (
-        <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
       )}
       {shareLink && (
         <ShareTask url={shareLink} onClose={() => setShareLink(undefined)} />
       )}
 
-      {!tasks?.length ? (
-        <EmptyTaskView
-          organization={organization}
-          onCode={onCode}
-          clickupToken={clickupToken}
-        />
+      {showEmptyView ? (
+        <EmptyTaskView organization={organization} onCode={onCode} />
       ) : (
         <div className='flex flex-col md:flex-row gap-4 md:items-center mb-6'>
           <p className='text-4xl font-bold mr-7'>{tr('tasks')}</p>
@@ -248,15 +309,23 @@ const TaskView = ({ tasks: taskList, organization }: TaskViewProps) => {
           currentTab={currentTab}
           onChange={(val: number) => {
             setCurrentTab(val)
-            setTasks([])
           }}
-          tabCount={tasks?.length}
+          taskCounts={{
+            [TaskFilters.WITHOUT_REQUEST]: tasksWithoutRequest?.length || 0,
+            [TaskFilters.WITH_REQUEST]: tasksWithRequest?.length || 0,
+            [TaskFilters.IN_PROGRESS]: tasksInProgress?.length || 0,
+            [TaskFilters.CLOSED]: tasksClosed?.length || 0
+          }}
         />
       </div>
       <ul>
-        {tasks?.map((t) => (
+        {taskMap[currentTab]?.map((t) => (
           <li key={t.id} className='mb-4'>
-            <TaskCard task={t} onClick={(id) => setSelected(id)} onShare={onShare} />
+            <TaskCard
+              task={t}
+              onClick={(id) => setSelected(id)}
+              onShare={onShare}
+            />
           </li>
         ))}
       </ul>

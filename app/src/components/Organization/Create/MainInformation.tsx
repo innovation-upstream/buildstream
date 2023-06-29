@@ -7,10 +7,10 @@ const MainInformation = () => {
   return (
     <div className='mt-3.5'>
       <div className='text-center w-fit'>
-        <label className='relative cursor-pointer flex flex-col items-center justify-center block rounded-full w-36 h-36 bg-[#F8F9FA]'>
+        <label className='relative cursor-not-allowed flex flex-col items-center justify-center block rounded-full w-36 h-36 bg-[#F8F9FA]'>
           <Camera />
           <span className='mt-3 text-sm text-secondary'>{t('upload_logo')}</span>
-          <input type='file' className='absolute w-0 h-0 invisible' />
+          <input disabled type='file' className='absolute w-0 h-0 invisible' />
         </label>
       </div>
       <label htmlFor='name' className='block mt-6 mb-2 text-sm'>
@@ -30,22 +30,10 @@ const MainInformation = () => {
       <textarea
         id='description'
         name='description'
-        required
         placeholder={t('info_about_self')}
         rows={5}
         className='input-base'
       />
-      <label htmlFor='name' className='block mt-6 mb-2 text-sm'>
-        {t('what_org_do')}
-      </label>
-      <select
-        id='what_we_do'
-        name='what_we_do'
-        placeholder={t('organization')}
-        className='input-base'
-      >
-        <option value='saas'>SaaS</option>
-      </select>
     </div>
   )
 }
