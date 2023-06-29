@@ -1,9 +1,9 @@
-import { Task, TaskStatus } from 'hooks/task/types'
 import TaskCard from 'components/Task/TaskCard'
+import { Task, TaskStatus } from 'hooks/task/types'
 import { useState } from 'react'
-import TabFilter from './TabFilter'
 import { useTranslation } from 'react-i18next'
 import TaskDetail from '../CreateTask/TaskDetail'
+import TabFilter from './TabFilter'
 
 interface TaskViewProps {
   tasks?: Task[]
@@ -39,7 +39,6 @@ const TaskOverview = ({ tasks: taskList }: TaskViewProps) => {
           .map((t, index) => (
             <li key={t.id} className=''>
               <TaskCard
-                showDescription
                 task={t}
                 onClick={() => setSelected(t.id)}
               />
