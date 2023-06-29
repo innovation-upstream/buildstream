@@ -29,6 +29,7 @@ interface Props {
   }
   isApprover?: boolean
   onAssign?: () => void
+  onDeny?: () => void
 }
 
 const AssigneeCard: React.FC<Props> = ({
@@ -36,7 +37,8 @@ const AssigneeCard: React.FC<Props> = ({
   isAssigned,
   onAssign,
   assignee,
-  isApprover
+  isApprover,
+  onDeny
 }) => {
   const [processing, setProcessing] = useState(false)
   const [processingDeny, setProcessingDeny] = useState(false)
@@ -152,7 +154,7 @@ const AssigneeCard: React.FC<Props> = ({
                 icon: '👍'
               }
             )
-            onAssign?.()
+            onDeny?.()
           }}
           onError={() =>
             toast.error(

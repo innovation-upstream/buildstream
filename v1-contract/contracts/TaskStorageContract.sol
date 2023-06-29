@@ -293,7 +293,8 @@ contract TaskStorageContract {
         address assignee
     ) external onlyTaskContract taskExists(taskId) {
         if (assignmentRequests[taskId][assignee])
-            return taskMetadata[taskId].makeAssignmentRequest(assignee);
+            return
+        taskMetadata[taskId].makeAssignmentRequest(assignee);
         emit TaskAssignmentRequested(assignee, taskId);
     }
 

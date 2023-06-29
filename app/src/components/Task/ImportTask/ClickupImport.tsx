@@ -135,7 +135,7 @@ const ClickupImport: React.FC<TImport> = ({
   }
 
   const getSpaces = async () => {
-    let token: any = clickupToken
+    let token: any = getCookie(TOKEN_KEY)
 
     if (!token) {
       token = await fetchToken(clickupCode, organization.id.toString())

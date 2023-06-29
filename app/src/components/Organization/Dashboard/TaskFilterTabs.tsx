@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { TaskFilters } from './types'
 
@@ -24,14 +23,19 @@ const filterTabs = [
 interface TFilter {
   currentTab: TaskFilters
   onChange: (val: TaskFilters) => void
-  tabCount?: number
+  taskCounts?: {
+    [key in TaskFilters]: number
+  }
 }
 
-const TaskFilterTabs = ({ currentTab, onChange, tabCount = 0 }: TFilter) => {
+const TaskFilterTabs = ({ currentTab, onChange, taskCounts }: TFilter) => {
   const { t } = useTranslation('tasks')
   return (
     <div className='mb-3 flex overflow-x-scroll snap-x xl:grid-rows scrollbar-hide'>
       {filterTabs.map((tabs) => {
+        const taskCount = taskCounts?.[tabs.value]
+        const isActive = currentTab === tabs.value
+
         return (
           <span
             key={tabs.value}
@@ -51,14 +55,10 @@ const TaskFilterTabs = ({ currentTab, onChange, tabCount = 0 }: TFilter) => {
               className='cursor-pointer w-[max-content] text-center px-3 py-2 peer-checked:font-bold peer-checked:text-gray-900 peer-checked:font-semibold border-b-[1px] border-gray peer-checked:border-blue-500'
             >
               <div className='flex gap-3 items-center'>
-                <span className='block text-xl'>{t(tabs.label)}</span>
-                {currentTab === tabs.value && (
-                  <div>
-                    <span className='block px-2 rounded-sm bg-blue-700 text-white'>
-                      {tabCount}
-                    </span>
-                  </div>
-                )}
+                <span className='block text-lg'>{t(tabs.label)}</span>
+                <span className={`${isActive ? 'px-2 bg-blue-700' : 'px-1 py-0 text-xs bg-blue-200' } block rounded-sm text-white`}>
+                  {taskCount}
+                </span>
               </div>
             </label>
           </span>

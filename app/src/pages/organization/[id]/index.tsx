@@ -16,6 +16,7 @@ import {
 } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetOrganizationQuery, usePolling } from 'hooks'
+import { TaskStatus } from 'hooks/task/types'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import type {
   GetServerSideProps,
@@ -25,12 +26,36 @@ import type {
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import Bell from 'SVGs/Bell'
 import { Converter } from 'utils/converter'
 
 const ACCOUNT = 'account'
+
+
+const getTasksWithClickupData = async (tasks: Task[]) => {
+  const tasksWithClickupData = await Promise.all(
+    tasks.map(async (t) => {
+      if (!t.externalId) {
+        return t
+      }
+      const clickupTask = await fetchClickupTask(
+        t.externalId as string,
+        t.orgId.id
+      )
+      return {
+        ...t,
+        title: clickupTask?.name || t.title,
+        description: clickupTask?.description || t.description
+      }
+    })
+  )
+
+  return tasksWithClickupData
+}
+
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
@@ -72,15 +97,49 @@ export const getServerSideProps: GetServerSideProps =
         actions = (data?.actions as any) || []
       }
 
-      const { data: tasks } = await client.query({
+      const {
+        data: tasksWithoutRequestData
+      } = await client.query({
         query: GetTasksDocument,
         variables: {
-          orderBy: 'taskId',
-          orderDirection: 'desc',
           where: {
             orgId: orgId,
-            status_lte: 1,
+            status_lte: TaskStatus.OPEN,
             assignmentRequest: null
+          }
+        }
+      })
+      const {
+        data: tasksWithRequestData
+      } = await client.query({
+        query: GetTasksDocument,
+        variables: {
+          where: {
+            orgId: orgId,
+            status_lte: TaskStatus.OPEN,
+            assignmentRequest_not: null
+          }
+        }
+      })
+      const {
+        data: tasksInProgressData
+      } = await client.query({
+        query: GetTasksDocument,
+        variables: {
+          where: {
+            orgId: orgId,
+            status: TaskStatus.ASSIGNED
+          }
+        }
+      })
+      const {
+        data: tasksClosedData
+      } = await client.query({
+        query: GetTasksDocument,
+        variables: {
+          where: {
+            orgId: orgId,
+            status: TaskStatus.CLOSED
           }
         }
       })
@@ -97,29 +156,15 @@ export const getServerSideProps: GetServerSideProps =
         }
       })
 
-      const tasksWithClickupData = await Promise.all(
-        tasks.tasks.map(async (t) => {
-          if (!t.externalId) {
-            return t
-          }
-          const clickupTask = await fetchClickupTask(
-            t.externalId as string,
-            orgId
-          )
-          return {
-            ...t,
-            title: clickupTask?.name || t.title,
-            description: clickupTask?.description || t.description
-          }
-        })
-      )
-
       return {
         props: {
           org: organizationResponse?.organization,
-          taskList: tasksWithClickupData,
           snapshots: snapshots.taskSnapshots,
           actions,
+          tasksWithoutRequest: await getTasksWithClickupData(tasksWithoutRequestData?.tasks as any || []),
+          tasksWithRequest: await getTasksWithClickupData(tasksWithRequestData?.tasks as any || []),
+          tasksInProgress: await getTasksWithClickupData(tasksInProgressData?.tasks as any || []),
+          tasksClosed: await getTasksWithClickupData(tasksClosedData?.tasks as any || []),
           ...(await serverSideTranslations(locale, [
             'common',
             'organization',
@@ -133,17 +178,24 @@ export const getServerSideProps: GetServerSideProps =
 
 interface PageProps {
   org: Organization
-  taskList: Task[]
   snapshots: TaskSnapshot[]
   actions: Action[]
+  tasksWithoutRequest: Task[]
+  tasksWithRequest: Task[]
+  tasksInProgress: Task[]
+  tasksClosed: Task[]
 }
 
 const OrganizationPage: NextPage<PageProps> = ({
   org,
-  taskList,
   snapshots,
-  actions
+  actions,
+  tasksWithoutRequest,
+  tasksWithRequest,
+  tasksInProgress,
+  tasksClosed
 }) => {
+  const { asPath, replace, query } = useRouter()
   const [organization, setOrganization] = useState(
     Converter.OrganizationFromQuery(org)
   )
@@ -159,6 +211,11 @@ const OrganizationPage: NextPage<PageProps> = ({
       setOrganization(Converter.OrganizationFromQuery(data.organization))
     }
   }, [data])
+
+  useEffect(() => {
+    if (query?.create)
+      window.history.replaceState(null, '', window.location.pathname);
+  }, [asPath, query])
 
   return (
     <div className='layout-container pb-20'>
@@ -200,8 +257,12 @@ const OrganizationPage: NextPage<PageProps> = ({
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6 order-1 2xl:order-2'>
           <TaskView
-            tasks={taskList.map((t) => Converter.TaskFromQuery(t))}
+            tasksWithoutRequest={tasksWithoutRequest.map((t) => Converter.TaskFromQuery(t))}
+            tasksWithRequest={tasksWithRequest.map((t) => Converter.TaskFromQuery(t))}
+            tasksInProgress={tasksInProgress.map((t) => Converter.TaskFromQuery(t))}
+            tasksClosed={tasksClosed.map((t) => Converter.TaskFromQuery(t))}
             organization={organization}
+            showCreateTask={query?.create === 'true'}
           />
         </div>
         <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>

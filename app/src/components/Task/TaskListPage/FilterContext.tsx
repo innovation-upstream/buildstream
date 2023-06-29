@@ -1,6 +1,6 @@
 import { GetTasksQueryVariables } from 'graphclient'
 import { ComplexityScore, TaskStatus } from 'hooks/task/types'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { ReactNode, createContext, useContext, useState } from 'react'
 
 interface IFilterContext {
   text?: string
@@ -68,7 +68,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
         where: {
           raw_contains_nocase: text,
           complexityScore: complexity as any,
-          status_lt: TaskStatus.CLOSED
+          status: TaskStatus.OPEN
         }
       }
     ]
@@ -83,7 +83,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
               raw_contains_nocase: text,
               complexityScore: complexity,
               taskTags_contains: [tag.toString() as any],
-              status_lt: TaskStatus.CLOSED
+              status: TaskStatus.OPEN
             }
           } as GetTasksQueryVariables)
       )
@@ -112,7 +112,7 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
             where: {
               raw_contains_nocase: t,
               complexityScore: complexity,
-              status_lt: TaskStatus.CLOSED
+              status: TaskStatus.OPEN
             }
           } as GetTasksQueryVariables)
       )

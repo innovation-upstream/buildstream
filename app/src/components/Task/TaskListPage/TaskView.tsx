@@ -1,13 +1,12 @@
-import { Task } from 'hooks/task/types'
 import TaskCard from 'components/Task/TaskCard'
-import { useEffect, useState } from 'react'
 import { useGetTasksQuery } from 'hooks'
+import { Task } from 'hooks/task/types'
+import { fetchClickupTask } from 'integrations/clickup/api'
+import { useEffect, useState } from 'react'
 import { Converter } from 'utils/converter'
+import ShareTask from '../ShareTask'
 import { useTaskFilter } from './FilterContext'
 import Search from './Search'
-import TaskDetail from '../CreateTask/TaskDetail'
-import { fetchClickupTask } from 'integrations/clickup/api'
-import ShareTask from '../ShareTask'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -19,7 +18,6 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
   const [tasks, setTasks] = useState(taskList || [])
   const { refetch } = useGetTasksQuery()
   const { filterQueryVariables } = useTaskFilter()
-  const [selected, setSelected] = useState<number>()
   const [shareLink, setShareLink] = useState<string>()
 
   const filterTasks = async () => {
@@ -84,32 +82,19 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
     ])
   }
 
-  const selectedTask = tasks.find((t) => t.id === selected)
-
   const onShare = (taskId: number) => {
     setShareLink(`${isBrowser ? window.location.origin : ''}/task/${taskId}`)
   }
 
   useEffect(() => {
     filterTasks()
-
-    const body = document.body
-    if (selected) {
-      body.style.overflow = 'hidden'
-    }
-    return () => {
-      body.style.overflow = 'auto'
-    }
-  }, [filterQueryVariables, selected])
+  }, [filterQueryVariables])
 
   return (
     <div>
       <div className='mb-5 hidden lg:block'>
         <Search />
       </div>
-      {selectedTask && (
-        <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
-      )}
       {shareLink && (
         <ShareTask url={shareLink} onClose={() => setShareLink(undefined)} />
       )}
@@ -117,9 +102,7 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
         {tasks?.map((t) => (
           <li key={t.id} className='mb-4'>
             <TaskCard
-              showDescription
               task={t}
-              onClick={(id) => setSelected(id)}
               onShare={onShare}
             />
           </li>

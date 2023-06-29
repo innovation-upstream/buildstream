@@ -10,10 +10,9 @@ import RequestAssignment from '../RequestAssignment/RequestAssignment'
 
 interface IProps {
   task: Task
-  onShare?: (id: number) => void
 }
 
-const TaskActions: React.FC<IProps> = ({ task, onShare }) => {
+const TaskActions: React.FC<IProps> = ({ task }) => {
   const [processing, setProcessing] = useState(false)
   const [processArchive, setProcessArchive] = useState(false)
   const [requestAssignmentProcessing, setRequestAssignmentProcessing] =
@@ -64,12 +63,17 @@ const TaskActions: React.FC<IProps> = ({ task, onShare }) => {
     }
   }
 
-  const handleShare = (e: any) => {
-    e.stopPropagation()
-    onShare?.(task.id)
-  }
-
   const isApprover = account && task.organization.approvers.includes(account)
+
+  const showPublishButton = task.status === TaskStatus.PROPOSED && isApprover
+  const showRequestAssignmentButton =
+    task.status === TaskStatus.OPEN &&
+    account &&
+    !task.assignmentRequests.includes(account)
+  const showArchiveButton = task?.status === TaskStatus.OPEN && isApprover
+
+  if (!showPublishButton && !showRequestAssignmentButton && !showArchiveButton)
+    return null
 
   return (
     <div
@@ -92,16 +96,7 @@ const TaskActions: React.FC<IProps> = ({ task, onShare }) => {
       )}
 
       <div className='flex flex-col md:flex-row flex-col-reverse items-center gap-4 flex-0'>
-        {onShare && (
-          <button
-            className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500'
-            disabled={processing}
-            onClick={handleShare}
-          >
-            {t('share')}
-          </button>
-        )}
-        {!processing && task.status === TaskStatus.PROPOSED && isApprover && (
+        {!processing && showPublishButton && (
           <button
             className='btn-primary min-w-full md:min-w-[30%]'
             disabled={processing}
@@ -110,24 +105,21 @@ const TaskActions: React.FC<IProps> = ({ task, onShare }) => {
             {t('open_task')}
           </button>
         )}
-        {!processing &&
-          task.status === TaskStatus.OPEN &&
-          account &&
-          !task.assignmentRequests.includes(account) && (
-            <button
-              className='btn-primary min-w-full md:min-w-[30%]'
-              disabled={processing}
-              onClick={() => {
-                if (!account)
-                  toast.error(t('wallet_not_connected'), { icon: '⚠️' })
-                else setRequestAssignmentProcessing(true)
-              }}
-            >
-              {t('request_assignment')}
-            </button>
-          )}
+        {!processing && showRequestAssignmentButton && (
+          <button
+            className='btn-primary min-w-full md:min-w-[30%]'
+            disabled={processing}
+            onClick={() => {
+              if (!account)
+                toast.error(t('wallet_not_connected'), { icon: '⚠️' })
+              else setRequestAssignmentProcessing(true)
+            }}
+          >
+            {t('request_assignment')}
+          </button>
+        )}
         {processing && <Spinner width={30} />}
-        {task?.status === TaskStatus.OPEN && isApprover && (
+        {showArchiveButton && (
           <button
             className='bg-rose-400 hover:bg-rose-300 text-white flex justify-center min-w-full md:min-w-[30%] py-3 px-4 font-semibold rounded-lg'
             onClick={archiveCurrentTask}
