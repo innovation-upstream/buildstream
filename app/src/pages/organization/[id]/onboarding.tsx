@@ -2,6 +2,7 @@ import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import client from 'graphclient/client'
 import { useWeb3 } from 'hooks'
+import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import {
   addOrgOnboardingInfo,
   getOrgOnboardingInfo
@@ -60,6 +61,9 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
   const { t } = useTranslation('organization')
   const [showForm, setShowForm] = useState(false)
   const [tempInstructions, setTempInstructions] = useState('')
+  const { callAction, component } = useServerConfirmation({
+    onError: () => setProcessing(false)
+  })
 
   const getOnboardingInfo = async () => {
     const getInfo = await getOrgOnboardingInfo(organization.id)
@@ -71,15 +75,17 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
     setProcessing(true)
     setEditInfo(!editInfo)
 
-    try {
-      await addOrgOnboardingInfo(tempInstructions, organization.id)
-      setOrgInstruction(tempInstructions)
-      setProcessing(false)
-      setShowForm(false)
-    } catch (err) {
-      setProcessing(false)
-      console.error(err)
-    }
+    callAction(async () => {
+      try {
+        await addOrgOnboardingInfo(tempInstructions, organization.id)
+        setOrgInstruction(tempInstructions)
+        setProcessing(false)
+        setShowForm(false)
+      } catch (err) {
+        setProcessing(false)
+        console.error(err)
+      }
+    })
   }
 
   const onEdit = () => {
@@ -103,6 +109,7 @@ const OnboardingInfo: NextPage<PageProps> = ({ org }) => {
         <meta name='description' content='' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
+      {component}
       <div className='layout-container pb-20'>
         <div className='py-5 md:py-12 flex justify-center'>
           {!showForm && (

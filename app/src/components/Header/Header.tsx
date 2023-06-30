@@ -4,7 +4,6 @@ import WalletModal from 'components/Modals/WalletModal'
 import injected from 'config/Walletconnectors'
 import { getCookie, setCookies } from 'cookies-next'
 import { useWeb3 } from 'hooks'
-import useAuth from 'hooks/auth/useAuth'
 import { Organization } from 'hooks/organization/types'
 import { getUserOrganizations } from 'hooks/userstat/functions'
 import Link from 'next/link'
@@ -29,7 +28,6 @@ const Header = () => {
   const { pathname } = useRouter()
   const navMenu = activeMenuItems(pathname)
   const [userOrganizations, setUserOrganizations] = useState<Organization[]>([])
-  useAuth()
 
   const fetchUserOrganizations = async () => {
     const orgs = await getUserOrganizations(address as string)

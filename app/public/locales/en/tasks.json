@@ -148,5 +148,7 @@
   "you_are_assigned_body": "Use the private task materials to complete the task according to the task description.  If you have any questions, you can get in touch with the task author using the communication channel specified by them in the private task materials",
   "you_are_denied": "Sorry, You were denied this task, see reason below",
   "task_is_assigned": "{{assignee}} is assigned to this task!",
-  "task_is_assigned_body": "The task is due in {{days}} days"
+  "task_is_assigned_body": "The task is due in {{days}} days",
+  "server_auth_modal_title": "Server Authentication",
+  "server_auth_modal_body": "You need to authenticate with the server to perform this action"
 }

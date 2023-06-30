@@ -36,6 +36,10 @@ module.exports = {
       }
     }
   },
+  safelist: [
+    'z-[61]',
+    'z-[62]'
+  ],
   plugins: [
     require('tailwind-scrollbar-hide')
   ]
