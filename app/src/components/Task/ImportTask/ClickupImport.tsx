@@ -15,13 +15,13 @@ import {
   ComplexityScoreMap,
   ComplexityScore as ComplexityScores,
   TaskReputation,
-  TaskReputationMap,
+  TaskReputationMap
 } from 'hooks/task/types'
 import {
   TOKEN_KEY,
   fetchSpaces,
   fetchTasks,
-  fetchToken,
+  fetchToken
 } from 'integrations/clickup/api'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
@@ -40,10 +40,10 @@ const initialTaskData = {
   taskTags: [] as number[],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  dueDate: moment().add(1, 'days').format('YYYY-MM-DD'),
+  dueDate: moment().add(1, 'weeks').format('YYYY-MM-DD'),
   disableSelfAssign: false,
   instructions: '',
-  publish: false,
+  publish: false
 }
 
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
@@ -68,7 +68,7 @@ const ClickupImport: React.FC<TImport> = ({
   clickupCode,
   clickupToken,
   close,
-  onCreated,
+  onCreated
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const [spaces, setSpaces] = useState<any[]>([])
@@ -97,7 +97,7 @@ const ClickupImport: React.FC<TImport> = ({
     if (targetName === 'disableSelfAssign')
       return setTaskData((prev) => ({
         ...prev,
-        [targetName]: !prev.disableSelfAssign,
+        [targetName]: !prev.disableSelfAssign
       }))
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
@@ -144,7 +144,7 @@ const ClickupImport: React.FC<TImport> = ({
     const spaces: ISpaces[] = await fetchSpaces(token)
     const spaceSuggestion = spaces?.map((space: any) => ({
       id: space.id,
-      value: space.name,
+      value: space.name
     }))
     setSpaces(spaceSuggestion)
   }
@@ -157,7 +157,7 @@ const ClickupImport: React.FC<TImport> = ({
     let spaceTasks = tasks?.map((task: any) => ({
       id: task.id,
       value: task.name,
-      description: task.description,
+      description: task.description
     }))
     setTasks(spaceTasks)
   }
@@ -168,7 +168,7 @@ const ClickupImport: React.FC<TImport> = ({
       ...prev,
       title: task.value,
       id: task.id,
-      description: task.description ?? '',
+      description: task.description ?? ''
     }))
   }
 
@@ -252,10 +252,8 @@ const ClickupImport: React.FC<TImport> = ({
             className=' h-full w-full flex flex-col'
           >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
-                <span className='block text-xl font-medium'>
-                  {t('task_description')}
-                </span>
+              <section className='pt-4 pb-5'>
+                <span className='block pb-2 border-b text-xl font-medium'>{t('basics')}</span>
                 <div className='mt-4'>
                   <label
                     htmlFor='spaces'
@@ -311,15 +309,9 @@ const ClickupImport: React.FC<TImport> = ({
                     }}
                   />
                 </div>
-              </section>
-              <section className='border-b py-4'>
-                <span className='block text-xl font-medium'>
-                  {t('general_task_settings')}
-                </span>
-
                 <div className='mt-4'>
                   <label
-                    htmlFor='duration'
+                    htmlFor='dueDate'
                     className='flex gap-2 items-center cursor-pointer max-w-xs'
                     data-tooltip-id='durationTip'
                     data-tooltip-content={t('expected_duration')}
@@ -334,6 +326,7 @@ const ClickupImport: React.FC<TImport> = ({
                   </label>
                   <div className='flex gap-x-3 gap-y-4 py-4 flex-wrap'>
                     <input
+                      id='dueDate'
                       type='date'
                       name='dueDate'
                       min={moment().add(1, 'days').format('YYYY-MM-DD')}
@@ -341,13 +334,18 @@ const ClickupImport: React.FC<TImport> = ({
                       onChange={(ev: any) =>
                         setTaskData((prev) => ({
                           ...prev,
-                          dueDate: ev.target.value,
+                          dueDate: ev.target.value
                         }))
                       }
                       className='overflow-hidden focus:outline-none w-full lg:w-1/2 border rounded-md p-2 text-black'
                     />
                   </div>
                 </div>
+              </section>
+              <section className='py-4'>
+                <span className='block pb-2 border-b text-xl font-medium'>
+                  {t('automate_contributor_selection')}
+                </span>
                 <div className='mt-4'>
                   <div className='relative mb-3'>
                     <label
@@ -433,8 +431,8 @@ const ClickupImport: React.FC<TImport> = ({
                   )}
                 </div>
               </section>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
-                <span className='block text-xl font-medium'>
+              <section className='py-4'>
+                <span className='block pb-2 border-b text-xl font-medium'>
                   {t('private_task_materials')}
                 </span>
                 <p className='block text-sm font-normal text-gray-600 mt-4'>
@@ -445,7 +443,7 @@ const ClickupImport: React.FC<TImport> = ({
                     name='instructions'
                     className='!h-[300px]'
                     value={{
-                      text: taskData.instructions || instructionsTemplate,
+                      text: taskData.instructions || instructionsTemplate
                     }}
                     onChange={(v) => {
                       let text = v.text
@@ -456,7 +454,7 @@ const ClickupImport: React.FC<TImport> = ({
                 </div>
               </section>
               <section className='py-4'>
-                <span className='block text-xl font-medium'>
+                <span className='block pb-2 border-b text-xl font-medium'>
                   {t('payment')}
                 </span>
                 <div className='mt-4'>

@@ -13,7 +13,7 @@ import {
   ComplexityScoreMap,
   ComplexityScore as ComplexityScores,
   TaskReputation,
-  TaskReputationMap,
+  TaskReputationMap
 } from 'hooks/task/types'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
@@ -32,10 +32,10 @@ const initialTaskData = {
   taskTags: [],
   complexityScore: 0,
   reputationLevel: TaskReputation.ENTRY,
-  dueDate: moment().add(1, 'days').format('YYYY-MM-DD'),
+  dueDate: moment().add(1, 'weeks').format('YYYY-MM-DD'),
   disableSelfAssign: false,
   instructions: '',
-  publish: false,
+  publish: false
 }
 type TaskTypes = typeof initialTaskData & { [key: string]: any }
 
@@ -58,7 +58,7 @@ const instructionsTemplate = `
 const CreateTask: React.FC<ICreateTask> = ({
   organization,
   close,
-  onCreated,
+  onCreated
 }) => {
   const [taskData, setTaskData] = useState<TaskTypes>(initialTaskData)
   const { account, library } = useWeb3()
@@ -85,7 +85,7 @@ const CreateTask: React.FC<ICreateTask> = ({
     if (targetName === 'disableSelfAssign')
       return setTaskData((prev) => ({
         ...prev,
-        [targetName]: !prev.disableSelfAssign,
+        [targetName]: !prev.disableSelfAssign
       }))
 
     setTaskData((prev) => ({ ...prev, [targetName]: targetValue }))
@@ -201,10 +201,8 @@ const CreateTask: React.FC<ICreateTask> = ({
             className=' h-full w-full flex flex-col'
           >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
-                <span className='block text-xl font-medium'>
-                  {t('task_description')}
-                </span>
+              <section className='pt-4 pb-5'>
+                <span className='block pb-2 border-b text-xl font-medium'>{t('basics')}</span>
                 <div className='mt-4'>
                   <label
                     htmlFor='title'
@@ -248,15 +246,9 @@ const CreateTask: React.FC<ICreateTask> = ({
                     }}
                   />
                 </div>
-              </section>
-              <section className='border-b py-4'>
-                <span className='block text-xl font-medium'>
-                  {t('general_task_settings')}
-                </span>
-
                 <div className='mt-4'>
                   <label
-                    htmlFor='duration'
+                    htmlFor='dueDate'
                     className='flex gap-2 items-center cursor-pointer max-w-xs'
                     data-tooltip-id='durationTip'
                     data-tooltip-content={t('expected_duration')}
@@ -271,6 +263,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                   </label>
                   <div className='flex flex-col gap-2 text-gray-400'>
                     <input
+                      id='dueDate'
                       type='date'
                       name='dueDate'
                       min={moment().add(1, 'days').format('YYYY-MM-DD')}
@@ -278,7 +271,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                       onChange={(ev: any) =>
                         setTaskData((prev) => ({
                           ...prev,
-                          dueDate: ev.target.value,
+                          dueDate: ev.target.value
                         }))
                       }
                       required
@@ -286,6 +279,11 @@ const CreateTask: React.FC<ICreateTask> = ({
                     />
                   </div>
                 </div>
+              </section>
+              <section className='py-5'>
+                <span className='block pb-2 border-b text-xl font-medium'>
+                  {t('automate_contributor_selection')}
+                </span>
                 <div className='mt-4'>
                   <div className='relative mb-3'>
                     <label
@@ -371,8 +369,8 @@ const CreateTask: React.FC<ICreateTask> = ({
                   )}
                 </div>
               </section>
-              <section className='py-4 border border-t-0 border-r-0 border-l-0'>
-                <span className='block text-xl font-medium'>
+              <section className='py-5'>
+                <span className='block pb-2 border-b text-xl font-medium'>
                   {t('private_task_materials')}
                 </span>
                 <p className='block text-sm font-normal text-gray-600 mt-4'>
@@ -383,7 +381,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                     name='instructions'
                     className='!h-[300px]'
                     value={{
-                      text: taskData.instructions || instructionsTemplate,
+                      text: taskData.instructions || instructionsTemplate
                     }}
                     onChange={(v) => {
                       let text = v.text
@@ -393,8 +391,8 @@ const CreateTask: React.FC<ICreateTask> = ({
                   />
                 </div>
               </section>
-              <section className='py-4'>
-                <span className='block text-xl font-medium'>
+              <section className='py-5'>
+                <span className='block pb-2 border-b text-xl font-medium'>
                   {t('payment')}
                 </span>
                 <div className='mt-4'>
