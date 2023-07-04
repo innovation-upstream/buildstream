@@ -43,6 +43,15 @@ const MobileNav = ({ close, connectWallet, organizations }: Props) => {
       </section>
       <section className='px-3'>
         <ul>
+          {organizations?.map((org) => (
+            <li
+              key={org.id}
+              className='py-4 border border-t-0 border-r-0 border-l-0 text-[#686C6F] text-base font-semibold'
+              onClick={close}
+            >
+              <Link href={`/organization/${org.id}`}>{org.name}</Link>
+            </li>
+          ))}
           {navMenu.map((menu) => (
             <Link href={menu.url} key={menu.label}>
               <li
@@ -55,26 +64,10 @@ const MobileNav = ({ close, connectWallet, organizations }: Props) => {
           ))}
         </ul>
       </section>
-      {!!organizations.length && (
-        <section className='mt-6 px-3 text-primary'>
-          <span className='font-bold text-lg'>Organizations</span>
-          <ul>
-            {organizations.map((org) => (
-              <li
-                key={org.id}
-                className='py-4 border border-t-0 border-r-0 border-l-0 text-[#686C6F] text-base font-semibold'
-                onClick={close}
-              >
-                <Link href={`/organization/${org.id}`}>{org.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
       <section className='mt-6 px-3 text-primary text-blue-700'>
         {address ? (
           <button
-            className='border border-solid border-gray-200 inline-flex items-center justify-between py-3 px-4 gap-x-3 rounded-full text-sm w-full'
+            className='border border-solid border-gray-200 inline-flex items-center justify-between py-3 px-4 gap-x-3 rounded-full text-sm'
             onClick={disconnect}
           >
             <span className='block flex items-center gap-4'>

@@ -105,6 +105,24 @@ const Header = () => {
         </button>
         <div className='ml-24 hidden md:flex flex-grow justify-between items-center'>
           <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
+            {userOrganizations.map((org) => (
+              <li key={org.id} className={`font-semibold hover:text-gray-900`}>
+                <Link href={`/organization/${org.id}`}>
+                  <a
+                    className={`${
+                      pathname.includes('/organization') &&
+                      pathname.endsWith(org.id.toString())
+                        ? 'active:text-gray-900'
+                        : 'text-[#686C6F]'
+                    }`}
+                  >
+                    {org.name}
+                  </a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
             {navMenu.map((menu, index) => {
               return (
                 <li key={index} className={`font-semibold hover:text-gray-900`}>
@@ -122,25 +140,6 @@ const Header = () => {
                 </li>
               )
             })}
-          </ul>
-
-          <ul className='flex flex-wrap items-center justify-center gap-x-7 text-base font-medium'>
-            {userOrganizations.map((org) => (
-              <li key={org.id} className={`font-semibold hover:text-gray-900`}>
-                <Link href={`/organization/${org.id}`}>
-                  <a
-                    className={`${
-                      pathname.includes('/organization') &&
-                      pathname.endsWith(org.id.toString())
-                        ? 'active:text-gray-900'
-                        : 'text-[#686C6F]'
-                    }`}
-                  >
-                    {org.name}
-                  </a>
-                </Link>
-              </li>
-            ))}
           </ul>
 
           {address ? (
