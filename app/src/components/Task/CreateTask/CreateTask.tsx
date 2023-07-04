@@ -1,6 +1,7 @@
 import Duration from 'SVGs/Duration'
 import Hint from 'SVGs/Hint'
 import Reputation from 'SVGs/Reputation'
+import Deposit from 'components/Deposit/Deposit'
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Reward from 'components/Reward/Reward'
@@ -68,6 +69,11 @@ const CreateTask: React.FC<ICreateTask> = ({
   const [rewardAmount, setRewardAmount] = useState(BigNumber.from(0))
   const [showRewardSettings, setShowRewardSettings] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
+  const [showDepositModal, setShowDepositModal] = useState(false)
+
+  const treasuryBalance = organization?.treasury?.tokens?.find(
+    (t) => t.token === tokenInfo?.address
+  )
 
   const handleChange = (ev: any) => {
     const targetName = ev.target.name
@@ -105,28 +111,20 @@ const CreateTask: React.FC<ICreateTask> = ({
       return
     }
 
-    const treasuryBalance = organization?.treasury?.tokens?.find(
-      (t) => t.token === tokenInfo?.address
-    )
-    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
-      toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
-      return
-    }
-
     if (taskData.taskTags.length < 1) {
       toast.error(t('task_tags_not_add'), { icon: '⚠️' })
       return
     }
 
     setTaskData((prev) => ({ ...prev, publish }))
+
+    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
+      setShowDepositModal(true)
+      return
+    }
+
     setShowProgressModal(true)
   }
-
-  const isApprover = account && organization?.approvers?.includes(account)
-  const rewardAmountValue = ethers.utils.formatUnits(
-    rewardAmount.toString(),
-    tokenInfo?.decimal
-  )
 
   const getRewardAmount = async (complexity: number, tags: number[]) => {
     let amount = BigNumber.from(0)
@@ -153,11 +151,37 @@ const CreateTask: React.FC<ICreateTask> = ({
     }
   }, [])
 
+  const isApprover = account && organization?.approvers?.includes(account)
+  const rewardAmountValue = ethers.utils.formatUnits(
+    rewardAmount.toString(),
+    tokenInfo?.decimal
+  )
+  const balanceToDeposit = rewardAmount.sub(treasuryBalance?.balance || 0)
+  const balanceToDepositValue = ethers.utils.formatUnits(
+    balanceToDeposit.toString(),
+    tokenInfo?.decimal
+  )
+
   const rewardUsd = parseFloat(rewardAmountValue) * (tokenInfo?.priceUsd || 0)
 
   return (
     <div className='layout-container flex justify-center items-center overflow-x-hidden overflow-hidden fixed inset-0 outline-none focus:outline-none z-50'>
       <Toaster position='bottom-left' />
+      {showDepositModal && (
+        <Deposit
+          organization={organization}
+          onClose={() => setShowDepositModal(false)}
+          amount={parseFloat(balanceToDepositValue)}
+          onSuccess={() => setShowProgressModal(true)}
+          onError={() =>
+            toast.error(t('insufficient_treasury_balance'), { icon: '❌' })
+          }
+          message={t('deposit_instruction', {
+            amount: balanceToDepositValue,
+            token: tokenInfo?.symbol
+          })}
+        />
+      )}
       {showProgressModal && (
         <ProgressModal
           organization={organization}
@@ -202,7 +226,9 @@ const CreateTask: React.FC<ICreateTask> = ({
           >
             <StyledScrollableContainer className='overflow-auto h-full pb-4 px-6 flex-1'>
               <section className='pt-4 pb-5'>
-                <span className='block pb-2 border-b text-xl font-medium'>{t('basics')}</span>
+                <span className='block pb-2 border-b text-xl font-medium'>
+                  {t('basics')}
+                </span>
                 <div className='mt-4'>
                   <label
                     htmlFor='title'
@@ -369,28 +395,30 @@ const CreateTask: React.FC<ICreateTask> = ({
                   )}
                 </div>
               </section>
-              <section className='py-5'>
-                <span className='block pb-2 border-b text-xl font-medium'>
-                  {t('private_task_materials')}
-                </span>
-                <p className='block text-sm font-normal text-gray-600 mt-4'>
-                  {t('contribution_information_hint')}
-                </p>
-                <div className='mt-3'>
-                  <MarkDownEditor
-                    name='instructions'
-                    className='!h-[300px]'
-                    value={{
-                      text: taskData.instructions || instructionsTemplate
-                    }}
-                    onChange={(v) => {
-                      let text = v.text
-                      if (v.text === instructionsTemplate) text = ''
-                      setTaskData((prev) => ({ ...prev, instructions: text }))
-                    }}
-                  />
-                </div>
-              </section>
+              {isApprover && (
+                <section className='py-5'>
+                  <span className='block pb-2 border-b text-xl font-medium'>
+                    {t('private_task_materials')}
+                  </span>
+                  <p className='block text-sm font-normal text-gray-600 mt-4'>
+                    {t('contribution_information_hint')}
+                  </p>
+                  <div className='mt-3'>
+                    <MarkDownEditor
+                      name='instructions'
+                      className='!h-[300px]'
+                      value={{
+                        text: taskData.instructions || instructionsTemplate
+                      }}
+                      onChange={(v) => {
+                        let text = v.text
+                        if (v.text === instructionsTemplate) text = ''
+                        setTaskData((prev) => ({ ...prev, instructions: text }))
+                      }}
+                    />
+                  </div>
+                </section>
+              )}
               <section className='py-5'>
                 <span className='block pb-2 border-b text-xl font-medium'>
                   {t('payment')}

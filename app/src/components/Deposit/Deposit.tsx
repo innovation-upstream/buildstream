@@ -12,16 +12,31 @@ import { useEffect, useState } from 'react'
 interface DepositProps {
   organization: Organization
   onClose: () => void
+  amount?: number
+  tokenAddress?: string
+  message?: string
+  onSuccess?: () => void
+  onError?: (error: string) => void
 }
 
 const AddressZero = ethers.constants.AddressZero
 
-const Deposit = ({ organization, onClose }: DepositProps) => {
+const Deposit = ({
+  organization,
+  onClose,
+  onSuccess,
+  onError,
+  ...props
+}: DepositProps) => {
   const orgHasRewardToken = organization?.rewardToken !== AddressZero
   const [customToken, setCustomToken] = useState(orgHasRewardToken)
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(props.amount || 0)
   const [tokenAddress, setTokenAddress] = useState(
-    orgHasRewardToken ? organization?.rewardToken : AddressZero
+    props.tokenAddress
+      ? props.tokenAddress
+      : orgHasRewardToken
+      ? organization?.rewardToken
+      : AddressZero
   )
 
   let tokenList = organization.treasury?.tokens?.map((t) => t.token) || []
@@ -70,11 +85,14 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
       }
       setAmount(0)
       setCustomToken(false)
+      onSuccess?.()
     } catch (e) {
       console.error(e)
+      onError?.(e as any)
     } finally {
       setIsTransacting(false)
     }
+    onClose()
   }
 
   const handleSelect = (e: any) => {
@@ -104,20 +122,28 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
     BigNumber.from(walletBalance || 0)?.toString()
   )
 
+  const handleCancel = () => {
+    onError?.('Deposit: transaction canceled')
+    onClose()
+  }
+
   return (
     <>
       <div
-        onClick={onClose}
-        className='fixed w-full h-full bg-black/40 inset-0 z-10'
+        onClick={handleCancel}
+        className='fixed w-full h-full bg-black/40 inset-0 z-[51]'
       />
-      <div className='fixed paper px-20 py-8 max-w-[90%] z-20 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
+      <div className='fixed paper px-20 py-8 max-w-[90%] z-[52] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
         <div className='relative'>
-          <button onClick={onClose} className='absolute top-0 -right-12'>
+          <button onClick={handleCancel} className='absolute top-0 -right-12'>
             <CloseIcon />
           </button>
           <p className='text-3xl text-center font-semibold'>
             {t('deposit_funds')}
           </p>
+          {props?.message && (
+            <p className='mt-5 font-semibold'>{props?.message}</p>
+          )}
         </div>
 
         <form className='w-full mt-5' onSubmit={handleSubmit}>
@@ -128,6 +154,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             className='input-base mt-2'
             value={customToken ? 'newToken' : tokenAddress}
             onChange={handleSelect}
+            disabled={isTransacting || !!props.amount}
           >
             {tokenList?.map((token) => {
               const tokenSymbol = tokenInfos?.find(
@@ -159,6 +186,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
                   required
                   value={tokenAddress}
                   onChange={(e) => setTokenAddress(e.target.value)}
+                  disabled={isTransacting || !!props.amount}
                   className='input-base w-full'
                 />
               </div>
@@ -182,6 +210,7 @@ const Deposit = ({ organization, onClose }: DepositProps) => {
             step='0.000001'
             required
             value={amount}
+            disabled={isTransacting || !!props.amount}
             onChange={(e) => setAmount(parseFloat(e.target.value))}
             placeholder='0.00'
             className='input-base'
