@@ -68,6 +68,7 @@ const Withdrawal = ({ organization, onClose }: WithdrawalProps) => {
     } finally {
       setIsTransacting(false)
     }
+    onClose()
   }
 
   const handleSelect = (e: any) => {

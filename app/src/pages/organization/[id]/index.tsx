@@ -133,6 +133,17 @@ export const getServerSideProps: GetServerSideProps =
         }
       })
       const {
+        data: tasksInReviewData
+      } = await client.query({
+        query: GetTasksDocument,
+        variables: {
+          where: {
+            orgId: orgId,
+            status: TaskStatus.SUBMITTED
+          }
+        }
+      })
+      const {
         data: tasksClosedData
       } = await client.query({
         query: GetTasksDocument,
@@ -164,6 +175,7 @@ export const getServerSideProps: GetServerSideProps =
           tasksWithoutRequest: await getTasksWithClickupData(tasksWithoutRequestData?.tasks as any || []),
           tasksWithRequest: await getTasksWithClickupData(tasksWithRequestData?.tasks as any || []),
           tasksInProgress: await getTasksWithClickupData(tasksInProgressData?.tasks as any || []),
+          tasksInReview: await getTasksWithClickupData(tasksInReviewData?.tasks as any || []),
           tasksClosed: await getTasksWithClickupData(tasksClosedData?.tasks as any || []),
           ...(await serverSideTranslations(locale, [
             'common',
@@ -183,6 +195,7 @@ interface PageProps {
   tasksWithoutRequest: Task[]
   tasksWithRequest: Task[]
   tasksInProgress: Task[]
+  tasksInReview: Task[]
   tasksClosed: Task[]
 }
 
@@ -193,6 +206,7 @@ const OrganizationPage: NextPage<PageProps> = ({
   tasksWithoutRequest,
   tasksWithRequest,
   tasksInProgress,
+  tasksInReview,
   tasksClosed
 }) => {
   const { asPath, replace, query } = useRouter()
@@ -260,6 +274,7 @@ const OrganizationPage: NextPage<PageProps> = ({
             tasksWithoutRequest={tasksWithoutRequest.map((t) => Converter.TaskFromQuery(t))}
             tasksWithRequest={tasksWithRequest.map((t) => Converter.TaskFromQuery(t))}
             tasksInProgress={tasksInProgress.map((t) => Converter.TaskFromQuery(t))}
+            tasksInReview={tasksInReview.map((t) => Converter.TaskFromQuery(t))}
             tasksClosed={tasksClosed.map((t) => Converter.TaskFromQuery(t))}
             organization={organization}
             showCreateTask={query?.create === 'true'}
