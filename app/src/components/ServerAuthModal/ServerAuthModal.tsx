@@ -8,13 +8,15 @@ interface IServerAuthModal {
   description?: string
   onRequest: () => Promise<void>
   onClose: () => void
+  onError?: () => void
 }
 
 const ServerAuthModal = ({
   title,
   description,
   onRequest,
-  onClose
+  onClose,
+  onError
 }: IServerAuthModal) => {
   const [processing, setProcessing] = useState(false)
   const { t } = useTranslation('tasks')
@@ -28,14 +30,14 @@ const ServerAuthModal = ({
   return (
     <>
       <div
-        onClick={onClose}
+        onClick={onError}
         className='fixed w-full h-full bg-black/40 inset-0 z-[61]'
       />
       <div className='paper fixed p-0 w-[500px] max-w-[90%] z-[62] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
         <div className='relative px-5 md:px-10 py-8'>
           <div className='relative mb-5'>
             <button
-              onClick={onClose}
+              onClick={onError}
               className='absolute -top-4 md:top-0 -right-1 md:-right-5'
             >
               <CloseIcon />
@@ -58,7 +60,7 @@ const ServerAuthModal = ({
               <button
                 className='btn-primary min-w-full md:min-w-fit'
                 disabled={processing}
-                onClick={onClose}
+                onClick={onError}
               >
                 {t('cancel')}
               </button>

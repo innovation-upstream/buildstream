@@ -1,6 +1,7 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
+import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import { Organization } from 'hooks/organization/types'
 import {
   createNewTask,
@@ -21,6 +22,7 @@ interface ProgressModalProps {
 }
 
 enum Progress {
+  SKIPPED,
   PENDING,
   IN_PROGRESS,
   SUCCESS,
@@ -35,12 +37,18 @@ const ProgressModal = ({
   onSuccess
 }: ProgressModalProps) => {
   const { t } = useTranslation('tasks')
-  const { library } = useWeb3()
+  const { account, library } = useWeb3()
+  const isApprover = account && organization?.approvers?.includes(account)
   const [createStatus, setCreateStatus] = useState(Progress.PENDING)
   const [updateInstructionsStatus, setUpdateInstructionStatus] = useState(
-    Progress.PENDING
+    isApprover && taskData.instructions ? Progress.PENDING : Progress.SKIPPED
   )
-  const [publishStatus, setPublishStatus] = useState(Progress.PENDING)
+  const [publishStatus, setPublishStatus] = useState(
+    isApprover && taskData.publish ? Progress.PENDING : Progress.SKIPPED
+  )
+  const { callAction, component } = useServerConfirmation({
+    onError: () => setUpdateInstructionStatus(Progress.FAILED)
+  })
 
   const beginActions = async () => {
     let taskId: number | undefined
@@ -54,13 +62,16 @@ const ProgressModal = ({
 
     if (!taskId) return
 
-    const promises: Promise<any>[] = [updateInstructions(taskId)]
-    if (taskData.publish) promises.push(publishTask(taskId))
-    const result = await Promise.allSettled(promises)
+    if (publishStatus === Progress.PENDING)
+      try {
+        await publishTask(taskId as number)
+      } catch (error) {
+        errors.push(error)
+      }
 
-    result.forEach((res) => {
-      if (res.status === 'rejected') errors.push(res.reason)
-    })
+    if (updateInstructionsStatus === Progress.PENDING)
+      await callAction(async () => await updateInstructions(taskId as number))
+
     if (errors.length) throw errors
   }
 
@@ -118,13 +129,11 @@ const ProgressModal = ({
   }
 
   useEffect(() => {
-    beginActions()
-      .then(() => onSuccess?.())
-      .catch((errors: any[]) => {
-        if (errors.length > 0) {
-          onError?.(errors)
-        }
-      })
+    beginActions().catch((errors: any[]) => {
+      if (errors.length > 0) {
+        onError?.(errors)
+      }
+    })
   }, [])
 
   const getClassName = (status: Progress) => {
@@ -149,7 +158,7 @@ const ProgressModal = ({
       case Progress.FAILED:
         return <ErrorIcon />
       default:
-        return <Spinner />
+        return null
     }
   }
 
@@ -166,15 +175,27 @@ const ProgressModal = ({
   )
     modalTitle = t('publish_task')
 
+  const isSuccessful =
+    createStatus === Progress.SUCCESS &&
+    (updateInstructionsStatus === Progress.SKIPPED ||
+      updateInstructionsStatus === Progress.SUCCESS) &&
+    (publishStatus === Progress.SKIPPED || publishStatus === Progress.SUCCESS)
+
   return (
     <>
-      <div
-        onClick={onClose}
-        className='fixed w-full h-full bg-black/40 inset-0 z-[51]'
-      />
+      {component}
+      <div className='fixed w-full h-full bg-black/40 inset-0 z-[51]' />
       <div className='paper fixed px-10 py-8 w-[400px] max-w-[90%] z-[52] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
         <div className='relative mb-5'>
-          <button onClick={onClose} className='absolute top-0 -right-5'>
+          <button
+            disabled={
+              createStatus === Progress.IN_PROGRESS ||
+              updateInstructionsStatus === Progress.IN_PROGRESS ||
+              publishStatus === Progress.IN_PROGRESS
+            }
+            onClick={isSuccessful ? onSuccess : onClose}
+            className='absolute top-0 -right-5'
+          >
             <CloseIcon />
           </button>
           <p className='text-3xl text-center font-semibold'>{modalTitle}</p>
@@ -197,8 +218,11 @@ const ProgressModal = ({
           <li className='mt-4'>
             <div className='flex gap-x-4 items-center justify-between mb-2'>
               {t('update_task_instructions')}
-              {createStatus === Progress.FAILED ? (
+              {createStatus === Progress.FAILED ||
+              updateInstructionsStatus === Progress.SKIPPED ? (
                 <span className='text-gray-500 text-xs'>{t('skipped')}</span>
+              ) : updateInstructionsStatus === Progress.PENDING ? (
+                <span className='text-gray-500 text-xs'>{t('pending')}</span>
               ) : (
                 getIcon(updateInstructionsStatus)
               )}
@@ -211,25 +235,26 @@ const ProgressModal = ({
               />
             </div>
           </li>
-          {taskData.publish && (
-            <li className='mt-4'>
-              <div className='flex gap-x-4 items-center justify-between mb-2'>
-                {t('publish_task')}
-                {createStatus === Progress.FAILED ? (
-                  <span className='text-gray-500 text-xs'>{t('skipped')}</span>
-                ) : (
-                  getIcon(publishStatus)
-                )}
-              </div>
-              <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
-                <div
-                  className={`bg-blue-600 h-2 rounded-full ${getClassName(
-                    publishStatus
-                  )}`}
-                />
-              </div>
-            </li>
-          )}
+          <li className='mt-4'>
+            <div className='flex gap-x-4 items-center justify-between mb-2'>
+              {t('publish_task')}
+              {createStatus === Progress.FAILED ||
+              publishStatus === Progress.SKIPPED ? (
+                <span className='text-gray-500 text-xs'>{t('skipped')}</span>
+              ) : publishStatus === Progress.PENDING ? (
+                <span className='text-gray-500 text-xs'>{t('pending')}</span>
+              ) : (
+                getIcon(publishStatus)
+              )}
+            </div>
+            <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
+              <div
+                className={`bg-blue-600 h-2 rounded-full ${getClassName(
+                  publishStatus
+                )}`}
+              />
+            </div>
+          </li>
         </ul>
       </div>
     </>

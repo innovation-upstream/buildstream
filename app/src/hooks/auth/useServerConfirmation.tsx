@@ -34,6 +34,7 @@ const useServerConfirmation = ({ title, description, onError }: Props) => {
     } catch (e) {
       onError?.()
     }
+
     reset()
   }
 
@@ -62,7 +63,8 @@ const useServerConfirmation = ({ title, description, onError }: Props) => {
         title={title}
         description={description}
         onRequest={authenticateUser}
-        onClose={() => {
+        onClose={reset}
+        onError={() => {
           reset()
           onError?.()
         }}

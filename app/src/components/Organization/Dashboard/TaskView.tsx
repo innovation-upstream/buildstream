@@ -23,6 +23,7 @@ interface TaskViewProps {
   tasksWithoutRequest: Task[]
   tasksWithRequest: Task[]
   tasksInProgress: Task[]
+  tasksInReview: Task[]
   tasksClosed: Task[]
 }
 
@@ -108,6 +109,7 @@ const TaskView = ({
   const [tasksWithoutRequest, setTasksWithoutRequest] = useState<Task[]>(props.tasksWithoutRequest)
   const [tasksWithRequest, setTasksWithRequest] = useState<Task[]>(props.tasksWithRequest)
   const [tasksInProgress, setTasksInProgress] = useState<Task[]>(props.tasksInProgress)
+  const [tasksInReview, setTasksInReview] = useState<Task[]>(props.tasksInReview)
   const [tasksClosed, setTasksClosed] = useState<Task[]>(props.tasksClosed)
   const clickupToken = getCookie(TOKEN_KEY)
 
@@ -155,6 +157,18 @@ const TaskView = ({
     }
   })
   const {
+    data: tasksInReviewData,
+    startPolling: startTasksInReviewPolling,
+    stopPolling: stopTasksInReviewPolling
+  } = useGetTasksQuery({
+    variables: {
+      where: {
+        orgId: organization.id.toString(),
+        status: TaskStatus.SUBMITTED
+      }
+    }
+  })
+  const {
     data: tasksClosedData,
     startPolling: startTasksClosedPolling,
     stopPolling: stopTasksClosedPolling
@@ -170,6 +184,7 @@ const TaskView = ({
   usePolling(startTasksWithoutRequestPolling, stopTasksWithoutRequestPolling)
   usePolling(startTasksWithRequestPolling, stopTasksWithRequestPolling)
   usePolling(startTasksInProgressPolling, stopTasksInProgressPolling)
+  usePolling(startTasksInReviewPolling, stopTasksInReviewPolling)
   usePolling(startTasksClosedPolling, stopTasksClosedPolling)
 
   const { t: tr } = useTranslation('organization')
@@ -218,6 +233,13 @@ const TaskView = ({
   }, [tasksInProgressData])
 
   useEffect(() => {
+    if (!tasksInReviewData?.tasks) return
+    processTasks(tasksInReviewData.tasks).then((tasksWithClickupData) =>
+      setTasksInReview(tasksWithClickupData)
+    )
+  }, [tasksInReviewData])
+
+  useEffect(() => {
     if (!tasksClosedData?.tasks) return
     processTasks(tasksClosedData.tasks).then((tasksWithClickupData) =>
       setTasksClosed(tasksWithClickupData)
@@ -238,6 +260,7 @@ const TaskView = ({
     [TaskFilters.WITHOUT_REQUEST]: tasksWithoutRequest,
     [TaskFilters.WITH_REQUEST]: tasksWithRequest,
     [TaskFilters.IN_PROGRESS]: tasksInProgress,
+    [TaskFilters.IN_REVIEW]: tasksInReview,
     [TaskFilters.CLOSED]: tasksClosed
   }
 
@@ -245,6 +268,7 @@ const TaskView = ({
     !tasksWithoutRequest?.length &&
     !tasksWithRequest.length &&
     !tasksInProgress.length &&
+    !tasksInReview.length &&
     !tasksClosed.length
 
   return (
@@ -314,6 +338,7 @@ const TaskView = ({
             [TaskFilters.WITHOUT_REQUEST]: tasksWithoutRequest?.length || 0,
             [TaskFilters.WITH_REQUEST]: tasksWithRequest?.length || 0,
             [TaskFilters.IN_PROGRESS]: tasksInProgress?.length || 0,
+            [TaskFilters.IN_REVIEW]: tasksInReview?.length || 0,
             [TaskFilters.CLOSED]: tasksClosed?.length || 0
           }}
         />
