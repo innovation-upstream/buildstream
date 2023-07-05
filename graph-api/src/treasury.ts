@@ -1,12 +1,12 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
-import { Deposit, Notification, TreasuryToken } from '../generated/schema'
+import { BigInt } from '@graphprotocol/graph-ts'
 import {
   TreasuryDeposit as TreasuryDepositEvent,
   TreasuryTokenLocked as TreasuryTokenLockedEvent,
   TreasuryTokenUnlocked as TreasuryTokenUnlockedEvent,
   TreasuryWithdraw as TreasuryWithdrawEvent
 } from '../generated/Treasury/Treasury'
-import { TREASURY, DEPOSIT } from '../helpers/notification'
+import { Deposit, Notification, TreasuryToken } from '../generated/schema'
+import { DEPOSIT, TREASURY } from '../helpers/notification'
 
 export function handleTreasuryDeposit(event: TreasuryDepositEvent): void {
   const orgId = event.params.orgId.toString()
