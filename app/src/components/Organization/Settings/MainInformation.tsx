@@ -1,4 +1,5 @@
 import Camera from 'SVGs/Camera'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import { createUpdateNameOrDescriptionAction } from 'hooks/action/functions'
 import { ActionType } from 'hooks/action/types'
@@ -62,7 +63,11 @@ const MainInformation = ({ organization }: { organization: Organization }) => {
             <span className='mt-3 text-sm text-secondary'>
               {t('upload_logo')}
             </span>
-            <input disabled type='file' className='absolute w-0 h-0 invisible' />
+            <input
+              disabled
+              type='file'
+              className='absolute w-0 h-0 invisible'
+            />
           </label>
         </div>
         <label htmlFor='name' className='block mt-6 mb-2 text-sm'>
@@ -98,11 +103,13 @@ const MainInformation = ({ organization }: { organization: Organization }) => {
       <button
         type='submit'
         disabled={
-          name === organization.name && description === organization.description
+          processing ||
+          (name === organization.name &&
+            description === organization.description)
         }
         className='btn-primary lg:px-20 mt-7'
       >
-        {t('save')}
+        {processing ? <Spinner /> : t('save')}
       </button>
     </form>
   )

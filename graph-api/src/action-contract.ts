@@ -1,11 +1,10 @@
-import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
+import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import {
   ActionConfirmation as ActionConfirmationEvent,
   ActionCreation as ActionCreationEvent,
   ActionExecution as ActionExecutionEvent,
   ActionContract as Contract
 } from '../generated/ActionContract/ActionContract'
-import { Organization as OrganizationContract } from '../generated/Organization/Organization'
 import {
   Action,
   ActionSnapshot,
@@ -14,8 +13,6 @@ import {
   OrganizationSnapshot
 } from '../generated/schema'
 import { ACTION, TREASURY, WITHDRAWAL } from '../helpers/notification'
-
-const organizationAddress = '0x606ab1F995931FDC8780Db9cd3CEeD9db4e7845c'
 
 enum ActionType {
   WITHDRAWAL,
@@ -171,19 +168,44 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
   const organizationEntity = Organization.load(orgId.toString())
   if (!organizationEntity) return
 
-  let contract = OrganizationContract.bind(
-    Address.fromString(organizationAddress)
-  )
-  const org = contract.getOrganization(orgId)
-  const orgConfig = contract.getOrganizationConfig(orgId)
+  if (entity.actionType === ActionType.UPDATE_NAME && entity.data)
+    organizationEntity.name = (entity.data as Bytes).toString()
 
-  organizationEntity.name = org.name
-  organizationEntity.description = org.description
-  organizationEntity.requiredTaskApprovals = orgConfig.requiredTaskApprovals
-  organizationEntity.requiredConfirmations = orgConfig.requiredConfirmations
-  organizationEntity.rewardMultiplier = orgConfig.rewardMultiplier
-  organizationEntity.rewardToken = orgConfig.rewardToken
-  organizationEntity.rewardSlashMultiplier = orgConfig.rewardSlashMultiplier
-  organizationEntity.slashRewardEvery = orgConfig.slashRewardEvery
+  if (entity.actionType === ActionType.UPDATE_DESCRIPTION && entity.data)
+    organizationEntity.description = (entity.data as Bytes).toString()
+
+  if (
+    entity.actionType === ActionType.UPDATE_REQUIRED_TASK_APPROVALS &&
+    entity.value
+  )
+    organizationEntity.requiredTaskApprovals = entity.value as BigInt
+
+  if (
+    entity.actionType === ActionType.UPDATE_REQUIRED_CONFIRMATIONS &&
+    entity.value
+  )
+    organizationEntity.requiredConfirmations = entity.value as BigInt
+
+  if (entity.actionType === ActionType.UPDATE_REWARD_MULTIPLIER && entity.value)
+    organizationEntity.rewardMultiplier = entity.value as BigInt
+
+  if (
+    entity.actionType === ActionType.UPDATE_REWARD_TOKEN &&
+    entity.targetAddress
+  )
+    organizationEntity.rewardToken = Bytes.fromHexString(entity.targetAddress as string)
+
+  if (
+    entity.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER &&
+    entity.value
+  )
+    organizationEntity.rewardSlashMultiplier = entity.value as BigInt
+
+  if (
+    entity.actionType === ActionType.UPDATE_SLASH_REWARD_EVERY &&
+    entity.value
+  )
+    organizationEntity.slashRewardEvery = entity.value as BigInt
+
   organizationEntity.save()
 }
