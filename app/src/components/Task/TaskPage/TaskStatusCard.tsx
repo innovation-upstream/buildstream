@@ -1,13 +1,10 @@
-import { useGetTaskSnapshotsQuery, usePolling } from 'hooks'
-import { Organization } from 'hooks/organization/types'
-import { Task, TaskSnapshot, TaskStatus } from 'hooks/task/types'
-import { useTranslation } from 'next-i18next'
-import { useEffect, useState } from 'react'
+import Archive from 'SVGs/Archive'
 import ClockSmall from 'SVGs/ClockSmall'
-import Closed from 'SVGs/Closed'
+import Correct from 'SVGs/Correct'
 import Laptop from 'SVGs/Laptop'
 import User from 'SVGs/User'
-import { Converter } from 'utils/converter'
+import { Task, TaskStatus } from 'hooks/task/types'
+import { useTranslation } from 'next-i18next'
 import { StyledListItem } from './styled'
 
 interface TaskStatusCardProps {
@@ -18,7 +15,8 @@ const statuses = [
   TaskStatus.OPEN,
   TaskStatus.ASSIGNED,
   TaskStatus.SUBMITTED,
-  TaskStatus.CLOSED
+  TaskStatus.CLOSED,
+  TaskStatus.ARCHIVED
 ]
 
 const taskStatusConfig = {
@@ -42,10 +40,16 @@ const taskStatusConfig = {
     background: 'bg-[#FCF0E1]'
   },
   [TaskStatus.CLOSED]: {
-    icon: Closed,
+    icon: Correct,
     messageKey: 'closed',
-    fill: 'fill-[#F35B5B]',
-    background: 'bg-[#FEEBEB]'
+    fill: 'fill-[#4bae4e]',
+    background: 'bg-[#4bae4e]/30'
+  },
+  [TaskStatus.ARCHIVED]: {
+    icon: Archive,
+    messageKey: 'archived',
+    fill: 'fill-[#444c54]',
+    background: 'bg-[#444c54]/30'
   }
 }
 
@@ -58,10 +62,17 @@ const TaskStatusCard = ({ task }: TaskStatusCardProps) => {
       <div className='divider' />
       <ul className='mt-6'>
         {statuses?.map((status, index) => {
+          if (
+            status === TaskStatus.ARCHIVED &&
+            task.status !== TaskStatus.ARCHIVED
+          )
+            return null
+
           const current = taskStatusConfig[status]
           if (!current) return null
           const Component = current.icon
           const isCurrentState = task.status === status
+
           return (
             <StyledListItem
               showLine={statuses.length > 1}
