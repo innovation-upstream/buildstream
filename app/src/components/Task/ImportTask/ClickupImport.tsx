@@ -171,7 +171,7 @@ const ClickupImport: React.FC<TImport> = ({
     setTaskData((prev) => ({
       ...prev,
       title: task.value,
-      id: task.id,
+      externalId: task.id,
       description: task.description ?? ''
     }))
   }

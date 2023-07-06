@@ -70,7 +70,7 @@ const TaskActions: React.FC<IProps> = ({ task }) => {
     task.status === TaskStatus.OPEN &&
     account &&
     !task.assignmentRequests.includes(account)
-  const showArchiveButton = task?.status === TaskStatus.OPEN && isApprover
+  const showArchiveButton = task?.status < TaskStatus.SUBMITTED && isApprover
 
   if (!showPublishButton && !showRequestAssignmentButton && !showArchiveButton)
     return null
