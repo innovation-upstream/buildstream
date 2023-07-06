@@ -19,15 +19,17 @@ interface SolutionHistoryProps {
 const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
   const { account, library } = useWeb3()
   const [taskRevisions, setTaskRevisions] = useState<TaskRevision[]>([])
-  const { data, startPolling, stopPolling, loading } = useGetTaskRevisionsQuery({
-    variables: {
-      orderBy: 'revisionId',
-      orderDirection: 'asc',
-      where: {
-        task: task.id.toString()
+  const { data, startPolling, stopPolling, loading } = useGetTaskRevisionsQuery(
+    {
+      variables: {
+        orderBy: 'revisionId',
+        orderDirection: 'asc',
+        where: {
+          task: task.id.toString()
+        }
       }
     }
-  })
+  )
   usePolling(startPolling, stopPolling)
   const { t } = useTranslation('tasks')
 
@@ -43,9 +45,11 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
 
   const wasChangesRequested = (index: number) =>
     taskRevisions[index - 1]?.status === TaskRevisionStatus.CHANGES_REQUESTED
-  
+
   const isRevisionPending = () =>
-    taskRevisions.length && taskRevisions[taskRevisions?.length - 1]?.status != TaskRevisionStatus.ACCEPTED
+    taskRevisions.length &&
+    taskRevisions[taskRevisions?.length - 1]?.status !=
+      TaskRevisionStatus.ACCEPTED
 
   return (
     <>
@@ -69,14 +73,18 @@ const SolutionHistory = ({ task, isApprover }: SolutionHistoryProps) => {
           </React.Fragment>
         )
       })}
-      {!loading && !isRevisionPending() && task.status >= TaskStatus.SUBMITTED && (
-        <SolutionCard
-          task={task}
-          comment={task.comment}
-          isUpdatedSolution={!!taskRevisions.length}
-          showControls={task.status !== TaskStatus.CLOSED && isApprover}
-        />
-      )}
+      {!loading &&
+        !isRevisionPending() &&
+        task.status >= TaskStatus.SUBMITTED &&
+        task.status !==
+          TaskStatus.ARCHIVED && (
+            <SolutionCard
+              task={task}
+              comment={task.comment}
+              isUpdatedSolution={!!taskRevisions.length}
+              showControls={task.status !== TaskStatus.CLOSED && isApprover}
+            />
+          )}
     </>
   )
 }

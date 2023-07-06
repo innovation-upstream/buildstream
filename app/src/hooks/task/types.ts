@@ -7,7 +7,8 @@ export enum TaskStatus {
   OPEN,
   ASSIGNED,
   SUBMITTED,
-  CLOSED
+  CLOSED,
+  ARCHIVED
 }
 
 export enum ComplexityScore {
@@ -30,7 +31,8 @@ export const TaskStatusMap: Record<TaskStatus, string> = {
   [TaskStatus.OPEN]: 'open',
   [TaskStatus.ASSIGNED]: 'assigned',
   [TaskStatus.SUBMITTED]: 'submitted',
-  [TaskStatus.CLOSED]: 'closed'
+  [TaskStatus.CLOSED]: 'closed',
+  [TaskStatus.ARCHIVED]: 'archived'
 }
 
 export const ComplexityScoreMap: Record<ComplexityScore, string> = {
