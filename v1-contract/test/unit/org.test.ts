@@ -21,21 +21,7 @@ describe('Unit test: Org contract', function () {
     const { contractInstance } = await getContractInstances()
     const [, approver1, approver2] = await ethers.getSigners()
 
-    const creationEvent = new Promise<any>((resolve, reject) => {
-      contractInstance.on('OrganizationCreation', (orgId, event) => {
-        event.removeListener()
-
-        resolve({
-          orgId: orgId
-        })
-      })
-
-      setTimeout(() => {
-        reject(new Error('timeout'))
-      }, 60000)
-    })
-
-    await contractInstance.createOrg(
+    const createOrgTx = await contractInstance.createOrg(
       'Buildstream',
       'Decentralized task management',
       [approver1.address, approver2.address],
@@ -43,9 +29,11 @@ describe('Unit test: Org contract', function () {
       false
     )
 
-    const event = await creationEvent
-
-    const orgId = event.orgId.toNumber()
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'OrganizationCreation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
     expect(await contractInstance.getOrgCount()).to.be.equal(1)
     expect(
       await (
