@@ -285,11 +285,12 @@ library TaskLibrary {
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
-            "decide made already"
+            "decision made already"
         );
+        self.status = TaskLib.TaskStatus.DISPUTED;
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
-            .REQUEST_FOR_NEW_TASK;
+            .REJECTED;
     }
 
     /// @dev Allows approvers to archive open tasks.

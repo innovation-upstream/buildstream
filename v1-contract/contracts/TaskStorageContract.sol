@@ -10,14 +10,15 @@ library TaskLib {
         ASSIGNED,
         SUBMITTED,
         CLOSED,
-        ARCHIVED
+        ARCHIVED,
+        DISPUTED
     }
 
     enum TaskRevisionStatus {
         PROPOSED,
         CHANGES_REQUESTED,
         ACCEPTED,
-        REQUEST_FOR_NEW_TASK
+        REJECTED
     }
 
     struct TaskRevision {

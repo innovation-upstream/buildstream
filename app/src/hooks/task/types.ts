@@ -23,7 +23,7 @@ export enum TaskRevisionStatus {
   PROPOSED,
   CHANGES_REQUESTED,
   ACCEPTED,
-  REQUEST_FOR_NEW_TASK
+  DISPUTED
 }
 
 export const TaskStatusMap: Record<TaskStatus, string> = {
