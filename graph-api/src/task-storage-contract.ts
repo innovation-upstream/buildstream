@@ -570,6 +570,7 @@ export function handleTaskRevisionAccepted(
   revisionEntity.save()
 
   const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
   taskEntity.status = 2
@@ -578,6 +579,7 @@ export function handleTaskRevisionAccepted(
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
 
   const notificationEntity = createTaskNotificationEntity(
     event,
