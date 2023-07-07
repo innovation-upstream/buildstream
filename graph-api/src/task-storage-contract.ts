@@ -81,6 +81,8 @@ export function createTaskNotificationEntity(
 }
 
 function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
+  if (previousTaskEntity && taskEntity.status === previousTaskEntity.status) return
+
   let assignee: string = Address.zero().toHexString()
   if (taskEntity && taskEntity.assignee)
     assignee = taskEntity.assignee as string
@@ -172,8 +174,8 @@ function updateStats(taskEntity: Task, previousTaskEntity: Task | null): void {
   }
   switch (taskEntity.status) {
     case TaskStatus.PROPOSED: {
-      userStatsEntity.proposedTasks = ONE
-      organizationStatsEntity.proposedTasks = ONE
+      userStatsEntity.proposedTasks = userStatsEntity.proposedTasks.plus(ONE)
+      organizationStatsEntity.proposedTasks = organizationStatsEntity.proposedTasks.plus(ONE)
       const taskTags = taskEntity.taskTags
       const organizationTags = (organizationStatsEntity.tags || []) as BigInt[]
       for (let i = 0; i < taskTags.length; i++) {

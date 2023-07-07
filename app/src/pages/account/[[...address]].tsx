@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react'
+import WalletModal from 'components/Modals/WalletModal'
+import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
+import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
+import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
+import TaskOverview from 'components/Task/TaskListPage/TaskOverview'
 import client from 'graphclient/client'
+import { useGetTasksLazyQuery, useWeb3 } from 'hooks'
+import { useUserStat } from 'hooks/userstat'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage
 } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { GetTasksDocument, Task } from '../../../.graphclient'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
-import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
-import { useUserStat } from 'hooks/userstat'
-import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
-import TaskOverview from 'components/Task/TaskListPage/TaskOverview'
-import { useGetTasksLazyQuery, useWeb3 } from 'hooks'
-import WalletModal from 'components/Modals/WalletModal'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -57,8 +57,9 @@ const TasksOverview: NextPage<{ taskList: Task[]; address: string }> = ({
   taskList,
   address
 }) => {
-  const stats = useUserStat(address)
   const { account } = useWeb3()
+  const userAddress = address || account
+  const stats = useUserStat(userAddress)
   const [showModal, setShowModal] = useState(false)
   const [tasks, setTasks] = useState(
     taskList?.map((t) => Converter.TaskFromQuery(t))
@@ -67,23 +68,22 @@ const TasksOverview: NextPage<{ taskList: Task[]; address: string }> = ({
   const [getTaskList, { data }] = useGetTasksLazyQuery()
 
   useEffect(() => {
-    if (!account && !address) {
+    if (!userAddress) {
       setShowModal(true)
       return
     }
 
     setShowModal(false)
-    if (account && !address)
-      getTaskList({
-        variables: {
-          orderBy: 'taskId',
-          orderDirection: 'desc',
-          where: {
-            assignee: account
-          }
+    getTaskList({
+      variables: {
+        orderBy: 'taskId',
+        orderDirection: 'desc',
+        where: {
+          assignee: userAddress
         }
-      })
-  }, [account, getTaskList, address])
+      }
+    })
+  }, [userAddress, getTaskList])
 
   useEffect(() => {
     if (data) setTasks(data.tasks?.map((t) => Converter.TaskFromQuery(t)))
@@ -101,9 +101,9 @@ const TasksOverview: NextPage<{ taskList: Task[]; address: string }> = ({
       <TaskFilterProvider>
         <div className='grid-layout py-10 md:py-24'>
           <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-1 2xl:order-1'>
-            {(address || account) && (
+            {userAddress && (
               <div className='rounded-2xl'>
-                <ProfileCard address={address} />
+                <ProfileCard address={userAddress} />
                 <div className='mt-4'>
                   <TaskStatistics stat={stats} />
                 </div>
