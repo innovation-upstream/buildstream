@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import { BigNumber, ethers } from 'ethers'
+import { verify } from 'hooks/auth/functions'
 import useTokenInfo from 'hooks/currency/useCurrency'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -40,13 +41,19 @@ export const usePolling = (
 export const useWeb3 = () => {
   const data = useWeb3React()
 
+  useEffect(() => {
+    if (data.account) verify(data.account)
+  }, [data.account])
+
   return {
     ...data,
     account: data.account?.toLocaleLowerCase()
   }
 }
 
-export const useWalletBalance = (walletAddress = ethers.constants.AddressZero) => {
+export const useWalletBalance = (
+  walletAddress = ethers.constants.AddressZero
+) => {
   const { account, library } = useWeb3()
   const [balance, setBalance] = useState<BigNumber>()
   const { tokenInfo } = useTokenInfo(walletAddress)
@@ -59,8 +66,7 @@ export const useWalletBalance = (walletAddress = ethers.constants.AddressZero) =
 
   useEffect(() => {
     if (!account || !tokenInfo) return
-    if (tokenInfo.isNative)
-      getNativeBalance()
+    if (tokenInfo.isNative) getNativeBalance()
   }, [account, library, walletAddress, tokenInfo, getNativeBalance])
 
   return balance

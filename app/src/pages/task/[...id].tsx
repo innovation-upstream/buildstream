@@ -4,6 +4,7 @@ import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import ShareTask from 'components/Task/ShareTask'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
 import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
+import AssignmentRequestCard from 'components/Task/TaskPage/AssignmentRequestCard'
 import ClosedCard from 'components/Task/TaskPage/ClosedCard'
 import SolutionHistory from 'components/Task/TaskPage/SolutionHistory'
 import SolutionTime from 'components/Task/TaskPage/SolutionTime'
@@ -19,9 +20,11 @@ import {
 } from 'graphclient'
 import client from 'graphclient/client'
 import { useGetTaskQuery, usePolling, useWeb3 } from 'hooks'
+import { getUser } from 'hooks/profile/functions'
 import { getTaskDenials, getTaskInstructions } from 'hooks/task/functions'
 import { TaskStatus } from 'hooks/task/types'
 import { fetchClickupTask } from 'integrations/clickup/api'
+import { User } from 'models/User/User'
 import type { GetServerSideProps, NextPage } from 'next'
 import { Trans, useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -38,6 +41,7 @@ type AssigneeData = {
     count: number
   }[]
   address: string
+  profile: User
   tasks: {
     id: number
     title: string
@@ -69,6 +73,7 @@ const getAssigneeData = async (
       id: assignee.toLowerCase()
     }
   })
+  const profile = await getUser(assignee)
   const allTags = tags.flat().filter((t) => t)
   // Tagless query
   tags.push([])
@@ -100,6 +105,7 @@ const getAssigneeData = async (
     )
   const assigneeInfo = {
     address: assignee,
+    profile: profile.user,
     tokens:
       statData.userStat?.tokens?.map((t) => ({
         id: t.id,
@@ -396,7 +402,7 @@ const TaskPage: NextPage<PageProps> = ({
                     const account = assignee?.address
                     return (
                       <li key={account} className='mb-4'>
-                        <AssigneeCard
+                        <AssignmentRequestCard
                           taskId={currentTask.id}
                           isApprover={isApprover}
                           assignee={getAssignee(assignee)}
@@ -419,11 +425,9 @@ const TaskPage: NextPage<PageProps> = ({
             </div>
           )}
 
-          {isApprover && assigneeData && (
+          {assigneeData && (
             <div className='mt-7'>
               <AssigneeCard
-                taskId={currentTask.id}
-                isApprover={isApprover}
                 assignee={getAssignee(assigneeData)}
               />
             </div>

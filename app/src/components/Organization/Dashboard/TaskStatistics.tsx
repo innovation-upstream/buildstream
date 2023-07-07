@@ -1,8 +1,8 @@
+import Calendar from 'SVGs/Calendar'
 import Clock from 'SVGs/Clock'
 import Close from 'SVGs/Close'
-import Calendar from 'SVGs/Calendar'
-import { useTranslation } from 'react-i18next'
 import { Stat } from 'hooks/userstat/types'
+import { useTranslation } from 'react-i18next'
 
 interface TaskStatisticsProps {
   stat: Stat
@@ -20,7 +20,7 @@ const TaskStatistics = ({ stat }: TaskStatisticsProps) => {
         </div>
         <div>
           <p className='text-base lg:text-2xl font-semibold'>
-            {stat.assignedTasks.toString()}
+            {stat.assignedTasks.add(stat.submittedTasks).toString()}
           </p>
           <span className='text-sm lg:text-base'>{t('task_in_progress')}</span>
         </div>

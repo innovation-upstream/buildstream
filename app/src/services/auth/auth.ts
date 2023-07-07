@@ -62,11 +62,12 @@ export default class AuthService {
     if (!JWT_SECRET) throw new ApiError(500, 'JWT_SECRET is not defined')
 
     const claims = jwt.verify(token, JWT_SECRET) as JwtPayload
-    if (claims.sub?.toLowerCase() !== address.toLowerCase()) return false
+    if (claims.sub?.toLowerCase() !== address.toLowerCase())
+      throw new ApiError(403, 'Token does not match address')
     return true
   }
 
-  public async getUser(token: string): Promise<string|null> {
+  public async getUser(token: string): Promise<string | null> {
     if (!JWT_SECRET) throw new ApiError(500, 'JWT_SECRET is not defined')
 
     const claims = jwt.verify(token, JWT_SECRET) as JwtPayload

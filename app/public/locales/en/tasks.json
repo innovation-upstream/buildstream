@@ -155,5 +155,6 @@
   "server_auth_modal_body": "You need to authenticate with the server to perform this action",
   "basics": "Basics",
   "automate_contributor_selection": "Automate Contributor Selection",
-  "deposit_instruction": "You need to deposit {{amount}} {{token}} to perform this action"
+  "deposit_instruction": "You need to deposit {{amount}} {{token}} to perform this action",
+  "task_assigned_alert_title": "Task is assigned to "
 }

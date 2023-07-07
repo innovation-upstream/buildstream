@@ -3,7 +3,7 @@ import { SBTRewardUser as SBTRewardUserEvent } from '../generated/TokenContract/
 import { UserToken } from '../generated/schema'
 
 export function handleSBTRewardUser(event: SBTRewardUserEvent): void {
-  const user = event.params.user.toString()
+  const user = event.params.user.toHexString()
   const token = event.params.tokenId
   const amount = event.params.amount
 

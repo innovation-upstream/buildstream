@@ -10,17 +10,7 @@ async function verifyAuthentication(req: NextApiRequest, res: NextApiResponse) {
   const cookies = cookie.parse(req.headers.cookie ?? '')
   const token = cookies['jwt-token']
 
-  if (!address)
-    return res.status(400).send({ message: 'Address is required' })
-
-  if (!token)
-    return res.status(401).send({ message: 'Token is invalid' })
-
-  try {
-    const status = await authService.verify(address, token)
-    res.status(200).send({ verified: status })
-  } catch (err: any) {
-    console.error(err)
+  const clearCookie = () => {
     res.setHeader(
       'Set-Cookie',
       cookie.serialize('jwt-token', '', {
@@ -30,7 +20,19 @@ async function verifyAuthentication(req: NextApiRequest, res: NextApiResponse) {
         sameSite: 'strict',
         path: '/'
       })
-   )
+    )
+  }
+
+  if (!address || !token) clearCookie()
+  if (!address) return res.status(400).send({ message: 'Address is required' })
+  if (!token) return res.status(401).send({ message: 'Token is invalid' })
+
+  try {
+    const status = await authService.verify(address, token)
+    res.status(200).send({ verified: status })
+  } catch (err: any) {
+    console.error(err)
+    clearCookie()
     if (err instanceof ApiError)
       return res.status(err.statusCode).send({ message: err.message })
     res.status(500).send({ message: 'Server error' })

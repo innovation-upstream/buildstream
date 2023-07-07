@@ -1,23 +1,23 @@
+import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
+import Filter from 'components/Task/TaskListPage/Filter'
+import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
+import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
+import Search from 'components/Task/TaskListPage/Search'
+import TaskView from 'components/Task/TaskListPage/TaskView'
 import client from 'graphclient/client'
+import { TaskStatus } from 'hooks/task/types'
+import { useUserStat } from 'hooks/userstat'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage
 } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { GetTasksDocument, Task } from '../../../.graphclient'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import TaskView from 'components/Task/TaskListPage/TaskView'
-import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
-import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
-import { useUserStat } from 'hooks/userstat'
-import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
-import Filter from 'components/Task/TaskListPage/Filter'
-import Search from 'components/Task/TaskListPage/Search'
-import { fetchClickupTask } from 'integrations/clickup/api'
-import { TaskStatus } from 'hooks/task/types'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -97,9 +97,6 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
           <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
             <div className='rounded-2xl'>
               <Filter />
-              <div className='mt-4'>
-                <TaskStatistics stat={stats} />
-              </div>
             </div>
           </div>
         </div>
