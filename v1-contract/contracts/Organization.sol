@@ -31,8 +31,8 @@ contract Organization {
     ActionContract private actionContract;
     Treasury private treasury;
 
-    event OrganizationCreation(uint256 indexed orgId);
-    event OrganizationInitialized(uint256 indexed orgId);
+    event OrganizationCreation(uint256 indexed orgId, OrgLib.Org org);
+    event OrganizationInitialized(uint256 indexed orgId, OrgLib.OrgConfig config);
     event OrganizationApproverAddition(
         uint256 indexed _orgId,
         address indexed _approver
@@ -125,7 +125,7 @@ contract Organization {
         for (i = 0; i < approvers.length; i++)
             isApprover[orgId][approvers[i]] = true;
         for (i = 0; i < signers.length; i++) isSigner[orgId][signers[i]] = true;
-        emit OrganizationCreation(orgId);
+        emit OrganizationCreation(orgId, orgs[orgId]);
 
         if (initializeConfig)
             addOrgConfig(
@@ -166,7 +166,7 @@ contract Organization {
             rewardSlashMultiplier: rewardSlashMultiplier,
             slashRewardEvery: slashRewardEvery
         });
-        emit OrganizationInitialized(orgId);
+        emit OrganizationInitialized(orgId, orgConfigs[orgId]);
     }
 
     /// @dev Get organization.

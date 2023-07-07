@@ -40,7 +40,7 @@ contract ActionContract {
     Organization private organization;
     address private organizationAddress;
 
-    event ActionCreation(uint256 indexed orgId, uint256 indexed actionId);
+    event ActionCreation(uint256 indexed orgId, uint256 indexed actionId, ActionLib.Action action);
     event ActionConfirmation(
         uint256 indexed orgId,
         address indexed sender,
@@ -129,7 +129,7 @@ contract ActionContract {
         orgActionCount[_orgId] += 1;
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
-        emit ActionCreation(_orgId, actionId);
+        emit ActionCreation(_orgId, actionId, actions[actionId]);
         confirmAction(actionId);
     }
 
@@ -164,7 +164,7 @@ contract ActionContract {
         orgActionCount[_orgId] += 1;
         orgActionIds[_orgId].push(actionId);
         _actionExists[actionId] = true;
-        emit ActionCreation(_orgId, actionId);
+        emit ActionCreation(_orgId, actionId, actions[actionId]);
         confirmAction(actionId);
     }
 
