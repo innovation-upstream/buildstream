@@ -77,9 +77,7 @@ const TaskStatusCard = ({ task }: TaskStatusCardProps) => {
             <StyledListItem
               showLine={statuses.length > 1}
               key={`task-timeline-${index}`}
-              className={`relative items-center gap-x-3 lg:gap-x-4 mb-5 ${
-                !isCurrentState ? 'hidden lg:flex' : 'flex'
-              }`}
+              className='relative items-center gap-x-3 lg:gap-x-4 mb-5 flex'
             >
               <div
                 className={`iconContainer shrink-0 flex items-center justify-center rounded-full h-9 md:h-10 w-9 md:w-10 ${

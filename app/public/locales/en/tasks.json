@@ -1,6 +1,8 @@
 {
   "level": "Level",
+  "difficulty": "Difficulty",
   "reputation": "Reputation",
+  "reputation_for_self_assignment": "Reputation For Self-Assignment",
   "min_reputation": "Min. Reputation",
   "id": "ID",
   "task_details": "Task Details",
@@ -22,7 +24,8 @@
   "in_review": "In review",
   "submit_solution": "Submit solution",
   "task_closed": "Task Closed",
-  "reward_message": "Your reward transfered to your account!",
+  "reward_message": "The reward has been transferred to the assignee!",
+  "assignee_reward_message": "Your reward transferred to your account!",
   "create_new_task": "Create new task",
   "task_description": "Task Description",
   "task_name": "Task Name",

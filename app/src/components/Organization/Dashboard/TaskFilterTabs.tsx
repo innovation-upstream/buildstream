@@ -44,7 +44,7 @@ const TaskFilterTabs = ({ currentTab, onChange, taskCounts }: TFilter) => {
   })
 
   return (
-    <div className='mb-3 flex overflow-x-scroll snap-x xl:grid-rows scrollbar-hide'>
+    <div className='mb-3 flex overflow-x-auto snap-x xl:grid-rows scrollbar-hide md:scrollbar-default md:scrollbar-thin'>
       {filterTabs.map((tabs) => {
         const taskCount = taskCounts?.[tabs.value]
         const isActive = currentTab === tabs.value

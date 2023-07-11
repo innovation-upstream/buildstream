@@ -8,7 +8,7 @@ type menuTypes = 'default' | 'task' | 'organization'
 export const defaultMenu: IProps[] = [
   {
     label: 'support',
-    url: '/support'
+    url: 'mailto:support@buildstream.xyz'
   }
 ]
 

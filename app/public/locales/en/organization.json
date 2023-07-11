@@ -24,6 +24,7 @@
   "task_statistics": "Task Statistics",
   "task_in_progress": "Task in progress",
   "closed_tasks": "Closed Tasks",
+  "completed_tasks": "Completed tasks",
   "overdue_tasks": "Overdue Tasks",
   "tasks": "Tasks",
   "create_first_task": "Create your first task",

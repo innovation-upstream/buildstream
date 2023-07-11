@@ -20,6 +20,10 @@ library TaskControlLogicLibrary {
         SBTToken sbtToken
     ) external view {
         require(organization.doesOrgExists(orgId), "Org not exist");
+        require(
+            taskTags.length > 0 && taskTags.length < 4,
+            "Task tags cannot be empty or more than 3"
+        );
         for (uint256 i = 0; i < taskTags.length; i++) {
             require(sbtToken.doesTokenExist(taskTags[i]), "Invalid tag");
         }

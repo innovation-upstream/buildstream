@@ -10,9 +10,10 @@ interface Props {
   tags: number[]
   updateTags: (tags: number[]) => void
   hideTitle?: boolean
+  disabled?: boolean
 }
 
-const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
+const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle, disabled }) => {
   const { t } = useTranslation('tasks')
   const tagRef = useRef<any>('')
   const tokens = useTokens()
@@ -76,6 +77,7 @@ const TaskTagInput: React.FC<Props> = ({ tags, updateTags, hideTitle }) => {
           className='w-full border rounded-md focus:outline-none p-2 pl-[2.2rem]'
           placeholder={t('enter_skills')}
           clearOnSelect
+          disabled={disabled}
         />
       </div>
       {tags.length > 0 && (

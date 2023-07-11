@@ -1,6 +1,6 @@
 import Calendar from 'SVGs/Calendar'
 import Clock from 'SVGs/Clock'
-import Close from 'SVGs/Close'
+import Correct from 'SVGs/Correct'
 import { Stat } from 'hooks/userstat/types'
 import { useTranslation } from 'react-i18next'
 
@@ -26,14 +26,14 @@ const TaskStatistics = ({ stat }: TaskStatisticsProps) => {
         </div>
       </div>
       <div className='mt-3 p-3 gap-5 flex rounded-lg bg-[#F5F7F9]'>
-        <div className='w-14 h-14 flex items-center justify-center rounded-lg bg-[#EDBBC3]'>
-          <Close />
+        <div className='w-14 h-14 flex items-center justify-center rounded-lg bg-[#4bae4e]/20'>
+          <Correct className='fill-[#4bae4e]' width={40} />
         </div>
         <div>
           <p className='text-base lg:text-2xl font-semibold'>
             {stat.closedTasks.toString()}
           </p>
-          <span className='text-sm lg:text-base'>{t('closed_tasks')}</span>
+          <span className='text-sm lg:text-base'>{t('completed_tasks')}</span>
         </div>
       </div>
       <div className='mt-3 p-3 gap-5 flex rounded-lg bg-[#F5F7F9]'>

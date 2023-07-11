@@ -16,6 +16,7 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
   suggestions = [],
   filterSuggestions,
   clearOnSelect,
+  disabled,
   ...props
 }) => {
   const [tempInput, setTempInput] = React.useState('')
@@ -163,8 +164,9 @@ const AutoComplete: React.FC<TextInputWithAutoCompleteProps> = ({
         onChange={onChange}
         onClick={() => setShowSuggestions(true)}
         autoComplete='off'
+        disabled={disabled}
       />
-      {showSuggestions && !!filteredSuggestions?.length && (
+      {!disabled && showSuggestions && !!filteredSuggestions?.length && (
         <ul
           ref={suggestionsRef}
           className='shadow-md py-2 absolute top-[calc(100%+5px)] overflow-auto z-[60] bg-white scrollbar-thin list-none w-full border rounded-md max-h-52'

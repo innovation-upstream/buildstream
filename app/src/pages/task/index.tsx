@@ -83,7 +83,7 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
           <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
             <div className='rounded-2xl'>
               <div className='mb-4 hidden lg:block 2xl:hidden'>
-                <Filter />
+                <Filter expand />
               </div>
               <ProfileCard />
               <div className='mt-4 2xl:hidden'>
@@ -96,7 +96,7 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
           </div>
           <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
             <div className='rounded-2xl'>
-              <Filter />
+              <Filter expand />
             </div>
           </div>
         </div>
