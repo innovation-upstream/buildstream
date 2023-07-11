@@ -16,14 +16,13 @@ interface TaskInfoCardProps {
 
 const TaskRequirement = ({
   complexityScore,
-  reputationLevel,
-  className
+  reputationLevel
 }: any) => {
   const { t } = useTranslation('tasks')
   return (
-    <div className={`gap-6 items-center ${className}`}>
-      <div className='flex gap-1'>
-        <p className='text-[#646873]'>{t('level')}</p>
+    <div className='flex gap-6 items-center flex-wrap'>
+      <div className='flex gap-1 flex-wrap'>
+        <p className='text-[#646873]'>{t('difficulty')}</p>
         <span className='font-semibold'>
           {ComplexityScoreMap[complexityScore as ComplexityScore]
             .charAt(0)
@@ -32,7 +31,7 @@ const TaskRequirement = ({
         </span>
       </div>
       <div className='flex gap-1'>
-        <p className='text-[#646873]'>{t('reputation')}:</p>
+        <p className='text-[#646873]'>{t('reputation_for_self_assignment')}:</p>
         <Badge />
         <span className='font-semibold'>{reputationLevel}</span>
       </div>
@@ -84,10 +83,10 @@ const TaskInfoCard = ({
       </div>
       <p className='mt-3 mb-6 break-all'>{task.description}</p>
       <div className='divider' />
-      <section className='flex justify-between items-center mt-6'>
-        <div className='flex gap-5'>
+      <section className='flex justify-between items-center gap-y-2 flex-wrap mt-6'>
+        <div className='flex gap-5 flex-wrap'>
           <button
-            className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500'
+            className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 order-1 md:order-none'
             onClick={handleShare}
           >
             {t('share')}
@@ -95,7 +94,7 @@ const TaskInfoCard = ({
           <TaskRequirement
             complexityScore={task.complexityScore}
             reputationLevel={task.reputationLevel}
-            className='hidden lg:flex'
+            className='flex'
           />
         </div>
 

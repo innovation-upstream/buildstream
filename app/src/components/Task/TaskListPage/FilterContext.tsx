@@ -6,6 +6,7 @@ interface IFilterContext {
   text?: string
   complexity?: ComplexityScore
   tags?: number[]
+  filters?: FilterUpdate
   filterQueryVariables?: GetTasksQueryVariables[]
   updateFilters?: (filter: FilterUpdate) => void
 }
@@ -125,7 +126,9 @@ export const TaskFilterProvider = ({ children }: { children: ReactNode }) => {
   return (
     <FilterContext.Provider
       value={{
-        ...filters,
+        text: filters.text,
+        tags: filters.tags,
+        filters,
         filterQueryVariables,
         updateFilters
       }}

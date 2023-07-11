@@ -1,8 +1,17 @@
+import { useWeb3 } from 'hooks'
+import { Task } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
 import Correct from 'SVGs/Correct'
 
-const ClosedCard = () => {
+interface ClosedCardProps {
+  task: Task
+}
+
+const ClosedCard = ({ task }: ClosedCardProps) => {
   const { t } = useTranslation('tasks')
+  const { account } = useWeb3()
+  const isAssignee = task.assigneeAddress === account
+
   return (
     <div className='paper mt-7'>
       <div className='flex items-center gap-x-4'>
@@ -11,7 +20,7 @@ const ClosedCard = () => {
         </div>
         <p className='text-2xl font-semibold'>{t('task_closed')}</p>
       </div>
-      <p className='mt-4'>{t('reward_message')}</p>
+      <p className='mt-4'>{t(isAssignee ? 'assignee_reward_message' : 'reward_message')}</p>
     </div>
   )
 }

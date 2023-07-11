@@ -270,6 +270,7 @@ const CreateTask: React.FC<ICreateTask> = ({
                       setTaskData((prev: any) => ({ ...prev, taskTags: tags }))
                       getRewardAmount(taskData.complexityScore, tags)
                     }}
+                    disabled={taskData?.taskTags?.length >= 3}
                   />
                 </div>
                 <div className='mt-4'>

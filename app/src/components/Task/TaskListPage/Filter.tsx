@@ -1,6 +1,6 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
 import ChevronDown from 'components/IconSvg/ChevronDown'
-import { ComplexityScoreMap } from 'hooks/task/types'
+import { ComplexityScore, ComplexityScoreMap } from 'hooks/task/types'
 import { useUserStat } from 'hooks/userstat'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,19 +13,33 @@ interface FilterProps {
   maxHeight?: number
 }
 
+const complexities = Object.entries(ComplexityScoreMap).filter(
+  ([key]) =>
+    parseInt(key) !== ComplexityScore.BEGINNER &&
+    parseInt(key) != ComplexityScore.ADVANCED
+)
+
 const Filter = ({ expand, maxHeight }: FilterProps) => {
   const { t } = useTranslation('tasks')
   const stats = useUserStat()
-  const { tags, updateFilters: applyFilters } = useTaskFilter()
+  const {
+    filters: initialFilter,
+    tags,
+    updateFilters: applyFilters
+  } = useTaskFilter()
   const [openSkills, setOpenSkills] = useState(expand || !!tags?.length)
-  const [filters, setFilters] = useState<FilterUpdate>({})
+  const [filters, setFilters] = useState<FilterUpdate>(initialFilter || {})
   const tokens = useTokens()
 
   const updateFilters = (key: string, value: any) => {
-    setFilters((prev: any) => ({
-      ...prev,
-      [key]: value
-    }))
+    setFilters((prev: any) => {
+      const newFilters = {
+        ...prev,
+        [key]: value
+      }
+      applyFilters?.(newFilters)
+      return newFilters
+    })
   }
 
   const handleCheckbox = (list: number[], item: number, key: string) => {
@@ -34,10 +48,6 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
     if (index !== -1) newList.splice(index, 1)
     else newList.push(item)
     updateFilters(key, newList)
-  }
-
-  const applyFilter = () => {
-    applyFilters?.(filters)
   }
 
   return (
@@ -49,30 +59,39 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
         <p className='text-2xl font-semibold mb-5'>{t('filter')}</p>
       </div>
       <div className='divider' />
-      <div className='my-4'>
-        <p className='text-lg font-semibold mb-4'>{t('complexity')}</p>
-        <label className='flex gap-x-3 mb-2.5 items-center'>
+      <p className='text-lg font-semibold my-4'>{t('complexity')}</p>
+      <div className='flex gap-2 flex-wrap my-4'>
+        <label className='btn-tag cursor-pointer'>
           <input
             type='radio'
             name='complexity'
-            className='w-5 h-5'
+            className='w-0 h-0'
             value='none'
             onChange={() => updateFilters('complexity', undefined)}
           />
           <span className='text-[#646873] capitalize'>{t('any')}</span>
         </label>
-        {Object.entries(ComplexityScoreMap).map(([k, v]) => (
-          <label key={v} className='flex gap-x-3 mb-2.5 items-center'>
-            <input
-              type='radio'
-              name='complexity'
-              className='w-5 h-5'
-              value={v}
-              onChange={() => updateFilters('complexity', Number(k))}
-            />
-            <span className='text-[#646873] capitalize'>{v}</span>
-          </label>
-        ))}
+        {complexities.map(([k, v]) => {
+          const isSelected = filters.complexity === Number(k)
+          return (
+            <label
+              key={v}
+              className={`${
+                isSelected ? 'bg-blue-200 hover:bg-blue-300' : ''
+              } btn-tag cursor-pointer`}
+            >
+              <input
+                type='radio'
+                name='complexity'
+                className='w-0 h-0'
+                value={k}
+                checked={isSelected}
+                onChange={() => updateFilters('complexity', Number(k))}
+              />
+              <span className='text-[#646873] capitalize'>{v}</span>
+            </label>
+          )
+        })}
       </div>
       <div className='divider' />
       <div className='my-4'>
@@ -84,7 +103,7 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
           >
             <span
               className={`block transition-transform ${
-                openSkills ? '' : 'rotate-180'
+                openSkills ? 'rotate-180' : ''
               }`}
             >
               <ChevronDown />
@@ -93,7 +112,7 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
         </div>
 
         {openSkills && (
-          <div>
+          <div className='min-h-[250px]'>
             <TaskTagInput
               tags={filters.tags || []}
               updateTags={(t) => updateFilters('tags', t)}
@@ -103,7 +122,10 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
               {stats.tokens.map((tag) => {
                 const token = tokens.find((t) => t.id === tag.token.toString())
                 return (
-                  <label key={tag.id} className='flex gap-x-3 mb-2.5 items-center'>
+                  <label
+                    key={tag.id}
+                    className='flex gap-x-3 mb-2.5 items-center'
+                  >
                     <input
                       type='checkbox'
                       className='w-5 h-5'
@@ -112,7 +134,9 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
                         handleCheckbox(filters?.tags || [], tag.token, 'tags')
                       }
                     />
-                    <span className='text-[#646873] capitalize'>{token?.name}</span>
+                    <span className='text-[#646873] capitalize'>
+                      {token?.name}
+                    </span>
                   </label>
                 )
               })}
@@ -120,10 +144,6 @@ const Filter = ({ expand, maxHeight }: FilterProps) => {
           </div>
         )}
       </div>
-      <div className='divider' />
-      <button onClick={applyFilter} className='btn-primary w-full mt-5'>
-        {t('apply_filter')}
-      </button>
     </StyledContainer>
   )
 }

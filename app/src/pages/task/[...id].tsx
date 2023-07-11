@@ -75,8 +75,7 @@ const getAssigneeData = async (
   })
   const profile = await getUser(assignee)
   const allTags = tags.flat().filter((t) => t)
-  // Tagless query
-  tags.push([])
+  tags.push([]) // Any tag query
   const allTasks = await Promise.all(
     tags.map(async (tag) => {
       const { data } = await client.query({
@@ -120,7 +119,6 @@ const getAssigneeData = async (
         rewardToken: t.rewardToken,
         taskTags: t.taskTags
       }))
-      .flat()
       .sort((a, b) => {
         const aCount = allTags.filter((t) => a.taskTags.includes(t)).length
         const bCount = allTags.filter((t) => b.taskTags.includes(t)).length
@@ -155,9 +153,10 @@ export const getServerSideProps: GetServerSideProps =
     let assignmentRequests = null
     const tags = (data.task?.taskTags || [])?.map((tag) => [tag])
 
-    const deniedAssignees = await getTaskDenials(Number(data.task.id))
+    let deniedAssignees: any[] = []
 
     if (data.task.status === TaskStatus.OPEN) {
+      deniedAssignees = await getTaskDenials(Number(data.task.id))
       assignmentRequests = await Promise.all(
         (data.task.assignmentRequest || [])
           ?.filter(
@@ -449,7 +448,7 @@ const TaskPage: NextPage<PageProps> = ({
             <SubmitCard taskId={currentTask.id} />
           )}
 
-          {currentTask.status === TaskStatus.CLOSED && <ClosedCard />}
+          {currentTask.status === TaskStatus.CLOSED && <ClosedCard task={currentTask} />}
         </div>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>
           <TaskStatusCard task={currentTask} />

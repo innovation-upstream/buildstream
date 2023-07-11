@@ -36,6 +36,7 @@
   }
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
     background: rgba(26, 43, 93, 0.08);
