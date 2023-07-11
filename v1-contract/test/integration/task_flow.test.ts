@@ -743,12 +743,12 @@ describe('Integration test: Task flow', function () {
         taskId,
         ethers.utils.formatBytes32String('3ed5'),
         ethers.utils.formatBytes32String('3ed5re'),
-        0
+        dueDate * 2
       )
 
     await storageContract
       .connect(assignee)
-      .requestForTaskRevisionDueDateExtension(taskId, 0, 3000)
+      .requestForTaskRevisionDueDateExtension(taskId, 0, dueDate * 3)
 
     await taskContract
       .connect(approver1)
@@ -756,7 +756,7 @@ describe('Integration test: Task flow', function () {
         taskId,
         ethers.utils.formatBytes32String('3ed5'),
         ethers.utils.formatBytes32String('3ed5re'),
-        3000
+        dueDate * 3
       )
     await storageContract.connect(assignee).acceptTaskRevision(taskId, 1)
 
