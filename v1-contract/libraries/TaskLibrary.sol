@@ -240,9 +240,7 @@ library TaskLibrary {
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
             .ACCEPTED;
-        self.dueDate =
-            self.dueDate +
-            taskMetadata.revisions[revisionIndex].dueDateExtension;
+        self.dueDate = taskMetadata.revisions[revisionIndex].dueDateExtension;
         taskMetadata.submitDate = 0;
     }
 

@@ -26,7 +26,7 @@ export default class RevisionService {
       .collection('tasks')
       .doc(taskId.toString())
       .collection('revisions')
-      .doc(revisionId)
+      .doc(revisionId.toString())
       .get()
 
     const revision = snapshot.data()
@@ -62,7 +62,7 @@ export default class RevisionService {
       .collection('tasks')
       .doc(taskId.toString())
       .collection('revisions')
-      .doc(revisionId)
+      .doc(revisionId.toString())
 
     await docRef.set(
       {

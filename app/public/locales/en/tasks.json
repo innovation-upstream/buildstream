@@ -159,5 +159,7 @@
   "basics": "Basics",
   "automate_contributor_selection": "Automate Contributor Selection",
   "deposit_instruction": "You need to deposit {{amount}} {{token}} to perform this action",
-  "task_assigned_alert_title": "Task is assigned to "
+  "task_assigned_alert_title": "Task is assigned to ",
+  "adjust_due_date": "Adjust Due Date",
+  "task_revision_body": "Describe how it will be solved"
 }

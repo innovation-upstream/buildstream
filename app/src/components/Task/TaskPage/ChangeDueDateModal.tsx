@@ -13,9 +13,6 @@ interface ChangeDueDateProps {
   onClose: () => void
 }
 
-const requestMessage =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc lobortis sem erat, at bibendum ante porta at. Pellentesque condimentum ex eu malesuada iaculis. Sed varius vulputate rutrum. Pellentesque non diam consequat, faucibus velit vitae, dapibus erat. Nunc maximus mauris magna, sed aliquet nibh faucibus at. Ut id justo elit. Etiam nunc eros, lacinia nec consectetur sed, sollicitudin in arcu.'
-
 const ChangeDueDateModal = ({ taskId, revisionId, onClose }: ChangeDueDateProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
@@ -32,7 +29,7 @@ const ChangeDueDateModal = ({ taskId, revisionId, onClose }: ChangeDueDateProps)
     if (!account || dueDateStr === '') return
 
     const dueDate = moment(dueDateStr)
-      .add(60 * 60 * 60 - 1, 'seconds')
+      .add(60 * 60 * 24 - 1, 'seconds')
       .unix()
 
     setProcessing(true)
@@ -68,19 +65,18 @@ const ChangeDueDateModal = ({ taskId, revisionId, onClose }: ChangeDueDateProps)
             <CloseIcon />
           </button>
           <p className='text-2xl font-semibold mb-6'>
-            {t('change_task_duration')}
+            {t('adjust_due_date')}
           </p>
         </div>
         <div className='divider' />
 
         <form className='mt-3' onSubmit={submitTask}>
-          <div className='mb-3'>{requestMessage}</div>
           <div className='col-span-4 md:w-1/3 mb-0'>
             <label htmlFor='duration' className='flex gap-2 items-center mb-2'>
               <span className='block text-gray-500'>
                 <Duration />
               </span>
-              <span className='block text-gray-500'>{t('set_duration')}</span>
+              <span className='block text-gray-500'>{t('adjust_due_date')}</span>
             </label>
             <input
               type='date'

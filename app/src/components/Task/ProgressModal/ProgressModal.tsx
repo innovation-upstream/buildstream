@@ -89,7 +89,7 @@ const ProgressModal = ({
           reputationLevel: taskData.reputationLevel,
           // End of day
           dueDate: moment(taskData.dueDate)
-            .add(60 * 60 * 60 - 1, 'seconds')
+            .add(60 * 60 * 24 - 1, 'seconds')
             .unix(),
           disableSelfAssign: taskData.disableSelfAssign
         },

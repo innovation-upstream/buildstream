@@ -4,6 +4,7 @@ import Spinner from 'components/Spinner/Spinner'
 import CryptoJS from 'crypto-js'
 import SHA256 from 'crypto-js/sha256'
 import { useWeb3 } from 'hooks'
+import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import { createRevision, requestTaskReview } from 'hooks/task/functions'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
@@ -13,18 +14,25 @@ interface RequestChangeModalProps {
   taskId: number
   onClose: () => void
   dueDate?: string
+  message?: string
 }
 
 const RequestChangeModal = ({
   taskId,
   onClose,
-  dueDate
+  dueDate,
+  message
 }: RequestChangeModalProps) => {
   const { account, library } = useWeb3()
   const { t } = useTranslation('tasks')
   const [processing, setProcessing] = useState(false)
+  const { callAction, component } = useServerConfirmation({
+    onError: () => setProcessing(false)
+  })
 
-  const getReviewParams = (changes: string): { reviewId: string; reviewHash: string } => {
+  const getReviewParams = (
+    changes: string
+  ): { reviewId: string; reviewHash: string } => {
     const idHash = SHA256(Date.parse(Date()).toString())
     const reviewId = '0x' + idHash.toString(CryptoJS.enc.Hex)
     const reviewHash = '0x' + SHA256(changes)
@@ -46,7 +54,7 @@ const RequestChangeModal = ({
     const dueDateStr = formData.get('dueDate') as string
     if (!account || dueDateStr === '') return
     const dueDate = moment(dueDateStr)
-      .add(60 * 60 * 60 - 1, 'seconds')
+      .add(60 * 60 * 24 - 1, 'seconds')
       .unix()
 
     if (dueDate < moment.now() / 1000) return
@@ -61,9 +69,13 @@ const RequestChangeModal = ({
         dueDate,
         library.getSigner()
       )
-      await createRevision(taskId, reviewId, revisionId, changes)
-      setProcessing(false)
-      onClose()
+      await callAction(
+        async () => await createRevision(taskId, reviewId, revisionId, changes),
+        () => {
+          setProcessing(false)
+          onClose()
+        }
+      )
     } catch (e) {
       console.error(e)
       setProcessing(false)
@@ -81,6 +93,7 @@ const RequestChangeModal = ({
 
   return (
     <>
+      {component}
       <div
         onClick={onClose}
         className='fixed w-full h-full bg-black/40 inset-0 z-10'
@@ -100,18 +113,29 @@ const RequestChangeModal = ({
               <span className='block text-gray-500'>
                 <Duration />
               </span>
-              <span className='block text-gray-500'>{t('set_duration')}</span>
+              <span className='block text-gray-500'>
+                {t('adjust_due_date')}
+              </span>
             </label>
             <input
               type='date'
               id='dueDate'
               name='dueDate'
-              defaultValue={dueDate || moment().add(1, 'days').format('YYYY-MM-DD')}
+              defaultValue={
+                dueDate || moment().add(1, 'days').format('YYYY-MM-DD')
+              }
               className='overflow-hidden focus:outline-none rounded-md p-2 border border-gray-200'
+              readOnly={!!dueDate}
             />
           </div>
-          <p className='text-sm mt-3 mb-3'>{t('changes_description')}</p>
-          <textarea className='input-base' name='changes' rows={5} />
+          <p className='text-sm mt-3 mb-3'>{t('task_revision_body')}</p>
+          <textarea
+            className='input-base'
+            name='changes'
+            value={message}
+            readOnly={!!message}
+            rows={5}
+          />
 
           <div className='mt-4 flex gap-x-6'>
             <button
