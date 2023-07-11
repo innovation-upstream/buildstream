@@ -51,7 +51,7 @@ const AssignmentRequestCard: React.FC<Props> = ({
   return (
     <div className='paper'>
       <div className=''>
-        {assignee.profile.displayName && (
+        {assignee.profile?.displayName && (
           <p className='text-xl font-semibold'>
             {assignee.profile.displayName}
           </p>

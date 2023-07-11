@@ -39,8 +39,9 @@ const AssigneeCard: React.FC<Props> = ({ assignee }) => {
         {t('task_assigned_alert_title')}
         <Link href={`/account/${assigneeAddress}`}>
           <a className='font-bold mb-2 text-lg' target='_blank'>
-            {`${assignee.profile.displayName}(${assigneeAddressTruncated})` ||
-              assigneeAddressTruncated}
+            {assignee.profile?.displayName
+              ? `${assignee.profile.displayName}(${assigneeAddressTruncated})`
+              : assigneeAddressTruncated}
           </a>
         </Link>
       </p>
