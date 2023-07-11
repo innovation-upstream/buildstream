@@ -1,9 +1,13 @@
-import Find from 'SVGs/Find'
-import Write from 'SVGs/Write'
-import WalletModal from 'components/Modals/WalletModal'
-import { useWeb3 } from 'hooks'
-import { getUserOrganizations } from 'hooks/userstat/functions'
-import { IUserOrganizations } from 'hooks/userstat/types'
+import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
+import Filter from 'components/Task/TaskListPage/Filter'
+import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
+import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
+import Search from 'components/Task/TaskListPage/Search'
+import TaskView from 'components/Task/TaskListPage/TaskView'
+import client from 'graphclient/client'
+import { TaskStatus } from 'hooks/task/types'
+import { useUserStat } from 'hooks/userstat'
+import { fetchClickupTask } from 'integrations/clickup/api'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -11,165 +15,94 @@ import type {
 } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { wrapper } from 'state/store'
-
-const ACCOUNT = 'account'
+import { Converter } from 'utils/converter'
+import { GetTasksDocument, Task } from '../../.graphclient'
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
     (store) => async (context: GetServerSidePropsContext) => {
+      const { data } = await client.query({
+        query: GetTasksDocument,
+        variables: {
+          orderBy: 'taskId',
+          orderDirection: 'desc',
+          where: {
+            status: TaskStatus.OPEN
+          }
+        }
+      })
       const locale = context.locale ?? ''
+
+      const tasksWithClickupData = await Promise.all(
+        data.tasks.map(async (t) => {
+          if (!t.externalId) {
+            return t
+          }
+          const clickupTask = await fetchClickupTask(
+            t.externalId as string,
+            t.orgId.id
+          )
+          return {
+            ...t,
+            title: clickupTask?.name || t.title,
+            description: clickupTask?.description || t.description
+          }
+        })
+      )
 
       return {
         props: {
+          taskList: tasksWithClickupData,
           ...(await serverSideTranslations(locale, [
             'common',
-            'home',
-            'header'
+            'tasks',
+            'header',
+            'organization'
           ]))
         }
       }
     }
   )
 
-enum action {
-  findTask,
-  createTask,
-  findTeam
-}
-
-interface IHome {}
-
-const Home: NextPage<IHome> = () => {
-  const { account } = useWeb3()
-  const [showModal, setShowModal] = useState(false)
-  const [actionValue, setActionValue] = useState<typeof action | undefined>()
-  const router = useRouter()
-  const { t } = useTranslation('home')
-  const [orgs, setOrgs] = useState<IUserOrganizations>()
-
-  useEffect(() => {
-    if (!account) return
-    getUserOrganizations(account as string).then((orgs) => {
-      setOrgs(orgs)
-      if (actionValue !== undefined) handleAction(actionValue, orgs)
-    })
-  }, [account])
-
-  const handleAction = async (
-    param: any,
-    userOrganizations: IUserOrganizations
-  ) => {
-    if (param === action.findTeam) {
-      router.push('/organization')
-    }
-    if (param === action.findTask) {
-      router.push('/task')
-    }
-    if (param === action.createTask) {
-      let org
-      if (
-        userOrganizations.signerOrganizations.length > 1 ||
-        userOrganizations.approverOrganizations.length > 1 ||
-        userOrganizations.memberOrganizations.length > 1
-      )
-        return router.push('/organization')
-
-      if (userOrganizations.signerOrganizations.length === 1)
-        org = userOrganizations.signerOrganizations[0]
-      else if (userOrganizations.approverOrganizations.length === 1)
-        org = userOrganizations.approverOrganizations[0]
-      else if (userOrganizations.memberOrganizations.length === 1)
-        org = userOrganizations.memberOrganizations[0]
-      else return router.push(`/organization/create`)
-
-      router.push(`/organization/${org.id}?create=true`)
-    }
-  }
-
-  const handleClick = (param?: any) => {
-    setActionValue(param)
-    if (!account && param !== undefined) {
-      setShowModal(true)
-      return
-    }
-    if (!orgs) return
-    handleAction(param, orgs)
-  }
+const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
+  const stats = useUserStat()
 
   return (
-    <div className='layout-container'>
+    <div className='layout-container pb-20'>
       <Head>
-        <title>Getting Started</title>
-        <meta
-          name='description'
-          content='Buildstream for Freelancers and Companies'
-        />
+        <title>Buildstream: Tasks</title>
+        <meta name='description' content='Generated by create next app' />
+        <link rel='icon' href='/favicon.ico' />
       </Head>
-      {showModal && (
-        <WalletModal
-          close={() => setShowModal(!showModal)}
-        />
-      )}
-      <main className='flex flex-col gap-3 md:gap-28 flex-auto h-screen'>
-        <section className='grid-layout mt-0 md:mt-28 gap-0'>
-          <div className='col-span-12 md:col-span-8'>
-            <h1 className='block text-[#17191A] lg:tracking-[-4px] text-4xl lg:text-7xl font-bold mb-10'>
-              {t('index_body_main')}
-            </h1>
-            <h2 className='block font-normal text-xl text-[#27272C] opacity-50 text-base tracking-[-0.5px] leading-7'>
-              {t('index_body_sub')}
-            </h2>
+      <TaskFilterProvider>
+        <div className='grid-layout py-10 md:py-24'>
+          <div className='col-span-4 md:col-span-8 lg:col-span-12 lg:hidden'>
+            <Search showControls />
           </div>
-          
-        </section>
-        <section className='grid-layout'>
-          <div className='paper col-span-4 flex flex-col gap-9'>
-            <div className='flex items-center justify-center rounded-full w-[86px] h-[86px] bg-[#E7EDFC]'>
-              <Find />
+          <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-2 2xl:order-1'>
+            <div className='rounded-2xl'>
+              <div className='mb-4 hidden lg:block 2xl:hidden'>
+                <Filter expand />
+              </div>
+              <ProfileCard />
+              <div className='mt-4 2xl:hidden'>
+                <TaskStatistics stat={stats} />
+              </div>
             </div>
-            <div className='flex flex-col items-start'>
-              <span className='block font-bold text-4xl text-sm'>
-                {t('find_task')}
-              </span>
-              <span className='font-normal opacity-50'>
-                {t('finde_task_sub')}
-              </span>
-            </div>
-            <button
-              className='btn-primary'
-              onClick={() => handleClick(action.findTask)}
-            >
-              {t('get_started')}
-            </button>
           </div>
-
-          <div className='paper col-span-4 flex flex-col gap-9'>
-            <div className='flex items-center justify-center rounded-full w-[86px] h-[86px] bg-[#FCF0E1]'>
-              <Write />
-            </div>
-            <div className='flex flex-col items-start'>
-              <span className='block font-bold text-4xl text-sm'>
-                {t('create_task')}
-              </span>
-              <span className='font-normal opacity-50'>
-                {t('create_task_sub')}
-              </span>
-            </div>
-            <button
-              className='btn-primary'
-              onClick={() => handleClick(action.createTask)}
-            >
-              {t('get_started')}
-            </button>
+          <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-6 order-1 2xl:order-2'>
+            <TaskView tasks={taskList.map((t) => Converter.TaskFromQuery(t))} />
           </div>
-        </section>
-      </main>
+          <div className='hidden 2xl:block col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 order-3'>
+            <div className='rounded-2xl'>
+              <Filter expand />
+            </div>
+          </div>
+        </div>
+      </TaskFilterProvider>
     </div>
   )
 }
 
-export default Home
+export default TasksPage
