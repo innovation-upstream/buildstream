@@ -46,7 +46,7 @@ export default class TaskApprovalService {
       .collection('tasks')
       .doc(taskId.toString())
       .collection('taskDenials')
-      .doc(assignee)
+      .doc(assignee.toString())
 
     await docRef.set(
       {

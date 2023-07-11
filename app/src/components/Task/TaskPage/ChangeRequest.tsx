@@ -158,6 +158,7 @@ const ChangeRequest = ({
           taskId={taskId}
           dueDate={durationExtenstionRequest}
           onClose={() => setProcessAcceptConditions(false)}
+          message={message}
         />
       )}
     </div>
