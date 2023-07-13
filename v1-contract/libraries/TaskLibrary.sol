@@ -139,6 +139,10 @@ library TaskLibrary {
         address assignee,
         string memory comment
     ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
+        require(
+            self.status == TaskLib.TaskStatus.ASSIGNED,
+            "Task is not assigned"
+        );
         self.status = TaskLib.TaskStatus.SUBMITTED;
         self.comment = comment;
         taskMetadata.submitDate = block.timestamp;
@@ -223,14 +227,14 @@ library TaskLibrary {
     function acceptTaskRevision(
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
-        uint256 revisionIndex,
         address assignee
     ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
+        uint256 revisionIndex = taskMetadata.revisionCount - 1;
         require(
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
+        require(revisionIndex >= 0, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
@@ -247,15 +251,15 @@ library TaskLibrary {
     function requestForTaskRevisionDueDateExtension(
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
-        uint256 revisionIndex,
         uint256 dueDateExtension,
         address assignee
     ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
+        uint256 revisionIndex = taskMetadata.revisionCount - 1;
         require(
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
+        require(revisionIndex >= 0, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
@@ -272,14 +276,14 @@ library TaskLibrary {
     function rejectTaskRevision(
         TaskLib.Task storage self,
         TaskLib.TaskMetadata storage taskMetadata,
-        uint256 revisionIndex,
         address assignee
     ) external onlyTaskAssignee(assignee, self.assigneeAddress) {
+        uint256 revisionIndex = taskMetadata.revisionCount - 1;
         require(
             self.status == TaskLib.TaskStatus.SUBMITTED,
             "Task not submitted"
         );
-        require(taskMetadata.revisionCount > revisionIndex, "revision invalid");
+        require(revisionIndex >= 0, "revision invalid");
         require(
             taskMetadata.revisions[revisionIndex].status ==
                 TaskLib.TaskRevisionStatus.PROPOSED,
@@ -289,6 +293,24 @@ library TaskLibrary {
         taskMetadata.revisions[revisionIndex].status = TaskLib
             .TaskRevisionStatus
             .REJECTED;
+    }
+
+    function dispute(
+        TaskLib.Task storage self,
+        TaskLib.TaskMetadata storage taskMetadata
+    ) external {
+        uint256 revisionIndex = taskMetadata.revisionCount - 1;
+        require(
+            self.status == TaskLib.TaskStatus.SUBMITTED,
+            "Task not submitted"
+        );
+        require(revisionIndex >= 0, "revision invalid");
+        require(
+            taskMetadata.revisions[revisionIndex].status ==
+                TaskLib.TaskRevisionStatus.CHANGES_REQUESTED,
+            "decision made already"
+        );
+        self.status = TaskLib.TaskStatus.DISPUTED;
     }
 
     /// @dev Allows approvers to archive open tasks.

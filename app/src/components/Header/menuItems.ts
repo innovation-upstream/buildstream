@@ -38,7 +38,7 @@ export const menuItems: Record<menuTypes, IProps[]> = {
   ]
 }
 
-export const activeMenuItems = (path = '/'): IProps[] => {
+export const activeMenuItems = (path = '/started'): IProps[] => {
   if (path.includes('organization')) {
     return menuItems.organization
   }

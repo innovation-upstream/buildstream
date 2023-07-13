@@ -104,6 +104,7 @@ contract TaskStorageContract {
     event TaskSubmission(uint256 indexed taskId, string comment);
     event TaskClosed(uint256 indexed taskId);
     event TaskArchived(uint256 indexed taskId);
+    event TaskDisputed(uint256 indexed taskId);
     event TaskUpdated(
         uint256 indexed taskId,
         TaskLib.Task task,
@@ -138,6 +139,11 @@ contract TaskStorageContract {
 
     modifier onlyTaskContract() {
         require(msg.sender == taskContractAddress, "Permission denied");
+        _;
+    }
+
+    modifier onlyAssignee(uint256 taskId) {
+        require(msg.sender == tasks[taskId].assigneeAddress, "Task not yours");
         _;
     }
 
@@ -268,10 +274,9 @@ contract TaskStorageContract {
     /// @param taskId Task ID.
     function submitTask(
         uint256 taskId,
-        address assignee,
         string memory comment
-    ) external onlyTaskContract taskExists(taskId) {
-        tasks[taskId].submitTask(taskMetadata[taskId], assignee, comment);
+    ) external taskExists(taskId) onlyAssignee(taskId) {
+        tasks[taskId].submitTask(taskMetadata[taskId], msg.sender, comment);
         emit TaskSubmission(taskId, comment);
     }
 
@@ -359,14 +364,13 @@ contract TaskStorageContract {
     }
 
     function acceptTaskRevision(
-        uint256 taskId,
-        uint256 revisionIndex
+        uint256 taskId
     ) external {
         tasks[taskId].acceptTaskRevision(
             taskMetadata[taskId],
-            revisionIndex,
             msg.sender
         );
+        uint256 revisionIndex = taskMetadata[taskId].revisionCount - 1;
         emit TaskRevisionAccepted(
             taskId,
             revisionIndex,
@@ -377,15 +381,14 @@ contract TaskStorageContract {
 
     function requestForTaskRevisionDueDateExtension(
         uint256 taskId,
-        uint256 revisionIndex,
         uint256 dueDateExtension
     ) external {
         tasks[taskId].requestForTaskRevisionDueDateExtension(
             taskMetadata[taskId],
-            revisionIndex,
             dueDateExtension,
             msg.sender
         );
+        uint256 revisionIndex = taskMetadata[taskId].revisionCount - 1;
         emit TaskRevisionChangesRequested(
             taskId,
             revisionIndex,
@@ -395,19 +398,29 @@ contract TaskStorageContract {
     }
 
     function rejectTaskRevision(
-        uint256 taskId,
-        uint256 revisionIndex
+        uint256 taskId
     ) external {
+        require(msg.sender == tasks[taskId].assigneeAddress, "Task not yours");
         tasks[taskId].rejectTaskRevision(
             taskMetadata[taskId],
-            revisionIndex,
             msg.sender
         );
+        uint256 revisionIndex = taskMetadata[taskId].revisionCount - 1;
         emit TaskRevisionRejected(
             taskId,
             revisionIndex,
             taskMetadata[taskId].revisions[revisionIndex].revisionId
         );
+        emit TaskDisputed(taskId);
+    }
+
+    /// @dev Allows approvers to dispute submitted tasks.
+    /// @param taskId Task ID.
+    function dispute(
+        uint256 taskId
+    ) external onlyTaskContract taskExists(taskId) {
+        tasks[taskId].dispute(taskMetadata[taskId]);
+        emit TaskDisputed(taskId);
     }
 
     /// @dev Check if an approver approved a task.
