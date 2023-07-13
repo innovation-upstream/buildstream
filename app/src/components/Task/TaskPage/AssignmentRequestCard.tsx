@@ -82,7 +82,7 @@ const AssignmentRequestCard: React.FC<Props> = ({
       {!!assignee.tasks.length && (
         <div className='mt-4'>
           <p className='text-xl font-semibold'>{t('recent_tasks')}:</p>
-          <ul className='mt-1 list-disc ml-4'>
+          <ul className='mt-1 list-disc list-outside ml-4'>
             {assignee.tasks.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>

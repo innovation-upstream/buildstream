@@ -20,7 +20,7 @@ const ProfileCard = ({ address }: Props) => {
   const { account } = useWeb3()
   const stat = useUserStat(address)
   const tokens = useTokens()
-  const { profile, refetch } = useProfile(address)
+  const { profile, refetch } = useProfile(address || account)
   const [showForm, setShowForm] = useState(false)
   const { t } = useTranslation('tasks')
   const [displayName, setDisplayName] = useState('')
