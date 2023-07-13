@@ -17,7 +17,7 @@ export const menuItems: Record<menuTypes, IProps[]> = {
   task: [
     {
       label: 'find_tasks',
-      url: '/task'
+      url: '/'
     },
     {
       label: 'my_work',
