@@ -1,9 +1,9 @@
-import TaskStatistics from 'components/Organization/Dashboard/TaskStatistics'
 import Filter from 'components/Task/TaskListPage/Filter'
 import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
 import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
 import Search from 'components/Task/TaskListPage/Search'
 import TaskView from 'components/Task/TaskListPage/TaskView'
+import UserTasks from 'components/Task/TaskListPage/UserTasks'
 import client from 'graphclient/client'
 import { TaskStatus } from 'hooks/task/types'
 import { useUserStat } from 'hooks/userstat'
@@ -86,8 +86,8 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
                 <Filter expand />
               </div>
               <ProfileCard />
-              <div className='mt-4 2xl:hidden'>
-                <TaskStatistics stat={stats} />
+              <div className='mt-4'>
+                <UserTasks />
               </div>
             </div>
           </div>
