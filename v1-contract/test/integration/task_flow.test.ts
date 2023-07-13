@@ -1,6 +1,23 @@
 import { expect } from 'chai'
 import { ethers } from 'hardhat'
 
+enum TaskStatus {
+  PROPOSED,
+  OPEN,
+  ASSIGNED,
+  SUBMITTED,
+  CLOSED,
+  ARCHIVED,
+  DISPUTED
+}
+
+enum TaskRevisionStatus {
+  PROPOSED,
+  CHANGES_REQUESTED,
+  ACCEPTED,
+  REJECTED
+}
+
 const rewardSlashMultiplier = 0.01
 const slashRewardEvery = 86400
 const multiplier = 0.00001
@@ -183,7 +200,7 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -279,7 +296,7 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -388,7 +405,7 @@ describe('Integration test: Task flow', function () {
     await ethers.provider.send('hardhat_mine', [`0x1`])
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -493,7 +510,7 @@ describe('Integration test: Task flow', function () {
     await ethers.provider.send('hardhat_mine', [`0x1`])
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -623,7 +640,7 @@ describe('Integration test: Task flow', function () {
       .assignTask(taskId, teamAssignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -650,7 +667,113 @@ describe('Integration test: Task flow', function () {
     expect(isEqual).to.be.equal(true)
   })
 
-  it('Should successfully complete the task revision flow', async function () {
+  it('Should successfully dispute task', async function () {
+    const [owner, approver1, approver2, assignee] = await ethers.getSigners()
+    const { orgContract, taskContract, treasuryContract, storageContract } =
+      await getContractInstances()
+
+    // Create organization
+    const createOrgTx = await orgContract.createOrg(
+      'Buildstream',
+      'Decentralized task managers',
+      [approver1.address, approver2.address],
+      [owner.address],
+      false
+    )
+
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'OrganizationCreation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract['deposit(uint256)'](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther('0.001')
+    })
+
+    // Create task using org id created earlier
+    const requestAssignment = false
+    const createTaskTx = await taskContract
+      .connect(approver1)
+      .createTask(
+        '',
+        orgId,
+        'update ethers version',
+        'update ethers version to v2',
+        [SOLIDITY_TAG],
+        complexityScore,
+        reputationLevel,
+        dueDate,
+        requestAssignment,
+        disableSelfAssign
+      )
+
+    const taskCreateReceipt = await createTaskTx.wait()
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
+    )
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
+
+    // Open task
+    const assignCreator = true
+    await taskContract
+      .connect(approver1)
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
+
+    // Assign task created above to self
+    await taskContract.connect(assignee).assignSelf(taskId)
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address)
+
+    // Submit task
+    await storageContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
+
+    await taskContract
+      .connect(approver1)
+      .requestForTaskRevision(
+        taskId,
+        ethers.utils.formatBytes32String('3ed5'),
+        ethers.utils.formatBytes32String('3ed5re'),
+        dueDate * 2
+      )
+
+    await storageContract
+      .connect(assignee)
+      .requestForTaskRevisionDueDateExtension(taskId, dueDate * 3)
+
+    await taskContract.connect(approver1).dispute(taskId)
+
+    const task = await storageContract.getTask(taskId)
+    const metadata = await storageContract.getTaskMetadata(taskId)
+
+    expect(task.status).to.be.equal(TaskStatus.DISPUTED)
+    expect(
+      metadata.revisions[metadata.revisionCount.toNumber() - 1].status
+    ).to.be.equal(TaskRevisionStatus.CHANGES_REQUESTED)
+  })
+
+  it('Should successfully complete the task revision acceptance flow', async function () {
     const [owner, approver1, approver2, assignee] = await ethers.getSigners()
     const {
       orgContract,
@@ -733,7 +856,7 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
 
@@ -748,7 +871,7 @@ describe('Integration test: Task flow', function () {
 
     await storageContract
       .connect(assignee)
-      .requestForTaskRevisionDueDateExtension(taskId, 0, dueDate * 3)
+      .requestForTaskRevisionDueDateExtension(taskId, dueDate * 3)
 
     await taskContract
       .connect(approver1)
@@ -758,9 +881,9 @@ describe('Integration test: Task flow', function () {
         ethers.utils.formatBytes32String('3ed5re'),
         dueDate * 3
       )
-    await storageContract.connect(assignee).acceptTaskRevision(taskId, 1)
+    await storageContract.connect(assignee).acceptTaskRevision(taskId)
 
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -782,6 +905,108 @@ describe('Integration test: Task flow', function () {
       await tokenContract.balanceOf(assignee.address, SOLIDITY_TAG)
     ).to.be.equal(1)
     expect(isEqual).to.be.equal(true)
+  })
+
+  it('Should successfully complete the task revision rejection flow', async function () {
+    const [owner, approver1, approver2, assignee] = await ethers.getSigners()
+    const { orgContract, taskContract, treasuryContract, storageContract } =
+      await getContractInstances()
+
+    // Create organization
+    const createOrgTx = await orgContract.createOrg(
+      'Buildstream',
+      'Decentralized task managers',
+      [approver1.address, approver2.address],
+      [owner.address],
+      false
+    )
+
+    const orgCreateReceipt = await createOrgTx.wait()
+    const orgCreateEvent = orgCreateReceipt?.events?.find(
+      (e: any) => e.event === 'OrganizationCreation'
+    )
+    const orgId = orgCreateEvent?.args?.[0]?.toNumber()
+
+    const addOrgConfigTx = await orgContract.addOrgConfig(
+      orgId,
+      ethers.utils.parseUnits(multiplier.toString()),
+      ethers.constants.AddressZero,
+      requiredConfirmations,
+      requiredApprovals,
+      ethers.utils.parseUnits(rewardSlashMultiplier.toString()),
+      slashRewardEvery
+    )
+    await addOrgConfigTx.wait()
+
+    // Make deposit in treasury for orgainization
+    await treasuryContract['deposit(uint256)'](orgId, {
+      from: owner.address,
+      value: ethers.utils.parseEther('0.001')
+    })
+
+    // Create task using org id created earlier
+    const requestAssignment = false
+    const createTaskTx = await taskContract
+      .connect(approver1)
+      .createTask(
+        '',
+        orgId,
+        'update ethers version',
+        'update ethers version to v2',
+        [SOLIDITY_TAG],
+        complexityScore,
+        reputationLevel,
+        dueDate,
+        requestAssignment,
+        disableSelfAssign
+      )
+
+    const taskCreateReceipt = await createTaskTx.wait()
+    const eventFilter = storageContract.filters.TaskCreation()
+    const events = await storageContract.queryFilter(eventFilter)
+
+    const taskEvent = events?.find(
+      (e) => e.transactionHash === taskCreateReceipt.events?.[0].transactionHash
+    )
+
+    const taskId = taskEvent?.args?.[0]?.toNumber() as number
+
+    // Open task
+    const assignCreator = true
+    await taskContract
+      .connect(approver1)
+      ['openTask(uint256,bool,bool)'](taskId, assignCreator, disableSelfAssign)
+
+    // Assign task created above to self
+    await taskContract.connect(assignee).assignSelf(taskId)
+
+    await taskContract
+      .connect(approver1)
+      .approveAssignRequest(taskId, assignee.address)
+
+    // Submit task
+    await storageContract
+      .connect(assignee)
+      .submitTask(taskId, 'https://github.com')
+
+    await taskContract
+      .connect(approver1)
+      .requestForTaskRevision(
+        taskId,
+        ethers.utils.formatBytes32String('3ed5'),
+        ethers.utils.formatBytes32String('3ed5re'),
+        dueDate * 2
+      )
+
+    await storageContract.connect(assignee).rejectTaskRevision(taskId)
+
+    const task = await storageContract.getTask(taskId)
+    const metadata = await storageContract.getTaskMetadata(taskId)
+
+    expect(task.status).to.be.equal(TaskStatus.DISPUTED)
+    expect(
+      metadata.revisions[metadata.revisionCount.toNumber() - 1].status
+    ).to.be.equal(TaskRevisionStatus.REJECTED)
   })
 
   it('Should successfully assign task to task creator and complete task flow', async function () {
@@ -864,7 +1089,7 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -968,8 +1193,8 @@ describe('Integration test: Task flow', function () {
     // Assign task created above to self
     await taskContract.connect(assignee).assignSelf(taskId)
 
-    // Submit task
-    await taskContract
+    // Submit tCask
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)
@@ -1079,7 +1304,7 @@ describe('Integration test: Task flow', function () {
       .approveAssignRequest(taskId, assignee.address)
 
     // Submit task
-    await taskContract
+    await storageContract
       .connect(assignee)
       .submitTask(taskId, 'https://github.com')
     const initialBalance = await ethers.provider.getBalance(assignee.address)

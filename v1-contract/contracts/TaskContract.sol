@@ -163,7 +163,7 @@ contract TaskContract {
         if (
             taskMetadata.assignmentRequests.length > 0 &&
             taskMetadata.assignmentRequests[0] != address(0)
-        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender, true);
+        ) approveAssignRequest(taskId, taskMetadata.assignmentRequests[0]);
     }
 
     /// @dev Allows an approver to move a task to open.
@@ -186,7 +186,7 @@ contract TaskContract {
         if (
             taskMetadata.assignmentRequests.length > 0 &&
             taskMetadata.assignmentRequests[0] != address(0)
-        ) assign(taskId, taskMetadata.assignmentRequests[0], msg.sender, true);
+        ) approveAssignRequest(taskId, taskMetadata.assignmentRequests[0]);
     }
 
     /// @dev Allows a approver to approve a task.
@@ -255,91 +255,51 @@ contract TaskContract {
                 );
     }
 
-    /// @dev Allows assignee to submit task for approval.
-    /// @param taskId Task ID.
-    function submitTask(uint256 taskId, string memory comment) external {
-        taskStorageContract.submitTask(taskId, msg.sender, comment);
-    }
-
     /// @dev Allows assignees assign task to themselves.
     /// @param taskId Task ID.
-    function assign(
-        uint256 taskId,
-        address assignee,
-        address assigner,
-        bool forceAssign
-    ) internal {
+    function assignSelf(
+        uint256 taskId
+    ) external {
         TaskLib.Task memory task = taskStorageContract.getTask(taskId);
         TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
             .getTaskMetadata(taskId);
-        if (!forceAssign && taskMetadata.disableSelfAssign) {
-            taskStorageContract.makeAssignmentRequest(taskId, assignee);
+        if (taskMetadata.disableSelfAssign) {
+            taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
             return;
         }
         for (uint256 i = 0; i < task.taskTags.length; i++) {
             uint256 tokenBalance = tokenContract.balanceOf(
-                assignee,
+                msg.sender,
                 task.taskTags[i]
             );
             uint256 stakableTokens = tokenContract.stakableTokens(
-                assignee,
+                msg.sender,
                 task.taskTags[i]
             );
             if (
                 tokenBalance < task.reputationLevel ||
                 stakableTokens < task.complexityScore
             ) {
-                if (forceAssign)
-                    taskStorageContract.assign(
-                        taskId,
-                        assignee,
-                        assigner,
-                        false
-                    );
-                else
-                    taskStorageContract.makeAssignmentRequest(taskId, assignee);
+                taskStorageContract.makeAssignmentRequest(taskId, msg.sender);
                 return;
             }
         }
 
-        taskStorageContract.assign(taskId, assignee, assigner, true);
+        taskStorageContract.assign(taskId, msg.sender, msg.sender, true);
         for (uint256 i = 0; i < task.taskTags.length; i++) {
             tokenContract.stake(
-                assignee,
+                msg.sender,
                 task.taskTags[i],
                 task.complexityScore
             );
         }
     }
 
-    /// @dev Allows assignees assign task to themselves.
-    /// @param taskId Task ID.
-    function assignSelf(uint256 taskId) external {
-        assign(taskId, msg.sender, msg.sender, false);
-    }
-
     function approveAssignRequest(
         uint256 taskId,
         address assignee
-    ) external onlyApprover(taskId) {
+    ) public onlyApprover(taskId) {
         taskStorageContract.assign(taskId, assignee, msg.sender, false);
-    }
-
-    /// @dev Allows assignees to drop tasks.
-    /// @param taskId Task ID.
-    function unassignSelf(uint256 taskId) external {
-        TaskLib.Task memory task = taskStorageContract.getTask(taskId);
-        TaskLib.TaskMetadata memory taskMetadata = taskStorageContract
-            .getTaskMetadata(taskId);
-        taskStorageContract.unassign(taskId, msg.sender);
-        if (taskMetadata.staked)
-            for (uint256 i = 0; i < task.taskTags.length; i++) {
-                tokenContract.unStake(
-                    msg.sender,
-                    task.taskTags[i],
-                    task.complexityScore
-                );
-            }
     }
 
     /// @dev Allows approver to unassign assignee.
@@ -372,6 +332,12 @@ contract TaskContract {
             dueDateExtension,
             msg.sender
         );
+    }
+
+    /// @dev Allows approvers to dispute tasks.
+    /// @param taskId Task ID.
+    function dispute(uint256 taskId) external onlyApprover(taskId) {
+        taskStorageContract.dispute(taskId);
     }
 
     /// @dev Allows approvers to archive unassigned tasks.
