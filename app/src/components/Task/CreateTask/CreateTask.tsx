@@ -132,7 +132,7 @@ const CreateTask: React.FC<ICreateTask> = ({
       const multiplier = await getRewardMultiplier(
         organization.id,
         tags,
-        library.getSigner()
+        library
       )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
