@@ -20,6 +20,7 @@ import {
 } from 'hooks/task/types'
 import { getTreasuryBalance } from 'hooks/treasury/functions'
 import {
+  CLICKUP_PREFIX,
   TOKEN_KEY,
   fetchSpaces,
   fetchTasks,
@@ -171,7 +172,7 @@ const ClickupImport: React.FC<TImport> = ({
     setTaskData((prev) => ({
       ...prev,
       title: task.value,
-      externalId: task.id,
+      externalId: `${CLICKUP_PREFIX}${task.id}`,
       description: task.description ?? ''
     }))
   }
