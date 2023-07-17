@@ -18,6 +18,7 @@ import {
   TaskReputation,
   TaskReputationMap
 } from 'hooks/task/types'
+import { getTreasuryBalance } from 'hooks/treasury/functions'
 import {
   TOKEN_KEY,
   fetchSpaces,
@@ -82,9 +83,8 @@ const ClickupImport: React.FC<TImport> = ({
   const [showRewardSettings, setShowRewardSettings] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showDepositModal, setShowDepositModal] = useState(false)
-
-  const treasuryBalance = organization?.treasury?.tokens?.find(
-    (t) => t.token === tokenInfo?.address
+  const [treasuryBalance, setTreasuryBalance] = useState<BigNumber>(
+    BigNumber.from(0)
   )
 
   const handleChange = (ev: any) => {
@@ -130,7 +130,7 @@ const ClickupImport: React.FC<TImport> = ({
 
     setTaskData((prev) => ({ ...prev, publish }))
 
-    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
+    if (publish && rewardAmount.gt(treasuryBalance || 0)) {
       setShowDepositModal(true)
       return
     }
@@ -191,7 +191,21 @@ const ClickupImport: React.FC<TImport> = ({
     setRewardAmount(amount)
   }
 
+  const getOrgTreasuryBalance = async () => {
+    try {
+      const balance = await getTreasuryBalance(
+        organization.id,
+        ethers.constants.AddressZero,
+        library
+      )
+      setTreasuryBalance(balance)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
+    getOrgTreasuryBalance()
     getSpaces()
     getRewardAmount(taskData.complexityScore, taskData.taskTags)
 
@@ -209,7 +223,7 @@ const ClickupImport: React.FC<TImport> = ({
     tokenInfo?.decimal
   )
   const rewardUsd = parseFloat(rewardAmountValue) * (tokenInfo?.priceUsd || 0)
-  const balanceToDeposit = rewardAmount.sub(treasuryBalance?.balance || 0)
+  const balanceToDeposit = rewardAmount.sub(treasuryBalance || 0)
   const balanceToDepositValue = ethers.utils.formatUnits(
     balanceToDeposit.toString(),
     tokenInfo?.decimal

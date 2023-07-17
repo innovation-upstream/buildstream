@@ -40,3 +40,13 @@ export const depositToken = async (
   )
   await tx.wait()
 }
+
+export const getTreasuryBalance = async (
+  orgId: number,
+  token: string,
+  provider?: any
+): Promise<BigNumber> => {
+  const contract = getContract(Treasury.address, Treasury.abi, provider)
+  const balance = await contract['getBalance(uint256,address)'](orgId, token)
+  return balance
+}
