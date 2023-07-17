@@ -8,7 +8,8 @@ export enum TaskStatus {
   ASSIGNED,
   SUBMITTED,
   CLOSED,
-  ARCHIVED
+  ARCHIVED,
+  DISPUTED
 }
 
 export enum ComplexityScore {
@@ -23,7 +24,7 @@ export enum TaskRevisionStatus {
   PROPOSED,
   CHANGES_REQUESTED,
   ACCEPTED,
-  DISPUTED
+  REJECTED
 }
 
 export const TaskStatusMap: Record<TaskStatus, string> = {
@@ -32,7 +33,8 @@ export const TaskStatusMap: Record<TaskStatus, string> = {
   [TaskStatus.ASSIGNED]: 'assigned',
   [TaskStatus.SUBMITTED]: 'submitted',
   [TaskStatus.CLOSED]: 'closed',
-  [TaskStatus.ARCHIVED]: 'archived'
+  [TaskStatus.ARCHIVED]: 'archived',
+  [TaskStatus.DISPUTED]: 'disputed'
 }
 
 export const ComplexityScoreMap: Record<ComplexityScore, string> = {

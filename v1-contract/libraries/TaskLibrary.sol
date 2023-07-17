@@ -167,6 +167,7 @@ library TaskLibrary {
         bool staked
     ) external {
         require(self.status == TaskLib.TaskStatus.OPEN, "Task is not opened");
+        require(self.dueDate > block.timestamp, "Task is expired");
         self.status = TaskLib.TaskStatus.ASSIGNED;
         self.assigneeAddress = assignee;
         self.assigner = assigner;

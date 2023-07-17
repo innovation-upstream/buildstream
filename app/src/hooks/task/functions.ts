@@ -158,6 +158,22 @@ export const archiveTask = async (
   return true
 }
 
+export const disputeTask = async (
+  taskId: number,
+  provider?: any
+): Promise<boolean> => {
+  const contract = getContract(
+    TaskContractInterface.address,
+    TaskContractInterface.abi,
+    provider
+  )
+
+  const response = await contract.dispute(taskId)
+  await response.wait()
+
+  return true
+}
+
 export const editTask = async (
   taskId: number,
   title: string,
@@ -229,7 +245,6 @@ export const requestTaskReview = async (
 
 export const changeDueDate = async (
   taskId: number,
-  revisionIndex: number,
   dueDateExtension: number,
   provider?: any
 ): Promise<boolean> => {
@@ -242,7 +257,6 @@ export const changeDueDate = async (
   const response =
     await taskStorageContract.requestForTaskRevisionDueDateExtension(
       taskId,
-      revisionIndex,
       dueDateExtension
     )
   await response.wait()
@@ -251,7 +265,6 @@ export const changeDueDate = async (
 
 export const acceptRevision = async (
   taskId: number,
-  revisionIndex: number,
   provider?: any
 ): Promise<boolean> => {
   const taskStorageContract = getContract(
@@ -261,8 +274,7 @@ export const acceptRevision = async (
   )
 
   const response = await taskStorageContract.acceptTaskRevision(
-    taskId,
-    revisionIndex
+    taskId
   )
   await response.wait()
   return true
@@ -270,7 +282,6 @@ export const acceptRevision = async (
 
 export const rejectTaskRevision = async (
   taskId: number,
-  revisionIndex: number,
   provider?: any
 ): Promise<boolean> => {
   const taskStorageContract = getContract(
@@ -280,8 +291,7 @@ export const rejectTaskRevision = async (
   )
 
   const response = await taskStorageContract.rejectTaskRevision(
-    taskId,
-    revisionIndex
+    taskId
   )
   await response.wait()
   return true

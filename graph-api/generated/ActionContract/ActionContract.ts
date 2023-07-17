@@ -56,6 +56,54 @@ export class ActionCreation__Params {
   get actionId(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get action(): ActionCreationActionStruct {
+    return changetype<ActionCreationActionStruct>(
+      this._event.parameters[2].value.toTuple()
+    );
+  }
+}
+
+export class ActionCreationActionStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get orgId(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get initiator(): Address {
+    return this[2].toAddress();
+  }
+
+  get targetAddress(): Address {
+    return this[3].toAddress();
+  }
+
+  get value(): BigInt {
+    return this[4].toBigInt();
+  }
+
+  get data(): Bytes {
+    return this[5].toBytes();
+  }
+
+  get executed(): boolean {
+    return this[6].toBoolean();
+  }
+
+  get tokenAddress(): Address {
+    return this[7].toAddress();
+  }
+
+  get actionType(): i32 {
+    return this[8].toI32();
+  }
+
+  get autoExecute(): boolean {
+    return this[9].toBoolean();
+  }
 }
 
 export class ActionExecution extends ethereum.Event {

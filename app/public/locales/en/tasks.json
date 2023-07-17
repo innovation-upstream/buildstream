@@ -162,5 +162,7 @@
   "task_assigned_alert_title": "Task is assigned to ",
   "adjust_due_date": "Adjust Due Date",
   "task_revision_body": "Describe how it will be solved",
-  "your_tasks": "Your Tasks"
+  "your_tasks": "Your Tasks",
+  "disputed": "Disputed",
+  "add_task": "Add task"
 }

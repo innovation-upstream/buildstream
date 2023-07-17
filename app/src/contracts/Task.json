@@ -1,5 +1,5 @@
 {
-  "address": "0x707e26d11be2B9eA4C8CF5fb1b223f34c172Acd0",
+  "address": "0x7Dd54323aBB17dCABf0DCf828F7b38DeDE45E239",
   "abi": [
     {
       "type": "constructor",
@@ -136,6 +136,20 @@
     },
     {
       "type": "function",
+      "name": "dispute",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "openTask",
       "constant": false,
       "payable": false,
@@ -228,39 +242,7 @@
     },
     {
       "type": "function",
-      "name": "submitTask",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        },
-        {
-          "type": "string",
-          "name": "comment"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
       "name": "unassign",
-      "constant": false,
-      "payable": false,
-      "gas": 1100000,
-      "inputs": [
-        {
-          "type": "uint256",
-          "name": "taskId"
-        }
-      ],
-      "outputs": []
-    },
-    {
-      "type": "function",
-      "name": "unassignSelf",
       "constant": false,
       "payable": false,
       "gas": 1100000,

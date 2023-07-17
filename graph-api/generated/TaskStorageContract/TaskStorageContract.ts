@@ -280,6 +280,24 @@ export class TaskCreationTaskMetadataRevisionsStruct extends ethereum.Tuple {
   }
 }
 
+export class TaskDisputed extends ethereum.Event {
+  get params(): TaskDisputed__Params {
+    return new TaskDisputed__Params(this);
+  }
+}
+
+export class TaskDisputed__Params {
+  _event: TaskDisputed;
+
+  constructor(event: TaskDisputed) {
+    this._event = event;
+  }
+
+  get taskId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+}
+
 export class TaskOpened extends ethereum.Event {
   get params(): TaskOpened__Params {
     return new TaskOpened__Params(this);
@@ -1057,10 +1075,6 @@ export class AcceptTaskRevisionCall__Inputs {
   get taskId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
-
-  get revisionIndex(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
 }
 
 export class AcceptTaskRevisionCall__Outputs {
@@ -1277,6 +1291,36 @@ export class CreateTaskCall__Outputs {
   }
 }
 
+export class DisputeCall extends ethereum.Call {
+  get inputs(): DisputeCall__Inputs {
+    return new DisputeCall__Inputs(this);
+  }
+
+  get outputs(): DisputeCall__Outputs {
+    return new DisputeCall__Outputs(this);
+  }
+}
+
+export class DisputeCall__Inputs {
+  _call: DisputeCall;
+
+  constructor(call: DisputeCall) {
+    this._call = call;
+  }
+
+  get taskId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class DisputeCall__Outputs {
+  _call: DisputeCall;
+
+  constructor(call: DisputeCall) {
+    this._call = call;
+  }
+}
+
 export class MakeAssignmentRequestCall extends ethereum.Call {
   get inputs(): MakeAssignmentRequestCall__Inputs {
     return new MakeAssignmentRequestCall__Inputs(this);
@@ -1373,10 +1417,6 @@ export class RejectTaskRevisionCall__Inputs {
   get taskId(): BigInt {
     return this._call.inputValues[0].value.toBigInt();
   }
-
-  get revisionIndex(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
 }
 
 export class RejectTaskRevisionCall__Outputs {
@@ -1454,12 +1494,8 @@ export class RequestForTaskRevisionDueDateExtensionCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get revisionIndex(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
   get dueDateExtension(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+    return this._call.inputValues[1].value.toBigInt();
   }
 }
 
@@ -1526,12 +1562,8 @@ export class SubmitTaskCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get assignee(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
   get comment(): string {
-    return this._call.inputValues[2].value.toString();
+    return this._call.inputValues[1].value.toString();
   }
 }
 

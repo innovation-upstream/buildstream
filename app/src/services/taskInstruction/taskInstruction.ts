@@ -27,27 +27,32 @@ export default class TaskInstruction {
     taskId: string,
     taskInstruction: string
   ): Promise<void> {
-    const { data } = await client.query({
-      query: GetTaskDocument,
-      variables: {
-        id: taskId
-      }
-    })
+    const savedInstructions = await this.get(taskId)
 
-    if (!data?.task) throw new ApiError(404, 'Task does not exist')
+    if (!!savedInstructions) {
+      const { data } = await client.query({
+        query: GetTaskDocument,
+        variables: {
+          id: taskId
+        }
+      })
 
-    if (
-      !data.task.orgId.approvers.includes(user) &&
-      !data.task.orgId.signers.includes(user)
-    )
-      throw new ApiError(403, 'User is not an approver or signer')
+      if (!data?.task) throw new ApiError(404, 'Task does not exist')
+      if (
+        !data.task.orgId.approvers.includes(user) &&
+        !data.task.orgId.signers.includes(user)
+      )
+        throw new ApiError(
+          403,
+          'Only an approver or signer can update instructions'
+        )
+    }
 
     const docRef = this.client.collection('tasks').doc(taskId.toString())
 
     await docRef.set(
       {
-        taskInstruction,
-        organizationId: data.task.orgId.id
+        taskInstruction
       },
       { merge: true }
     )

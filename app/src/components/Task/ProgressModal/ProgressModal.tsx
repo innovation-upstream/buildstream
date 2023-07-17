@@ -1,7 +1,6 @@
 import CloseIcon from 'components/IconSvg/CloseIcon'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
-import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import { Organization } from 'hooks/organization/types'
 import {
   createNewTask,
@@ -41,14 +40,11 @@ const ProgressModal = ({
   const isApprover = account && organization?.approvers?.includes(account)
   const [createStatus, setCreateStatus] = useState(Progress.PENDING)
   const [updateInstructionsStatus, setUpdateInstructionStatus] = useState(
-    isApprover && taskData.instructions ? Progress.PENDING : Progress.SKIPPED
+    taskData.instructions ? Progress.PENDING : Progress.SKIPPED
   )
   const [publishStatus, setPublishStatus] = useState(
     isApprover && taskData.publish ? Progress.PENDING : Progress.SKIPPED
   )
-  const { callAction, component } = useServerConfirmation({
-    onError: () => setUpdateInstructionStatus(Progress.FAILED)
-  })
 
   const beginActions = async () => {
     let taskId: number | undefined
@@ -62,15 +58,15 @@ const ProgressModal = ({
 
     if (!taskId) return
 
+    if (updateInstructionsStatus === Progress.PENDING)
+      await updateInstructions(taskId as number)
+
     if (publishStatus === Progress.PENDING)
       try {
         await publishTask(taskId as number)
       } catch (error) {
         errors.push(error)
       }
-
-    if (updateInstructionsStatus === Progress.PENDING)
-      await callAction(async () => await updateInstructions(taskId as number))
 
     if (errors.length) throw errors
   }
@@ -183,7 +179,6 @@ const ProgressModal = ({
 
   return (
     <>
-      {component}
       <div className='fixed w-full h-full bg-black/40 inset-0 z-[51]' />
       <div className='paper fixed px-10 py-8 w-[400px] max-w-[90%] z-[52] top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'>
         <div className='relative mb-5'>

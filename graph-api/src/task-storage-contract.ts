@@ -16,6 +16,7 @@ import {
   TaskClosed as TaskClosedEvent,
   TaskConfirmation as TaskConfirmationEvent,
   TaskCreation as TaskCreationEvent,
+  TaskDisputed as TaskDisputedEvent,
   TaskOpened as TaskOpenedEvent,
   TaskRevisionAccepted as TaskRevisionAcceptedEvent,
   TaskRevisionChangesRequested as TaskRevisionChangesRequestedEvent,
@@ -36,7 +37,15 @@ enum TaskStatus {
   ASSIGNED,
   SUBMITTED,
   CLOSED,
-  ARCHIVED
+  ARCHIVED,
+  DISPUTED
+}
+
+enum TaskRevisionStatus {
+  PROPOSED,
+  CHANGES_REQUESTED,
+  ACCEPTED,
+  REJECTED
 }
 
 export function createTaskSnapshot(
@@ -249,7 +258,7 @@ export function handleTaskAssignment(event: TaskAssignmentEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 2
+  taskEntity.status = TaskStatus.ASSIGNED
   taskEntity.assignee = event.params.assignee.toHexString()
   taskEntity.team = event.params.assignee.toHexString()
   taskEntity.assigner = event.transaction.from.toHexString()
@@ -311,7 +320,7 @@ export function handleTaskClosed(event: TaskClosedEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 4
+  taskEntity.status = TaskStatus.CLOSED
   taskEntity.save()
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
   taskSnapshotEntity.save()
@@ -417,7 +426,7 @@ export function handleTaskOpened(event: TaskOpenedEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 1
+  taskEntity.status = TaskStatus.OPEN
   taskEntity.rewardToken = event.params.rewardToken
   taskEntity.rewardAmount = event.params.rewardAmount
   taskEntity.disableSelfAssign = event.params.disableSelfAssign
@@ -463,7 +472,7 @@ export function handleTaskSubmission(event: TaskSubmissionEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 3
+  taskEntity.status = TaskStatus.SUBMITTED
   taskEntity.comment = event.params.comment
   taskEntity.submitDate = event.block.timestamp
   taskEntity.save()
@@ -485,7 +494,7 @@ export function handleTaskUnassignment(event: TaskUnassignmentEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 1
+  taskEntity.status = TaskStatus.OPEN
   taskEntity.assignee = Address.zero().toHexString()
   taskEntity.team = Address.zero().toHexString()
   taskEntity.teamAssignee = Address.zero().toHexString()
@@ -511,7 +520,7 @@ export function handleTaskArchived(event: TaskArchivedEvent): void {
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 5
+  taskEntity.status = TaskStatus.ARCHIVED
   taskEntity.save()
 
   const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
@@ -565,7 +574,7 @@ export function handleTaskRevisionAccepted(
   const entityId = event.params.revisionId
   const revisionEntity = TaskRevision.load(entityId.toHexString())
   if (!revisionEntity) return
-  revisionEntity.status = 2
+  revisionEntity.status = TaskRevisionStatus.ACCEPTED
 
   revisionEntity.save()
 
@@ -573,7 +582,6 @@ export function handleTaskRevisionAccepted(
   const prevTEntity = Task.load(taskId)
   const taskEntity = Task.load(taskId)
   if (!taskEntity) return
-  taskEntity.status = 2
   taskEntity.dueDate = event.params.dueDate
   taskEntity.save()
 
@@ -595,7 +603,7 @@ export function handleTaskRevisionRejected(
   const entityId = event.params.revisionId
   const revisionEntity = TaskRevision.load(entityId.toHexString())
   if (!revisionEntity) return
-  revisionEntity.status = 3
+  revisionEntity.status = TaskRevisionStatus.REJECTED
 
   revisionEntity.save()
 }
@@ -606,8 +614,28 @@ export function handleTaskRevisionChangesRequested(
   const entityId = event.params.revisionId
   const revisionEntity = TaskRevision.load(entityId.toHexString())
   if (!revisionEntity) return
-  revisionEntity.status = 1
+  revisionEntity.status = TaskRevisionStatus.CHANGES_REQUESTED
   revisionEntity.dueDateExtensionRequest = event.params.dueDateExtension
 
   revisionEntity.save()
+}
+
+export function handleTaskDisputed(event: TaskDisputedEvent): void {
+  const taskId = event.params.taskId.toString()
+  const prevTEntity = Task.load(taskId)
+  const taskEntity = Task.load(taskId)
+  if (!taskEntity) return
+  taskEntity.status = TaskStatus.DISPUTED
+  taskEntity.save()
+
+  const taskSnapshotEntity = createTaskSnapshot(event, taskEntity)
+  taskSnapshotEntity.save()
+  updateStats(taskEntity, prevTEntity)
+
+  const notificationEntity = createTaskNotificationEntity(
+    event,
+    taskEntity,
+    taskSnapshotEntity
+  )
+  notificationEntity.save()
 }

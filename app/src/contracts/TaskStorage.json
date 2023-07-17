@@ -1,5 +1,5 @@
 {
-  "address": "0x7160187A42Cf6aAbad4da9c1Cc2834f35f0aC1D2",
+  "address": "0xAd44099eA82933b52580E3fa7dd583A0f24Ec25C",
   "abi": [
     {
       "type": "constructor",
@@ -239,6 +239,18 @@
               "name": "disableSelfAssign"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "anonymous": false,
+      "name": "TaskDisputed",
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId",
+          "indexed": true
         }
       ]
     },
@@ -626,10 +638,6 @@
         {
           "type": "uint256",
           "name": "taskId"
-        },
-        {
-          "type": "uint256",
-          "name": "revisionIndex"
         }
       ],
       "outputs": []
@@ -783,6 +791,20 @@
           "type": "bool"
         }
       ]
+    },
+    {
+      "type": "function",
+      "name": "dispute",
+      "constant": false,
+      "payable": false,
+      "gas": 1100000,
+      "inputs": [
+        {
+          "type": "uint256",
+          "name": "taskId"
+        }
+      ],
+      "outputs": []
     },
     {
       "type": "function",
@@ -1010,10 +1032,6 @@
         {
           "type": "uint256",
           "name": "taskId"
-        },
-        {
-          "type": "uint256",
-          "name": "revisionIndex"
         }
       ],
       "outputs": []
@@ -1061,10 +1079,6 @@
         },
         {
           "type": "uint256",
-          "name": "revisionIndex"
-        },
-        {
-          "type": "uint256",
           "name": "dueDateExtension"
         }
       ],
@@ -1098,10 +1112,6 @@
         {
           "type": "uint256",
           "name": "taskId"
-        },
-        {
-          "type": "address",
-          "name": "assignee"
         },
         {
           "type": "string",

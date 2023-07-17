@@ -2,8 +2,7 @@ import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import {
   ActionConfirmation as ActionConfirmationEvent,
   ActionCreation as ActionCreationEvent,
-  ActionExecution as ActionExecutionEvent,
-  ActionContract as Contract
+  ActionExecution as ActionExecutionEvent
 } from '../generated/ActionContract/ActionContract'
 import {
   Action,
@@ -28,7 +27,9 @@ enum ActionType {
   UPDATE_REWARD_TOKEN,
   UPDATE_REWARD_SLASH_MULTIPLIER,
   UPDATE_SLASH_REWARD_EVERY,
-  UPDATE_TAG_REWARD_MULTIPLIER
+  UPDATE_TAG_REWARD_MULTIPLIER,
+  ARCHIVE_ORGANIZATION,
+  UNARCHIVE_ORGANIZATION
 }
 
 function createActionSnapshot(
@@ -93,8 +94,7 @@ export function handleActionConfirmation(event: ActionConfirmationEvent): void {
 
 export function handleActionCreation(event: ActionCreationEvent): void {
   const entity = new Action(event.params.actionId.toString())
-  const contract = Contract.bind(event.address)
-  const action = contract.getAction(event.params.actionId)
+  const action = event.params.action
 
   const orgId = event.params.orgId
   const organizationEntity = Organization.load(orgId.toString())
@@ -193,7 +193,9 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
     entity.actionType === ActionType.UPDATE_REWARD_TOKEN &&
     entity.targetAddress
   )
-    organizationEntity.rewardToken = Bytes.fromHexString(entity.targetAddress as string)
+    organizationEntity.rewardToken = Bytes.fromHexString(
+      entity.targetAddress as string
+    )
 
   if (
     entity.actionType === ActionType.UPDATE_REWARD_SLASH_MULTIPLIER &&
@@ -206,6 +208,18 @@ export function handleActionExecution(event: ActionExecutionEvent): void {
     entity.value
   )
     organizationEntity.slashRewardEvery = entity.value as BigInt
+
+  if (
+    entity.actionType === ActionType.ARCHIVE_ORGANIZATION &&
+    entity.value
+  )
+    organizationEntity.isArchived = true
+
+  if (
+    entity.actionType === ActionType.UNARCHIVE_ORGANIZATION &&
+    entity.value
+  )
+    organizationEntity.isArchived = false
 
   organizationEntity.save()
 }

@@ -34,7 +34,7 @@ const ChangeDueDateModal = ({ taskId, revisionId, onClose }: ChangeDueDateProps)
 
     setProcessing(true)
     try {
-      await changeDueDate(taskId, revisionId, dueDate, library.getSigner())
+      await changeDueDate(taskId, dueDate, library.getSigner())
       setProcessing(false)
       onClose()
     } catch (e) {

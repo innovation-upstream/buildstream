@@ -70,6 +70,42 @@ export class OrganizationCreation__Params {
   get orgId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
   }
+
+  get org(): OrganizationCreationOrgStruct {
+    return changetype<OrganizationCreationOrgStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+}
+
+export class OrganizationCreationOrgStruct extends ethereum.Tuple {
+  get id(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get name(): string {
+    return this[1].toString();
+  }
+
+  get description(): string {
+    return this[2].toString();
+  }
+
+  get approvers(): Array<Address> {
+    return this[3].toAddressArray();
+  }
+
+  get signers(): Array<Address> {
+    return this[4].toAddressArray();
+  }
+
+  get isInitialized(): boolean {
+    return this[5].toBoolean();
+  }
+
+  get isArchived(): boolean {
+    return this[6].toBoolean();
+  }
 }
 
 export class OrganizationInitialized extends ethereum.Event {
@@ -87,6 +123,42 @@ export class OrganizationInitialized__Params {
 
   get orgId(): BigInt {
     return this._event.parameters[0].value.toBigInt();
+  }
+
+  get config(): OrganizationInitializedConfigStruct {
+    return changetype<OrganizationInitializedConfigStruct>(
+      this._event.parameters[1].value.toTuple()
+    );
+  }
+}
+
+export class OrganizationInitializedConfigStruct extends ethereum.Tuple {
+  get orgId(): BigInt {
+    return this[0].toBigInt();
+  }
+
+  get requiredTaskApprovals(): BigInt {
+    return this[1].toBigInt();
+  }
+
+  get requiredConfirmations(): BigInt {
+    return this[2].toBigInt();
+  }
+
+  get rewardMultiplier(): BigInt {
+    return this[3].toBigInt();
+  }
+
+  get rewardToken(): Address {
+    return this[4].toAddress();
+  }
+
+  get rewardSlashMultiplier(): BigInt {
+    return this[5].toBigInt();
+  }
+
+  get slashRewardEvery(): BigInt {
+    return this[6].toBigInt();
   }
 }
 
@@ -157,6 +229,10 @@ export class Organization__getOrganizationResultValue0Struct extends ethereum.Tu
 
   get isInitialized(): boolean {
     return this[5].toBoolean();
+  }
+
+  get isArchived(): boolean {
+    return this[6].toBoolean();
   }
 }
 
@@ -335,7 +411,7 @@ export class Organization extends ethereum.SmartContract {
   ): Organization__getOrganizationResultValue0Struct {
     let result = super.call(
       "getOrganization",
-      "getOrganization(uint256):((uint256,string,string,address[],address[],bool))",
+      "getOrganization(uint256):((uint256,string,string,address[],address[],bool,bool))",
       [ethereum.Value.fromUnsignedBigInt(_orgId)]
     );
 
@@ -349,7 +425,7 @@ export class Organization extends ethereum.SmartContract {
   ): ethereum.CallResult<Organization__getOrganizationResultValue0Struct> {
     let result = super.tryCall(
       "getOrganization",
-      "getOrganization(uint256):((uint256,string,string,address[],address[],bool))",
+      "getOrganization(uint256):((uint256,string,string,address[],address[],bool,bool))",
       [ethereum.Value.fromUnsignedBigInt(_orgId)]
     );
     if (result.reverted) {

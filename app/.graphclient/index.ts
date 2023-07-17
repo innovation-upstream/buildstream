@@ -304,6 +304,7 @@ export type ActionSnapshot_orderBy =
   | 'organizationSnapshot__slashRewardEvery'
   | 'organizationSnapshot__rewardToken'
   | 'organizationSnapshot__isInitialized'
+  | 'organizationSnapshot__isArchived'
   | 'initiator'
   | 'targetAddress'
   | 'value'
@@ -517,6 +518,7 @@ export type Action_orderBy =
   | 'organizationSnapshot__slashRewardEvery'
   | 'organizationSnapshot__rewardToken'
   | 'organizationSnapshot__isInitialized'
+  | 'organizationSnapshot__isArchived'
   | 'initiator'
   | 'targetAddress'
   | 'value'
@@ -826,6 +828,7 @@ export type Notification_orderBy =
   | 'orgId__slashRewardEvery'
   | 'orgId__rewardToken'
   | 'orgId__isInitialized'
+  | 'orgId__isArchived'
   | 'task'
   | 'task__id'
   | 'task__taskId'
@@ -934,6 +937,7 @@ export type Organization = {
   isInitialized: Scalars['Boolean'];
   treasury: Treasury;
   stat?: Maybe<OrganizationStat>;
+  isArchived: Scalars['Boolean'];
 };
 
 export type OrganizationSnapshot = {
@@ -952,6 +956,7 @@ export type OrganizationSnapshot = {
   isInitialized: Scalars['Boolean'];
   treasury: Treasury;
   stat?: Maybe<OrganizationStat>;
+  isArchived: Scalars['Boolean'];
 };
 
 export type OrganizationSnapshot_filter = {
@@ -1119,6 +1124,10 @@ export type OrganizationSnapshot_filter = {
   stat_not_ends_with?: InputMaybe<Scalars['String']>;
   stat_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   stat_?: InputMaybe<OrganizationStat_filter>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
+  isArchived_not?: InputMaybe<Scalars['Boolean']>;
+  isArchived_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isArchived_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<OrganizationSnapshot_filter>>>;
@@ -1149,7 +1158,8 @@ export type OrganizationSnapshot_orderBy =
   | 'stat__assignedTasks'
   | 'stat__submittedTasks'
   | 'stat__closedTasks'
-  | 'stat__archivedTasks';
+  | 'stat__archivedTasks'
+  | 'isArchived';
 
 export type OrganizationStat = {
   id: Scalars['ID'];
@@ -1412,6 +1422,10 @@ export type Organization_filter = {
   stat_not_ends_with?: InputMaybe<Scalars['String']>;
   stat_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
   stat_?: InputMaybe<OrganizationStat_filter>;
+  isArchived?: InputMaybe<Scalars['Boolean']>;
+  isArchived_not?: InputMaybe<Scalars['Boolean']>;
+  isArchived_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  isArchived_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Organization_filter>>>;
@@ -1443,7 +1457,8 @@ export type Organization_orderBy =
   | 'stat__assignedTasks'
   | 'stat__submittedTasks'
   | 'stat__closedTasks'
-  | 'stat__archivedTasks';
+  | 'stat__archivedTasks'
+  | 'isArchived';
 
 export type Query = {
   userStat?: Maybe<UserStat>;
@@ -2670,6 +2685,7 @@ export type TaskSnapshot_orderBy =
   | 'orgId__slashRewardEvery'
   | 'orgId__rewardToken'
   | 'orgId__isInitialized'
+  | 'orgId__isArchived'
   | 'title'
   | 'description'
   | 'assigner'
@@ -3041,6 +3057,7 @@ export type Task_orderBy =
   | 'orgId__slashRewardEvery'
   | 'orgId__rewardToken'
   | 'orgId__isInitialized'
+  | 'orgId__isArchived'
   | 'title'
   | 'description'
   | 'assigner'
@@ -3822,6 +3839,7 @@ export type OrganizationResolvers<ContextType = MeshContext, ParentType extends 
   isInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   treasury?: Resolver<ResolversTypes['Treasury'], ParentType, ContextType>;
   stat?: Resolver<Maybe<ResolversTypes['OrganizationStat']>, ParentType, ContextType>;
+  isArchived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3841,6 +3859,7 @@ export type OrganizationSnapshotResolvers<ContextType = MeshContext, ParentType 
   isInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   treasury?: Resolver<ResolversTypes['Treasury'], ParentType, ContextType>;
   stat?: Resolver<Maybe<ResolversTypes['OrganizationStat']>, ParentType, ContextType>;
+  isArchived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

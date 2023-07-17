@@ -1,3 +1,4 @@
+import CreateTask from 'components/Task/TaskListPage/CreateTask'
 import Filter from 'components/Task/TaskListPage/Filter'
 import { TaskFilterProvider } from 'components/Task/TaskListPage/FilterContext'
 import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
@@ -77,6 +78,9 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
       </Head>
       <TaskFilterProvider>
         <div className='grid-layout py-10 md:py-24'>
+          <div className='col-span-4 md:col-span-8 lg:col-span-12'>
+            <CreateTask />
+          </div>
           <div className='col-span-4 md:col-span-8 lg:col-span-12 lg:hidden'>
             <Search showControls />
           </div>

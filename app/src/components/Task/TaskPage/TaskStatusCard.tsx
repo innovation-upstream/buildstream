@@ -2,6 +2,7 @@ import Archive from 'SVGs/Archive'
 import ClockSmall from 'SVGs/ClockSmall'
 import Correct from 'SVGs/Correct'
 import Laptop from 'SVGs/Laptop'
+import Scale from 'SVGs/Scale'
 import User from 'SVGs/User'
 import { Task, TaskStatus } from 'hooks/task/types'
 import { useTranslation } from 'next-i18next'
@@ -15,6 +16,7 @@ const statuses = [
   TaskStatus.OPEN,
   TaskStatus.ASSIGNED,
   TaskStatus.SUBMITTED,
+  TaskStatus.DISPUTED,
   TaskStatus.CLOSED,
   TaskStatus.ARCHIVED
 ]
@@ -50,6 +52,12 @@ const taskStatusConfig = {
     messageKey: 'archived',
     fill: 'fill-[#444c54]',
     background: 'bg-[#444c54]/30'
+  },
+  [TaskStatus.DISPUTED]: {
+    icon: Scale,
+    messageKey: 'disputed',
+    fill: 'fill-[#F35B5B]',
+    background: 'bg-[#FEEBEB]'
   }
 }
 
@@ -63,8 +71,9 @@ const TaskStatusCard = ({ task }: TaskStatusCardProps) => {
       <ul className='mt-6'>
         {statuses?.map((status, index) => {
           if (
-            status === TaskStatus.ARCHIVED &&
-            task.status !== TaskStatus.ARCHIVED
+            (status === TaskStatus.ARCHIVED ||
+              status === TaskStatus.DISPUTED) &&
+            task.status !== status
           )
             return null
 

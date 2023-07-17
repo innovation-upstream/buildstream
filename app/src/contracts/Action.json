@@ -1,5 +1,5 @@
 {
-  "address": "0x82E3ea24Cb6619Fbf301316a56574e509Fb6ab6d",
+  "address": "0x18EB0395e45a059277615721B755cDC1d0020da2",
   "abi": [
     {
       "type": "constructor",
@@ -47,6 +47,53 @@
           "type": "uint256",
           "name": "actionId",
           "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "action",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "address",
+              "name": "initiator"
+            },
+            {
+              "type": "address",
+              "name": "targetAddress"
+            },
+            {
+              "type": "uint256",
+              "name": "value"
+            },
+            {
+              "type": "bytes",
+              "name": "data"
+            },
+            {
+              "type": "bool",
+              "name": "executed"
+            },
+            {
+              "type": "address",
+              "name": "tokenAddress"
+            },
+            {
+              "type": "uint8",
+              "name": "actionType"
+            },
+            {
+              "type": "bool",
+              "name": "autoExecute"
+            }
+          ]
         }
       ]
     },
