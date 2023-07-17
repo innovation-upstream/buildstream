@@ -2,6 +2,8 @@ import { ISpaces } from 'components/Task/ImportTask/types'
 import { setCookies } from 'cookies-next'
 import { TOKEN_KEY } from './'
 
+export const CLICKUP_PREFIX = 'clickup-'
+
 const serverUrl = process.env.NEXT_PUBLIC_CLICKUP_SERVER_URL
 const client_secret = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_SECRET
 const client_id = process.env.NEXT_PUBLIC_CLICKUP_CLIENT_ID
@@ -11,11 +13,13 @@ export const fetchClickupTask = async (
   clickupTaskId: string,
   organizationId: string
 ) => {
+  const taskId = clickupTaskId.replace(CLICKUP_PREFIX, '')
+  if (!taskId) return null
   try {
     const response = await fetch(`${serverUrl}/task`, {
       method: 'POST',
       body: JSON.stringify({
-        task_id: clickupTaskId,
+        task_id: taskId,
         organizationId
       }),
       headers: new Headers({ 'Content-Type': 'application/json' })
