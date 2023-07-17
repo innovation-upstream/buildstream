@@ -16,6 +16,7 @@ import {
   TaskReputation,
   TaskReputationMap
 } from 'hooks/task/types'
+import { getTreasuryBalance } from 'hooks/treasury/functions'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -70,9 +71,8 @@ const CreateTask: React.FC<ICreateTask> = ({
   const [showRewardSettings, setShowRewardSettings] = useState(false)
   const [showProgressModal, setShowProgressModal] = useState(false)
   const [showDepositModal, setShowDepositModal] = useState(false)
-
-  const treasuryBalance = organization?.treasury?.tokens?.find(
-    (t) => t.token === tokenInfo?.address
+  const [treasuryBalance, setTreasuryBalance] = useState<BigNumber>(
+    BigNumber.from(0)
   )
 
   const handleChange = (ev: any) => {
@@ -118,7 +118,7 @@ const CreateTask: React.FC<ICreateTask> = ({
 
     setTaskData((prev) => ({ ...prev, publish }))
 
-    if (publish && rewardAmount.gt(treasuryBalance?.balance || 0)) {
+    if (publish && rewardAmount.gt(treasuryBalance || 0)) {
       setShowDepositModal(true)
       return
     }
@@ -132,7 +132,7 @@ const CreateTask: React.FC<ICreateTask> = ({
       const multiplier = await getRewardMultiplier(
         organization.id,
         tags,
-        library.getSigner()
+        library
       )
       amount = multiplier.mul(complexity + 1)
     } catch (error) {
@@ -141,7 +141,21 @@ const CreateTask: React.FC<ICreateTask> = ({
     setRewardAmount(amount)
   }
 
+  const getOrgTreasuryBalance = async () => {
+    try {
+      const balance = await getTreasuryBalance(
+        organization.id,
+        ethers.constants.AddressZero,
+        library
+      )
+      setTreasuryBalance(balance)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
+    getOrgTreasuryBalance()
     getRewardAmount(taskData.complexityScore, taskData.taskTags)
     const body = document.body
     body.style.overflow = 'hidden'
@@ -156,7 +170,7 @@ const CreateTask: React.FC<ICreateTask> = ({
     rewardAmount.toString(),
     tokenInfo?.decimal
   )
-  const balanceToDeposit = rewardAmount.sub(treasuryBalance?.balance || 0)
+  const balanceToDeposit = rewardAmount.sub(treasuryBalance || 0)
   const balanceToDepositValue = ethers.utils.formatUnits(
     balanceToDeposit.toString(),
     tokenInfo?.decimal
