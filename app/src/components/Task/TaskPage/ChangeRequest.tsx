@@ -4,7 +4,11 @@ import Warning from 'SVGs/Warning'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
-import { acceptRevision, getRevisions, rejectTaskRevision } from 'hooks/task/functions'
+import {
+  acceptRevision,
+  getRevisions,
+  rejectTaskRevision
+} from 'hooks/task/functions'
 import { TaskRevision, TaskRevisionStatus } from 'hooks/task/types'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
@@ -31,6 +35,7 @@ const ChangeRequest = ({
   const [changeConditions, setChangeConditions] = useState(false)
   const { account, library } = useWeb3()
   const [processing, setProcessing] = useState(false)
+  const [processRejection, setProcessRejection] = useState(false)
   const [processDispute, setProcessDispute] = useState(false)
   const [processAcceptConditions, setProcessAcceptConditions] = useState(false)
   const [message, setMessage] = useState('')
@@ -39,7 +44,7 @@ const ChangeRequest = ({
     if (!account) return
     setProcessing(true)
     try {
-      await acceptRevision(taskId, revision.id, library.getSigner())
+      await acceptRevision(taskId, library.getSigner())
       setProcessing(false)
     } catch (e) {
       console.error(e)
@@ -49,10 +54,20 @@ const ChangeRequest = ({
 
   const reject = async () => {
     if (!account) return
+    setProcessRejection(true)
+    try {
+      await rejectTaskRevision(taskId, library.getSigner())
+      setProcessRejection(false)
+    } catch (e) {
+      console.error(e)
+      setProcessRejection(false)
+    }
+  }
+
+  const dispute = async () => {
+    if (!account) return
     setProcessDispute(true)
     try {
-      await rejectTaskRevision(taskId, revision.id, library.getSigner())
-      setProcessDispute(false)
     } catch (e) {
       console.error(e)
       setProcessDispute(false)
@@ -62,7 +77,9 @@ const ChangeRequest = ({
   useEffect(() => {
     if (taskId === undefined) return
     getRevisions(taskId).then((revisions) => {
-      const revisionData = revisions.find((r: any) => r.revisionId == revision.id)
+      const revisionData = revisions.find(
+        (r: any) => r.revisionId == revision.id
+      )
       setMessage(revisionData?.message || '')
     })
   }, [taskId, revision.id])
@@ -121,7 +138,7 @@ const ChangeRequest = ({
             <FileWrite />
             {t('change_conditions')}
           </button>
-          {processDispute ? (
+          {processRejection ? (
             <Spinner />
           ) : (
             <button
@@ -143,6 +160,20 @@ const ChangeRequest = ({
               onClick={acceptConditions}
             >
               {t('accept_duedate_extension_request')}
+            </button>
+            <button
+              className='btn-outline border-[#EFF0F1] text-sm flex justify-center gap-2.5 items-center'
+              onClick={dispute}
+              disabled={processDispute}
+            >
+              {processRejection ? (
+                <Spinner />
+              ) : (
+                <>
+                  <Warning />
+                  {t('dispute_task')}
+                </>
+              )}
             </button>
           </div>
         )}

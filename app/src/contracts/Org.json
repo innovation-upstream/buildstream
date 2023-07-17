@@ -1,5 +1,5 @@
 {
-  "address": "0x5F2c15be874907f432cCD9bc29457f08e14BA6fE",
+  "address": "0xeFc1f56EDd0bcb7Ba421cA9dA8763f3Fc4bcF200",
   "abi": [
     {
       "type": "constructor",
@@ -49,6 +49,41 @@
           "type": "uint256",
           "name": "orgId",
           "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "org",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "id"
+            },
+            {
+              "type": "string",
+              "name": "name"
+            },
+            {
+              "type": "string",
+              "name": "description"
+            },
+            {
+              "type": "address[]",
+              "name": "approvers"
+            },
+            {
+              "type": "address[]",
+              "name": "signers"
+            },
+            {
+              "type": "bool",
+              "name": "isInitialized"
+            },
+            {
+              "type": "bool",
+              "name": "isArchived"
+            }
+          ]
         }
       ]
     },
@@ -61,6 +96,41 @@
           "type": "uint256",
           "name": "orgId",
           "indexed": true
+        },
+        {
+          "type": "tuple",
+          "name": "config",
+          "indexed": false,
+          "components": [
+            {
+              "type": "uint256",
+              "name": "orgId"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredTaskApprovals"
+            },
+            {
+              "type": "uint256",
+              "name": "requiredConfirmations"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardMultiplier"
+            },
+            {
+              "type": "address",
+              "name": "rewardToken"
+            },
+            {
+              "type": "uint256",
+              "name": "rewardSlashMultiplier"
+            },
+            {
+              "type": "uint256",
+              "name": "slashRewardEvery"
+            }
+          ]
         }
       ]
     },
@@ -301,6 +371,10 @@
             {
               "type": "bool",
               "name": "isInitialized"
+            },
+            {
+              "type": "bool",
+              "name": "isArchived"
             }
           ]
         }

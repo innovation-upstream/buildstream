@@ -459,6 +459,15 @@ export class Organization extends Entity {
       this.set("stat", Value.fromString(<string>value));
     }
   }
+
+  get isArchived(): boolean {
+    let value = this.get("isArchived");
+    return value!.toBoolean();
+  }
+
+  set isArchived(value: boolean) {
+    this.set("isArchived", Value.fromBoolean(value));
+  }
 }
 
 export class OrganizationSnapshot extends Entity {
@@ -626,6 +635,15 @@ export class OrganizationSnapshot extends Entity {
     } else {
       this.set("stat", Value.fromString(<string>value));
     }
+  }
+
+  get isArchived(): boolean {
+    let value = this.get("isArchived");
+    return value!.toBoolean();
+  }
+
+  set isArchived(value: boolean) {
+    this.set("isArchived", Value.fromBoolean(value));
   }
 }
 

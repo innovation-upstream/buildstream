@@ -13,10 +13,8 @@ export const StyledListItem = styled.li<ListItemProps>`
           &::before {
             content: '';
             position: absolute;
-            // top: 50% + icon_container_height/2
             top: calc(50% + 18px);
             border-left: 1px dashed #c9c9c9;
-            // height: 50% + icon_container_height/2 - list_item_margin_bottom
             height: 50%;
 
             @media (min-width: 1024px) {
@@ -32,7 +30,6 @@ export const StyledListItem = styled.li<ListItemProps>`
             position: absolute;
             top: 0;
             border-left: 1px dashed #c9c9c9;
-            // top: 50% - icon_container_height/2
             height: calc(50% - 18px);
 
             @media (min-width: 1024px) {

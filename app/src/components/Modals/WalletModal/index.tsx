@@ -17,15 +17,13 @@ import WalletsInfo from './wallets_info'
 const ACCOUNT = 'account'
 
 const WalletModal: React.FC<IModalProps> = ({ close, onConnect }) => {
-  const { account: address, activate } = useWeb3()
+  const { account: address, activate, library } = useWeb3()
   const { t } = useTranslation()
 
   async function connect() {
     try {
       await checkNetwork()
       await activate(injected)
-      onConnect?.()
-      close()
     } catch (ex) {
       console.error(ex)
     }
@@ -33,7 +31,9 @@ const WalletModal: React.FC<IModalProps> = ({ close, onConnect }) => {
 
   useEffect(() => {
     if (address) {
+      onConnect?.(address)
       setCookies(ACCOUNT, address)
+      close()
     }
   }, [address])
 

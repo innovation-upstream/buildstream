@@ -12,6 +12,7 @@ library OrgLib {
         address[] approvers;
         address[] signers;
         bool isInitialized;
+        bool isArchived;
     }
 
     struct OrgConfig {
@@ -117,7 +118,8 @@ contract Organization {
             description: description,
             isInitialized: false,
             approvers: approvers,
-            signers: signers
+            signers: signers,
+            isArchived: false
         });
         orgCount += 1;
         _orgExists[orgId] = true;
@@ -302,6 +304,12 @@ contract Organization {
 
         if (action.actionType == ActionLib.ActionType.UPDATE_DESCRIPTION)
             orgs[action.orgId].description = val;
+
+        if (action.actionType == ActionLib.ActionType.ARCHIVE_ORGANIZATION)
+            orgs[action.orgId].isArchived = true;
+
+        if (action.actionType == ActionLib.ActionType.UNARCHIVE_ORGANIZATION)
+            orgs[action.orgId].isArchived = false;
     }
 
     function withdraw(

@@ -7,7 +7,7 @@ dataSources:
     network: mumbai
     source:
       abi: Organization
-      address: "0x5F2c15be874907f432cCD9bc29457f08e14BA6fE"
+      address: "0xeFc1f56EDd0bcb7Ba421cA9dA8763f3Fc4bcF200"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -22,9 +22,11 @@ dataSources:
           handler: handleOrganizationApproverAddition
         - event: OrganizationApproverRemoval(indexed uint256,indexed address)
           handler: handleOrganizationApproverRemoval
-        - event: OrganizationCreation(indexed uint256)
+        - event: OrganizationCreation(indexed
+            uint256,(uint256,string,string,address[],address[],bool,bool))
           handler: handleOrganizationCreation
-        - event: OrganizationInitialized(indexed uint256)
+        - event: OrganizationInitialized(indexed
+            uint256,(uint256,uint256,uint256,uint256,address,uint256,uint256))
           handler: handleOrganizationInitialized
         - event: OrganizationSignerAddition(indexed uint256,indexed address)
           handler: handleOrganizationSignerAddition
@@ -36,7 +38,7 @@ dataSources:
     network: mumbai
     source:
       abi: Treasury
-      address: "0x55231a482b432543C67677712cC16c952E76aa3A"
+      address: "0xd462aFec5eE4cFAAe2E4e45265f91d45349F6EeA"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -63,7 +65,7 @@ dataSources:
     network: mumbai
     source:
       abi: ActionContract
-      address: "0x82E3ea24Cb6619Fbf301316a56574e509Fb6ab6d"
+      address: "0x18EB0395e45a059277615721B755cDC1d0020da2"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -78,7 +80,8 @@ dataSources:
       eventHandlers:
         - event: ActionConfirmation(indexed uint256,indexed address,indexed uint256)
           handler: handleActionConfirmation
-        - event: ActionCreation(indexed uint256,indexed uint256)
+        - event: ActionCreation(indexed uint256,indexed
+            uint256,(uint256,uint256,address,address,uint256,bytes,bool,address,uint8,bool))
           handler: handleActionCreation
         - event: ActionExecution(indexed uint256,indexed uint256)
           handler: handleActionExecution
@@ -88,7 +91,7 @@ dataSources:
     network: mumbai
     source:
       abi: TaskStorageContract
-      address: "0x7160187A42Cf6aAbad4da9c1Cc2834f35f0aC1D2"
+      address: "0xAd44099eA82933b52580E3fa7dd583A0f24Ec25C"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -103,6 +106,8 @@ dataSources:
       eventHandlers:
         - event: TaskArchived(indexed uint256)
           handler: handleTaskArchived
+        - event: TaskDisputed(indexed uint256)
+          handler: handleTaskDisputed
         - event: TaskAssignment(indexed address,indexed uint256,bool)
           handler: handleTaskAssignment
         - event: TaskAssignmentRequested(indexed address,indexed uint256)
@@ -140,7 +145,7 @@ dataSources:
     network: mumbai
     source:
       abi: TeamContract
-      address: "0x7Da9638FBBDb1c3E847B0c2CFaECf417D6d61D45"
+      address: "0x865B4431D2Ad05A29445Fe5E9417e47c85A34BdA"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -173,7 +178,7 @@ dataSources:
     network: mumbai
     source:
       abi: TokenContract
-      address: "0x25A9f3C7943E8a8e8560B27dc985E4Bfa8A1A4d6"
+      address: "0x4fd7f4B7402e13C9f8c25dDF87C6C360E8955193"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

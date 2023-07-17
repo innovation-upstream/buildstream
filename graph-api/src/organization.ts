@@ -1,6 +1,5 @@
 import { Address, BigInt } from '@graphprotocol/graph-ts'
 import {
-  Organization as Contract,
   OrganizationApproverAddition as OrganizationApproverAdditionEvent,
   OrganizationApproverRemoval as OrganizationApproverRemovalEvent,
   OrganizationCreation as OrganizationCreationEvent,
@@ -44,8 +43,7 @@ export function handleOrganizationCreation(
   event: OrganizationCreationEvent
 ): void {
   const orgId = event.params.orgId
-  let contract = Contract.bind(event.address)
-  const org = contract.getOrganization(orgId)
+  const org = event.params.org
   const entity = new Organization(orgId.toString())
 
   const tEntity = new Treasury(orgId.toString())
@@ -74,6 +72,7 @@ export function handleOrganizationCreation(
   entity.rewardSlashMultiplier = BigInt.fromI32(0)
   entity.slashRewardEvery = BigInt.fromI32(0)
   entity.isInitialized = false
+  entity.isArchived = false
   entity.treasury = orgId.toString()
   entity.save()
 }
@@ -82,8 +81,7 @@ export function handleOrganizationInitialized(
   event: OrganizationInitializedEvent
 ): void {
   const orgId = event.params.orgId
-  let contract = Contract.bind(event.address)
-  const orgConfig = contract.getOrganizationConfig(orgId)
+  const orgConfig = event.params.config
   const entity = Organization.load(orgId.toString())
 
   if (!entity) return

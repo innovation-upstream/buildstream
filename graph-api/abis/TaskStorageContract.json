@@ -292,6 +292,19 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
+      }
+    ],
+    "name": "TaskDisputed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
       },
       {
         "indexed": false,
@@ -731,11 +744,6 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "revisionIndex",
-        "type": "uint256"
       }
     ],
     "name": "acceptTaskRevision",
@@ -901,6 +909,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "taskId",
+        "type": "uint256"
+      }
+    ],
+    "name": "dispute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1159,11 +1180,6 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "revisionIndex",
-        "type": "uint256"
       }
     ],
     "name": "rejectTaskRevision",
@@ -1213,11 +1229,6 @@
       },
       {
         "internalType": "uint256",
-        "name": "revisionIndex",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
         "name": "dueDateExtension",
         "type": "uint256"
       }
@@ -1251,11 +1262,6 @@
         "internalType": "uint256",
         "name": "taskId",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "assignee",
-        "type": "address"
       },
       {
         "internalType": "string",

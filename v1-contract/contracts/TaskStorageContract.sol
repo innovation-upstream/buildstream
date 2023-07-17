@@ -377,6 +377,7 @@ contract TaskStorageContract {
             taskMetadata[taskId].revisions[revisionIndex].revisionId,
             tasks[taskId].dueDate
         );
+        emit TaskAssignment(tasks[taskId].assigneeAddress, taskId, taskMetadata[taskId].staked);
     }
 
     function requestForTaskRevisionDueDateExtension(

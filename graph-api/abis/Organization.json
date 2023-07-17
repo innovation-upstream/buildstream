@@ -50,6 +50,49 @@
         "internalType": "uint256",
         "name": "orgId",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "address[]",
+            "name": "approvers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "signers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "isInitialized",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isArchived",
+            "type": "bool"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct OrgLib.Org",
+        "name": "org",
+        "type": "tuple"
       }
     ],
     "name": "OrganizationCreation",
@@ -63,6 +106,49 @@
         "internalType": "uint256",
         "name": "orgId",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "orgId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredTaskApprovals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "requiredConfirmations",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardMultiplier",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardSlashMultiplier",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "slashRewardEvery",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct OrgLib.OrgConfig",
+        "name": "config",
+        "type": "tuple"
       }
     ],
     "name": "OrganizationInitialized",
@@ -316,6 +402,11 @@
           {
             "internalType": "bool",
             "name": "isInitialized",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isArchived",
             "type": "bool"
           }
         ],
