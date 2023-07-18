@@ -79,7 +79,7 @@ const TaskCard = ({
           ) : (
             <div className='flex'>
               <Link href={`/organization/${task.orgId}`}>
-                <a className='hover:text-blue-700 hover:underline z-10'>
+                <a className='hover:text-blue-700 hover:underline z-[1]'>
                   {task.organization.name}
                 </a>
               </Link>
@@ -108,7 +108,7 @@ const TaskCard = ({
         <section className='flex justify-between items-center mt-6'>
           <div className='flex gap-5'>
             <button
-              className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 z-10'
+              className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 z-[1]'
               onClick={handleShare}
             >
               {t('share')}
