@@ -14,7 +14,9 @@ export default class UserService {
 
     const users = usersData.map((user) => ({
       id: user.id,
-      displayName: user.displayName
+      displayName: user.displayName,
+      email: user.email,
+      githubProfile: user.githubProfile
     }))
 
     return users
@@ -28,7 +30,9 @@ export default class UserService {
 
     const user = {
       id: userData.id,
-      displayName: userData.displayName
+      displayName: userData.displayName,
+      email: userData.email,
+      githubProfile: userData.githubProfile
     }
 
     return user
@@ -38,12 +42,17 @@ export default class UserService {
     id: string,
     user: UserWithoutId
   ): Promise<string> {
-    const { displayName } = user
+    const { displayName, email, githubProfile } = user
 
-    await this.client.collection('users').doc(id).set({
-      id,
-      displayName
-    }, { merge: true })
+    await this.client.collection('users').doc(id).set(
+      {
+        id,
+        displayName,
+        email,
+        githubProfile
+      },
+      { merge: true }
+    )
 
     return id
   }

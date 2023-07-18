@@ -428,6 +428,7 @@ const TaskPage: NextPage<PageProps> = ({
             <div className='mt-7'>
               <AssigneeCard
                 assignee={getAssignee(assigneeData)}
+                task={currentTask}
               />
             </div>
           )}

@@ -165,5 +165,8 @@
   "your_tasks": "Your Tasks",
   "disputed": "Disputed",
   "add_task": "Add task",
-  "disputes": "Disputes"
+  "disputes": "Disputes",
+  "additional_information": "Additional Information",
+  "email": "Email",
+  "github_profile": "Github Profile"
 }
