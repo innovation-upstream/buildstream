@@ -1,5 +1,6 @@
 import Badge from 'SVGs/Badge'
 import TokenGeneric from 'SVGs/TokenGeneric'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import useTokenInfo from 'hooks/currency/useCurrency'
@@ -81,7 +82,12 @@ const TaskInfoCard = ({
           </div>
         ))}
       </div>
-      <p className='mt-3 mb-6 break-all'>{task.description}</p>
+      <MarkDownEditor
+        className='!mt-3 !mb-6 !border-0'
+        value={{ text: task.description }}
+        readOnly
+        hideToggle
+      />
       <div className='divider' />
       <section className='flex justify-between items-center gap-y-2 flex-wrap mt-6'>
         <div className='flex gap-5 flex-wrap'>
