@@ -47,10 +47,25 @@ const UserTasks = () => {
     },
     skip: !account
   })
+  const {
+    data: tasksDisputed,
+    loading: tasksDisputedLoading,
+    startPolling: startTasksDisputedPolling,
+    stopPolling: stopTasksDisputedPolling
+  } = useGetTasksQuery({
+    variables: {
+      where: {
+        assignee: account,
+        status: TaskStatus.DISPUTED
+      }
+    },
+    skip: !account
+  })
 
   usePolling(startTasksInProgressPolling, stopTasksInProgressPolling)
   usePolling(startTasksInReviewPolling, stopTasksInReviewPolling)
   usePolling(startTasksRequestedPolling, stopTasksRequestedPolling)
+  usePolling(startTasksDisputedPolling, stopTasksDisputedPolling)
 
   const { t } = useTranslation('tasks')
 
@@ -58,9 +73,11 @@ const UserTasks = () => {
     !tasksInProgressLoading &&
     !tasksInReviewLoading &&
     !tasksRequestedLoading &&
+    !tasksDisputedLoading &&
     !tasksInProgress?.tasks?.length &&
     !tasksInReview?.tasks?.length &&
-    !tasksRequested?.tasks?.length
+    !tasksRequested?.tasks?.length &&
+    !tasksDisputed?.tasks?.length
   )
     return null
 
@@ -104,6 +121,22 @@ const UserTasks = () => {
           <p className='font-semibold mb-2'>{t('requests')}</p>
           <ul className='ml-4 md:ml-6 list-disc list-outside'>
             {tasksRequested.tasks.map((task) => (
+              <li key={task.id}>
+                <Link href={`/task/${task.id}`}>
+                  <a className='text-[#3667EA] underline' target='_blank'>
+                    {task.title}
+                  </a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {!!tasksDisputed?.tasks?.length && (
+        <div className='mt-4'>
+          <p className='font-semibold mb-2'>{t('disputes')}</p>
+          <ul className='ml-4 md:ml-6 list-disc list-outside'>
+            {tasksDisputed.tasks.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
                   <a className='text-[#3667EA] underline' target='_blank'>
