@@ -1,12 +1,42 @@
+import { Task as TaskType } from 'graphclient'
 import { useGetTasksQuery, usePolling, useWeb3 } from 'hooks'
-import { TaskStatus } from 'hooks/task/types'
+import { Task, TaskStatus } from 'hooks/task/types'
+import { fetchClickupTask } from 'integrations/clickup/api/functions'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Converter } from 'utils/converter'
+
+const processTasks = async (tasks: TaskType[]): Promise<Task[]> => {
+  const processedTasks = await Promise.all(
+    tasks.map(async (t) => {
+      if (!t.externalId) {
+        return t
+      }
+      const clickupTask = await fetchClickupTask(
+        t.externalId as string,
+        t.orgId.id
+      )
+      return {
+        ...t,
+        title: clickupTask?.name || t.title,
+        description: clickupTask?.description || t.description
+      }
+    })
+  )
+
+  return processedTasks.map((t) => Converter.TaskFromQuery(t))
+}
 
 const UserTasks = () => {
   const { account } = useWeb3()
+  const [tasksInProgress, setTasksInProgress] = useState<Task[]>([])
+  const [tasksInReview, setTasksInReview] = useState<Task[]>([])
+  const [tasksRequested, setTasksRequested] = useState<Task[]>([])
+  const [tasksDisputed, setTasksDisputed] = useState<Task[]>([])
+
   const {
-    data: tasksInProgress,
+    data: tasksInProgressData,
     loading: tasksInProgressLoading,
     startPolling: startTasksInProgressPolling,
     stopPolling: stopTasksInProgressPolling
@@ -20,7 +50,7 @@ const UserTasks = () => {
     skip: !account
   })
   const {
-    data: tasksInReview,
+    data: tasksInReviewData,
     loading: tasksInReviewLoading,
     startPolling: startTasksInReviewPolling,
     stopPolling: stopTasksInReviewPolling
@@ -34,7 +64,7 @@ const UserTasks = () => {
     skip: !account
   })
   const {
-    data: tasksRequested,
+    data: tasksRequestedData,
     loading: tasksRequestedLoading,
     startPolling: startTasksRequestedPolling,
     stopPolling: stopTasksRequestedPolling
@@ -48,7 +78,7 @@ const UserTasks = () => {
     skip: !account
   })
   const {
-    data: tasksDisputed,
+    data: tasksDisputedData,
     loading: tasksDisputedLoading,
     startPolling: startTasksDisputedPolling,
     stopPolling: stopTasksDisputedPolling
@@ -69,26 +99,60 @@ const UserTasks = () => {
 
   const { t } = useTranslation('tasks')
 
+  useEffect(() => {
+    if (!tasksInProgressData?.tasks) return
+    processTasks(tasksInProgressData.tasks).then((tasksWithClickupData) =>
+      setTasksInProgress(tasksWithClickupData)
+    )
+  }, [tasksInProgressData])
+
+  useEffect(() => {
+    if (!tasksInReviewData?.tasks) return
+    processTasks(tasksInReviewData.tasks).then((tasksWithClickupData) =>
+      setTasksInReview(tasksWithClickupData)
+    )
+  }, [tasksInReviewData])
+
+  useEffect(() => {
+    if (!tasksRequestedData?.tasks) return
+    processTasks(tasksRequestedData.tasks).then((tasksWithClickupData) =>
+      setTasksRequested(tasksWithClickupData)
+    )
+  }, [tasksRequestedData])
+
+  useEffect(() => {
+    if (!tasksDisputedData?.tasks) return
+    processTasks(tasksDisputedData.tasks).then((tasksWithClickupData) =>
+      setTasksDisputed(tasksWithClickupData)
+    )
+  }, [tasksDisputedData])
+
+  useEffect(() => {
+    if (!tasksInProgressData) return
+    
+  }, [tasksInProgressData])
+  
+
   if (
     !tasksInProgressLoading &&
     !tasksInReviewLoading &&
     !tasksRequestedLoading &&
     !tasksDisputedLoading &&
-    !tasksInProgress?.tasks?.length &&
-    !tasksInReview?.tasks?.length &&
-    !tasksRequested?.tasks?.length &&
-    !tasksDisputed?.tasks?.length
+    !tasksInProgress?.length &&
+    !tasksInReview?.length &&
+    !tasksRequested?.length &&
+    !tasksDisputed?.length
   )
     return null
 
   return (
     <div className='paper'>
       <p className='text-2xl font-semibold mb-5'>{t('your_tasks')}</p>
-      {!!tasksInProgress?.tasks?.length && (
+      {!!tasksInProgress?.length && (
         <div className='mt-4'>
           <p className='font-semibold mb-2'>{t('in_progress')}</p>
           <ul className='ml-4 md:ml-6 list-disc list-outside'>
-            {tasksInProgress.tasks.map((task) => (
+            {tasksInProgress.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
                   <a className='text-[#3667EA] underline' target='_blank'>
@@ -100,11 +164,11 @@ const UserTasks = () => {
           </ul>
         </div>
       )}
-      {!!tasksInReview?.tasks?.length && (
+      {!!tasksInReview?.length && (
         <div className='mt-4'>
           <p className='font-semibold mb-2'>{t('in_review')}</p>
           <ul className='ml-4 md:ml-6 list-disc list-outside'>
-            {tasksInReview.tasks.map((task) => (
+            {tasksInReview.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
                   <a className='text-[#3667EA] underline' target='_blank'>
@@ -116,11 +180,11 @@ const UserTasks = () => {
           </ul>
         </div>
       )}
-      {!!tasksRequested?.tasks?.length && (
+      {!!tasksRequested?.length && (
         <div className='mt-4'>
           <p className='font-semibold mb-2'>{t('requests')}</p>
           <ul className='ml-4 md:ml-6 list-disc list-outside'>
-            {tasksRequested.tasks.map((task) => (
+            {tasksRequested.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
                   <a className='text-[#3667EA] underline' target='_blank'>
@@ -132,11 +196,11 @@ const UserTasks = () => {
           </ul>
         </div>
       )}
-      {!!tasksDisputed?.tasks?.length && (
+      {!!tasksDisputed?.length && (
         <div className='mt-4'>
           <p className='font-semibold mb-2'>{t('disputes')}</p>
           <ul className='ml-4 md:ml-6 list-disc list-outside'>
-            {tasksDisputed.tasks.map((task) => (
+            {tasksDisputed.map((task) => (
               <li key={task.id}>
                 <Link href={`/task/${task.id}`}>
                   <a className='text-[#3667EA] underline' target='_blank'>
