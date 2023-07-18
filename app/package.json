@@ -41,7 +41,10 @@
     "react-redux": "^8.0.2",
     "react-share": "^4.4.1",
     "react-tooltip": "^5.10.0",
+    "remark-breaks": "^3.0.3",
+    "remark-directive": "^2.0.1",
     "remark-gfm": "^3.0.1",
+    "remark-math": "^5.1.1",
     "styled-components": "^5.3.5",
     "swr": "^2.1.5",
     "tailwind-scrollbar-hide": "^1.1.7"
