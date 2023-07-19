@@ -5,7 +5,9 @@ import ProfileCard from 'components/Task/TaskListPage/ProfileCard'
 import TaskOverview from 'components/Task/TaskListPage/TaskOverview'
 import client from 'graphclient/client'
 import { useGetTasksLazyQuery, useWeb3 } from 'hooks'
+import { TaskStatus } from 'hooks/task/types'
 import { useUserStat } from 'hooks/userstat'
+import { fetchClickupTask } from 'integrations/clickup/api/functions'
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -17,6 +19,25 @@ import { useEffect, useState } from 'react'
 import { wrapper } from 'state/store'
 import { Converter } from 'utils/converter'
 import { GetTasksDocument, Task } from '../../../.graphclient'
+
+const processTasks = async (tasks: Task[]): Promise<Task[]> => {
+  return await Promise.all(
+    tasks.map(async (t) => {
+      if (!t.externalId) {
+        return t
+      }
+      const clickupTask = await fetchClickupTask(
+        t.externalId as string,
+        t.orgId.id
+      )
+      return {
+        ...t,
+        title: clickupTask?.name || t.title,
+        description: clickupTask?.description || t.description
+      }
+    })
+  )
+}
 
 export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps(
@@ -30,11 +51,13 @@ export const getServerSideProps: GetServerSideProps =
             orderBy: 'taskId',
             orderDirection: 'desc',
             where: {
-              assignee: address
+              assignee: address,
+              status_gte: TaskStatus.ASSIGNED,
+              status_lte: TaskStatus.CLOSED
             }
           }
         })
-        tasks = data.tasks
+        tasks = await processTasks(data.tasks as Task[])
       }
       const locale = context.locale ?? ''
 
@@ -86,7 +109,10 @@ const TasksOverview: NextPage<{ taskList: Task[]; address: string }> = ({
   }, [userAddress, getTaskList])
 
   useEffect(() => {
-    if (data) setTasks(data.tasks?.map((t) => Converter.TaskFromQuery(t)))
+    if (!data) return
+    processTasks(data.tasks as Task[]).then((tasksWithClickupData) =>
+      setTasks(tasksWithClickupData?.map((t) => Converter.TaskFromQuery(t)))
+    )
   }, [data])
 
   return (
