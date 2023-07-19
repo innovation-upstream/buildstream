@@ -2,7 +2,6 @@ import TaskCard from 'components/Task/TaskCard'
 import { Task, TaskStatus } from 'hooks/task/types'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import TaskDetail from '../CreateTask/TaskDetail'
 import TabFilter from './TabFilter'
 
 interface TaskViewProps {
@@ -12,14 +11,9 @@ interface TaskViewProps {
 const TaskOverview = ({ tasks: taskList }: TaskViewProps) => {
   const { t } = useTranslation('tasks')
   const [currentTab, setCurrentTab] = useState(TaskStatus.CLOSED)
-  const [selected, setSelected] = useState<number>()
-  const selectedTask = taskList?.find((t) => t.id === selected)
 
   return (
     <div>
-      {selectedTask && (
-        <TaskDetail task={selectedTask} close={() => setSelected(undefined)} />
-      )}
       <div className='mb-5 lg:block'>
         <h1 className='text-2xl	 lg:text-4xl	font-bold mb-3'>
           {t('account_overview')}
@@ -36,11 +30,10 @@ const TaskOverview = ({ tasks: taskList }: TaskViewProps) => {
               ? task.status !== TaskStatus.CLOSED
               : task.status === TaskStatus.CLOSED
           )
-          .map((t, index) => (
+          .map((t) => (
             <li key={t.id} className=''>
               <TaskCard
                 task={t}
-                onClick={() => setSelected(t.id)}
               />
             </li>
           ))}
