@@ -1,5 +1,6 @@
 import Badge from 'SVGs/Badge'
 import TokenGeneric from 'SVGs/TokenGeneric'
+import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
 import useTokenInfo from 'hooks/currency/useCurrency'
@@ -42,11 +43,7 @@ const TaskRequirement = ({
   )
 }
 
-const TaskCard = ({
-  task,
-  onClick,
-  onShare
-}: TaskCardProps) => {
+const TaskCard = ({ task, onClick, onShare }: TaskCardProps) => {
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
   const { pathname } = useRouter()
@@ -68,64 +65,66 @@ const TaskCard = ({
   }, [getReward])
 
   return (
-    
-      <div
-        className='relative paper hover:drop-shadow-xl hover:brightness-[0.98]'
-        onClick={() => onClick?.(task.id)}
-      >
-        <div className='flex mb-2'>
-          {pathname.includes('organization') ? (
-            <span>{task.organization.name}</span>
-          ) : (
-            <div className='flex'>
-              <Link href={`/organization/${task.orgId}`}>
-                <a className='hover:text-blue-700 hover:underline z-[1]'>
-                  {task.organization.name}
-                </a>
-              </Link>
-            </div>
-          )}
-        </div>
-        <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
-          {task.title}
-        </p>
-        <TaskRequirement
-          complexityScore={task.complexityScore}
-          reputationLevel={task.reputationLevel}
-          className='hidden lg:flex'
-        />
-        <div
-          className='flex flex-wrap gap-1 mt-3'
-        >
-          {task.taskTags?.map((tag) => (
-            <div key={tag.id} className='btn-tag'>
-              {tag.name}
-            </div>
-          ))}
-        </div>
-        <p className='mt-3 mb-6 break-all'>{task.description}</p>
-        <div className='divider' />
-        <section className='flex justify-between items-center mt-6'>
-          <div className='flex gap-5'>
-            <button
-              className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 z-[1]'
-              onClick={handleShare}
-            >
-              {t('share')}
-            </button>
+    <div
+      className='relative paper hover:drop-shadow-xl hover:brightness-[0.98]'
+      onClick={() => onClick?.(task.id)}
+    >
+      <div className='flex mb-2'>
+        {pathname.includes('organization') ? (
+          <span>{task.organization.name}</span>
+        ) : (
+          <div className='flex'>
+            <Link href={`/organization/${task.orgId}`}>
+              <a className='hover:text-blue-700 hover:underline z-[1]'>
+                {task.organization.name}
+              </a>
+            </Link>
           </div>
-
-          <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
-            <TokenGeneric />
-            <span className='font-semibold text-sm'>
-              {rewardValue} {tokenInfo?.symbol}
-            </span>
-          </div>
-        </section>
-        <Link href={`/task/${task.id}`}>
-          <a className='after:absolute after:w-full after:h-full after:inset-0' />
-        </Link>
+        )}
       </div>
+      <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
+        {task.title}
+      </p>
+      <TaskRequirement
+        complexityScore={task.complexityScore}
+        reputationLevel={task.reputationLevel}
+        className='hidden lg:flex'
+      />
+      <div className='flex flex-wrap gap-1 mt-3'>
+        {task.taskTags?.map((tag) => (
+          <div key={tag.id} className='btn-tag'>
+            {tag.name}
+          </div>
+        ))}
+      </div>
+      <MarkDownEditor
+        className='!mt-3 !mb-6 !border-0 clamp-4'
+        value={{ text: task.description }}
+        readOnly
+        hideToggle
+      />
+      <div className='divider' />
+      <section className='flex justify-between items-center mt-6'>
+        <div className='flex gap-5'>
+          <button
+            className='btn-primary min-w-full md:min-w-fit bg-green-700 hover:bg-green-500 z-[1]'
+            onClick={handleShare}
+          >
+            {t('share')}
+          </button>
+        </div>
+
+        <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>
+          <TokenGeneric />
+          <span className='font-semibold text-sm'>
+            {rewardValue} {tokenInfo?.symbol}
+          </span>
+        </div>
+      </section>
+      <Link href={`/task/${task.id}`}>
+        <a className='after:absolute after:w-full after:h-full after:inset-0' />
+      </Link>
+    </div>
   )
 }
 

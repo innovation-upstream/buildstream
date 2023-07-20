@@ -3,6 +3,8 @@ import { ChangeEvent, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import Editor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
+import remarkBreaks from 'remark-breaks'
+import remarkDirective from 'remark-directive'
 import gfm from 'remark-gfm'
 
 interface IEditorProps extends React.ComponentProps<typeof Editor> {
@@ -92,7 +94,11 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
         forwardedRef={mdEditor}
         className={className}
         renderHTML={(text) => (
-          <ReactMarkdown remarkPlugins={[gfm]}>{text}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[gfm, remarkBreaks, remarkDirective]}
+          >
+            {text}
+          </ReactMarkdown>
         )}
         onChange={onChange}
         value={value?.text}

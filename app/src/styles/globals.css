@@ -71,8 +71,21 @@
   input.toggle:focus::after {
     @apply absolute z-[1] block h-5 w-5 rounded-full;
   }
-}
-
-.editor-container>.section {
-  border: 0 !important;
+  .editor-container > .section {
+    border: 0 !important;
+  }
+  .rc-md-editor .editor-container>.section>.section-container {
+    padding: 0 !important;
+    @apply text-[#17191A] text-sm sm:text-base;
+  }
+  .rc-md-editor .editor-container>.section>.section-container p {
+    @apply text-[#17191A] text-sm sm:text-base;
+  }
+  .rc-md-editor.clamp-4 .section-container.html-wrap .custom-html-style {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+  }
 }
