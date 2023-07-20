@@ -65,8 +65,8 @@ export const taskSubmission = async (
   provider?: any
 ): Promise<boolean> => {
   const contract = getContract(
-    TaskContractInterface.address,
-    TaskContractInterface.abi,
+    TaskStorageContractInterface.address,
+    TaskStorageContractInterface.abi,
     provider
   )
 
