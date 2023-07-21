@@ -1,6 +1,7 @@
 import Back from 'SVGs/Back'
 import Alert from 'components/Alert/Alert'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
+import EditTask from 'components/Task/EditTask/EditTask'
 import ShareTask from 'components/Task/ShareTask'
 import TaskActions from 'components/Task/TaskActions/TaskActions'
 import AssigneeCard from 'components/Task/TaskPage/AssigneeCard'
@@ -220,6 +221,7 @@ const TaskPage: NextPage<PageProps> = ({
   const [assignmentRequests, setAssignmentRequests] = useState(
     props.assignmentRequests
   )
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const { t } = useTranslation('tasks')
 
@@ -325,13 +327,25 @@ const TaskPage: NextPage<PageProps> = ({
         </div>
         <div className='col-span-4 md:col-span-5 lg:col-span-8 2xl:col-span-7'>
           <>
+            {showEditModal && (
+              <EditTask
+                task={currentTask}
+                instructions={instructions || ''}
+                organization={currentTask.organization}
+                close={() => setShowEditModal(false)}
+              />
+            )}
             {shareLink && (
               <ShareTask
                 url={shareLink}
                 onClose={() => setShareLink(undefined)}
               />
             )}
-            <TaskInfoCard task={currentTask} onShare={onShare} />
+            <TaskInfoCard
+              task={currentTask}
+              onShare={onShare}
+              onEdit={() => setShowEditModal(true)}
+            />
             {instructions && (isAssignee || isApprover) && (
               <section className=''>
                 <div className='w-full p-3 bg-gray-100 border mt-3 rounded-xl'>
@@ -339,6 +353,7 @@ const TaskPage: NextPage<PageProps> = ({
                     {t('private_task_materials')}
                   </p>
                   <MarkDownEditor
+                    className='px-2'
                     hideToggle
                     value={{ text: instructions }}
                     readOnly
@@ -406,7 +421,9 @@ const TaskPage: NextPage<PageProps> = ({
                           isApprover={isApprover}
                           assignee={getAssignee(assignee)}
                           onDeny={() =>
-                            fetchAssigneeData(currentTask.assignmentRequests || [])
+                            fetchAssigneeData(
+                              currentTask.assignmentRequests || []
+                            )
                           }
                         />
                       </li>
@@ -449,7 +466,9 @@ const TaskPage: NextPage<PageProps> = ({
             <SubmitCard taskId={currentTask.id} />
           )}
 
-          {currentTask.status === TaskStatus.CLOSED && <ClosedCard task={currentTask} />}
+          {currentTask.status === TaskStatus.CLOSED && (
+            <ClosedCard task={currentTask} />
+          )}
         </div>
         <div className='col-span-4 md:col-span-3 lg:col-span-4 2xl:col-span-3 hidden md:block'>
           <TaskStatusCard task={currentTask} />

@@ -6,8 +6,8 @@ import Search from 'components/Task/TaskListPage/Search'
 import TaskView from 'components/Task/TaskListPage/TaskView'
 import UserTasks from 'components/Task/TaskListPage/UserTasks'
 import client from 'graphclient/client'
+import { useWeb3 } from 'hooks'
 import { TaskStatus } from 'hooks/task/types'
-import { useUserStat } from 'hooks/userstat'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import type {
   GetServerSideProps,
@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps =
   )
 
 const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
-  const stats = useUserStat()
+  const { account } = useWeb3()
 
   return (
     <div className='layout-container pb-20'>
@@ -89,7 +89,7 @@ const TasksPage: NextPage<{ taskList: Task[] }> = ({ taskList }) => {
               <div className='mb-4 hidden lg:block 2xl:hidden'>
                 <Filter expand />
               </div>
-              <ProfileCard />
+              <ProfileCard address={account} />
               <div className='mt-4'>
                 <UserTasks />
               </div>

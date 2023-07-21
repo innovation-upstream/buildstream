@@ -168,5 +168,9 @@
   "disputes": "Disputes",
   "additional_information": "Additional Information",
   "email": "Email",
-  "github_profile": "Github Profile"
+  "github_profile": "Github Profile",
+  "save": "Save",
+  "edit_task": "Edit task",
+  "task_not_updated": "Error! Task Not Updated",
+  "update_task": "Update task"
 }
