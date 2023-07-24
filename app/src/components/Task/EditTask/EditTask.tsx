@@ -383,7 +383,7 @@ const EditTask: React.FC<IEditTask> = ({
                       name='instructions'
                       className='!h-[300px]'
                       value={{
-                        text: taskData.instructions || instructionsTemplate
+                        text: taskData.instructions || instructions
                       }}
                       onChange={(v) => {
                         let text = v.text
