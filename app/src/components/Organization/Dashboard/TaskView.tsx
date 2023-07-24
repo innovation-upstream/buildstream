@@ -1,12 +1,14 @@
 import ClickupLogo from 'SVGs/ClickupLogo'
 import Plus from 'SVGs/Plus'
 import CreateTask from 'components/Task/CreateTask/CreateTask'
+import EditTask from 'components/Task/EditTask/EditTask'
 import ClickupImport from 'components/Task/ImportTask/ClickupImport'
 import TaskCard from 'components/Task/TaskCard'
 import { getCookie } from 'cookies-next'
 import { Task as TaskType } from 'graphclient'
 import { useGetTasksQuery, usePolling } from 'hooks'
 import { Organization } from 'hooks/organization/types'
+import { getTaskInstructions } from 'hooks/task/functions'
 import { Task, TaskStatus } from 'hooks/task/types'
 import { TOKEN_KEY, fetchClickupTask } from 'integrations/clickup/api'
 import { useEffect, useState } from 'react'
@@ -106,11 +108,23 @@ const TaskView = ({
   const [showClickupModal, setShowClickupModal] = useState(false)
   const [clickupCode, setClickupCode] = useState('')
   const [shareLink, setShareLink] = useState<string>()
-  const [tasksWithoutRequest, setTasksWithoutRequest] = useState<Task[]>(props.tasksWithoutRequest)
-  const [tasksWithRequest, setTasksWithRequest] = useState<Task[]>(props.tasksWithRequest)
-  const [tasksInProgress, setTasksInProgress] = useState<Task[]>(props.tasksInProgress)
-  const [tasksInReview, setTasksInReview] = useState<Task[]>(props.tasksInReview)
+  const [tasksWithoutRequest, setTasksWithoutRequest] = useState<Task[]>(
+    props.tasksWithoutRequest
+  )
+  const [tasksWithRequest, setTasksWithRequest] = useState<Task[]>(
+    props.tasksWithRequest
+  )
+  const [tasksInProgress, setTasksInProgress] = useState<Task[]>(
+    props.tasksInProgress
+  )
+  const [tasksInReview, setTasksInReview] = useState<Task[]>(
+    props.tasksInReview
+  )
   const [tasksClosed, setTasksClosed] = useState<Task[]>(props.tasksClosed)
+  const [taskToEdit, setTaskToEdit] = useState<{
+    task: Task
+    instructions?: string
+  }>()
   const clickupToken = getCookie(TOKEN_KEY)
 
   const onCode = async (code: any, params?: any) => {
@@ -246,6 +260,13 @@ const TaskView = ({
     )
   }, [tasksClosedData])
 
+  useEffect(() => {
+    if (!taskToEdit?.task?.id) return
+    getTaskInstructions(Number(taskToEdit.task.id)).then((instructions) => {
+      setTaskToEdit(t => ({ ...t, instructions } as any))
+    })
+  }, [taskToEdit?.task?.id])
+
   const onCreated = (taskId: number) => {
     setShowCreateModal(false)
     setShowClickupModal(false)
@@ -278,6 +299,14 @@ const TaskView = ({
           organization={organization}
           close={() => setShowCreateModal(false)}
           onCreated={onCreated}
+        />
+      )}
+      {taskToEdit?.task && (
+        <EditTask
+          task={taskToEdit.task}
+          instructions={taskToEdit.instructions || ''}
+          organization={taskToEdit.task.organization}
+          close={() => setTaskToEdit(undefined)}
         />
       )}
       {showClickupModal && (
@@ -350,6 +379,7 @@ const TaskView = ({
               task={t}
               onClick={(id) => setSelected(id)}
               onShare={onShare}
+              onEdit={() => setTaskToEdit({ task: t })}
             />
           </li>
         ))}

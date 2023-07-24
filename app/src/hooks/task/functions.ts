@@ -176,14 +176,14 @@ export const disputeTask = async (
 
 export const editTask = async (
   taskInfo: {
-    taskId: number,
-    externalId: string,
-    title: string,
-    description: string,
-    taskTags: number[],
-    complexityScore: ComplexityScore,
-    reputationLevel: number,
-    dueDate: number,
+    taskId: number
+    externalId: string
+    title: string
+    description: string
+    taskTags: number[]
+    complexityScore: ComplexityScore
+    reputationLevel: number
+    dueDate: number
     disableSelfAssign: boolean
   },
   provider?: any
@@ -277,9 +277,7 @@ export const acceptRevision = async (
     provider
   )
 
-  const response = await taskStorageContract.acceptTaskRevision(
-    taskId
-  )
+  const response = await taskStorageContract.acceptTaskRevision(taskId)
   await response.wait()
   return true
 }
@@ -294,9 +292,7 @@ export const rejectTaskRevision = async (
     provider
   )
 
-  const response = await taskStorageContract.rejectTaskRevision(
-    taskId
-  )
+  const response = await taskStorageContract.rejectTaskRevision(taskId)
   await response.wait()
   return true
 }
@@ -354,7 +350,9 @@ export const updateTaskInstructions = async (
   }
 }
 
-export const getTaskInstructions = async (taskId: number) => {
+export const getTaskInstructions = async (
+  taskId: number
+): Promise<string | undefined> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task/${taskId}/instructions`,

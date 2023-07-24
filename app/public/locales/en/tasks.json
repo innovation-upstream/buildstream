@@ -170,6 +170,7 @@
   "email": "Email",
   "github_profile": "Github Profile",
   "save": "Save",
+  "edit": "Edit",
   "edit_task": "Edit task",
   "task_not_updated": "Error! Task Not Updated",
   "update_task": "Update task"
