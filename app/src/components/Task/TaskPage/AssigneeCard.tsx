@@ -1,4 +1,6 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
+import Email from 'SVGs/Email'
+import Github from 'SVGs/Github'
 import Laptop from 'SVGs/Laptop'
 import Alert from 'components/Alert/Alert'
 import { useWeb3 } from 'hooks'
@@ -61,26 +63,26 @@ const AssigneeCard: React.FC<Props> = ({ task, assignee }) => {
       )}
       {isApprover &&
         (assignee?.profile?.email || assignee?.profile?.githubProfile) && (
-          <div className='flex flex-col gap-3 mt-4'>
-            {assignee?.profile?.email && (
-              <div>
-                <span className='block text-gray-700 text-sm mb-1'>
-                  {t('email')}
-                </span>
-                <p className='text-sm font-semibold break-all'>
-                  {assignee.profile.email}
-                </p>
-              </div>
+          <div className='flex gap-2'>
+            {assignee.profile?.githubProfile && (
+              <a
+                href={assignee.profile.githubProfile}
+                className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <Github />
+              </a>
             )}
-            {assignee?.profile?.githubProfile && (
-              <div>
-                <span className='block text-gray-700 text-sm mb-1'>
-                  {t('github_profile')}
-                </span>
-                <p className='text-sm font-semibold break-all'>
-                  {assignee.profile.githubProfile}
-                </p>
-              </div>
+            {assignee.profile?.email && (
+              <a
+                href={`mailto:${assignee.profile.email}`}
+                className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <Email />
+              </a>
             )}
           </div>
         )}

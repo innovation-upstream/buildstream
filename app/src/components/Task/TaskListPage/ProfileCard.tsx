@@ -1,5 +1,4 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
-import ChevronDown from 'components/IconSvg/ChevronDown'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
 import { useWeb3 } from 'hooks'
 import useServerConfirmation from 'hooks/auth/useServerConfirmation'
@@ -10,6 +9,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Badge from 'SVGs/Badge'
 import Correct from 'SVGs/Correct'
+import Email from 'SVGs/Email'
+import Github from 'SVGs/Github'
 import Info from 'SVGs/Info'
 import ProfileEdit from 'SVGs/ProfileEdit'
 import Write from 'SVGs/Write'
@@ -69,6 +70,7 @@ const ProfileCard = ({ address }: Props) => {
   const { t } = useTranslation('tasks')
   const [displayName, setDisplayName] = useState(profile?.displayName || '')
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false)
+  const [showAdditionalInfoForm, setShowAdditionalInfoForm] = useState(false)
   const { callAction, component } = useServerConfirmation({
     onError: () => setShowForm(false)
   })
@@ -187,42 +189,59 @@ const ProfileCard = ({ address }: Props) => {
             <span className='text-2xl font-bold'>{totalTokens.toString()}</span>
           </div>
         </div>
-        {account === address && (
-          <>
-            <div className='divider' />
-            <div className='my-5'>
-              <div className='relative flex gap-2 items-center justify-between'>
-                <p className='font-semibold'>{t('additional_information')} </p>
-                <button
-                  onClick={() => setShowAdditionalInfo((prev) => !prev)}
-                  className='after:absolute after:w-full after:h-full after:inset-0'
+
+        <div className='divider' />
+        <div className='my-5'>
+          <div className='relative flex gap-2 items-center'>
+            <p className='font-semibold'>{t('additional_information')} </p>
+            {address === account && (
+              <button
+                onClick={() => setShowAdditionalInfoForm((prev) => !prev)}
+                className='iconContainer shrink-0 flex items-center after:absolute after:w-full after:h-full after:inset-0 h-4 w-4 ml-3'
+              >
+                <Write className='fill-[#B1B3B9]' />
+              </button>
+            )}
+          </div>
+          {!showAdditionalInfoForm && (
+            <div className='flex gap-2 mt-1'>
+              {profile?.githubProfile && (
+                <a
+                  href={profile.githubProfile}
+                  className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                  target='_blank'
+                  rel='noreferrer'
                 >
-                  <span
-                    className={`block transition-transform ${
-                      showAdditionalInfo ? 'rotate-180' : ''
-                    }`}
-                  >
-                    <ChevronDown />
-                  </span>
-                </button>
-              </div>
-              {showAdditionalInfo && (
-                <div className='mt-4'>
-                  <AdditionalInfo
-                    value={profile?.email}
-                    onChange={changeEmail}
-                    title={t('email')}
-                  />
-                  <AdditionalInfo
-                    value={profile?.githubProfile}
-                    onChange={changeGithubProfile}
-                    title={t('github_profile')}
-                  />
-                </div>
+                  <Github />
+                </a>
+              )}
+              {profile?.email && (
+                <a
+                  href={`mailto:${profile.email}`}
+                  className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <Email />
+                </a>
               )}
             </div>
-          </>
-        )}
+          )}
+          {address === account && showAdditionalInfoForm && (
+            <div className='mt-4'>
+              <AdditionalInfo
+                value={profile?.email}
+                onChange={changeEmail}
+                title={t('email')}
+              />
+              <AdditionalInfo
+                value={profile?.githubProfile}
+                onChange={changeGithubProfile}
+                title={t('github_profile')}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </>
   )

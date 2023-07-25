@@ -1,4 +1,6 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
+import Email from 'SVGs/Email'
+import Github from 'SVGs/Github'
 import TokenGeneric from 'SVGs/TokenGeneric'
 import { BigNumber, ethers } from 'ethers'
 import useTokenInfos from 'hooks/currency/useCurrencies'
@@ -62,6 +64,28 @@ const AssignmentRequestCard: React.FC<Props> = ({
             ${assigneeAddress?.substring(assigneeAddress?.length - 4)}`}
           </a>
         </Link>
+      </div>
+      <div className='flex gap-2 mt-2'>
+        {assignee.profile?.githubProfile && (
+          <a
+            href={assignee.profile.githubProfile}
+            className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+            target='_blank'
+            rel='noreferrer'
+          >
+            <Github />
+          </a>
+        )}
+        {assignee.profile?.email && (
+          <a
+            href={`mailto:${assignee.profile.email}`}
+            className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+            target='_blank'
+            rel='noreferrer'
+          >
+            <Email />
+          </a>
+        )}
       </div>
       {assignee.tokens?.length > 0 && (
         <div className='flex gap-1 mt-4'>
