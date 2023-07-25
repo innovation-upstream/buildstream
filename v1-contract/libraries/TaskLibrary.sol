@@ -54,6 +54,10 @@ library TaskLibrary {
         uint256 reputationLevel,
         uint256 dueDate
     ) external {
+        require(
+            self.status < TaskLib.TaskStatus.ASSIGNED,
+            "Task already assigned"
+        );
         self.externalId = externalId;
         self.title = title;
         self.description = description;
@@ -67,8 +71,13 @@ library TaskLibrary {
 
     function updateTaskMetadata(
         TaskLib.TaskMetadata storage self,
+        TaskLib.TaskStatus status,
         bool disableSelfAssign
     ) external {
+        require(
+            status < TaskLib.TaskStatus.ASSIGNED,
+            "Task already assigned"
+        );
         self.disableSelfAssign = disableSelfAssign;
     }
 

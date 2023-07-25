@@ -27,7 +27,12 @@ export default class TaskInstruction {
     taskId: string,
     taskInstruction: string
   ): Promise<void> {
-    const savedInstructions = await this.get(taskId)
+    const snapshot = await this.client
+      .collection('tasks')
+      .doc(taskId.toString())
+      .get()
+
+    const savedInstructions = snapshot.data()?.taskInstruction
 
     if (!!savedInstructions) {
       const { data } = await client.query({

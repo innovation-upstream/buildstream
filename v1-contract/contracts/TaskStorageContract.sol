@@ -230,7 +230,10 @@ contract TaskStorageContract {
             reputationLevel,
             dueDate
         );
-        taskMetadata[taskId].updateTaskMetadata(disableSelfAssign);
+        taskMetadata[taskId].updateTaskMetadata(
+            tasks[taskId].status,
+            disableSelfAssign
+        );
         emit TaskUpdated(taskId, tasks[taskId], taskMetadata[taskId]);
     }
 
@@ -242,7 +245,12 @@ contract TaskStorageContract {
         address rewardToken,
         bool disableSelfAssign
     ) external taskExists(taskId) onlyTaskContract {
-        tasks[taskId].openTask(taskMetadata[taskId], rewardAmount, rewardToken, disableSelfAssign);
+        tasks[taskId].openTask(
+            taskMetadata[taskId],
+            rewardAmount,
+            rewardToken,
+            disableSelfAssign
+        );
         emit TaskOpened(taskId, rewardAmount, rewardToken, disableSelfAssign);
     }
 
@@ -299,8 +307,7 @@ contract TaskStorageContract {
         address assignee
     ) external onlyTaskContract taskExists(taskId) {
         if (assignmentRequests[taskId][assignee])
-            return
-        taskMetadata[taskId].makeAssignmentRequest(assignee);
+            return taskMetadata[taskId].makeAssignmentRequest(assignee);
         emit TaskAssignmentRequested(assignee, taskId);
     }
 
@@ -363,13 +370,8 @@ contract TaskStorageContract {
         );
     }
 
-    function acceptTaskRevision(
-        uint256 taskId
-    ) external {
-        tasks[taskId].acceptTaskRevision(
-            taskMetadata[taskId],
-            msg.sender
-        );
+    function acceptTaskRevision(uint256 taskId) external {
+        tasks[taskId].acceptTaskRevision(taskMetadata[taskId], msg.sender);
         uint256 revisionIndex = taskMetadata[taskId].revisionCount - 1;
         emit TaskRevisionAccepted(
             taskId,
@@ -377,7 +379,11 @@ contract TaskStorageContract {
             taskMetadata[taskId].revisions[revisionIndex].revisionId,
             tasks[taskId].dueDate
         );
-        emit TaskAssignment(tasks[taskId].assigneeAddress, taskId, taskMetadata[taskId].staked);
+        emit TaskAssignment(
+            tasks[taskId].assigneeAddress,
+            taskId,
+            taskMetadata[taskId].staked
+        );
     }
 
     function requestForTaskRevisionDueDateExtension(
@@ -398,14 +404,9 @@ contract TaskStorageContract {
         );
     }
 
-    function rejectTaskRevision(
-        uint256 taskId
-    ) external {
+    function rejectTaskRevision(uint256 taskId) external {
         require(msg.sender == tasks[taskId].assigneeAddress, "Task not yours");
-        tasks[taskId].rejectTaskRevision(
-            taskMetadata[taskId],
-            msg.sender
-        );
+        tasks[taskId].rejectTaskRevision(taskMetadata[taskId], msg.sender);
         uint256 revisionIndex = taskMetadata[taskId].revisionCount - 1;
         emit TaskRevisionRejected(
             taskId,

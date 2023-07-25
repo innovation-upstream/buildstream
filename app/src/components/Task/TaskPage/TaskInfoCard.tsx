@@ -1,5 +1,6 @@
 import Badge from 'SVGs/Badge'
 import TokenGeneric from 'SVGs/TokenGeneric'
+import Write from 'SVGs/Write'
 import MarkDownEditor from 'components/MarkDownEditor/MarkDownEditor'
 import { ethers } from 'ethers'
 import { useWeb3 } from 'hooks'
@@ -13,12 +14,10 @@ import { useTranslation } from 'react-i18next'
 interface TaskInfoCardProps {
   task: Task
   onShare?: (id: number) => void
+  onEdit?: (id: number) => void
 }
 
-const TaskRequirement = ({
-  complexityScore,
-  reputationLevel
-}: any) => {
+const TaskRequirement = ({ complexityScore, reputationLevel }: any) => {
   const { t } = useTranslation('tasks')
   return (
     <div className='flex gap-6 items-center flex-wrap'>
@@ -40,14 +39,13 @@ const TaskRequirement = ({
   )
 }
 
-const TaskInfoCard = ({
-  task,
-  onShare
-}: TaskInfoCardProps) => {
+const TaskInfoCard = ({ task, onShare, onEdit }: TaskInfoCardProps) => {
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
   const [rewardValue, setRewardValue] = useState('')
-  const { library } = useWeb3()
+  const { account, library } = useWeb3()
+  const isApprover =
+    account && task.organization.approvers.includes(account?.toLowerCase())
 
   const handleShare = (e: any) => {
     e.stopPropagation()
@@ -72,9 +70,20 @@ const TaskInfoCard = ({
           </a>
         </Link>
       </div>
-      <p className='text-2xl lg:text-[28px] leading-8 font-bold mb-3.5'>
-        {task.title}
-      </p>
+      <div className='flex items-center mb-3.5'>
+        <p className='text-2xl lg:text-[28px] leading-8 font-bold'>
+          {task.title}
+        </p>
+        {isApprover && onEdit && (
+          <button
+            onClick={() => onEdit(task.id)}
+            className='iconContainer shrink-0 flex items-center justify-center h-5 w-5 ml-3'
+          >
+            <Write className='fill-[#B1B3B9]' />
+          </button>
+        )}
+      </div>
+
       <div className='flex flex-wrap gap-1 mt-3'>
         {task.taskTags?.map((tag) => (
           <div key={tag.id} className='btn-tag'>

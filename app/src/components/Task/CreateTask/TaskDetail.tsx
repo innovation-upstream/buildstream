@@ -97,7 +97,8 @@ const TaskDetail: React.FC<ITaskDetail> = ({ task, close }) => {
 
   const getInstructions = async () => {
     const data = await getTaskInstructions(task.id)
-    setInstructions(data)
+    if (data)
+      setInstructions(data)
   }
 
   useEffect(() => {

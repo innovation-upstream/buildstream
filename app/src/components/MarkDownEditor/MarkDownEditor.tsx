@@ -92,7 +92,7 @@ const MarkDownEditor: React.FC<IEditorProps> = ({
       <MdEditor
         /* @ts-ignore next-line */
         forwardedRef={mdEditor}
-        className={className}
+        className={`${className} ${readOnly || togglePreview ? '!border-0' : ''}`}
         renderHTML={(text) => (
           <ReactMarkdown
             remarkPlugins={[gfm, remarkBreaks, remarkDirective]}
