@@ -15,6 +15,7 @@ interface TaskCardProps {
   task: Task
   onClick?: (id: number) => void
   onShare?: (id: number) => void
+  onEdit?: (id: number) => void
 }
 
 const TaskRequirement = ({
@@ -43,12 +44,13 @@ const TaskRequirement = ({
   )
 }
 
-const TaskCard = ({ task, onClick, onShare }: TaskCardProps) => {
+const TaskCard = ({ task, onClick, onShare, onEdit }: TaskCardProps) => {
   const { t } = useTranslation('tasks')
   const { tokenInfo } = useTokenInfo()
   const { pathname } = useRouter()
   const [rewardValue, setRewardValue] = useState('')
-  const { library } = useWeb3()
+  const { account, library } = useWeb3()
+  const isApprover = account && task?.organization?.approvers?.includes(account)
 
   const handleShare = (e: any) => {
     e.stopPropagation()
@@ -112,6 +114,14 @@ const TaskCard = ({ task, onClick, onShare }: TaskCardProps) => {
           >
             {t('share')}
           </button>
+          {onEdit && isApprover && (
+            <button
+              className='btn-primary min-w-full md:min-w-fit bg-blue-700 hover:bg-blue-500 z-[1]'
+              onClick={() => onEdit(task.id)}
+            >
+              {t('edit')}
+            </button>
+          )}
         </div>
 
         <div className='flex items-center gap-1 bg-[#70C550]/25 px-3 py-2 rounded-full'>

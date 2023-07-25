@@ -3,19 +3,17 @@ import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import { Organization } from 'hooks/organization/types'
-import {
-  createNewTask,
-  openTask,
-  updateTaskInstructions
-} from 'hooks/task/functions'
+import { editTask, updateTaskInstructions } from 'hooks/task/functions'
+import { Task } from 'hooks/task/types'
 import moment from 'moment'
 import { useTranslation } from 'next-i18next'
 import { useEffect, useState } from 'react'
 import { CheckmarkIcon, ErrorIcon } from 'react-hot-toast'
 
-interface ProgressModalProps {
+interface EditProgressModalProps {
   organization: Organization
   onClose?: () => void
+  task: Task
   taskData: any
   onError?: (error: string[]) => void
   onSuccess?: () => void
@@ -29,59 +27,65 @@ enum Progress {
   FAILED
 }
 
-const ProgressModal = ({
+const compareTaskData = (task: Task, taskData: any) => {
+  return (
+    task.externalId === taskData.externalId &&
+    task.title === taskData.title &&
+    task.description === taskData.description &&
+    task.complexityScore === taskData.complexityScore &&
+    task.reputationLevel === taskData.reputationLevel &&
+    moment.unix(task.dueDate).format('YYYY-MM-DD') === taskData.dueDate &&
+    task.disableSelfAssign === taskData.disableSelfAssign &&
+    task.taskTags?.map((t) => Number(t.id)).toString() ===
+      taskData.taskTags?.toString()
+  )
+}
+
+const EditProgressModal = ({
   organization,
   onClose,
+  task,
   taskData,
   onError,
   onSuccess
-}: ProgressModalProps) => {
+}: EditProgressModalProps) => {
   const { t } = useTranslation('tasks')
   const { account, library } = useWeb3()
   const isApprover = account && organization?.approvers?.includes(account)
-  const [createStatus, setCreateStatus] = useState(Progress.PENDING)
-  const [updateInstructionsStatus, setUpdateInstructionStatus] = useState(
-    isApprover && taskData.instructions ? Progress.PENDING : Progress.SKIPPED
+  const [updateStatus, setUpdateStatus] = useState(
+    compareTaskData(task, taskData) ? Progress.SKIPPED : Progress.PENDING
   )
-  const [publishStatus, setPublishStatus] = useState(
-    isApprover && taskData.publish ? Progress.PENDING : Progress.SKIPPED
+  const [updateInstructionsStatus, setUpdateInstructionStatus] = useState(
+    taskData.instructions ? Progress.PENDING : Progress.SKIPPED
   )
   const { callAction, component } = useServerConfirmation({
     onError: () => setUpdateInstructionStatus(Progress.FAILED)
   })
 
   const beginActions = async () => {
-    let taskId: number | undefined
     const errors: any[] = []
-    try {
-      taskId = await createTask()
-    } catch (error) {
-      errors.push(error)
-      throw errors
-    }
-
-    if (!taskId) return
-
-    if (publishStatus === Progress.PENDING)
+    if (updateStatus === Progress.PENDING) {
       try {
-        await publishTask(taskId as number)
+        await updateTask()
       } catch (error) {
         errors.push(error)
+        throw errors
       }
+    }
 
     if (updateInstructionsStatus === Progress.PENDING)
-      await callAction(async () => await updateInstructions(taskId as number))
+      await callAction(async () => await updateInstructions())
 
     if (errors.length) throw errors
   }
 
-  const createTask = async (): Promise<number | undefined> => {
+  const updateTask = async () => {
     try {
-      setCreateStatus(Progress.IN_PROGRESS)
-      const taskId = await createNewTask(
+      setUpdateStatus(Progress.IN_PROGRESS)
+      await editTask(
         {
+          taskId: task.id,
           externalId: taskData.externalId || '',
-          orgId: organization.id,
           title: taskData.externalId ? '' : taskData.title,
           description: taskData.externalId ? '' : taskData.description,
           taskTags: taskData.taskTags,
@@ -93,38 +97,25 @@ const ProgressModal = ({
             .unix(),
           disableSelfAssign: taskData.disableSelfAssign
         },
-        library.getSigner()
+        library?.getSigner()
       )
-      setCreateStatus(Progress.SUCCESS)
-      return taskId
+      setUpdateStatus(Progress.SUCCESS)
     } catch (error: any) {
-      setCreateStatus(Progress.FAILED)
+      setUpdateStatus(Progress.FAILED)
       console.error(error)
-      throw t('task_not_created')
+      throw t('task_not_updated')
     }
   }
 
-  const updateInstructions = async (taskId: number) => {
+  const updateInstructions = async () => {
     try {
       setUpdateInstructionStatus(Progress.IN_PROGRESS)
-      await updateTaskInstructions(taskId, taskData.instructions || null)
+      await updateTaskInstructions(task.id, taskData.instructions || null)
       setUpdateInstructionStatus(Progress.SUCCESS)
     } catch (error: any) {
       setUpdateInstructionStatus(Progress.FAILED)
       console.error(error)
       throw t('task_instructions_not_updated')
-    }
-  }
-
-  const publishTask = async (taskId: number) => {
-    try {
-      setPublishStatus(Progress.IN_PROGRESS)
-      await openTask(taskId, taskData.disableSelfAssign, library.getSigner())
-      setPublishStatus(Progress.SUCCESS)
-    } catch (error: any) {
-      setPublishStatus(Progress.FAILED)
-      console.error(error)
-      throw t('error_opening_task')
     }
   }
 
@@ -162,24 +153,17 @@ const ProgressModal = ({
     }
   }
 
-  let modalTitle = t('create_task')
+  let modalTitle = t('update_task')
   if (
-    createStatus === Progress.SUCCESS &&
+    updateStatus === Progress.SUCCESS &&
     updateInstructionsStatus === Progress.IN_PROGRESS
   )
     modalTitle = t('update_task_instructions')
-  if (
-    createStatus === Progress.SUCCESS &&
-    updateInstructionsStatus === Progress.SUCCESS &&
-    publishStatus === Progress.IN_PROGRESS
-  )
-    modalTitle = t('publish_task')
 
   const isSuccessful =
-    createStatus === Progress.SUCCESS &&
+    updateStatus === Progress.SUCCESS &&
     (updateInstructionsStatus === Progress.SKIPPED ||
-      updateInstructionsStatus === Progress.SUCCESS) &&
-    (publishStatus === Progress.SKIPPED || publishStatus === Progress.SUCCESS)
+      updateInstructionsStatus === Progress.SUCCESS)
 
   return (
     <>
@@ -189,9 +173,8 @@ const ProgressModal = ({
         <div className='relative mb-5'>
           <button
             disabled={
-              createStatus === Progress.IN_PROGRESS ||
-              updateInstructionsStatus === Progress.IN_PROGRESS ||
-              publishStatus === Progress.IN_PROGRESS
+              updateStatus === Progress.IN_PROGRESS ||
+              updateInstructionsStatus === Progress.IN_PROGRESS
             }
             onClick={isSuccessful ? onSuccess : onClose}
             className='absolute top-0 -right-5'
@@ -204,13 +187,17 @@ const ProgressModal = ({
         <ul className='mt-5'>
           <li>
             <div className='flex gap-x-4 items-center justify-between mb-2'>
-              {t('create_task')}
-              {getIcon(createStatus)}
+              {t('update_task')}
+              {updateStatus === Progress.SKIPPED ? (
+                <span className='text-gray-500 text-xs'>{t('skipped')}</span>
+              ) : (
+                getIcon(updateInstructionsStatus)
+              )}
             </div>
             <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
               <div
                 className={`bg-blue-600 h-2 rounded-full transition-all duration-500 ${getClassName(
-                  createStatus
+                  updateStatus
                 )}`}
               />
             </div>
@@ -218,7 +205,7 @@ const ProgressModal = ({
           <li className='mt-4'>
             <div className='flex gap-x-4 items-center justify-between mb-2'>
               {t('update_task_instructions')}
-              {createStatus === Progress.FAILED ||
+              {updateStatus === Progress.FAILED ||
               updateInstructionsStatus === Progress.SKIPPED ? (
                 <span className='text-gray-500 text-xs'>{t('skipped')}</span>
               ) : updateInstructionsStatus === Progress.PENDING ? (
@@ -235,30 +222,10 @@ const ProgressModal = ({
               />
             </div>
           </li>
-          <li className='mt-4'>
-            <div className='flex gap-x-4 items-center justify-between mb-2'>
-              {t('publish_task')}
-              {createStatus === Progress.FAILED ||
-              publishStatus === Progress.SKIPPED ? (
-                <span className='text-gray-500 text-xs'>{t('skipped')}</span>
-              ) : publishStatus === Progress.PENDING ? (
-                <span className='text-gray-500 text-xs'>{t('pending')}</span>
-              ) : (
-                getIcon(publishStatus)
-              )}
-            </div>
-            <div className='w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700'>
-              <div
-                className={`bg-blue-600 h-2 rounded-full ${getClassName(
-                  publishStatus
-                )}`}
-              />
-            </div>
-          </li>
         </ul>
       </div>
     </>
   )
 }
 
-export default ProgressModal
+export default EditProgressModal

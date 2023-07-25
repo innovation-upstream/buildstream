@@ -1,9 +1,11 @@
 import TaskCard from 'components/Task/TaskCard'
 import { useGetTasksQuery } from 'hooks'
+import { getTaskInstructions } from 'hooks/task/functions'
 import { Task } from 'hooks/task/types'
 import { fetchClickupTask } from 'integrations/clickup/api'
 import { useEffect, useState } from 'react'
 import { Converter } from 'utils/converter'
+import EditTask from '../EditTask/EditTask'
 import ShareTask from '../ShareTask'
 import { useTaskFilter } from './FilterContext'
 import Search from './Search'
@@ -19,6 +21,10 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
   const { refetch } = useGetTasksQuery()
   const { filterQueryVariables } = useTaskFilter()
   const [shareLink, setShareLink] = useState<string>()
+  const [taskToEdit, setTaskToEdit] = useState<{
+    task: Task
+    instructions?: string
+  }>()
 
   const filterTasks = async () => {
     const result = await Promise.all(
@@ -90,6 +96,13 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
     filterTasks()
   }, [filterQueryVariables])
 
+  useEffect(() => {
+    if (!taskToEdit?.task?.id) return
+    getTaskInstructions(Number(taskToEdit.task.id)).then((instructions) => {
+      setTaskToEdit(t => ({ ...t, instructions } as any))
+    })
+  }, [taskToEdit?.task?.id])
+
   return (
     <div>
       <div className='mb-5 hidden lg:block'>
@@ -98,12 +111,21 @@ const TaskView = ({ tasks: taskList }: TaskViewProps) => {
       {shareLink && (
         <ShareTask url={shareLink} onClose={() => setShareLink(undefined)} />
       )}
+      {taskToEdit?.task && (
+        <EditTask
+          task={taskToEdit.task}
+          instructions={taskToEdit.instructions || ''}
+          organization={taskToEdit.task.organization}
+          close={() => setTaskToEdit(undefined)}
+        />
+      )}
       <ul>
         {tasks?.map((t) => (
           <li key={t.id} className='mb-4'>
             <TaskCard
               task={t}
               onShare={onShare}
+              onEdit={() => setTaskToEdit({ task: t })}
             />
           </li>
         ))}

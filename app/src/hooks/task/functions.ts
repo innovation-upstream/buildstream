@@ -175,16 +175,19 @@ export const disputeTask = async (
 }
 
 export const editTask = async (
-  taskId: number,
-  title: string,
-  description: string,
-  taskTags: number[],
-  complexityScore: ComplexityScore,
-  reputationLevel: number,
-  dueDate: number,
+  taskInfo: {
+    taskId: number
+    externalId: string
+    title: string
+    description: string
+    taskTags: number[]
+    complexityScore: ComplexityScore
+    reputationLevel: number
+    dueDate: number
+    disableSelfAssign: boolean
+  },
   provider?: any
 ): Promise<boolean> => {
-  const externalId = ''
   const contract = getContract(
     TaskContractInterface.address,
     TaskContractInterface.abi,
@@ -192,14 +195,15 @@ export const editTask = async (
   )
 
   const response = await contract.updateTask(
-    taskId,
-    externalId,
-    title,
-    description,
-    taskTags,
-    complexityScore,
-    reputationLevel,
-    dueDate
+    taskInfo.taskId,
+    taskInfo.externalId,
+    taskInfo.title,
+    taskInfo.description,
+    taskInfo.taskTags,
+    taskInfo.complexityScore,
+    taskInfo.reputationLevel,
+    taskInfo.dueDate,
+    taskInfo.disableSelfAssign
   )
   await response.wait()
 
@@ -273,9 +277,7 @@ export const acceptRevision = async (
     provider
   )
 
-  const response = await taskStorageContract.acceptTaskRevision(
-    taskId
-  )
+  const response = await taskStorageContract.acceptTaskRevision(taskId)
   await response.wait()
   return true
 }
@@ -290,9 +292,7 @@ export const rejectTaskRevision = async (
     provider
   )
 
-  const response = await taskStorageContract.rejectTaskRevision(
-    taskId
-  )
+  const response = await taskStorageContract.rejectTaskRevision(taskId)
   await response.wait()
   return true
 }
@@ -350,7 +350,9 @@ export const updateTaskInstructions = async (
   }
 }
 
-export const getTaskInstructions = async (taskId: number) => {
+export const getTaskInstructions = async (
+  taskId: number
+): Promise<string | undefined> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_CLICKUP_REDIRECT_URL}/api/task/${taskId}/instructions`,
