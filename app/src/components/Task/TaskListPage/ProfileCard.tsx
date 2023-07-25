@@ -1,5 +1,6 @@
 import { useTokens } from '@innovationupstream/buildstream-utils'
 import MetamaskSvg from 'components/IconSvg/WalletSvg/MetamaskSvg'
+import Spinner from 'components/Spinner/Spinner'
 import { useWeb3 } from 'hooks'
 import useServerConfirmation from 'hooks/auth/useServerConfirmation'
 import { createOrUpdateUser } from 'hooks/profile/functions'
@@ -19,45 +20,44 @@ interface Props {
   address?: string
 }
 
-const AdditionalInfo = ({ value, onChange, title }: any) => {
-  const [localValue, setLocalValue] = useState(value)
-  const [showForm, setShowForm] = useState(false)
+const AdditionalInfoForm = ({ profile, onSubmit }: any) => {
+  const [email, setEmail] = useState(profile?.email || '')
+  const [githubProfile, setGithubProfile] = useState(
+    profile?.githubProfile || ''
+  )
+  const [processing, setProcessing] = useState(false)
+  const { t } = useTranslation('tasks')
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    onSubmit({ email, githubProfile })
+    setProcessing(true)
+  }
 
   return (
-    <div>
-      <div className='flex items-center mb-2'>
-        <span className='block text-gray-700 text-sm'>{title}</span>
-        <button
-          onClick={() => setShowForm((prev) => !prev)}
-          className='iconContainer shrink-0 flex items-center justify-center h-4 w-4 ml-3'
-        >
-          <Write className='fill-[#B1B3B9]' />
-        </button>
-      </div>
-      <div className='flex items-center mb-5'>
-        {showForm ? (
-          <input
-            value={localValue}
-            placeholder={value || ''}
-            onChange={(e) => setLocalValue(e.target.value)}
-            className='px-2 py-1 input-base w-full'
-          />
-        ) : (
-          <p className='text-sm font-semibold break-all'>{value}</p>
-        )}
-        {showForm && (
-          <button
-            onClick={() => {
-              onChange(localValue)
-              setShowForm(false)
-            }}
-            className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8 bg-[#F5F5F5] ml-5'
-          >
-            <Correct className='fill-[#4bae4e]' />
-          </button>
-        )}
-      </div>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <label className='block text-gray-700 text-sm'>
+        {t('email')}
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className='mt-1 px-2 py-1 input-base w-full'
+          disabled={processing}
+        />
+      </label>
+      <label className='mt-2 block text-gray-700 text-sm'>
+        {t('github_profile')}
+        <input
+          value={githubProfile}
+          onChange={(e) => setGithubProfile(e.target.value)}
+          className='px-2 py-1 input-base w-full'
+          disabled={processing}
+        />
+      </label>
+      <button className='mt-3 btn-primary py-1 text-sm'>
+        {processing ? <Spinner width={20} /> : t('save')}
+      </button>
+    </form>
   )
 }
 
@@ -99,32 +99,19 @@ const ProfileCard = ({ address }: Props) => {
     setShowForm(false)
   }
 
-  const changeEmail = async (email?: string) => {
-    if (email && email !== profile?.email) {
+  const updateSocialInformation = async ({ email, githubProfile }: any) => {
+    if (email || githubProfile) {
       callAction(
         async () =>
           await createOrUpdateUser({
             ...profile,
+            githubProfile,
             email
           }),
         refetch
       )
     }
-    setShowForm(false)
-  }
-
-  const changeGithubProfile = async (githubProfile?: string) => {
-    if (githubProfile && githubProfile !== profile?.githubProfile) {
-      callAction(
-        async () =>
-          await createOrUpdateUser({
-            ...profile,
-            githubProfile
-          }),
-        refetch
-      )
-    }
-    setShowForm(false)
+    setShowAdditionalInfoForm(false)
   }
 
   return (
@@ -203,41 +190,35 @@ const ProfileCard = ({ address }: Props) => {
               </button>
             )}
           </div>
-          {!showAdditionalInfoForm && (
-            <div className='flex gap-2 mt-1'>
-              {profile?.githubProfile && (
-                <a
-                  href={profile.githubProfile}
-                  className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
-                  target='_blank'
-                  rel='noreferrer'
-                >
-                  <Github />
-                </a>
-              )}
-              {profile?.email && (
-                <a
-                  href={`mailto:${profile.email}`}
-                  className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
-                  target='_blank'
-                  rel='noreferrer'
-                >
-                  <Email />
-                </a>
-              )}
-            </div>
-          )}
+
+          <div className='flex gap-2 mt-1'>
+            {profile?.githubProfile && (
+              <a
+                href={profile.githubProfile}
+                className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <Github />
+              </a>
+            )}
+            {profile?.email && (
+              <a
+                href={`mailto:${profile.email}`}
+                className='iconContainer shrink-0 flex items-center justify-center rounded-full h-7 md:h-8 w-7 md:w-8'
+                target='_blank'
+                rel='noreferrer'
+              >
+                <Email />
+              </a>
+            )}
+          </div>
+
           {address === account && showAdditionalInfoForm && (
             <div className='mt-4'>
-              <AdditionalInfo
-                value={profile?.email}
-                onChange={changeEmail}
-                title={t('email')}
-              />
-              <AdditionalInfo
-                value={profile?.githubProfile}
-                onChange={changeGithubProfile}
-                title={t('github_profile')}
+              <AdditionalInfoForm
+                profile={profile}
+                onSubmit={updateSocialInformation}
               />
             </div>
           )}
